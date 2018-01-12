@@ -9,11 +9,11 @@
 
 #include <cctype>
 
-#include "create_database.h"
-#include "identifier.h"
-#include "keywords.h"
+#include "internal/identifier.h"
+#include "internal/keywords.h"
+#include "internal/symbols.h"
 #include "parse.h"
-#include "symbols.h"
+#include "parser/create_database.h"
 
 namespace sqltoast {
 

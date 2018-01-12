@@ -11,7 +11,7 @@
 #include <string>
 
 #include "parse.h"
-#include "symbols.h"
+#include "internal/symbols.h"
 
 namespace sqltoast {
 

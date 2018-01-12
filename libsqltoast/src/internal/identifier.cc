@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "identifier.h"
+#include "internal/identifier.h"
 #include "parse.h"
 
 namespace sqltoast {

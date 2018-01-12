@@ -6,17 +6,16 @@
 #include <string>
 #include <vector>
 
-#include "config.h"
-
-#include "parse.h"
+#include <sqltoast/config.h>
+#include <sqltoast/parse.h>
 
 int main (int argc, char *argv[])
 {
     if (argc < 2) {
-        fprintf(stdout,"%s Version %d.%d\n",
+        fprintf(stdout,"%s libsqltoast version %d.%d\n",
             argv[0],
-            sqltoast_VERSION_MAJOR,
-            sqltoast_VERSION_MINOR);
+            libsqltoast_VERSION_MAJOR,
+            libsqltoast_VERSION_MINOR);
         return 1;
     }
     sqltoast::parse_result_t res;

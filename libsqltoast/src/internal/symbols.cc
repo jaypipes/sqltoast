@@ -4,11 +4,9 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "symbols.h"
+#include "internal/symbols.h"
 
 namespace sqltoast {
-
-#ifdef SQLTOAST_DEBUG
 
 // Given a symbol, returns the string representation of the symbol
 const std::string& string_from_symbol(symbol s) {
@@ -40,7 +38,5 @@ symbol_map_t _init_symbol_map() {
 }
 
 symbol_map_t symbol_map::m = _init_symbol_map();
-
-#endif // SQLTOAST_DEBUG
 
 } // namespace sqltoast

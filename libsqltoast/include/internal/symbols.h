@@ -34,8 +34,6 @@ enum symbol {
     UNKNOWN
 };
 
-#ifdef SQLTOAST_DEBUG
-
 typedef std::map<symbol, std::string> symbol_map_t;
 struct symbol_map {
     static symbol_map_t m;
@@ -45,8 +43,6 @@ struct symbol_map {
 const std::string& string_from_symbol(symbol s);
 
 symbol_map_t _init_symbol_map();
-
-#endif // SQLTOAST_DEBUG
 
 } // namespace sqltoast
 

@@ -4,8 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_AST_NODE_H
-#define SQLTOAST_AST_NODE_H
+#ifndef SQLTOAST_AST_H
+#define SQLTOAST_AST_H
 
 namespace sqltoast {
 
@@ -35,6 +35,13 @@ struct statement_node : ast_node {
     const std::string to_string();
 };
 
+typedef struct ast {
+    ast_node root;
+    ast(ast_node& root) : root(root)
+    {}
+    const std::string to_string();
+} ast_t;
+
 } // namespace sqltoast
 
-#endif /* SQLTOAST_AST_NODE_H */
+#endif /* SQLTOAST_AST_H */

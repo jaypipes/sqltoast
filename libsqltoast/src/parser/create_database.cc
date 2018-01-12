@@ -6,11 +6,10 @@
 
 #include <memory>
 
+#include "internal/identifier.h"
 #include "ast.h"
-#include "ast_node.h"
-#include "create_database.h"
-#include "identifier.h"
 #include "parse.h"
+#include "parser/create_database.h"
 
 namespace sqltoast {
 

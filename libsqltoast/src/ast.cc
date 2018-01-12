@@ -11,7 +11,15 @@
 namespace sqltoast {
 
 const std::string ast::to_string() {
-    return std::string("<ast>");
+    return std::string("<begin>");
+}
+
+const std::string ast_node::to_string() {
+    return std::string("<node>");
+}
+
+const std::string statement_node::to_string() {
+    return std::string("CREATE DATABASE <identifier>");
 }
 
 } // namespace sqltoast

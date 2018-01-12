@@ -12,8 +12,7 @@
 #include <vector>
 
 #include "ast.h"
-#include "ast_node.h"
-#include "symbols.h"
+#include "internal/symbols.h"
 
 namespace sqltoast {
 
