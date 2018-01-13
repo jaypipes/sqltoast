@@ -24,6 +24,9 @@ int main (int argc, char *argv[])
         cout << "OK" << endl;
     } else {
         cout << "Parsing failed." << endl;
+        for (auto e : res.errors) {
+            cout << e << endl;
+        }
     }
     return 0;
 }

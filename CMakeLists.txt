@@ -18,6 +18,7 @@ SET(SQLTOAST_VERSION_MAJOR 0)
 SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
     src/ast.cc
+    src/error.cc
     src/parser/create_database.cc
     src/internal/identifier.cc
     src/internal/keywords.cc

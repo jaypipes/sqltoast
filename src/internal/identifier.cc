@@ -4,10 +4,14 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <sstream>
+#include <string>
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "internal/identifier.h"
+#include "error.h"
 #include "parse.h"
 
 namespace sqltoast {
@@ -104,25 +108,16 @@ bool parse_quoted_identifier(parser_context_t& ctx) {
     }
     // We will get here if there was a start of a quoted escape sequence but we
     // never found the closing escape character(s). Set the parser context's
-    // error to indicate this is the location that an error occurred.
-    char estr[200];
-    std::string original(ctx.start_pos, ctx.end_pos);
-    std::string location(original);
-    auto start_pos = start - ctx.start_pos;
-    for (auto cur = location.begin(); cur != location.end(); cur++) {
-        auto loc_pos = cur - location.begin();
-        if (loc_pos < start_pos) {
-            *cur = ' ';
-        } else {
-            *cur = '^';
-        }
+    // error to indicate the location that an error occurred.
+    std::stringstream estr;
+    estr << "In quoted identifier parsing, failed to find closing escape character ";
+    if (closer == '\'') {
+        estr << "\"\'\".\n";
+    } else {
+        estr << "\'" << closer << "\'.\n";
     }
-
-    sprintf(estr,
-            "In quoted identifier parsing, failed to find closing escape character '%c'.\n"
-            "%s\n%s", closer, original.data(), location.data());
-    std::string e(estr);
-    ctx.errors.push_back(e);
+    create_syntax_error_marker(ctx, estr, start);
+    ctx.errors.push_back(estr.str());
     return false;
 }
 
