@@ -69,11 +69,10 @@ bool parse_identifier(parse_context_t& ctx) {
     bool res = (start != ctx.cursor);
     if (res) {
         ctx.current_symbol = IDENTIFIER;
+        // TODO(jaypipes): tack actual identifier object into the AST
         db_identifier_t id(start, ctx.cursor);
         ast_node_t node(NODE_TYPE_IDENTIFIER);
         ctx.result.ast.add_node(node);
-        // TODO(jaypipes): tack identifier into the AST
-        fprintf(stdout, "found identifier: \"%s\"\n", id.name.data());
     }
     return res;
 }
@@ -102,11 +101,10 @@ bool parse_quoted_identifier(parse_context_t& ctx) {
         if (c == closer) {
             ctx.current_escape = ESCAPE_NONE;
             ctx.current_symbol = IDENTIFIER;
+            // TODO(jaypipes): tack actual identifier object into the AST
             db_identifier_t id(start, ctx.cursor);
             ast_node_t node(NODE_TYPE_IDENTIFIER);
             ctx.result.ast.add_node(node);
-            // TODO(jaypipes): tack identifier into the AST
-            fprintf(stdout, "found identifier: \"%s\"\n", id.name.data());
             return true;
         }
     }

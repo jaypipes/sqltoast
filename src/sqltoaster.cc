@@ -21,8 +21,7 @@ int main (int argc, char *argv[])
 
     auto res = sqltoast::parse(p_in);
     if (res.code == sqltoast::SUCCESS) {
-        cout << "OK" << endl;
-        cout << "Found " << res.ast.nodes.size() << " nodes." << endl;
+        cout << "OK (" << res.ast.nodes.size() << " nodes found)" << endl;
         cout << res.ast.to_string() << endl;
     } else {
         cout << "Parsing failed." << endl;
