@@ -27,7 +27,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
 
-bool keyword(parser_context_t& ctx) {
+bool keyword(parse_context_t& ctx) {
     kw_jump_table_t jump_tbl;
     switch (*ctx.cursor) {
         case 'c':
@@ -42,7 +42,7 @@ bool keyword(parser_context_t& ctx) {
             return false;
     }
     for (auto entry : jump_tbl) {
-        const std::string to_end(parser_position_t(ctx.cursor), ctx.end_pos);
+        const std::string to_end(parse_position_t(ctx.cursor), ctx.end_pos);
         if (ci_find_substr(to_end, entry.second) != -1) {
             ctx.current_symbol = entry.first;
             ctx.cursor += entry.second.size();

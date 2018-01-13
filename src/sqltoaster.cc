@@ -17,11 +17,13 @@ int main (int argc, char *argv[])
         return 1;
     }
     const std::string input(argv[1]);
-    sqltoast::parser_input_t p_in(input.cbegin(), input.cend());
+    sqltoast::parse_input_t p_in(input.cbegin(), input.cend());
 
     auto res = sqltoast::parse(p_in);
     if (res.code == sqltoast::SUCCESS) {
         cout << "OK" << endl;
+        cout << "Found " << res.ast.nodes.size() << " nodes." << endl;
+        cout << res.ast.to_string() << endl;
     } else {
         cout << "Parsing failed." << endl;
         for (auto e : res.errors) {

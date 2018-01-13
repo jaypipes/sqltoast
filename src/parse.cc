@@ -7,24 +7,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <iostream>
 #include <cctype>
 
 #include "internal/identifier.h"
 #include "internal/keywords.h"
 #include "internal/symbols.h"
 #include "parse.h"
-#include "parser/create_database.h"
+#include "statements/create_database.h"
 
 namespace sqltoast {
 
-bool accept(parser_context_t& ctx, symbol s) {
+bool accept(parse_context_t& ctx, symbol s) {
     if (ctx.current_symbol == s) {
         return true;
     }
     return false;
 }
 
-bool expect(parser_context_t& ctx, symbol s) {
+bool expect(parse_context_t& ctx, symbol s) {
     if (accept(ctx, s))
         return true;
 
@@ -33,11 +34,11 @@ bool expect(parser_context_t& ctx, symbol s) {
             string_from_symbol(s).data(),
             string_from_symbol(ctx.current_symbol).data());
     std::string e(estr);
-    ctx.errors.push_back(e);
+    ctx.result.errors.push_back(e);
     return false;
 }
 
-bool simple_terminal(parser_context_t& ctx) {
+bool simple_terminal(parse_context_t& ctx) {
     // Search through the single-character terminal symbols first
     switch (*ctx.cursor++) {
         case '\n':
@@ -72,11 +73,11 @@ bool simple_terminal(parser_context_t& ctx) {
     return true;
 }
 
-bool identifier(parser_context_t& ctx) {
+bool identifier(parse_context_t& ctx) {
     // Return true if the context's cursor is at the beginning of something
     // that can be considered an identifier.
     // Skip cursor to the next whitespace
-    parser_position_t start = ctx.cursor;
+    parse_position_t start = ctx.cursor;
     while (! std::isspace(*ctx.cursor) && *ctx.cursor != ';' && ctx.end_pos != ctx.cursor) {
         ctx.cursor++;
     }
@@ -88,7 +89,7 @@ bool identifier(parser_context_t& ctx) {
     return res;
 }
 
-void next_symbol(parser_context_t& ctx) {
+void next_symbol(parse_context_t& ctx) {
     skip_ws(ctx);
     if (simple_terminal(ctx))
         return;
@@ -103,7 +104,7 @@ void next_symbol(parser_context_t& ctx) {
     return;
 }
 
-bool comment(parser_context_t& ctx) {
+bool comment(parse_context_t& ctx) {
     if (! accept(ctx, DOUBLE_SLASH))
         return false;
 
@@ -116,32 +117,26 @@ bool comment(parser_context_t& ctx) {
     return true;
 }
 
-const std::string consume_to_next(parser_context_t& ctx, symbol s) {
-    parser_position_t start = ctx.cursor;
+const std::string consume_to_next(parse_context_t& ctx, symbol s) {
+    parse_position_t start = ctx.cursor;
 
     while (! accept(ctx, s) || accept(ctx, EOS)) {
         skip_ws(ctx);
         next_symbol(ctx);
     }
-    return std::string(start, parser_position_t(ctx.cursor));
+    return std::string(start, parse_position_t(ctx.cursor));
 }
 
-void skip_ws(parser_context_t& ctx) {
+void skip_ws(parse_context_t& ctx) {
     while (std::isspace(*ctx.cursor))
         ctx.cursor++;
     return;
 }
 
-parse_result_t parse(parser_input_t& subject) {
+parse_result_t parse(parse_input_t& subject) {
     parse_result_t res;
     res.code = SYNTAX_ERROR;
-
-    parser_context_t ctx;
-    ctx.current_escape = ESCAPE_NONE;
-    ctx.current_symbol = SOS;
-    ctx.start_pos = subject.cbegin();
-    ctx.end_pos = subject.cend();
-    ctx.cursor = subject.begin();
+    parse_context_t ctx(res, subject);
 
     next_symbol(ctx);
     switch (ctx.current_symbol) {
@@ -149,7 +144,7 @@ parse_result_t parse(parser_input_t& subject) {
             next_symbol(ctx);
             if (accept(ctx, DATABASE)) {
                 if (parse_create_database(ctx)) {
-                    res.code = SUCCESS;;
+                    res.code = SUCCESS;
                 }
             }
         case EOS:
@@ -157,16 +152,6 @@ parse_result_t parse(parser_input_t& subject) {
         default:
             break;
     }
-
-#ifdef SQLTOAST_DEBUG
-
-    if (ctx.ast) {
-        fprintf(stdout, "%s\n", ctx.ast->to_string().data());
-    }
-
-#endif // SQLTOAST_DEBUG
-
-    res.errors = ctx.errors;
 
     return res;
 }

@@ -4,12 +4,10 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <memory>
-
 #include "internal/identifier.h"
 #include "ast.h"
 #include "parse.h"
-#include "parser/create_database.h"
+#include "statements/create_database.h"
 
 namespace sqltoast {
 
@@ -18,14 +16,12 @@ namespace sqltoast {
 //
 // CREATE DATABASE [IF NOT EXISTS] identifier;
 //
-bool parse_create_database(parser_context_t& ctx) {
+bool parse_create_database(parse_context_t& ctx) {
     next_symbol(ctx);
     if (expect(ctx, IDENTIFIER)) {
         next_symbol(ctx);
-        statement_node st_node(STMT_TYPE_CREATE_DATABASE);
-        if (! ctx.ast) {
-            ctx.ast = std::make_unique<ast_t>(ast(st_node));
-        }
+        ast_node node(STMT_TYPE_CREATE_DATABASE);
+        ctx.result.ast.add_node(node);
         return true;
     }
     return false;

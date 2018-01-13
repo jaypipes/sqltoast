@@ -14,7 +14,7 @@
 
 namespace sqltoast {
 
-void create_syntax_error_marker(parser_context_t& ctx, std::stringstream& es, parser_position_t err_pos);
+void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es, parse_position_t err_pos);
 
 } // namespace sqltoast
 

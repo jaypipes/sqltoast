@@ -26,10 +26,10 @@ struct kw_jump_tables {
 
 kw_jump_table_t _init_kw_jump_table(char c);
 
-// Moves the supplied parser context's cursor to the next keyword found in the
+// Moves the supplied parse context's cursor to the next keyword found in the
 // context's input stream and sets the context's current symbol to the found
 // keyword symbol. Returns whether a keyword was found.
-bool keyword(parser_context_t& ctx);
+bool keyword(parse_context_t& ctx);
 
 } // namespace sqltoast
 

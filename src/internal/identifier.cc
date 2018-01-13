@@ -31,9 +31,9 @@ namespace sqltoast {
 // that uses Unicode-encoded characters in the identifier.
 //
 // Note that whitespace will have been skipped already so that the character
-// pointed to by the parser context is guaranteed to be not whitespace.
-bool parse_identifier(parser_context_t& ctx) {
-    parser_position_t start = ctx.cursor;
+// pointed to by the parse context is guaranteed to be not whitespace.
+bool parse_identifier(parse_context_t& ctx) {
+    parse_position_t start = ctx.cursor;
 
     // Let's first look to see if we have the potential start of a quoted
     // identifier of some sort...
@@ -70,14 +70,16 @@ bool parse_identifier(parser_context_t& ctx) {
     if (res) {
         ctx.current_symbol = IDENTIFIER;
         db_identifier_t id(start, ctx.cursor);
+        ast_node_t node(NODE_TYPE_IDENTIFIER);
+        ctx.result.ast.add_node(node);
         // TODO(jaypipes): tack identifier into the AST
         fprintf(stdout, "found identifier: \"%s\"\n", id.name.data());
     }
     return res;
 }
 
-bool parse_quoted_identifier(parser_context_t& ctx) {
-    parser_position_t start = ctx.cursor;
+bool parse_quoted_identifier(parse_context_t& ctx) {
+    parse_position_t start = ctx.cursor;
     char closer;
     switch (ctx.current_escape) {
         case ESCAPE_SINGLE_QUOTE:
@@ -101,13 +103,15 @@ bool parse_quoted_identifier(parser_context_t& ctx) {
             ctx.current_escape = ESCAPE_NONE;
             ctx.current_symbol = IDENTIFIER;
             db_identifier_t id(start, ctx.cursor);
+            ast_node_t node(NODE_TYPE_IDENTIFIER);
+            ctx.result.ast.add_node(node);
             // TODO(jaypipes): tack identifier into the AST
             fprintf(stdout, "found identifier: \"%s\"\n", id.name.data());
             return true;
         }
     }
     // We will get here if there was a start of a quoted escape sequence but we
-    // never found the closing escape character(s). Set the parser context's
+    // never found the closing escape character(s). Set the parse context's
     // error to indicate the location that an error occurred.
     std::stringstream estr;
     estr << "In quoted identifier parsing, failed to find closing escape character ";
@@ -117,7 +121,7 @@ bool parse_quoted_identifier(parser_context_t& ctx) {
         estr << "\'" << closer << "\'.\n";
     }
     create_syntax_error_marker(ctx, estr, start);
-    ctx.errors.push_back(estr.str());
+    ctx.result.errors.push_back(estr.str());
     return false;
 }
 

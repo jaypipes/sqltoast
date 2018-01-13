@@ -4,6 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <iostream>
+#include <sstream>
 #include <string>
 
 #include "ast.h"
@@ -11,15 +13,36 @@
 namespace sqltoast {
 
 const std::string ast::to_string() {
-    return std::string("<begin>");
+    std::stringstream ss;
+    while (! nodes.empty()) {
+        ast_node& node = nodes.top();
+        ss << node.to_string();
+        nodes.pop();
+        if (! nodes.empty()) {
+            ss << " ==> ";
+        }
+    }
+    return ss.str();
 }
 
 const std::string ast_node::to_string() {
-    return std::string("<node>");
+    switch (type) {
+        case NODE_TYPE_STATEMENT:
+            return std::string("<statement node>");
+        case NODE_TYPE_IDENTIFIER:
+            return std::string("<identifier node>");
+        default:
+            return std::string("<unknown node>");
+    }
 }
 
-const std::string statement_node::to_string() {
-    return std::string("CREATE DATABASE <identifier>");
+const std::string statement::to_string() {
+    switch (type) {
+        case STMT_TYPE_CREATE_DATABASE:
+            return std::string("<create database statement>");
+        default:
+            return std::string("<unknown statement>");
+    }
 }
 
 } // namespace sqltoast

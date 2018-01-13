@@ -12,7 +12,9 @@
 
 namespace sqltoast {
 
-void create_syntax_error_marker(parser_context_t& ctx, std::stringstream& es, parser_position_t err_pos) {
+// TODO(jaypipes): Limit the amount of output to something like 200 characters
+// before the syntax error position...
+void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es, parse_position_t err_pos) {
     std::string original(ctx.start_pos, ctx.end_pos);
     std::string location(original);
     auto start_pos = err_pos - ctx.start_pos;
