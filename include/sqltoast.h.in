@@ -1,3 +1,4 @@
-// the configured options and settings for sqltoast
+// DO NOT EDIT. Only edit the lnclude/sqltoast.h.in file, since sqltoast.h is
+// generated during build.
 #define SQLTOAST_VERSION_MAJOR @SQLTOAST_VERSION_MAJOR@
 #define SQLTOAST_VERSION_MINOR @SQLTOAST_VERSION_MINOR@

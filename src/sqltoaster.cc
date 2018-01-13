@@ -1,22 +1,29 @@
 // A demonstration of the sqltoast library API
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <string>
-#include <vector>
+#include <iostream>
 
 #include <sqltoast.h>
-//#include <sqltoast/parse.h>
+#include <parse.h>
+
+using namespace std;
 
 int main (int argc, char *argv[])
 {
-    if (argc < 2) {
-        fprintf(stdout,"%s libsqltoast version %d.%d\n",
-            argv[0],
-            SQLTOAST_VERSION_MAJOR,
-            SQLTOAST_VERSION_MINOR);
+    if (argc != 2) {
+        cout << "Usage: " << argv[0] << " <SQL>" << endl;
+        cout << " using libsqltoast version " <<
+            SQLTOAST_VERSION_MAJOR << '.' <<
+            SQLTOAST_VERSION_MINOR << endl;
         return 1;
+    }
+    const std::string input(argv[1]);
+    sqltoast::parser_input_t p_in(input.cbegin(), input.cend());
+
+    auto res = sqltoast::parse(p_in);
+    if (res.code == sqltoast::SUCCESS) {
+        cout << "OK" << endl;
+    } else {
+        cout << "Parsing failed." << endl;
     }
     return 0;
 }

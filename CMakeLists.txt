@@ -28,12 +28,8 @@ SET(LIBSQLTOAST_SOURCES
 # Header file for configuration templated variables
 CONFIGURE_FILE(
     "${PROJECT_SOURCE_DIR}/include/sqltoast.h.in"
-    "${PROJECT_BINARY_DIR}/sqltoast.h"
+    "${PROJECT_SOURCE_DIR}/include/sqltoast.h"
 )
-
-# add the binary directory to the search path for include files
-# so that we will find config.h
-INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR} include)
 
 ADD_LIBRARY(sqltoast SHARED ${LIBSQLTOAST_SOURCES})
 TARGET_INCLUDE_DIRECTORIES(sqltoast PUBLIC ${PROJECT_SOURCE_DIR}/include)
