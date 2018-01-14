@@ -19,11 +19,11 @@ SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
     src/ast.cc
     src/error.cc
-    src/statements/create_database.cc
     src/internal/identifier.cc
     src/internal/symbols.cc
     src/parse.cc
     src/parser/keyword.cc
+    src/parser/statements/create_database.cc
 )
 
 # Header file for configuration templated variables
@@ -31,6 +31,10 @@ CONFIGURE_FILE(
     "${PROJECT_SOURCE_DIR}/include/sqltoast.h.in"
     "${PROJECT_SOURCE_DIR}/include/sqltoast.h"
 )
+
+# Header files in src/ are private and not exported for public sqltoast
+# interfaces
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
 ADD_LIBRARY(sqltoast SHARED ${LIBSQLTOAST_SOURCES})
 TARGET_INCLUDE_DIRECTORIES(sqltoast PUBLIC ${PROJECT_SOURCE_DIR}/include)
