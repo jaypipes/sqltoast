@@ -17,7 +17,7 @@ bool parse_create_database(parse_context_t& ctx) {
     next_symbol(ctx);
     if (expect(ctx, IDENTIFIER)) {
         next_symbol(ctx);
-        ast_node node(STMT_TYPE_CREATE_DATABASE);
+        ast_node node(NODE_TYPE_STATEMENT);
         ctx.ast.add_node(node);
         return true;
     }

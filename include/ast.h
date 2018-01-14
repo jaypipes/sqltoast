@@ -20,22 +20,8 @@ enum ast_node_type {
     NODE_TYPE_UNKNOWN
 };
 
-enum statement_type {
-    STMT_TYPE_CREATE_DATABASE
-};
-
-typedef struct statement {
-    const statement_type type;
-    statement(statement_type type) : type(type)
-    {}
-    const std::string to_string();
-} statement_t;
-
 typedef struct ast_node {
     const ast_node_type type;
-    // TODO(jaypipes): Use C++17's std::variant when we can...
-    ast_node(statement_type statement_type) : type(NODE_TYPE_STATEMENT)
-    {}
     ast_node(ast_node_type type) : type(type)
     {}
     ast_node operator=(const ast_node& other) {

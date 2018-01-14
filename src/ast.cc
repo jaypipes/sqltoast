@@ -36,13 +36,4 @@ const std::string ast_node::to_string() {
     }
 }
 
-const std::string statement::to_string() {
-    switch (type) {
-        case STMT_TYPE_CREATE_DATABASE:
-            return std::string("<create database statement>");
-        default:
-            return std::string("<unknown statement>");
-    }
-}
-
 } // namespace sqltoast
