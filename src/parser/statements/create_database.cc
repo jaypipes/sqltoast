@@ -7,7 +7,7 @@
 #include "internal/identifier.h"
 #include "ast.h"
 #include "parse.h"
-#include "parser/statements/create_database.h"
+#include "create_database.h"
 
 namespace sqltoast {
 
@@ -21,7 +21,7 @@ bool parse_create_database(parse_context_t& ctx) {
     if (expect(ctx, IDENTIFIER)) {
         next_symbol(ctx);
         ast_node node(STMT_TYPE_CREATE_DATABASE);
-        ctx.result.ast.add_node(node);
+        ctx.ast.add_node(node);
         return true;
     }
     return false;

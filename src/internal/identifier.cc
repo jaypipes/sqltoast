@@ -72,7 +72,7 @@ bool parse_identifier(parse_context_t& ctx) {
         // TODO(jaypipes): tack actual identifier object into the AST
         db_identifier_t id(start, ctx.cursor);
         ast_node_t node(NODE_TYPE_IDENTIFIER);
-        ctx.result.ast.add_node(node);
+        ctx.ast.add_node(node);
     }
     return res;
 }
@@ -104,7 +104,7 @@ bool parse_quoted_identifier(parse_context_t& ctx) {
             // TODO(jaypipes): tack actual identifier object into the AST
             db_identifier_t id(start, ctx.cursor);
             ast_node_t node(NODE_TYPE_IDENTIFIER);
-            ctx.result.ast.add_node(node);
+            ctx.ast.add_node(node);
             return true;
         }
     }
@@ -119,7 +119,7 @@ bool parse_quoted_identifier(parse_context_t& ctx) {
         estr << "\'" << closer << "\'.\n";
     }
     create_syntax_error_marker(ctx, estr, start);
-    ctx.result.errors.push_back(estr.str());
+    ctx.result.error.assign(estr.str());
     return false;
 }
 

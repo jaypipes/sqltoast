@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include <sqltoast.h>
-#include <parse.h>
 
 using namespace std;
 
@@ -20,14 +19,11 @@ int main (int argc, char *argv[])
     sqltoast::parse_input_t p_in(input.cbegin(), input.cend());
 
     auto res = sqltoast::parse(p_in);
-    if (res.code == sqltoast::SUCCESS) {
-        cout << "OK (" << res.ast.nodes.size() << " nodes found)" << endl;
-        cout << res.ast.to_string() << endl;
+    if (res.code == sqltoast::PARSE_SUCCESS) {
+        cout << "OK" << endl;
     } else {
         cout << "Parsing failed." << endl;
-        for (auto e : res.errors) {
-            cout << e << endl;
-        }
+        cout << res.error << endl;
     }
     return 0;
 }

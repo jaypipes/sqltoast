@@ -33,8 +33,7 @@ bool expect(parse_context_t& ctx, symbol s) {
     sprintf(estr, "Expected symbol %s but found %s",
             string_from_symbol(s).data(),
             string_from_symbol(ctx.current_symbol).data());
-    std::string e(estr);
-    ctx.result.errors.push_back(e);
+    ctx.result.error.assign(estr);
     return false;
 }
 
@@ -135,7 +134,7 @@ void skip_ws(parse_context_t& ctx) {
 
 parse_result_t parse(parse_input_t& subject) {
     parse_result_t res;
-    res.code = SYNTAX_ERROR;
+    res.code = PARSE_SYNTAX_ERROR;
     parse_context_t ctx(res, subject);
 
     next_symbol(ctx);
@@ -144,7 +143,7 @@ parse_result_t parse(parse_input_t& subject) {
             next_symbol(ctx);
             if (accept(ctx, DATABASE)) {
                 if (parse_create_database(ctx)) {
-                    res.code = SUCCESS;
+                    res.code = PARSE_SUCCESS;
                 }
             }
         case EOS:

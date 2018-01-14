@@ -11,6 +11,7 @@
 #include <stack>
 #include <vector>
 
+#include "sqltoast.h"
 #include "ast.h"
 #include "internal/symbols.h"
 
@@ -25,23 +26,8 @@ enum escape_mode {
     ESCAPE_UNICODE_AMPERSAND = 4
 };
 
-// Possible return codes from parsing, tokenizing, etc
-enum parse_result_code {
-    SUCCESS = 0,
-    SYNTAX_ERROR = 1
-};
-
-typedef std::vector<char> parse_input_t;
 typedef std::vector<char>::const_iterator parse_position_t;
 typedef std::vector<char>::iterator parse_cursor_t;
-typedef std::string parse_error_t;
-typedef std::vector<std::string> parse_errors_t;
-
-typedef struct parse_result {
-    parse_result_code code;
-    ast_t ast;
-    parse_errors_t errors;
-} parse_result_t;
 
 typedef struct parse_context {
     parse_result_t& result;
@@ -50,6 +36,7 @@ typedef struct parse_context {
     parse_position_t start_pos;
     parse_position_t end_pos;
     parse_cursor_t cursor;
+    ast_t ast;
     parse_context(parse_result_t& result, parse_input_t& subject) :
         result(result),
         current_symbol(SOS),
@@ -89,8 +76,6 @@ bool comment(parse_context_t& ctx);
 
 // Simply advances the parse context's cursor over any whitespace
 void skip_ws(parse_context_t& ctx);
-
-parse_result_t parse(parse_input_t& subject);
 
 } // namespace sqltoast
 
