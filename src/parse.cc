@@ -11,9 +11,9 @@
 #include <cctype>
 
 #include "internal/identifier.h"
-#include "internal/keywords.h"
 #include "internal/symbols.h"
 #include "parse.h"
+#include "parser/keyword.h"
 #include "statements/create_database.h"
 
 namespace sqltoast {

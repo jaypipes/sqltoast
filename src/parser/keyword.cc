@@ -6,7 +6,7 @@
 
 #include "internal/compare.h"
 #include "internal/symbols.h"
-#include "internal/keywords.h"
+#include "keyword.h"
 
 namespace sqltoast {
 

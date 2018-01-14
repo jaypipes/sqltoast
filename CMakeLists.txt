@@ -21,9 +21,9 @@ SET(LIBSQLTOAST_SOURCES
     src/error.cc
     src/statements/create_database.cc
     src/internal/identifier.cc
-    src/internal/keywords.cc
-    src/parse.cc
     src/internal/symbols.cc
+    src/parse.cc
+    src/parser/keyword.cc
 )
 
 # Header file for configuration templated variables
