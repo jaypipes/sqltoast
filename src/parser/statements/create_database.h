@@ -14,14 +14,6 @@
 
 namespace sqltoast {
 
-typedef struct create_database_statement {
-    const db_identifier_t db_id;
-    create_database_statement(
-        parse_input_t::const_iterator start_pos,
-        parse_input_t::const_iterator end_pos) : db_id(start_pos, end_pos)
-    {}
-} create_database_statement_t;
-
 // Returns true if the CREATE DATABASE statement was parsed successfully from
 // the parse context
 bool parse_create_database(parse_context_t& ctx);
