@@ -10,9 +10,9 @@
 #include <iostream>
 #include <cctype>
 
-#include "internal/identifier.h"
 #include "internal/symbols.h"
 #include "parse.h"
+#include "parser/identifier.h"
 #include "parser/keyword.h"
 #include "parser/statements/create_database.h"
 

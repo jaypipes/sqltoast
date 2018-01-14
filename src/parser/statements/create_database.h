@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "internal/identifier.h"
+#include "parser/identifier.h"
 #include "parse.h"
 
 namespace sqltoast {

@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "internal/identifier.h"
+#include "identifier.h"
 #include "error.h"
 #include "parse.h"
 
