@@ -13,7 +13,7 @@
 
 #include "sqltoast.h"
 #include "ast.h"
-#include "internal/symbols.h"
+#include "parser/symbol.h"
 
 namespace sqltoast {
 

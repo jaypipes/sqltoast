@@ -4,14 +4,14 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_KEYWORDS_H
-#define SQLTOAST_KEYWORDS_H
+#ifndef SQLTOAST_KEYWORD_H
+#define SQLTOAST_KEYWORD_H
 
 #include <vector>
 #include <string>
 
 #include "parse.h"
-#include "internal/symbols.h"
+#include "symbol.h"
 
 namespace sqltoast {
 
@@ -33,4 +33,4 @@ bool keyword(parse_context_t& ctx);
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_KEYWORDS_H */
+#endif /* SQLTOAST_KEYWORD_H */

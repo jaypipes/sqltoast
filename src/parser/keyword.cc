@@ -4,9 +4,9 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "internal/compare.h"
-#include "internal/symbols.h"
+#include "compare.h"
 #include "keyword.h"
+#include "symbol.h"
 
 namespace sqltoast {
 

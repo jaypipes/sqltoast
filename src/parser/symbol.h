@@ -4,8 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_SYMBOLS_H
-#define SQLTOAST_SYMBOLS_H
+#ifndef SQLTOAST_SYMBOL_H
+#define SQLTOAST_SYMBOL_H
 
 #include <map>
 #include <string>
@@ -46,4 +46,4 @@ symbol_map_t _init_symbol_map();
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_SYMBOLS_H */
+#endif /* SQLTOAST_SYMBOL_H */

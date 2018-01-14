@@ -19,11 +19,11 @@ SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
     src/ast.cc
     src/error.cc
-    src/internal/symbols.cc
     src/parse.cc
     src/parser/keyword.cc
     src/parser/identifier.cc
     src/parser/statements/create_database.cc
+    src/parser/symbol.cc
 )
 
 # Header file for configuration templated variables

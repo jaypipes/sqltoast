@@ -4,7 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "internal/symbols.h"
+#include "symbol.h"
 
 namespace sqltoast {
 
