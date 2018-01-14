@@ -4,8 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_PARSE_H
-#define SQLTOAST_PARSE_H
+#ifndef SQLTOAST_PARSER_CONTEXT_H
+#define SQLTOAST_PARSER_CONTEXT_H
 
 #include <memory>
 #include <stack>
@@ -13,7 +13,7 @@
 
 #include "sqltoast.h"
 #include "ast.h"
-#include "parser/symbol.h"
+#include "symbol.h"
 
 namespace sqltoast {
 
@@ -79,4 +79,4 @@ void skip_ws(parse_context_t& ctx);
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_PARSE_H */
+#endif /* SQLTOAST_PARSER_CONTEXT_H */

@@ -10,9 +10,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "identifier.h"
+#include "context.h"
 #include "error.h"
-#include "parse.h"
+#include "identifier.h"
 
 namespace sqltoast {
 

@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-#include "parse.h"
+#include "context.h"
 #include "symbol.h"
 
 namespace sqltoast {

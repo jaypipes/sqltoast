@@ -10,11 +10,11 @@
 #include <iostream>
 #include <cctype>
 
-#include "parse.h"
-#include "parser/identifier.h"
-#include "parser/keyword.h"
-#include "parser/statements/create_database.h"
-#include "parser/symbol.h"
+#include "context.h"
+#include "identifier.h"
+#include "keyword.h"
+#include "statements/create_database.h"
+#include "symbol.h"
 
 namespace sqltoast {
 

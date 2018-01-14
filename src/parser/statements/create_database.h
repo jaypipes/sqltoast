@@ -9,8 +9,8 @@
 
 #include <string>
 
+#include "parser/context.h"
 #include "parser/identifier.h"
-#include "parse.h"
 
 namespace sqltoast {
 
