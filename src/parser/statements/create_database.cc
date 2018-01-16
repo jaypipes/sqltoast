@@ -5,6 +5,7 @@
  */
 
 #include "create_database.h"
+#include "parser/token.h"
 
 namespace sqltoast {
 
@@ -15,7 +16,7 @@ namespace sqltoast {
 //
 bool parse_create_database(parse_context_t& ctx) {
     next_symbol(ctx);
-    if (expect(ctx, IDENTIFIER)) {
+    if (expect(ctx, TOKEN_TYPE_IDENTIFIER)) {
         next_symbol(ctx);
         ast_node node(NODE_TYPE_STATEMENT);
         ctx.ast.add_node(node);

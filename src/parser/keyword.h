@@ -4,18 +4,22 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_KEYWORD_H
-#define SQLTOAST_KEYWORD_H
+#ifndef SQLTOAST_PARSER_KEYWORD_H
+#define SQLTOAST_PARSER_KEYWORD_H
 
 #include <vector>
 #include <string>
 
 #include "context.h"
-#include "symbol.h"
 
 namespace sqltoast {
 
-typedef std::pair<symbol, std::string> kw_jump_table_entry_t;
+typedef enum keyword {
+    KEYWORD_CREATE,
+    KEYWORD_DATABASE
+} keyword_t;
+
+typedef std::pair<keyword_t, std::string> kw_jump_table_entry_t;
 typedef std::vector<kw_jump_table_entry_t> kw_jump_table_t;
 
 struct kw_jump_tables {
@@ -29,8 +33,8 @@ kw_jump_table_t _init_kw_jump_table(char c);
 // Moves the supplied parse context's cursor to the next keyword found in the
 // context's input stream and sets the context's current symbol to the found
 // keyword symbol. Returns whether a keyword was found.
-bool keyword(parse_context_t& ctx);
+bool parse_keyword(parse_context_t& ctx);
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_KEYWORD_H */
+#endif /* SQLTOAST_PARSER_KEYWORD_H */
