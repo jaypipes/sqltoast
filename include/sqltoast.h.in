@@ -14,6 +14,7 @@ namespace sqltoast {
 // Possible return codes from parsing
 enum parse_result_code {
     PARSE_SUCCESS,
+    PARSE_INPUT_ERROR,
     PARSE_SYNTAX_ERROR
 };
 

@@ -60,8 +60,13 @@ void skip_ws(parse_context_t& ctx) {
 
 parse_result_t parse(parse_input_t& subject) {
     parse_result_t res;
-    res.code = PARSE_SYNTAX_ERROR;
+    res.code = PARSE_INPUT_ERROR;
     parse_context_t ctx(res, subject);
+
+    if (ctx.cursor == ctx.end_pos) {
+        res.error.assign("Nothing to parse.");
+        return res;
+    }
 
     next_symbol(ctx);
 
@@ -72,8 +77,10 @@ parse_result_t parse(parse_input_t& subject) {
             if (accept(ctx, TOKEN_TYPE_KEYWORD)) {
                 if (parse_create_database(ctx)) {
                     res.code = PARSE_SUCCESS;
+                    break;
                 }
             }
+            break;
         case TOKEN_TYPE_COMMENT:
             res.error.assign("got a comment!");
             res.code = PARSE_SYNTAX_ERROR;

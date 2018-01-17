@@ -21,8 +21,10 @@ int main (int argc, char *argv[])
     auto res = sqltoast::parse(p_in);
     if (res.code == sqltoast::PARSE_SUCCESS) {
         cout << "OK" << endl;
+    } else if (res.code == sqltoast::PARSE_INPUT_ERROR) {
+        cout << "Input error: " << res.error << endl;
     } else {
-        cout << "Parsing failed." << endl;
+        cout << "Syntax error." << endl;
         cout << res.error << endl;
     }
     return 0;
