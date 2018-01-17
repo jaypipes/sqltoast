@@ -28,6 +28,7 @@ void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es, par
     }
 
     es << original << std::endl << location;
+    ctx.result.code = PARSE_SYNTAX_ERROR;
 }
 
 } // namespace sqltoast

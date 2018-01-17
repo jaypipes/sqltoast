@@ -4,9 +4,6 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <iostream>
 #include <cctype>
 #include <sstream>
@@ -33,11 +30,12 @@ bool expect(parse_context_t& ctx, token_type_t tt) {
     if (accept(ctx, tt))
         return true;
 
-    char estr[200];
-    sprintf(estr, "Expected token %s but found %s",
-            token_type_map::to_string(tt).data(),
-            token_type_map::to_string(ctx.tokens.top().type).data());
-    ctx.result.error.assign(estr);
+    token_type_t cur_tt = ctx.tokens.top().type;
+    std::stringstream estr;
+    estr << "Expected token " << token_type_map::to_string(tt).data() <<
+            " but found " << token_type_map::to_string(cur_tt).data() << std::endl;
+    create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
+    ctx.result.error.assign(estr.str());
     return false;
 }
 
