@@ -9,9 +9,11 @@
 
 #include <iostream>
 #include <cctype>
+#include <sstream>
 
 #include "comment.h"
 #include "context.h"
+#include "error.h"
 #include "identifier.h"
 #include "keyword.h"
 #include "punctuator.h"
@@ -63,6 +65,7 @@ parse_result_t parse(parse_input_t& subject) {
     res.code = PARSE_INPUT_ERROR;
     parse_context_t ctx(res, subject);
 
+    skip_ws(ctx);
     if (ctx.cursor == ctx.end_pos) {
         res.error.assign("Nothing to parse.");
         return res;
@@ -85,6 +88,26 @@ parse_result_t parse(parse_input_t& subject) {
             res.error.assign("got a comment!");
             res.code = PARSE_SYNTAX_ERROR;
             break;
+        case TOKEN_TYPE_PUNCTUATOR:
+        {
+            std::stringstream estr;
+            estr << "Parse subject must either begin with a keyword or a "
+                    "comment, but found punctuation." << std::endl;
+            create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
+            res.code = PARSE_SYNTAX_ERROR;
+            res.error.assign(estr.str());
+        }
+        break;
+        case TOKEN_TYPE_IDENTIFIER:
+        {
+            std::stringstream estr;
+            estr << "Parse subject must either begin with a keyword or a "
+                    "comment, but found identifier." << std::endl;
+            create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
+            res.code = PARSE_SYNTAX_ERROR;
+            res.error.assign(estr.str());
+        }
+        break;
         default:
             break;
     }
