@@ -31,14 +31,16 @@ typedef std::vector<char>::iterator parse_cursor_t;
 
 typedef struct parse_context {
     parse_result_t& result;
-    std::stack<token_t> tokens;
+    sql_dialect_t sql_dialect;
     escape_mode current_escape;
     parse_position_t start_pos;
     parse_position_t end_pos;
     parse_cursor_t cursor;
+    std::stack<token_t> tokens;
     ast_t ast;
     parse_context(parse_result_t& result, parse_input_t& subject) :
         result(result),
+        sql_dialect(SQL_DIALECT_ANSI_2003),
         current_escape(ESCAPE_NONE),
         start_pos(subject.cbegin()),
         end_pos(subject.cend()),

@@ -11,6 +11,11 @@
 
 namespace sqltoast {
 
+// Dialects of SQL that can be parsed by sqltoast
+typedef enum sql_dialect {
+    SQL_DIALECT_ANSI_2003
+} sql_dialect_t;
+
 // Possible return codes from parsing
 enum parse_result_code {
     PARSE_SUCCESS,
