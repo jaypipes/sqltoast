@@ -30,7 +30,7 @@ static const char punctuator_map[4] = {
 // Moves the supplied parse context's cursor to the next punctuator found in the
 // context's input stream and sets the context's current symbol to the found
 // punctuator symbol. Returns whether a punctuator was found.
-bool parse_punctuator(parse_context_t& ctx);
+bool token_punctuator(parse_context_t& ctx);
 
 } // namespace sqltoast
 

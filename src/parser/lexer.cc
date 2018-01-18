@@ -39,17 +39,15 @@ bool expect(parse_context_t& ctx, token_type_t tt) {
     return false;
 }
 
-void next_token(parse_context_t& ctx) {
+bool next_token(parse_context_t& ctx) {
     skip_ws(ctx);
-    if (parse_comment(ctx))
-        return;
-    if (parse_punctuator(ctx))
-        return;
-    if (parse_keyword(ctx))
-        return;
-    if (parse_identifier(ctx))
-        return;
-    return;
+    if (token_comment(ctx) ||
+            token_punctuator(ctx) ||
+            token_keyword(ctx) ||
+            token_identifier(ctx)) {
+        return true;
+    }
+    return false;
 }
 
 void skip_ws(parse_context_t& ctx) {

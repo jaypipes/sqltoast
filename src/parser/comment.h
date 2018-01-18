@@ -11,10 +11,7 @@
 
 namespace sqltoast {
 
-// Moves the supplied parse context's cursor to the next comment found in the
-// context's input stream and sets the context's current symbol to the found
-// comment symbol. Returns whether a comment was found.
-bool parse_comment(parse_context_t& ctx);
+bool token_comment(parse_context_t& ctx);
 
 } // namespace sqltoast
 

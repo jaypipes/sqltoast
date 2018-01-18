@@ -11,7 +11,6 @@
 
 namespace sqltoast {
 
-
 // Returns true if the parse context's current token is the supplied token
 bool accept(parse_context_t& ctx, token_type_t tt);
 
@@ -21,10 +20,10 @@ bool accept(parse_context_t& ctx, token_type_t tt);
 // syntax error.
 bool expect(parse_context_t& ctx, token_type_t tt);
 
-// Moves the supplied parse context's cursor to the next token found in the
-// context's input stream and sets the context's current token to the found
-// token.
-void next_token(parse_context_t& ctx);
+// Attempts to find the next token in the parse context. If a token was found,
+// returns true, else false. If true, the parse context's tokens stack will
+// have had a token pushed onto it.
+bool next_token(parse_context_t& ctx);
 
 // Simply advances the parse context's cursor over any whitespace
 void skip_ws(parse_context_t& ctx);

@@ -12,7 +12,7 @@ namespace sqltoast {
 
 // A comment in SQL is a slash followed by an asterisk, then any characters
 // (include newline) until an asterisk followed by a slash.
-bool parse_comment(parse_context_t& ctx) {
+bool token_comment(parse_context_t& ctx) {
     if (! peek_char(ctx, '/'))
         return false;
 

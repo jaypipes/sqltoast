@@ -43,11 +43,11 @@ typedef struct column_identifier {
 
 // Returns true if an identifier (of any kind) can be parsed from the parse
 // context's cursor position
-bool parse_identifier(parse_context_t& ctx);
+bool token_identifier(parse_context_t& ctx);
 
-// Returns true if a quoted identifier can be parsed from the parse
+// Returns true if a delimited identifier can be parsed from the parse
 // context's cursor position.
-bool parse_quoted_identifier(parse_context_t& ctx);
+bool token_delimited_identifier(parse_context_t& ctx);
 
 } // namespace sqltoast
 

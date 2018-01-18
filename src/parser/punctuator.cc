@@ -9,7 +9,7 @@
 
 namespace sqltoast {
 
-bool parse_punctuator(parse_context_t& ctx) {
+bool token_punctuator(parse_context_t& ctx) {
     const char c = *ctx.cursor++;
     for (unsigned int x = 0; x < NUM_PUNCTUATORS; x++) {
         if (c == punctuator_map[x]) {

@@ -27,7 +27,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
 
-bool parse_keyword(parse_context_t& ctx) {
+bool token_keyword(parse_context_t& ctx) {
     kw_jump_table_t jump_tbl;
     switch (*ctx.cursor) {
         case 'c':

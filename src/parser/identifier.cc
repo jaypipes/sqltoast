@@ -27,16 +27,16 @@ namespace sqltoast {
 // In addition to dots to indicate object boundaries, individual identifier
 // object names can be enclosed with quotes (or in the case of MySQL, backticks
 // or quotes). These kinds of identifiers are commonly called "delimited
-// identifiers" or "quoted identifiers". Finally, some database servers such as
-// PostgreSQL use special qualifiers like 'U&"' to indicate a quoted identifier
+// identifiers" or "delimited identifiers". Finally, some database servers such as
+// PostgreSQL use special qualifiers like 'U&"' to indicate a delimited identifier
 // that uses Unicode-encoded characters in the identifier.
 //
 // Note that whitespace will have been skipped already so that the character
 // pointed to by the parse context is guaranteed to be not whitespace.
-bool parse_identifier(parse_context_t& ctx) {
+bool token_identifier(parse_context_t& ctx) {
     parse_position_t start = ctx.cursor;
 
-    // Let's first look to see if we have the potential start of a quoted
+    // Let's first look to see if we have the potential start of a delimited
     // identifier of some sort...
     switch (*ctx.cursor) {
         case '\'':
@@ -52,15 +52,15 @@ bool parse_identifier(parse_context_t& ctx) {
             ctx.cursor++;
             break;
         case 'U':
-            // TODO(jaypipes): Check for PostgreSQL-style Unicode quoted
+            // TODO(jaypipes): Check for PostgreSQL-style Unicode delimited
             // identifiers that look like U&"\0441\043B\043E\043D"
             break;
     }
     if (ctx.current_escape != ESCAPE_NONE)
-        // handle quoted identifiers...
-        return parse_quoted_identifier(ctx);
+        // handle delimited identifiers...
+        return token_delimited_identifier(ctx);
 
-    // If we're not a quoted identifier, then consume all non-space characters
+    // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
     while (! std::isspace(*ctx.cursor) && *ctx.cursor != ';' && ctx.end_pos != ctx.cursor) {
         ctx.cursor++;
@@ -79,7 +79,7 @@ bool parse_identifier(parse_context_t& ctx) {
     return res;
 }
 
-bool parse_quoted_identifier(parse_context_t& ctx) {
+bool token_delimited_identifier(parse_context_t& ctx) {
     parse_position_t start = ctx.cursor;
     char closer;
     switch (ctx.current_escape) {
@@ -111,11 +111,11 @@ bool parse_quoted_identifier(parse_context_t& ctx) {
             return true;
         }
     }
-    // We will get here if there was a start of a quoted escape sequence but we
+    // We will get here if there was a start of a delimited escape sequence but we
     // never found the closing escape character(s). Set the parse context's
     // error to indicate the location that an error occurred.
     std::stringstream estr;
-    estr << "In quoted identifier parsing, failed to find closing escape character ";
+    estr << "In delimited identifier parsing, failed to find closing escape character ";
     if (closer == '\'') {
         estr << "\"\'\".\n";
     } else {
