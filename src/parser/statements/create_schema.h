@@ -7,8 +7,6 @@
 #ifndef SQLTOAST_PARSER_STATEMENTS_CREATE_SCHEMA_H
 #define SQLTOAST_PARSER_STATEMENTS_CREATE_SCHEMA_H
 
-#include <string>
-
 #include "parser/context.h"
 
 namespace sqltoast {

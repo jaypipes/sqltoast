@@ -11,7 +11,9 @@
 #include "context.h"
 #include "error.h"
 #include "lexer.h"
-#include "statements/create_schema.h"
+#include "statement.h"
+#include "symbol.h"
+#include "token.h"
 
 namespace sqltoast {
 
@@ -28,15 +30,11 @@ parse_result_t parse(parse_input_t& subject) {
 
     tokenize(ctx);
 
-    token_type_t tt = ctx.tokens.front().type;
+    token_t &top_tok = ctx.tokens.front();
+    token_type_t& tt = top_tok.type;
     switch (tt) {
         case TOKEN_TYPE_KEYWORD:
-            if (accept(ctx, TOKEN_TYPE_KEYWORD)) {
-                if (parse_create_schema(ctx)) {
-                    res.code = PARSE_SUCCESS;
-                    break;
-                }
-            }
+            parse_statement(ctx);
             break;
         case TOKEN_TYPE_COMMENT:
             res.error.assign("got a comment!");
