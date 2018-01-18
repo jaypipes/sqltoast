@@ -23,6 +23,8 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/error.cc
     src/parser/keyword.cc
     src/parser/identifier.cc
+    src/parser/lexer.cc
+    src/parser/parse.cc
     src/parser/punctuator.cc
     src/parser/statements/create_database.cc
     src/parser/symbol.cc

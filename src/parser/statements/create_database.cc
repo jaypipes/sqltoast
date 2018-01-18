@@ -6,6 +6,7 @@
 
 #include "create_database.h"
 #include "parser/token.h"
+#include "parser/lexer.h"
 
 namespace sqltoast {
 
