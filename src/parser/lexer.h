@@ -28,6 +28,10 @@ bool next_token(parse_context_t& ctx);
 // Simply advances the parse context's cursor over any whitespace
 void skip_ws(parse_context_t& ctx);
 
+// Run through the subject string to parse, creating a stack of token_t's on
+// the parse context.
+void tokenize(parse_context_t& ctx);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_LEXER_H */

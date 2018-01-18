@@ -4,8 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_TOKEN_H
-#define SQLTOAST_TOKEN_H
+#ifndef SQLTOAST_PARSER_TOKEN_H
+#define SQLTOAST_PARSER_TOKEN_H
 
 #include <map>
 #include <string>

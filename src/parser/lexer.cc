@@ -56,4 +56,14 @@ void skip_ws(parse_context_t& ctx) {
     return;
 }
 
+void tokenize(parse_context_t& ctx) {
+    while (next_token(ctx)) {
+#ifdef SQLTOAST_DEBUG
+        token_t tok = ctx.tokens.top();
+        std::cout << token_type_map::to_string(tok.type) << std::endl;
+#endif /* SQLTOAST_DEBUG */
+    }
+    return;
+}
+
 } // namespace sqltoast

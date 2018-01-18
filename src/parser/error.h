@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-#include "parser/context.h"
+#include "context.h"
 
 namespace sqltoast {
 

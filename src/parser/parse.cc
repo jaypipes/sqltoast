@@ -27,7 +27,7 @@ parse_result_t parse(parse_input_t& subject) {
         return res;
     }
 
-    next_token(ctx);
+    tokenize(ctx);
 
     token_type_t tt = ctx.tokens.top().type;
     switch (tt) {
