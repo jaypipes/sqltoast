@@ -45,4 +45,4 @@ token_type_map::tt_map_t _init_token_type_map();
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_TOKEN_H */
+#endif /* SQLTOAST_PARSER_TOKEN_H */

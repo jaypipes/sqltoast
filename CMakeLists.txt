@@ -26,7 +26,8 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/lexer.cc
     src/parser/parse.cc
     src/parser/punctuator.cc
-    src/parser/statements/create_database.cc
+    src/parser/statements/create_schema.cc
+    src/parser/symbol.cc
     src/parser/token.cc
 )
 

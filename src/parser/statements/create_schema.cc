@@ -4,18 +4,18 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "create_database.h"
+#include "create_schema.h"
 #include "parser/token.h"
 #include "parser/lexer.h"
 
 namespace sqltoast {
 
 //
-// The CREATE DATABASE statement follows this form:
+// The CREATE SCHEMA statement follows this form:
 //
-// CREATE DATABASE [IF NOT EXISTS] identifier;
+// CREATE SCHEMA [IF NOT EXISTS] identifier;
 //
-bool parse_create_database(parse_context_t& ctx) {
+bool parse_create_schema(parse_context_t& ctx) {
     next_token(ctx);
     if (expect(ctx, TOKEN_TYPE_IDENTIFIER)) {
         next_token(ctx);

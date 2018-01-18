@@ -11,7 +11,7 @@
 #include "context.h"
 #include "error.h"
 #include "lexer.h"
-#include "statements/create_database.h"
+#include "statements/create_schema.h"
 
 namespace sqltoast {
 
@@ -32,7 +32,7 @@ parse_result_t parse(parse_input_t& subject) {
     switch (tt) {
         case TOKEN_TYPE_KEYWORD:
             if (accept(ctx, TOKEN_TYPE_KEYWORD)) {
-                if (parse_create_database(ctx)) {
+                if (parse_create_schema(ctx)) {
                     res.code = PARSE_SUCCESS;
                     break;
                 }
