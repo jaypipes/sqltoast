@@ -7,6 +7,7 @@
 #include "compare.h"
 #include "keyword.h"
 #include "token.h"
+#include "symbol.h"
 
 namespace sqltoast {
 
@@ -15,17 +16,17 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 
     switch (lead_char) {
         case 'c':
-            t.push_back(kw_jump_table_entry_t(KEYWORD_CREATE, std::string("CREATE")));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CREATE, SYMBOL_CREATE, "CREATE"));
             return t;
-        case 'd':
-            t.push_back(kw_jump_table_entry_t(KEYWORD_DATABASE, std::string("DATABASE")));
+        case 's':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SCHEMA, SYMBOL_SCHEMA, "SCHEMA"));
             return t;
     }
     return t;
 }
 
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
-kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
+kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 
 bool token_keyword(parse_context_t& ctx) {
     kw_jump_table_t jump_tbl;
@@ -34,9 +35,9 @@ bool token_keyword(parse_context_t& ctx) {
         case 'C':
             jump_tbl = kw_jump_tables::c;
             break;
-        case 'd':
-        case 'D':
-            jump_tbl = kw_jump_tables::d;
+        case 's':
+        case 'S':
+            jump_tbl = kw_jump_tables::s;
             break;
         default:
             return false;
@@ -46,11 +47,10 @@ bool token_keyword(parse_context_t& ctx) {
 
     for (auto entry : jump_tbl) {
         const std::string to_end(parse_position_t(ctx.cursor), ctx.end_pos);
-        if (ci_find_substr(to_end, entry.second) != -1) {
-            //ctx.current_token = entry.first;
-            ctx.cursor += entry.second.size();
-            token_t tok(TOKEN_TYPE_KEYWORD, start, parse_position_t(ctx.cursor));
+        if (ci_find_substr(to_end, entry.kw_str) != -1) {
+            token_t tok(TOKEN_TYPE_KEYWORD, entry.symbol, start, parse_position_t(ctx.cursor));
             ctx.tokens.emplace_back(tok);
+            ctx.cursor += entry.kw_str.size();
             return true;
         }
     }

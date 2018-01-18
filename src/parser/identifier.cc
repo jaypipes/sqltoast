@@ -13,6 +13,7 @@
 #include "context.h"
 #include "error.h"
 #include "identifier.h"
+#include "symbol.h"
 #include "token.h"
 
 namespace sqltoast {
@@ -69,7 +70,7 @@ bool token_identifier(parse_context_t& ctx) {
     // identifier...
     bool res = (start != ctx.cursor);
     if (res) {
-        token_t tok(TOKEN_TYPE_IDENTIFIER, start, parse_position_t(ctx.cursor));
+        token_t tok(TOKEN_TYPE_IDENTIFIER, SYMBOL_IDENTIFIER, start, parse_position_t(ctx.cursor));
         ctx.tokens.emplace_back(tok);
         // TODO(jaypipes): tack actual identifier object into the AST
         db_identifier_t id(start, ctx.cursor);
@@ -102,7 +103,7 @@ bool token_delimited_identifier(parse_context_t& ctx) {
         c = *ctx.cursor;
         if (c == closer) {
             ctx.current_escape = ESCAPE_NONE;
-            token_t tok(TOKEN_TYPE_IDENTIFIER, start, parse_position_t(ctx.cursor));
+            token_t tok(TOKEN_TYPE_IDENTIFIER, SYMBOL_IDENTIFIER, start, parse_position_t(ctx.cursor));
             ctx.tokens.emplace_back(tok);
             // TODO(jaypipes): tack actual identifier object into the AST
             db_identifier_t id(start, ctx.cursor);

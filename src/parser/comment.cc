@@ -6,6 +6,7 @@
 
 #include "comment.h"
 #include "peek.h"
+#include "symbol.h"
 #include "token.h"
 
 namespace sqltoast {
@@ -25,7 +26,7 @@ bool token_comment(parse_context_t& ctx) {
     }
     ctx.cursor++;
 
-    token_t tok(TOKEN_TYPE_COMMENT, parse_position_t(ctx.cursor), ctx.end_pos);
+    token_t tok(TOKEN_TYPE_COMMENT, SYMBOL_COMMENT, parse_position_t(ctx.cursor), ctx.end_pos);
     ctx.tokens.emplace_back(tok);
     return true;
 }

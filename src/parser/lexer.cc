@@ -15,6 +15,7 @@
 #include "lexer.h"
 #include "keyword.h"
 #include "punctuator.h"
+#include "symbol.h"
 #include "token.h"
 
 namespace sqltoast {
@@ -60,7 +61,7 @@ void tokenize(parse_context_t& ctx) {
     while (next_token(ctx)) {
 #ifdef SQLTOAST_DEBUG
         token_t tok = ctx.tokens.back();
-        std::cout << token_type_map::to_string(tok.type) << std::endl;
+        std::cout << tok << std::endl;
 #endif /* SQLTOAST_DEBUG */
     }
     return;

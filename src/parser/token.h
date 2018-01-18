@@ -7,9 +7,12 @@
 #ifndef SQLTOAST_PARSER_TOKEN_H
 #define SQLTOAST_PARSER_TOKEN_H
 
+#include <ostream>
 #include <map>
 #include <string>
 #include <vector>
+
+#include "symbol.h"
 
 namespace sqltoast {
 
@@ -26,11 +29,19 @@ typedef enum token_type {
 
 typedef struct token {
     token_type_t type;
+    symbol_t symbol;
     parse_position_t start;
     parse_position_t end;
-    token(token_type_t type, parse_position_t start, parse_position_t end) : type(type), start(start), end(end)
+    token(
+        token_type_t type,
+        symbol_t symbol,
+        parse_position_t start,
+        parse_position_t end) :
+        type(type), symbol(symbol), start(start), end(end)
     {}
 } token_t;
+
+std::ostream& operator<< (std::ostream& out, const token_t& token);
 
 struct token_type_map {
     typedef std::map<token_type_t, std::string> tt_map_t;

@@ -12,9 +12,10 @@ namespace sqltoast {
 bool token_punctuator(parse_context_t& ctx) {
     const char c = *ctx.cursor++;
     for (unsigned int x = 0; x < NUM_PUNCTUATORS; x++) {
-        if (c == punctuator_map[x]) {
+        if (c == punctuator_char_map[x]) {
             token_t tok(
                 TOKEN_TYPE_PUNCTUATOR,
+                punctuator_symbol_map[x],
                 parse_position_t(ctx.cursor),
                 parse_position_t(ctx.cursor+1)
             );

@@ -8,6 +8,7 @@
 #define SQLTOAST_PARSER_PUNCTUATOR_H
 
 #include "context.h"
+#include "symbol.h"
 
 namespace sqltoast {
 
@@ -20,11 +21,18 @@ typedef enum punctuator {
 
 const unsigned int NUM_PUNCTUATORS = 4;
 
-static const char punctuator_map[4] = {
+static const char punctuator_char_map[4] = {
     ';', // PUNCTUATOR_SEMICOLON
     ',', // PUNCTUATOR_COMMA
     '(', // PUNCTUATOR_LPAREN
     ')', // PUNCTUATOR_RPAREN
+};
+
+static const symbol_t punctuator_symbol_map[4] = {
+    SYMBOL_SEMICOLON,
+    SYMBOL_COMMA,
+    SYMBOL_LPAREN,
+    SYMBOL_RPAREN
 };
 
 // Moves the supplied parse context's cursor to the next punctuator found in the

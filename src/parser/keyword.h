@@ -11,21 +11,29 @@
 #include <string>
 
 #include "context.h"
+#include "symbol.h"
 
 namespace sqltoast {
 
 typedef enum keyword {
     KEYWORD_CREATE,
-    KEYWORD_DATABASE
+    KEYWORD_SCHEMA
 } keyword_t;
 
-typedef std::pair<keyword_t, std::string> kw_jump_table_entry_t;
+typedef struct kw_jump_table_entry {
+    keyword_t kw;
+    symbol_t symbol;
+    std::string kw_str;
+    kw_jump_table_entry(keyword_t kw, symbol_t sym, const char *kw_str) :
+        kw(kw), symbol(sym), kw_str(kw_str)
+    {}
+} kw_jump_table_entry_t;
 typedef std::vector<kw_jump_table_entry_t> kw_jump_table_t;
 
 struct kw_jump_tables {
     // There is a separate list of jump table entries for each lead character
     static kw_jump_table_t c;
-    static kw_jump_table_t d;
+    static kw_jump_table_t s;
 };
 
 kw_jump_table_t _init_kw_jump_table(char c);
