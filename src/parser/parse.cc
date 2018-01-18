@@ -12,7 +12,6 @@
 #include "error.h"
 #include "lexer.h"
 #include "statements/create_database.h"
-#include "token.h"
 
 namespace sqltoast {
 
@@ -29,10 +28,9 @@ parse_result_t parse(parse_input_t& subject) {
 
     tokenize(ctx);
 
-    token_type_t tt = ctx.tokens.top().type;
+    token_type_t tt = ctx.tokens.front().type;
     switch (tt) {
         case TOKEN_TYPE_KEYWORD:
-            next_token(ctx);
             if (accept(ctx, TOKEN_TYPE_KEYWORD)) {
                 if (parse_create_database(ctx)) {
                     res.code = PARSE_SUCCESS;

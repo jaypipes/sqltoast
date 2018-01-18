@@ -50,7 +50,7 @@ bool token_keyword(parse_context_t& ctx) {
             //ctx.current_token = entry.first;
             ctx.cursor += entry.second.size();
             token_t tok(TOKEN_TYPE_KEYWORD, start, parse_position_t(ctx.cursor));
-            ctx.tokens.push(tok);
+            ctx.tokens.emplace_back(tok);
             return true;
         }
     }

@@ -20,7 +20,7 @@
 namespace sqltoast {
 
 bool accept(parse_context_t& ctx, token_type_t tt) {
-    if (ctx.tokens.top().type == tt) {
+    if (ctx.tokens.back().type == tt) {
         return true;
     }
     return false;
@@ -30,7 +30,7 @@ bool expect(parse_context_t& ctx, token_type_t tt) {
     if (accept(ctx, tt))
         return true;
 
-    token_type_t cur_tt = ctx.tokens.top().type;
+    token_type_t cur_tt = ctx.tokens.back().type;
     std::stringstream estr;
     estr << "Expected token " << token_type_map::to_string(tt).data() <<
             " but found " << token_type_map::to_string(cur_tt).data() << std::endl;
@@ -59,7 +59,7 @@ void skip_ws(parse_context_t& ctx) {
 void tokenize(parse_context_t& ctx) {
     while (next_token(ctx)) {
 #ifdef SQLTOAST_DEBUG
-        token_t tok = ctx.tokens.top();
+        token_t tok = ctx.tokens.back();
         std::cout << token_type_map::to_string(tok.type) << std::endl;
 #endif /* SQLTOAST_DEBUG */
     }
