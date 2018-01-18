@@ -39,7 +39,7 @@ bool expect(parse_context_t& ctx, token_type_t tt) {
     return false;
 }
 
-void next_symbol(parse_context_t& ctx) {
+void next_token(parse_context_t& ctx) {
     skip_ws(ctx);
     if (parse_comment(ctx))
         return;

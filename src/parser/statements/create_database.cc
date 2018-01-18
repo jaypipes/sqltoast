@@ -16,9 +16,9 @@ namespace sqltoast {
 // CREATE DATABASE [IF NOT EXISTS] identifier;
 //
 bool parse_create_database(parse_context_t& ctx) {
-    next_symbol(ctx);
+    next_token(ctx);
     if (expect(ctx, TOKEN_TYPE_IDENTIFIER)) {
-        next_symbol(ctx);
+        next_token(ctx);
         ast_node node(NODE_TYPE_STATEMENT);
         ctx.ast.add_node(node);
         return true;

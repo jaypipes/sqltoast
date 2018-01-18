@@ -27,12 +27,12 @@ parse_result_t parse(parse_input_t& subject) {
         return res;
     }
 
-    next_symbol(ctx);
+    next_token(ctx);
 
     token_type_t tt = ctx.tokens.top().type;
     switch (tt) {
         case TOKEN_TYPE_KEYWORD:
-            next_symbol(ctx);
+            next_token(ctx);
             if (accept(ctx, TOKEN_TYPE_KEYWORD)) {
                 if (parse_create_database(ctx)) {
                     res.code = PARSE_SUCCESS;
