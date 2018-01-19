@@ -59,12 +59,14 @@ void skip_ws(parse_context_t& ctx) {
 }
 
 void tokenize(parse_context_t& ctx) {
-    while (next_token(ctx)) {
+    while (next_token(ctx)) {};
 #ifdef SQLTOAST_DEBUG
-        token_t tok = ctx.tokens.back();
-        std::cout << tok << std::endl;
-#endif /* SQLTOAST_DEBUG */
+    std::cout << "tokenize() produced:" << std::endl << "  ";
+    for (auto tok : ctx.tokens) {
+        std::cout << tok << " > ";
     }
+    std::cout << "EOS" << std::endl;
+#endif /* SQLTOAST_DEBUG */
     return;
 }
 

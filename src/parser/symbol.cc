@@ -12,10 +12,10 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     symbol_map::symbol_map_t m;
 
     // Special characters
-    m[SYMBOL_SEMICOLON] = std::string("<< SEMICOLON >>");
-    m[SYMBOL_COMMA] = std::string("<< COMMA >>");
-    m[SYMBOL_LPAREN] = std::string("<< LPAREN >>");
-    m[SYMBOL_RPAREN] = std::string("<< RPAREN >>");
+    m[SYMBOL_SEMICOLON] = std::string("SEMICOLON");
+    m[SYMBOL_COMMA] = std::string("COMMA");
+    m[SYMBOL_LPAREN] = std::string("LPAREN");
+    m[SYMBOL_RPAREN] = std::string("RPAREN");
 
     // Reserved keywords
     m[SYMBOL_CREATE] = std::string("CREATE");

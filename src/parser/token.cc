@@ -26,33 +26,33 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
     token_type_t tt = token.type;
     switch (tt) {
         case TOKEN_TYPE_KEYWORD:
-            out << "keyword<" << symbol_map::to_string(token.symbol) << ">";
+            out << "keyword[" << symbol_map::to_string(token.symbol) << "]";
             break;
         case TOKEN_TYPE_PUNCTUATOR:
-            out << "punctuator<" << symbol_map::to_string(token.symbol) << ">";
+            out << symbol_map::to_string(token.symbol);
             break;
         case TOKEN_TYPE_IDENTIFIER:
             {
                 size_t len = (token.end - token.start);
-                out << "identifier<length: " << len << ">";
+                out << "identifier[length: " << len << "]";
             }
             break;
         case TOKEN_TYPE_COMMENT:
             {
                 size_t len = (token.end - token.start);
-                out << "comment<length: " << len << ">";
+                out << "comment[length: " << len << "]";
             }
             break;
         case TOKEN_TYPE_LITERAL:
             {
                 // TODO(jaypipes): Add typing of literal...
                 size_t len = (token.end - token.start);
-                out << "literal<length: " << len << ">";
+                out << "literal[length: " << len << "]";
             }
             break;
         default:
-            out << "token<type: " << token_type_map::to_string(token.type)
-                << " symbol: " << symbol_map::to_string(token.symbol) << ">";
+            out << "token[type: " << token_type_map::to_string(token.type)
+                << " symbol: " << symbol_map::to_string(token.symbol) << "]";
     }
     return out;
 }
