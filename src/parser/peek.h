@@ -12,7 +12,7 @@
 namespace sqltoast {
 
 inline bool peek_char(parse_context_t& ctx, const char c) {
-    return ((ctx.cursor != ctx.end_pos && (*(ctx.cursor+1) == c)));
+    return ((ctx.cursor != ctx.end_pos && (*ctx.cursor == c)));
 }
 
 } // namespace sqltoast
