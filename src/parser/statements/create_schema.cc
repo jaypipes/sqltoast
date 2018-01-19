@@ -58,7 +58,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         if (tok_it == ctx.tokens.end() || cur_sym == SYMBOL_SEMICOLON) {
             ctx.result.code = PARSE_SUCCESS;
             schema_identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
-            ctx.result.statements.push(std::make_unique<statements::create_schema_t>(schema_ident));
+            ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident));
             return true;
         }
         {

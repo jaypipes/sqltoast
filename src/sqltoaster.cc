@@ -46,6 +46,13 @@ int main (int argc, char *argv[])
     auto dur = measure<std::chrono::nanoseconds>::execution(p);
     if (p.res.code == sqltoast::PARSE_SUCCESS) {
         cout << "OK" << endl;
+        unsigned int x = 0;
+        for (auto stmt_ptr_it = p.res.statements.begin();
+                stmt_ptr_it != p.res.statements.end();
+                stmt_ptr_it++) {
+            cout << "statements[" << x++ << "]:" << endl;
+            cout << "  " << (*stmt_ptr_it)->to_string() << endl;
+        }
     } else if (p.res.code == sqltoast::PARSE_INPUT_ERROR) {
         cout << "Input error: " << p.res.error << endl;
     } else {

@@ -14,7 +14,6 @@
 
 #include <memory>
 #include <string>
-#include <stack>
 #include <vector>
 
 #include "statement.h"
@@ -40,8 +39,8 @@ typedef struct parse_result {
     std::string error;
     // As each SQL statement in an input stream is successfully parsed, a
     // sqltoast::statement derived object will be dynamically allocated and
-    // pushed onto this stack
-    std::stack<std::unique_ptr<statement>> statements;
+    // pushed onto this vector
+    std::vector<std::unique_ptr<statement>> statements;
 } parse_result_t;
 
 parse_result_t parse(parse_input_t& subject);
