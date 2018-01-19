@@ -7,7 +7,10 @@
 #ifndef SQLTOAST_PARSER_LEXER_H
 #define SQLTOAST_PARSER_LEXER_H
 
+#include <vector>
+
 #include "context.h"
+#include "symbol.h"
 
 namespace sqltoast {
 

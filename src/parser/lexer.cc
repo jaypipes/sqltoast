@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cctype>
 #include <sstream>
+#include <vector>
 
 #include "comment.h"
 #include "context.h"

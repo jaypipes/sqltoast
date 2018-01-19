@@ -6,6 +6,12 @@
 #define SQLTOAST_VERSION_MAJOR 0
 #define SQLTOAST_VERSION_MINOR 1
 
+#if defined(__GNUC__) || defined(__clang__)
+#define SQLTOAST_UNREACHABLE() __builtin_unreachable()
+#else
+#define SQLTOAST_UNREACHABLE() assert(!"code should not be reachable")
+#endif
+
 #include <vector>
 #include <string>
 
