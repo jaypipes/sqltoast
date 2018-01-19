@@ -23,18 +23,11 @@ struct measure
 
 struct parser {
     sqltoast::parse_input_t subject;
+    sqltoast::parse_result_t res;
     parser(const std::string &input) : subject(input.cbegin(), input.cend())
     {}
     void operator()() {
-        auto res = sqltoast::parse(subject);
-        if (res.code == sqltoast::PARSE_SUCCESS) {
-            cout << "OK" << endl;
-        } else if (res.code == sqltoast::PARSE_INPUT_ERROR) {
-            cout << "Input error: " << res.error << endl;
-        } else {
-            cout << "Syntax error." << endl;
-            cout << res.error << endl;
-        }
+        res = sqltoast::parse(subject);
     }
 };
 
@@ -48,8 +41,17 @@ int main (int argc, char *argv[])
         return 1;
     }
     const std::string input(argv[1]);
+    parser p(input);
 
-    auto dur = measure<std::chrono::nanoseconds>::execution(parser(input));
+    auto dur = measure<std::chrono::nanoseconds>::execution(p);
+    if (p.res.code == sqltoast::PARSE_SUCCESS) {
+        cout << "OK" << endl;
+    } else if (p.res.code == sqltoast::PARSE_INPUT_ERROR) {
+        cout << "Input error: " << p.res.error << endl;
+    } else {
+        cout << "Syntax error." << endl;
+        cout << p.res.error << endl;
+    }
     cout << "(took " << dur << " nanoseconds)" << endl;
     return 0;
 }

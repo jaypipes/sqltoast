@@ -11,8 +11,8 @@
 #include <vector>
 
 #include "sqltoast.h"
-#include "ast.h"
-#include "token.h"
+
+#include "parser/token.h"
 
 namespace sqltoast {
 
@@ -36,7 +36,6 @@ typedef struct parse_context {
     parse_position_t end_pos;
     parse_cursor_t cursor;
     std::vector<token_t> tokens;
-    ast_t ast;
     parse_context(parse_result_t& result, parse_input_t& subject) :
         result(result),
         sql_dialect(SQL_DIALECT_ANSI_2003),

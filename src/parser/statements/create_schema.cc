@@ -9,6 +9,7 @@
 #include "create_schema.h"
 #include "parser/error.h"
 #include "parser/token.h"
+#include "statements/create_schema.h"
 
 namespace sqltoast {
 
@@ -32,8 +33,10 @@ bool parse_create_schema(parse_context_t& ctx) {
     // BEGIN STATE MACHINE
 
     std::vector<token_t>::iterator tok_it = ctx.tokens.begin();
+    std::vector<token_t>::iterator tok_ident = ctx.tokens.end();
     symbol_t exp_sym = SYMBOL_CREATE;
     symbol_t cur_sym = (*tok_it).symbol;
+
     goto next_token;
 
     identifier_or_authorization_clause:
@@ -43,6 +46,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         cur_sym = (*tok_it).symbol;
         tok_it++;
         if (cur_sym == SYMBOL_IDENTIFIER) {
+            tok_ident = (tok_it - 1);
             goto statement_ending;
         }
         goto next_token;
@@ -53,6 +57,8 @@ bool parse_create_schema(parse_context_t& ctx) {
         cur_sym = (*tok_it).symbol;
         if (tok_it == ctx.tokens.end() || cur_sym == SYMBOL_SEMICOLON) {
             ctx.result.code = PARSE_SUCCESS;
+            schema_identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
+            ctx.result.statements.push(std::make_unique<statements::create_schema_t>(schema_ident));
             return true;
         }
         {

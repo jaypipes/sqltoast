@@ -72,10 +72,6 @@ bool token_identifier(parse_context_t& ctx) {
     if (res) {
         token_t tok(TOKEN_TYPE_IDENTIFIER, SYMBOL_IDENTIFIER, start, parse_position_t(ctx.cursor));
         ctx.tokens.emplace_back(tok);
-        // TODO(jaypipes): tack actual identifier object into the AST
-        db_identifier_t id(start, ctx.cursor);
-        ast_node_t node(NODE_TYPE_IDENTIFIER);
-        ctx.ast.add_node(node);
     }
     return res;
 }
@@ -105,10 +101,6 @@ bool token_delimited_identifier(parse_context_t& ctx) {
             ctx.current_escape = ESCAPE_NONE;
             token_t tok(TOKEN_TYPE_IDENTIFIER, SYMBOL_IDENTIFIER, start, parse_position_t(ctx.cursor));
             ctx.tokens.emplace_back(tok);
-            // TODO(jaypipes): tack actual identifier object into the AST
-            db_identifier_t id(start, ctx.cursor);
-            ast_node_t node(NODE_TYPE_IDENTIFIER);
-            ctx.ast.add_node(node);
             return true;
         }
     }

@@ -12,8 +12,12 @@
 #define SQLTOAST_UNREACHABLE() assert(!"code should not be reachable")
 #endif
 
-#include <vector>
+#include <memory>
 #include <string>
+#include <stack>
+#include <vector>
+
+#include "statement.h"
 
 namespace sqltoast {
 
@@ -34,10 +38,14 @@ typedef std::vector<char> parse_input_t;
 typedef struct parse_result {
     parse_result_code code;
     std::string error;
+    // As each SQL statement in an input stream is successfully parsed, a
+    // sqltoast::statement derived object will be dynamically allocated and
+    // pushed onto this stack
+    std::stack<std::unique_ptr<statement>> statements;
 } parse_result_t;
 
 parse_result_t parse(parse_input_t& subject);
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_PARSE_H */
+#endif /* SQLTOAST_H */

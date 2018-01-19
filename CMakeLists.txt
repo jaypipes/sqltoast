@@ -17,7 +17,7 @@ SET(PROJECT_DESCRIPTION "convert SQL to an abstract syntax tree")
 SET(SQLTOAST_VERSION_MAJOR 0)
 SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
-    src/ast.cc
+    src/identifier.cc
     src/parser/comment.cc
     src/parser/context.cc
     src/parser/error.cc
@@ -30,6 +30,7 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/statements/create_schema.cc
     src/parser/symbol.cc
     src/parser/token.cc
+    src/statements/create_schema.cc
 )
 
 # Header file for configuration templated variables
