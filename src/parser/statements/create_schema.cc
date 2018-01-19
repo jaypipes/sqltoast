@@ -36,7 +36,6 @@ bool parse_create_schema(parse_context_t& ctx) {
     symbol_t cur_sym = (*tok_it).symbol;
     goto next_token;
 
-    if (0) {
     identifier_or_authorization_clause:
         // We get here after successfully finding CREATE followed by SCHEMA. We
         // now need to find either an identifier or the schema authorization
@@ -51,7 +50,6 @@ bool parse_create_schema(parse_context_t& ctx) {
     statement_ending:
         // We get here when we're expecting the next symbol to be statement
         // ending, so either a semicolon or EOS
-        tok_it++;
         cur_sym = (*tok_it).symbol;
         if (tok_it == ctx.tokens.end() || cur_sym == SYMBOL_SEMICOLON) {
             ctx.result.code = PARSE_SUCCESS;
@@ -61,7 +59,7 @@ bool parse_create_schema(parse_context_t& ctx) {
             parse_position_t err_pos = (*tok_it).start;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found "
-                 << symbol_map::to_string(cur_sym);
+                 << symbol_map::to_string(cur_sym) << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -105,8 +103,6 @@ bool parse_create_schema(parse_context_t& ctx) {
                 return false;
         }
         SQLTOAST_UNREACHABLE();
-    }
-    SQLTOAST_UNREACHABLE();
 }
 
 } // namespace sqltoast

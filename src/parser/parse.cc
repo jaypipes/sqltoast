@@ -46,8 +46,6 @@ parse_result_t parse(parse_input_t& subject) {
             estr << "Parse subject must either begin with a keyword or a "
                     "comment, but found punctuation." << std::endl;
             create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
-            res.code = PARSE_SYNTAX_ERROR;
-            res.error.assign(estr.str());
         }
         break;
         case TOKEN_TYPE_IDENTIFIER:
@@ -56,8 +54,6 @@ parse_result_t parse(parse_input_t& subject) {
             estr << "Parse subject must either begin with a keyword or a "
                     "comment, but found identifier." << std::endl;
             create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
-            res.code = PARSE_SYNTAX_ERROR;
-            res.error.assign(estr.str());
         }
         break;
         default:
