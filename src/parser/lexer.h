@@ -14,22 +14,17 @@
 
 namespace sqltoast {
 
-// Returns true if the parse context's current token is the supplied token
-bool accept(parse_context_t& ctx, token_type_t tt);
-
-// Returns true if the parse context's current token is the supplied token
-// and moves the context's cursor to the next token. If the current token is
-// NOT what is expected, then sets the context's error message to indicate a
-// syntax error.
-bool expect(parse_context_t& ctx, token_type_t tt);
-
 // Attempts to find the next token in the parse context. If a token was found,
 // returns true, else false. If true, the parse context's tokens stack will
 // have had a token pushed onto it.
 bool next_token(parse_context_t& ctx);
 
 // Simply advances the parse context's cursor over any whitespace
-void skip_ws(parse_context_t& ctx);
+inline void skip_ws(parse_context_t& ctx) {
+    while (std::isspace(*ctx.cursor))
+        ctx.cursor++;
+    return;
+}
 
 // Run through the subject string to parse, creating a stack of token_t's on
 // the parse context.
