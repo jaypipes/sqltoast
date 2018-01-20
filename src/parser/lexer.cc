@@ -45,8 +45,8 @@ void tokenize(parse_context_t& ctx) {
     while (next_token(ctx)) {};
 #ifdef SQLTOAST_DEBUG
     std::cout << "tokenize() produced:" << std::endl << "  ";
-    for (auto tok : ctx.tokens) {
-        std::cout << tok << " > ";
+    for (auto it = ctx.tokens.begin(); it != ctx.tokens.end(); it++) {
+        std::cout << *it << " > ";
     }
     std::cout << "EOS" << std::endl;
 #endif /* SQLTOAST_DEBUG */

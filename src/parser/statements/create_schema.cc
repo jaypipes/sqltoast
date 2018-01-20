@@ -27,13 +27,13 @@ namespace sqltoast {
 //   DEFAULT CHARACTER SET <charset_spec>
 //
 bool parse_create_schema(parse_context_t& ctx) {
-    if (ctx.tokens.size() < 2)
+    if (ctx.tokens.empty())
         return false;
 
     // BEGIN STATE MACHINE
 
-    std::vector<token_t>::iterator tok_it = ctx.tokens.begin();
-    std::vector<token_t>::iterator tok_ident = ctx.tokens.end();
+    tokens_t::iterator tok_it = ctx.tokens.begin();
+    tokens_t::iterator tok_ident = ctx.tokens.end();
     symbol_t exp_sym = SYMBOL_CREATE;
     symbol_t cur_sym = (*tok_it).symbol;
 

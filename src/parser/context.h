@@ -7,6 +7,7 @@
 #ifndef SQLTOAST_PARSER_CONTEXT_H
 #define SQLTOAST_PARSER_CONTEXT_H
 
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -27,6 +28,7 @@ enum escape_mode {
 
 typedef std::vector<char>::const_iterator parse_position_t;
 typedef std::vector<char>::iterator parse_cursor_t;
+typedef std::deque<token_t> tokens_t;
 
 typedef struct parse_context {
     parse_result_t& result;
@@ -35,7 +37,7 @@ typedef struct parse_context {
     parse_position_t start_pos;
     parse_position_t end_pos;
     parse_cursor_t cursor;
-    std::vector<token_t> tokens;
+    tokens_t tokens;
     parse_context(parse_result_t& result, parse_input_t& subject) :
         result(result),
         sql_dialect(SQL_DIALECT_ANSI_2003),
@@ -44,6 +46,9 @@ typedef struct parse_context {
         end_pos(subject.cend()),
         cursor(subject.begin())
     {}
+    inline void push_token(token_t& tok) {
+        tokens.emplace_back(tok);
+    }
 } parse_context_t;
 
 } // namespace sqltoast

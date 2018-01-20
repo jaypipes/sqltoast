@@ -19,7 +19,7 @@ bool token_punctuator(parse_context_t& ctx) {
                 parse_position_t(ctx.cursor),
                 parse_position_t(ctx.cursor+1)
             );
-            ctx.tokens.emplace_back(tok);
+            ctx.push_token(tok);
             return true;
         }
     }

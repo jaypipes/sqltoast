@@ -42,7 +42,7 @@ bool token_comment(parse_context_t& ctx) {
     {
         ctx.cursor += 2;
         token_t tok(TOKEN_TYPE_COMMENT, SYMBOL_COMMENT, start, parse_position_t(ctx.cursor));
-        ctx.tokens.emplace_back(tok);
+        ctx.push_token(tok);
         return true;
     }
 

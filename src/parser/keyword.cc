@@ -49,7 +49,7 @@ bool token_keyword(parse_context_t& ctx) {
         const std::string to_end(parse_position_t(ctx.cursor), ctx.end_pos);
         if (ci_find_substr(to_end, entry.kw_str) != -1) {
             token_t tok(TOKEN_TYPE_KEYWORD, entry.symbol, start, parse_position_t(ctx.cursor));
-            ctx.tokens.emplace_back(tok);
+            ctx.push_token(tok);
             ctx.cursor += entry.kw_str.size();
             return true;
         }
