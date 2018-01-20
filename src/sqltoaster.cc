@@ -44,7 +44,7 @@ int main (int argc, char *argv[])
     parser p(input);
 
     auto dur = measure<std::chrono::nanoseconds>::execution(p);
-    if (p.res.code == sqltoast::PARSE_SUCCESS) {
+    if (p.res.code == sqltoast::PARSE_OK) {
         cout << "OK" << endl;
         unsigned int x = 0;
         for (auto stmt_ptr_it = p.res.statements.begin();

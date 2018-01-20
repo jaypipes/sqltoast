@@ -27,7 +27,7 @@ typedef enum sql_dialect {
 
 // Possible return codes from parsing
 enum parse_result_code {
-    PARSE_SUCCESS,
+    PARSE_OK,
     PARSE_INPUT_ERROR,
     PARSE_SYNTAX_ERROR
 };

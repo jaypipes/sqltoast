@@ -19,27 +19,25 @@ namespace sqltoast {
 
 parse_result_t parse(parse_input_t& subject) {
     parse_result_t res;
-    res.code = PARSE_INPUT_ERROR;
+    res.code = PARSE_OK;
     parse_context_t ctx(res, subject);
 
     skip_ws(ctx);
     if (ctx.cursor == ctx.end_pos) {
+        res.code = PARSE_INPUT_ERROR;
         res.error.assign("Nothing to parse.");
         return res;
     }
 
     tokenize(ctx);
 
-    for (auto it = ctx.tokens.begin(); it != ctx.tokens.end(); it++) {
-        if (res.code != PARSE_INPUT_ERROR) {
-            break;
-        }
-        token_t &top_tok = *it;
+    while (res.code == PARSE_OK && ! ctx.tokens.empty()) {
+        token_t &top_tok = ctx.tokens.front();
         token_type_t& tt = top_tok.type;
         switch (tt) {
             case TOKEN_TYPE_KEYWORD:
                 parse_statement(ctx);
-                return res;
+                break;
             case TOKEN_TYPE_COMMENT:
                 // Just remove the comment from the token stack...
                 ctx.tokens.pop_front();

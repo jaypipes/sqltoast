@@ -27,17 +27,15 @@ namespace sqltoast {
 //   DEFAULT CHARACTER SET <charset_spec>
 //
 bool parse_create_schema(parse_context_t& ctx) {
-    if (ctx.tokens.empty())
-        return false;
-
-    // BEGIN STATE MACHINE
-
     tokens_t::iterator tok_it = ctx.tokens.begin();
+    tokens_t::const_iterator tok_start = tok_it;
     tokens_t::iterator tok_ident = ctx.tokens.end();
     symbol_t exp_sym = SYMBOL_CREATE;
     symbol_t cur_sym = (*tok_it).symbol;
 
     goto next_token;
+
+    // BEGIN STATE MACHINE
 
     identifier_or_authorization_clause:
         // We get here after successfully finding CREATE followed by SCHEMA. We
@@ -56,8 +54,11 @@ bool parse_create_schema(parse_context_t& ctx) {
         // ending, so either a semicolon or EOS
         cur_sym = (*tok_it).symbol;
         if (tok_it == ctx.tokens.end() || cur_sym == SYMBOL_SEMICOLON) {
-            ctx.result.code = PARSE_SUCCESS;
             schema_identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
+            // Trim the token stack...
+            // NOTE(jaypipes): should we not try and trim and instead just have the context
+            // store a marker for the last processed token?
+            ctx.tokens.erase(tok_start, tok_it);
             ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident));
             return true;
         }
