@@ -12,6 +12,8 @@
 namespace sqltoast {
 
 bool token_comment(parse_context_t& ctx);
+bool token_simple_comment(parse_context_t& ctx);
+bool token_bracketed_comment(parse_context_t& ctx);
 
 } // namespace sqltoast
 
