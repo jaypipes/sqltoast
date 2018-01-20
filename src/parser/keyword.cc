@@ -15,6 +15,9 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
     kw_jump_table_t t;
 
     switch (lead_char) {
+        case 'a':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_AUTHORIZATION, SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
+            return t;
         case 'c':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CREATE, SYMBOL_CREATE, "CREATE"));
             return t;
@@ -25,12 +28,17 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
     return t;
 }
 
+kw_jump_table_t kw_jump_tables::a = _init_kw_jump_table('a');
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 
 bool token_keyword(parse_context_t& ctx) {
     kw_jump_table_t* jump_tbl;
     switch (*ctx.cursor) {
+        case 'a':
+        case 'A':
+            jump_tbl = &kw_jump_tables::a;
+            break;
         case 'c':
         case 'C':
             jump_tbl = &kw_jump_tables::c;

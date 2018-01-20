@@ -35,6 +35,7 @@ typedef enum symbol {
     SYMBOL_RPAREN,
 
     // Reserved keywords
+    SYMBOL_AUTHORIZATION,
     SYMBOL_CREATE,
 
     // Non-reserved keywords

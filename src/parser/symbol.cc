@@ -18,6 +18,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_RPAREN] = std::string("RPAREN");
 
     // Reserved keywords
+    m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_CREATE] = std::string("CREATE");
 
     // Non-Reserved keywordsr

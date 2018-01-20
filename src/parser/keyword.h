@@ -16,6 +16,7 @@
 namespace sqltoast {
 
 typedef enum keyword {
+    KEYWORD_AUTHORIZATION,
     KEYWORD_CREATE,
     KEYWORD_SCHEMA
 } keyword_t;
@@ -32,6 +33,7 @@ typedef std::vector<kw_jump_table_entry_t> kw_jump_table_t;
 
 struct kw_jump_tables {
     // There is a separate list of jump table entries for each lead character
+    static kw_jump_table_t a;
     static kw_jump_table_t c;
     static kw_jump_table_t s;
 };
