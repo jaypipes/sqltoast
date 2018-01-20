@@ -1,0 +1,20 @@
+/*
+ * Use and distribution licensed under the Apache license version 2.
+ *
+ * See the COPYING file in the root project directory for full text.
+ */
+
+#ifndef SQLTOAST_PARSER_COMMENT_H
+#define SQLTOAST_PARSER_COMMENT_H
+
+#include "context.h"
+
+namespace sqltoast {
+
+bool token_comment(parse_context_t& ctx);
+bool token_simple_comment(parse_context_t& ctx);
+bool token_bracketed_comment(parse_context_t& ctx);
+
+} // namespace sqltoast
+
+#endif /* SQLTOAST_PARSER_COMMENT_H */
