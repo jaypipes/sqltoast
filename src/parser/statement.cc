@@ -4,6 +4,10 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <cctype>
+#include <sstream>
+
+#include "parser/error.h"
 #include "parser/parse.h"
 #include "parser/statement.h"
 #include "parser/statements/create_schema.h"
@@ -17,7 +21,7 @@ static const parse_func_t create_statement_parsers[1] = {
     &parse_create_schema
 };
 
-bool parse_statement(parse_context_t& ctx) {
+void parse_statement(parse_context_t& ctx) {
     // Assumption: the top token in the stack will be of type
     // TOKEN_TYPE_KEYWORD
     token_t& top_tok = ctx.tokens.front();
@@ -27,18 +31,24 @@ bool parse_statement(parse_context_t& ctx) {
         case SYMBOL_CREATE:
         {
             size_t x = 0;
-            bool parse_res = false;
             while (ctx.result.code == PARSE_OK &&
-                    ! parse_res &&
-                    x < NUM_CREATE_STATEMENT_PARSERS) {
-                parse_res = create_statement_parsers[x](ctx);
-                x++;
+                    x++ < NUM_CREATE_STATEMENT_PARSERS) {
+                if (create_statement_parsers[x](ctx))
+                    return;
             }
-            return parse_res;
+            if (ctx.result.code == PARSE_SYNTAX_ERROR) {
+                // Already have a nicely-formatted error, so just return
+                return;
+            }
+            break;
         }
         default:
-            return false;
+            break;
     }
+
+    std::stringstream estr;
+    estr << "Failed to recognize any valid SQL statement." << std::endl;
+    create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
 }
 
 } // namespace sqltoast

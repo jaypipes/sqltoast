@@ -4,7 +4,6 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <iostream>
 #include <cctype>
 #include <sstream>
 
@@ -35,11 +34,7 @@ parse_result_t parse(parse_input_t& subject) {
         token_type_t& tt = top_tok.type;
         switch (tt) {
             case TOKEN_TYPE_KEYWORD:
-                if (! parse_statement(ctx)) {
-                    std::stringstream estr;
-                    estr << "Got " << top_tok << " but failed to parse a statement." << std::endl;
-                    create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
-                }
+                parse_statement(ctx);
                 break;
             case TOKEN_TYPE_COMMENT:
                 // Just remove the comment from the token stack...
