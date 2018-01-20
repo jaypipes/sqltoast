@@ -29,15 +29,15 @@ kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 
 bool token_keyword(parse_context_t& ctx) {
-    kw_jump_table_t jump_tbl;
+    kw_jump_table_t* jump_tbl;
     switch (*ctx.cursor) {
         case 'c':
         case 'C':
-            jump_tbl = kw_jump_tables::c;
+            jump_tbl = &kw_jump_tables::c;
             break;
         case 's':
         case 'S':
-            jump_tbl = kw_jump_tables::s;
+            jump_tbl = &kw_jump_tables::s;
             break;
         default:
             return false;
@@ -45,7 +45,7 @@ bool token_keyword(parse_context_t& ctx) {
 
     parse_cursor_t start = ctx.cursor;
 
-    for (auto entry : jump_tbl) {
+    for (auto entry : *jump_tbl) {
         const std::string to_end(parse_position_t(ctx.cursor), ctx.end_pos);
         if (ci_find_substr(to_end, entry.kw_str) != -1) {
             token_t tok(TOKEN_TYPE_KEYWORD, entry.symbol, start, parse_position_t(ctx.cursor));
