@@ -17,7 +17,7 @@ static const parse_func_t create_statement_parsers[1] = {
     &parse_create_schema
 };
 
-void parse_statement(parse_context_t& ctx) {
+bool parse_statement(parse_context_t& ctx) {
     // Assumption: the top token in the stack will be of type
     // TOKEN_TYPE_KEYWORD
     token_t& top_tok = ctx.tokens.front();
@@ -34,10 +34,10 @@ void parse_statement(parse_context_t& ctx) {
                 parse_res = create_statement_parsers[x](ctx);
                 x++;
             }
-            break;
+            return parse_res;
         }
         default:
-            break;
+            return false;
     }
 }
 

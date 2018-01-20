@@ -49,6 +49,23 @@ typedef struct parse_context {
     inline void push_token(token_t& tok) {
         tokens.emplace_back(tok);
     }
+    // NOTE(jaypipes): should we instead just have the context store a marker
+    // for the last processed token instead of adjusting the token stack
+    // itself?
+    inline void trim_to(tokens_t::const_iterator pos) {
+        if (pos == tokens.end()) {
+            tokens.clear();
+        } else {
+            tokens.erase(tokens.begin(), pos);
+        }
+    }
+    inline tokens_t::iterator skip_comments(tokens_t::iterator pos) {
+        tokens_t::iterator it = pos;
+        while (it != tokens.end() && (*it).type == TOKEN_TYPE_COMMENT) {
+            it++;
+        }
+        return it;
+    }
 } parse_context_t;
 
 } // namespace sqltoast

@@ -11,7 +11,7 @@
 
 namespace sqltoast {
 
-void parse_statement(parse_context_t& ctx);
+bool parse_statement(parse_context_t& ctx);
 
 } // namespace sqltoast
 

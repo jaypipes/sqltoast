@@ -8,12 +8,11 @@
 #include <cctype>
 #include <sstream>
 
-#include "context.h"
-#include "error.h"
-#include "lexer.h"
-#include "statement.h"
-#include "symbol.h"
-#include "token.h"
+#include "parser/context.h"
+#include "parser/error.h"
+#include "parser/lexer.h"
+#include "parser/statement.h"
+#include "parser/token.h"
 
 namespace sqltoast {
 
@@ -36,7 +35,11 @@ parse_result_t parse(parse_input_t& subject) {
         token_type_t& tt = top_tok.type;
         switch (tt) {
             case TOKEN_TYPE_KEYWORD:
-                parse_statement(ctx);
+                if (! parse_statement(ctx)) {
+                    std::stringstream estr;
+                    estr << "Got " << top_tok << " but failed to parse a statement." << std::endl;
+                    create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
+                }
                 break;
             case TOKEN_TYPE_COMMENT:
                 // Just remove the comment from the token stack...

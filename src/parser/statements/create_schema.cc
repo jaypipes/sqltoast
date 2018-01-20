@@ -4,6 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <iostream>
+#include <cctype>
 #include <sstream>
 
 #include "create_schema.h"
@@ -28,7 +30,6 @@ namespace sqltoast {
 //
 bool parse_create_schema(parse_context_t& ctx) {
     tokens_t::iterator tok_it = ctx.tokens.begin();
-    tokens_t::const_iterator tok_start = tok_it;
     tokens_t::iterator tok_ident = ctx.tokens.end();
     symbol_t exp_sym = SYMBOL_CREATE;
     symbol_t cur_sym = (*tok_it).symbol;
@@ -42,9 +43,8 @@ bool parse_create_schema(parse_context_t& ctx) {
         // now need to find either an identifier or the schema authorization
         // clause
         cur_sym = (*tok_it).symbol;
-        tok_it++;
         if (cur_sym == SYMBOL_IDENTIFIER) {
-            tok_ident = (tok_it - 1);
+            tok_ident = tok_it++;
             goto statement_ending;
         }
         goto next_token;
@@ -52,15 +52,16 @@ bool parse_create_schema(parse_context_t& ctx) {
     statement_ending:
         // We get here when we're expecting the next symbol to be statement
         // ending, so either a semicolon or EOS
+        tok_it = ctx.skip_comments(tok_it);
+        if (tok_it == ctx.tokens.end()) {
+            goto push_statement;
+        }
         cur_sym = (*tok_it).symbol;
-        if (tok_it == ctx.tokens.end() || cur_sym == SYMBOL_SEMICOLON) {
-            schema_identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
-            // Trim the token stack...
-            // NOTE(jaypipes): should we not try and trim and instead just have the context
-            // store a marker for the last processed token?
-            ctx.tokens.erase(tok_start, tok_it);
-            ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident));
-            return true;
+        if (cur_sym == SYMBOL_SEMICOLON) {
+            // skip-consume the semicolon token
+            tok_it++;
+            tok_it = ctx.skip_comments(tok_it);
+            goto push_statement;
         }
         {
             parse_position_t err_pos = (*tok_it).start;
@@ -71,6 +72,13 @@ bool parse_create_schema(parse_context_t& ctx) {
             return false;
         }
         SQLTOAST_UNREACHABLE();
+    push_statement:
+        {
+            schema_identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
+            ctx.trim_to(tok_it);
+            ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident));
+            return true;
+        }
     eos:
         if (exp_sym == SYMBOL_CREATE || exp_sym == SYMBOL_SCHEMA) {
             // Reached the end of the token stack and never found the
@@ -88,6 +96,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         }
         SQLTOAST_UNREACHABLE();
     next_token:
+        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto eos;
         }
@@ -103,8 +112,6 @@ bool parse_create_schema(parse_context_t& ctx) {
                 if (exp_sym == SYMBOL_SCHEMA) {
                     goto identifier_or_authorization_clause;
                 }
-                goto next_token;
-            case SYMBOL_COMMENT:
                 goto next_token;
             default:
                 return false;
