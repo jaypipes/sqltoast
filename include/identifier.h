@@ -14,15 +14,15 @@
 
 namespace sqltoast {
 
-typedef struct schema_identifier {
+typedef struct identifier {
     const std::string name;
-    schema_identifier(
+    identifier(
         parse_input_t::const_iterator start_pos,
         parse_input_t::const_iterator end_pos) : name(start_pos, end_pos)
     {}
-} schema_identifier_t;
+} identifier_t;
 
-std::ostream& operator<< (std::ostream& out, const schema_identifier_t& id);
+std::ostream& operator<< (std::ostream& out, const identifier_t& id);
 
 } // namespace sqltoast
 

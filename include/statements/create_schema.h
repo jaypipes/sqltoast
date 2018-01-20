@@ -16,10 +16,10 @@ namespace sqltoast {
 namespace statements {
 
 typedef struct create_schema : statement_t {
-    schema_identifier_t schema_identifier;
-    create_schema(schema_identifier_t id) :
+    identifier_t identifier;
+    create_schema(identifier_t id) :
         statement_t(STATEMENT_TYPE_CREATE_SCHEMA),
-        schema_identifier(id)
+        identifier(id)
     {}
     virtual const std::string to_string();
 } create_schema_t;

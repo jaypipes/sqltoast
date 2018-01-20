@@ -74,7 +74,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     push_statement:
         {
-            schema_identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
+            identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
             ctx.trim_to(tok_it);
             ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident));
             return true;

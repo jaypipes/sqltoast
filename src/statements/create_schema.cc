@@ -14,7 +14,7 @@ namespace statements {
 const std::string create_schema::to_string() {
     std::stringstream ss;
     ss << "<statement: CREATE SCHEMA" << std::endl
-       << "   schema identifier: " << schema_identifier << ">" << std::endl;
+       << "   schema identifier: " << identifier << ">" << std::endl;
 
     return ss.str();
 }

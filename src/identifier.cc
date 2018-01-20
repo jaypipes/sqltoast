@@ -10,7 +10,7 @@
 
 namespace sqltoast {
 
-std::ostream& operator<< (std::ostream& out, const schema_identifier_t& id) {
+std::ostream& operator<< (std::ostream& out, const identifier_t& id) {
     out << id.name;
     return out;
 }
