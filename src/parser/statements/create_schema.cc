@@ -16,17 +16,42 @@
 namespace sqltoast {
 
 //
-// The CREATE SCHEMA statement follows this EBNF form for ANSI-2003 SQL:
+// The CREATE SCHEMA statement follows this EBNF form for the following SQL
+// dialects:
 //
-// CREATE SCHEMA <schema_name_clause> [ <schema_character_set_or_path> ]
+// * SQL_DIALECT_ANSI_1992
+// * SQL_DIALECT_ANSI_1999
+// * SQL_DIALECT_ANSI_2003
 //
-// <schema_name_clause> :=
-//   <identifier>
-//   | AUTHORIZATION <schema_authorization_identifier>
-//   | <identifier> AUTHORIZATION <schema_authorization_identifier>
+//  <schema definition> ::=
+//      CREATE SCHEMA <schema name clause>
+//      [ <schema character set specification> ]
+//      [ <schema element> ... ]
 //
-// <schema_character_set_or_path> :=
-//   DEFAULT CHARACTER SET <charset_spec>
+//  <schema name clause> ::=
+//      <schema name>
+//      | AUTHORIZATION <schema authorization identifier>
+//      | <schema name> AUTHORIZATION <schema authorization identifier>
+//
+//  <schema authorization identifier> ::= <authorization identifier>
+//
+//  <schema character set specification> ::=
+//      DEFAULT CHARACTER SET <character set specification>
+//
+//  <schema element> ::=
+//      <domain definition>
+//      | <table definition>
+//      | <view definition>
+//      | <grant statement>
+//      | <assertion definition>
+//      | <character set definition>
+//      | <collation definition>
+//      | <translation definition>
+//
+// So far, we only implement up to the <schema name clause> part of the grammar.
+//
+// TODO(jaypipes): Implement the <schema character set specification> element
+// TODO(jaypipes): Implement the <schema element> list
 //
 bool parse_create_schema(parse_context_t& ctx) {
     tokens_t::iterator tok_it = ctx.tokens.begin();
