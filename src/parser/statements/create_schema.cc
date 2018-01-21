@@ -159,12 +159,14 @@ bool parse_create_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     push_statement:
         {
+            ctx.trim_to(tok_it);
+            if (ctx.opts.disable_statement_construction)
+                return true;
             identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
             std::unique_ptr<identifier_t> authz_ident;
             if (tok_authz_ident != ctx.tokens.end()) {
                 authz_ident = std::make_unique<identifier_t>((*tok_authz_ident).start, (*tok_authz_ident).end);
             }
-            ctx.trim_to(tok_it);
             ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident, authz_ident));
             return true;
         }

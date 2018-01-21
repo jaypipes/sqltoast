@@ -16,9 +16,18 @@
 namespace sqltoast {
 
 parse_result_t parse(parse_input_t& subject) {
+    parse_options_t opts = {
+        SQL_DIALECT_ANSI_1992,
+        false
+    };
+
+    return parse(subject, opts);
+}
+
+parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
     parse_result_t res;
     res.code = PARSE_OK;
-    parse_context_t ctx(res, subject);
+    parse_context_t ctx(res, opts, subject);
 
     skip_ws(ctx);
     if (ctx.cursor == ctx.end_pos) {

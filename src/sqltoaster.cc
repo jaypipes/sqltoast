@@ -1,5 +1,7 @@
 // A demonstration of the sqltoast library API
 
+#include <string.h>
+
 #include <iostream>
 #include <chrono>
 
@@ -22,26 +24,56 @@ struct measure
 };
 
 struct parser {
+    sqltoast::parse_options_t opts;
     sqltoast::parse_input_t subject;
     sqltoast::parse_result_t res;
-    parser(const std::string &input) : subject(input.cbegin(), input.cend())
+    parser(sqltoast::parse_options_t& opts, const std::string &input) :
+        opts(opts),
+        subject(input.cbegin(), input.cend())
     {}
     void operator()() {
-        res = sqltoast::parse(subject);
+        res = sqltoast::parse(subject, opts);
     }
 };
 
+void usage(const char* prg_name) {
+    cout << "Usage: " << prg_name << " [--disable-statement-construction] <SQL>" << endl;
+    cout << " using libsqltoast version " <<
+        SQLTOAST_VERSION_MAJOR << '.' <<
+        SQLTOAST_VERSION_MINOR << endl;
+}
+
 int main (int argc, char *argv[])
 {
-    if (argc != 2) {
-        cout << "Usage: " << argv[0] << " <SQL>" << endl;
-        cout << " using libsqltoast version " <<
-            SQLTOAST_VERSION_MAJOR << '.' <<
-            SQLTOAST_VERSION_MINOR << endl;
-        return 1;
+    std::string input;
+    bool disable_statement_construction = false;
+    switch (argc) {
+        case 1:
+            usage(argv[0]);
+            return 1;
+        case 3:
+            if (strcmp(argv[1], "--disable-statement-construction") != 0) {
+                cout << "Unknown argument: " << argv[1] << endl;
+                usage(argv[0]);
+                return 1;
+            }
+            disable_statement_construction = true;
+            input.assign(argv[2]);
+            break;
+        case 2:
+            input.assign(argv[1]);
+            break;
+        default:
+            cout << "Expected 1 or 2 arguments but got " << argc << endl;
+            usage(argv[0]);
+            return 1;
     }
-    const std::string input(argv[1]);
-    parser p(input);
+
+    sqltoast::parse_options_t opts = {
+        sqltoast::SQL_DIALECT_ANSI_1992,
+        disable_statement_construction
+    };
+    parser p(opts, input);
 
     auto dur = measure<std::chrono::nanoseconds>::execution(p);
     if (p.res.code == sqltoast::PARSE_OK) {

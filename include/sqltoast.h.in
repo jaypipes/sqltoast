@@ -36,6 +36,17 @@ enum parse_result_code {
 
 typedef std::vector<char> parse_input_t;
 
+typedef struct parse_options {
+    // The dialect of SQL to parse the input with
+    sql_dialect_t dialect;
+    // If true, sqltoast::parse() will not attempt to create
+    // sqltoast::statement objects during parsing. If all the caller is
+    // interested in is determining whether a particular input is valid SQL and
+    // parses to one or more SQL statements, this can reduce both the CPU time
+    // taken as well as the memory usage of the parser.
+    bool disable_statement_construction;
+} parse_options_t;
+
 typedef struct parse_result {
     parse_result_code code;
     std::string error;
@@ -46,6 +57,7 @@ typedef struct parse_result {
 } parse_result_t;
 
 parse_result_t parse(parse_input_t& subject);
+parse_result_t parse(parse_input_t& subject, parse_options_t &opts);
 
 } // namespace sqltoast
 
