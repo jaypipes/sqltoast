@@ -15,11 +15,11 @@ const std::string create_schema::to_string() {
     std::stringstream ss;
     ss << "<statement: CREATE SCHEMA" << std::endl
        << "   schema identifier: " << schema_identifier;
-    if (authorization_identifier.get()) {
+    if (authorization_identifier) {
        ss << std::endl
           << "   authorization identifier: " << *authorization_identifier;
     }
-    if (default_charset.get()) {
+    if (default_charset) {
        ss << std::endl
           << "   default charset: " << *default_charset;
     }

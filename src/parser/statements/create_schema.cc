@@ -68,8 +68,10 @@ bool require_default_charset_clause(parse_context_t& ctx, tokens_t::iterator& cu
 bool parse_create_schema(parse_context_t& ctx) {
     tokens_t::iterator tok_it = ctx.tokens.begin();
     tokens_t::iterator tok_ident = ctx.tokens.end();
-    tokens_t::iterator tok_authz_ident = ctx.tokens.end();
-    tokens_t::iterator tok_default_charset_ident = ctx.tokens.end();
+    bool found_authz = false;
+    tokens_t::iterator tok_authz_ident;
+    bool found_default_charset = false;
+    tokens_t::iterator tok_default_charset_ident;
     symbol_t exp_sym = SYMBOL_CREATE;
     symbol_t cur_sym = (*tok_it).symbol;
 
@@ -90,6 +92,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     default_charset_clause:
         if (require_default_charset_clause(ctx, tok_it)) {
+            found_default_charset = true;
             tok_default_charset_ident = tok_it++;
             goto statement_ending;
         }
@@ -104,6 +107,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         }
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
+            found_authz = true;
             tok_authz_ident = tok_it++;
             goto default_charset_or_statement_ending;
         }
@@ -200,15 +204,20 @@ bool parse_create_schema(parse_context_t& ctx) {
             if (ctx.opts.disable_statement_construction)
                 return true;
             identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
-            std::unique_ptr<identifier_t> authz_ident;
-            std::unique_ptr<identifier_t> default_charset_ident;
-            if (tok_authz_ident != ctx.tokens.end()) {
-                authz_ident = std::make_unique<identifier_t>((*tok_authz_ident).start, (*tok_authz_ident).end);
+            auto stmt_p = std::make_unique<statements::create_schema_t>(schema_ident);
+            if (found_authz) {
+                parse_position_t id_start = (*tok_authz_ident).start;
+                parse_position_t id_end = (*tok_authz_ident).end;
+                auto p_authz = std::make_unique<identifier_t>(id_start, id_end);
+                (*stmt_p).authorization_identifier = std::move(p_authz);
             }
-            if (tok_default_charset_ident != ctx.tokens.end()) {
-                default_charset_ident = std::make_unique<identifier_t>((*tok_default_charset_ident).start, (*tok_default_charset_ident).end);
+            if (found_default_charset) {
+                parse_position_t id_start = (*tok_default_charset_ident).start;
+                parse_position_t id_end = (*tok_default_charset_ident).end;
+                auto p_def_charset = std::make_unique<identifier_t>(id_start, id_end);
+                (*stmt_p).default_charset = std::move(p_def_charset);
             }
-            ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident, authz_ident, default_charset_ident));
+            ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
         }
     eos:
