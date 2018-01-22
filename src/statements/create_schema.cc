@@ -19,6 +19,10 @@ const std::string create_schema::to_string() {
        ss << std::endl
           << "   authorization identifier: " << *authorization_identifier;
     }
+    if (default_charset.get()) {
+       ss << std::endl
+          << "   default charset: " << *default_charset;
+    }
     ss << ">" << std::endl;
 
     return ss.str();

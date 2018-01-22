@@ -18,11 +18,16 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'a':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_AUTHORIZATION, SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
+        case 'd':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DEFAULT, SYMBOL_DEFAULT, "DEFAULT"));
+            return t;
         case 'c':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CREATE, SYMBOL_CREATE, "CREATE"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHARACTER, SYMBOL_CHARACTER, "CHARACTER"));
             return t;
         case 's':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_SCHEMA, SYMBOL_SCHEMA, "SCHEMA"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SET, SYMBOL_SET, "SET"));
             return t;
     }
     return t;
@@ -30,6 +35,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 
 kw_jump_table_t kw_jump_tables::a = _init_kw_jump_table('a');
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
+kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 
 bool token_keyword(parse_context_t& ctx) {
@@ -42,6 +48,10 @@ bool token_keyword(parse_context_t& ctx) {
         case 'c':
         case 'C':
             jump_tbl = &kw_jump_tables::c;
+            break;
+        case 'd':
+        case 'D':
+            jump_tbl = &kw_jump_tables::d;
             break;
         case 's':
         case 'S':

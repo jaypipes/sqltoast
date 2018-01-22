@@ -50,13 +50,13 @@ namespace sqltoast {
 //
 // So far, we only implement up to the <schema name clause> part of the grammar.
 //
-// TODO(jaypipes): Implement the <schema character set specification> element
 // TODO(jaypipes): Implement the <schema element> list
 //
 bool parse_create_schema(parse_context_t& ctx) {
     tokens_t::iterator tok_it = ctx.tokens.begin();
     tokens_t::iterator tok_ident = ctx.tokens.end();
     tokens_t::iterator tok_authz_ident = ctx.tokens.end();
+    tokens_t::iterator tok_default_charset_ident = ctx.tokens.end();
     symbol_t exp_sym = SYMBOL_CREATE;
     symbol_t cur_sym = (*tok_it).symbol;
 
@@ -74,6 +74,55 @@ bool parse_create_schema(parse_context_t& ctx) {
             goto authz_or_statement_ending;
         }
         goto authorization_clause;
+        SQLTOAST_UNREACHABLE();
+    default_charset_clause:
+        // We've already found the DEFAULT token, so parse the <default
+        // character set clause> element or return a syntax error
+        exp_sym = SYMBOL_CHARACTER;
+        tok_it = ctx.skip_comments(tok_it);
+        if (tok_it == ctx.tokens.end()) {
+            goto err_default_charset_clause;
+        }
+        cur_sym = (*tok_it).symbol;
+        if (cur_sym != SYMBOL_CHARACTER) {
+            goto err_default_charset_clause;
+        }
+        exp_sym = SYMBOL_SET;
+        tok_it = ctx.skip_comments(++tok_it);
+        if (tok_it == ctx.tokens.end()) {
+            goto err_default_charset_clause;
+        }
+        cur_sym = (*tok_it).symbol;
+        if (cur_sym != SYMBOL_SET) {
+            goto err_default_charset_clause;
+        }
+        exp_sym = SYMBOL_IDENTIFIER;
+        tok_it = ctx.skip_comments(++tok_it);
+        if (tok_it == ctx.tokens.end()) {
+            goto err_default_charset_clause;
+        }
+        cur_sym = (*tok_it).symbol;
+        if (cur_sym == SYMBOL_IDENTIFIER) {
+            tok_default_charset_ident = tok_it++;
+            goto statement_ending;
+        }
+        goto err_default_charset_clause;
+        SQLTOAST_UNREACHABLE();
+    err_default_charset_clause:
+        {
+            parse_position_t err_pos = (*(tok_it - 1)).start;
+            std::stringstream estr;
+            if (tok_it == ctx.tokens.end()) {
+                estr << "Expected " << symbol_map::to_string(exp_sym) << " but found EOS";
+            } else {
+                cur_sym = (*tok_it).symbol;
+                estr << "Expected " << symbol_map::to_string(exp_sym) << " but found "
+                     << symbol_map::to_string(cur_sym);
+            }
+            estr << std::endl;
+            create_syntax_error_marker(ctx, estr, err_pos);
+            return false;
+        }
         SQLTOAST_UNREACHABLE();
     authorization_clause:
         // The next non-comment token MUST be an identifier for the
@@ -123,11 +172,15 @@ bool parse_create_schema(parse_context_t& ctx) {
         } else if (cur_sym == SYMBOL_AUTHORIZATION) {
             tok_it++;
             goto authorization_clause;
+        } else if (cur_sym == SYMBOL_DEFAULT) {
+            tok_it++;
+            goto default_charset_clause;
         }
         {
             parse_position_t err_pos = (*tok_it).start;
             std::stringstream estr;
-            estr << "Expected EOS, SEMICOLON or <schema_authorization_clause> but found "
+            estr << "Expected EOS, SEMICOLON, <default character set clause> "
+                 << " or <schema_authorization_clause> but found "
                  << symbol_map::to_string(cur_sym) << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -164,10 +217,14 @@ bool parse_create_schema(parse_context_t& ctx) {
                 return true;
             identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
             std::unique_ptr<identifier_t> authz_ident;
+            std::unique_ptr<identifier_t> default_charset_ident;
             if (tok_authz_ident != ctx.tokens.end()) {
                 authz_ident = std::make_unique<identifier_t>((*tok_authz_ident).start, (*tok_authz_ident).end);
             }
-            ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident, authz_ident));
+            if (tok_default_charset_ident != ctx.tokens.end()) {
+                default_charset_ident = std::make_unique<identifier_t>((*tok_default_charset_ident).start, (*tok_default_charset_ident).end);
+            }
+            ctx.result.statements.emplace_back(std::make_unique<statements::create_schema_t>(schema_ident, authz_ident, default_charset_ident));
             return true;
         }
     eos:

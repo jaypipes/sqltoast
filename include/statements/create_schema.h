@@ -18,10 +18,15 @@ namespace statements {
 typedef struct create_schema : statement_t {
     identifier_t schema_identifier;
     std::unique_ptr<identifier_t> authorization_identifier;
-    create_schema(identifier_t& schema_id, std::unique_ptr<identifier_t>& authorization_id) :
+    std::unique_ptr<identifier_t> default_charset;
+    create_schema(
+            identifier_t& schema_id,
+            std::unique_ptr<identifier_t>& authorization_id,
+            std::unique_ptr<identifier_t>& default_charset_id) :
         statement_t(STATEMENT_TYPE_CREATE_SCHEMA),
         schema_identifier(schema_id),
-        authorization_identifier(std::move(authorization_id))
+        authorization_identifier(std::move(authorization_id)),
+        default_charset(std::move(default_charset_id))
     {}
     virtual const std::string to_string();
 } create_schema_t;
