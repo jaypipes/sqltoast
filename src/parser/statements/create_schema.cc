@@ -52,6 +52,56 @@ namespace sqltoast {
 //
 // TODO(jaypipes): Implement the <schema element> list
 //
+
+bool require_default_charset_clause(parse_context_t& ctx, tokens_t::iterator& cur_tok) {
+    // We've already found the DEFAULT token, so parse the <default character
+    // set clause> element or return a syntax error
+    symbol_t exp_sym = SYMBOL_CHARACTER;
+    symbol_t cur_sym = (*cur_tok).symbol;
+    cur_tok = ctx.skip_comments(cur_tok);
+    if (cur_tok == ctx.tokens.end()) {
+        goto err_default_charset_clause;
+    }
+    cur_sym = (*cur_tok).symbol;
+    if (cur_sym != SYMBOL_CHARACTER) {
+        goto err_default_charset_clause;
+    }
+    exp_sym = SYMBOL_SET;
+    cur_tok = ctx.skip_comments(++cur_tok);
+    if (cur_tok == ctx.tokens.end()) {
+        goto err_default_charset_clause;
+    }
+    cur_sym = (*cur_tok).symbol;
+    if (cur_sym != SYMBOL_SET) {
+        goto err_default_charset_clause;
+    }
+    exp_sym = SYMBOL_IDENTIFIER;
+    cur_tok = ctx.skip_comments(++cur_tok);
+    if (cur_tok == ctx.tokens.end()) {
+        goto err_default_charset_clause;
+    }
+    cur_sym = (*cur_tok).symbol;
+    if (cur_sym == SYMBOL_IDENTIFIER) {
+        return true;
+    }
+    goto err_default_charset_clause;
+err_default_charset_clause:
+    {
+        parse_position_t err_pos = (*(cur_tok - 1)).start;
+        std::stringstream estr;
+        if (cur_tok == ctx.tokens.end()) {
+            estr << "Expected " << symbol_map::to_string(exp_sym) << " but found EOS";
+        } else {
+            cur_sym = (*cur_tok).symbol;
+            estr << "Expected " << symbol_map::to_string(exp_sym) << " but found "
+                 << symbol_map::to_string(cur_sym);
+        }
+        estr << std::endl;
+        create_syntax_error_marker(ctx, estr, err_pos);
+        return false;
+    }
+}
+
 bool parse_create_schema(parse_context_t& ctx) {
     tokens_t::iterator tok_it = ctx.tokens.begin();
     tokens_t::iterator tok_ident = ctx.tokens.end();
@@ -76,53 +126,11 @@ bool parse_create_schema(parse_context_t& ctx) {
         goto authorization_clause;
         SQLTOAST_UNREACHABLE();
     default_charset_clause:
-        // We've already found the DEFAULT token, so parse the <default
-        // character set clause> element or return a syntax error
-        exp_sym = SYMBOL_CHARACTER;
-        tok_it = ctx.skip_comments(tok_it);
-        if (tok_it == ctx.tokens.end()) {
-            goto err_default_charset_clause;
-        }
-        cur_sym = (*tok_it).symbol;
-        if (cur_sym != SYMBOL_CHARACTER) {
-            goto err_default_charset_clause;
-        }
-        exp_sym = SYMBOL_SET;
-        tok_it = ctx.skip_comments(++tok_it);
-        if (tok_it == ctx.tokens.end()) {
-            goto err_default_charset_clause;
-        }
-        cur_sym = (*tok_it).symbol;
-        if (cur_sym != SYMBOL_SET) {
-            goto err_default_charset_clause;
-        }
-        exp_sym = SYMBOL_IDENTIFIER;
-        tok_it = ctx.skip_comments(++tok_it);
-        if (tok_it == ctx.tokens.end()) {
-            goto err_default_charset_clause;
-        }
-        cur_sym = (*tok_it).symbol;
-        if (cur_sym == SYMBOL_IDENTIFIER) {
+        if (require_default_charset_clause(ctx, tok_it)) {
             tok_default_charset_ident = tok_it++;
             goto statement_ending;
         }
-        goto err_default_charset_clause;
-        SQLTOAST_UNREACHABLE();
-    err_default_charset_clause:
-        {
-            parse_position_t err_pos = (*(tok_it - 1)).start;
-            std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
-                estr << "Expected " << symbol_map::to_string(exp_sym) << " but found EOS";
-            } else {
-                cur_sym = (*tok_it).symbol;
-                estr << "Expected " << symbol_map::to_string(exp_sym) << " but found "
-                     << symbol_map::to_string(cur_sym);
-            }
-            estr << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
-            return false;
-        }
+        return false;
         SQLTOAST_UNREACHABLE();
     authorization_clause:
         // The next non-comment token MUST be an identifier for the
@@ -134,7 +142,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             tok_authz_ident = tok_it++;
-            goto statement_ending;
+            goto default_charset_or_statement_ending;
         }
         goto err_expect_authz_identifier;
         SQLTOAST_UNREACHABLE();
@@ -155,6 +163,21 @@ bool parse_create_schema(parse_context_t& ctx) {
             return false;
         }
         SQLTOAST_UNREACHABLE();
+    default_charset_or_statement_ending:
+        // We get here after successfully parsing the <schema name clause>,
+        // which must be followed by either a statement ending or a <default
+        // character set clause>
+        tok_it = ctx.skip_comments(tok_it);
+        if (tok_it == ctx.tokens.end()) {
+            goto push_statement;
+        }
+
+        cur_sym = (*tok_it).symbol;
+        if (cur_sym == SYMBOL_DEFAULT) {
+            tok_it++;
+            goto default_charset_clause;
+        }
+        goto statement_ending;
     authz_or_statement_ending:
         // We get here if we already have the CREATE SCHEMA <identifier> and
         // now we are expecting either the end of the statement OR an
