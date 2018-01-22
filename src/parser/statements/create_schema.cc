@@ -10,6 +10,7 @@
 
 #include "create_schema.h"
 #include "parser/error.h"
+#include "parser/sequence.h"
 #include "parser/token.h"
 #include "statements/create_schema.h"
 
@@ -54,52 +55,14 @@ namespace sqltoast {
 //
 
 bool require_default_charset_clause(parse_context_t& ctx, tokens_t::iterator& cur_tok) {
-    // We've already found the DEFAULT token, so parse the <default character
-    // set clause> element or return a syntax error
-    symbol_t exp_sym = SYMBOL_CHARACTER;
-    symbol_t cur_sym = (*cur_tok).symbol;
-    cur_tok = ctx.skip_comments(cur_tok);
-    if (cur_tok == ctx.tokens.end()) {
-        goto err_default_charset_clause;
-    }
-    cur_sym = (*cur_tok).symbol;
-    if (cur_sym != SYMBOL_CHARACTER) {
-        goto err_default_charset_clause;
-    }
-    exp_sym = SYMBOL_SET;
-    cur_tok = ctx.skip_comments(++cur_tok);
-    if (cur_tok == ctx.tokens.end()) {
-        goto err_default_charset_clause;
-    }
-    cur_sym = (*cur_tok).symbol;
-    if (cur_sym != SYMBOL_SET) {
-        goto err_default_charset_clause;
-    }
-    exp_sym = SYMBOL_IDENTIFIER;
-    cur_tok = ctx.skip_comments(++cur_tok);
-    if (cur_tok == ctx.tokens.end()) {
-        goto err_default_charset_clause;
-    }
-    cur_sym = (*cur_tok).symbol;
-    if (cur_sym == SYMBOL_IDENTIFIER) {
-        return true;
-    }
-    goto err_default_charset_clause;
-err_default_charset_clause:
-    {
-        parse_position_t err_pos = (*(cur_tok - 1)).start;
-        std::stringstream estr;
-        if (cur_tok == ctx.tokens.end()) {
-            estr << "Expected " << symbol_map::to_string(exp_sym) << " but found EOS";
-        } else {
-            cur_sym = (*cur_tok).symbol;
-            estr << "Expected " << symbol_map::to_string(exp_sym) << " but found "
-                 << symbol_map::to_string(cur_sym);
-        }
-        estr << std::endl;
-        create_syntax_error_marker(ctx, estr, err_pos);
-        return false;
-    }
+    // Current token is pointing at SYMBOL_DEFAULT, so parse the <default
+    // character set clause> element or set a syntax error
+    static const symbol_t exp_sym_seq[3] = {
+        SYMBOL_CHARACTER,
+        SYMBOL_SET,
+        SYMBOL_IDENTIFIER
+    };
+    return follows_sequence(ctx, cur_tok, exp_sym_seq, 3);
 }
 
 bool parse_create_schema(parse_context_t& ctx) {
@@ -174,7 +137,6 @@ bool parse_create_schema(parse_context_t& ctx) {
 
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_DEFAULT) {
-            tok_it++;
             goto default_charset_clause;
         }
         goto statement_ending;
@@ -196,7 +158,6 @@ bool parse_create_schema(parse_context_t& ctx) {
             tok_it++;
             goto authorization_clause;
         } else if (cur_sym == SYMBOL_DEFAULT) {
-            tok_it++;
             goto default_charset_clause;
         }
         {
