@@ -11,6 +11,7 @@
 #include "parser/parse.h"
 #include "parser/statement.h"
 #include "parser/statements/create_schema.h"
+#include "parser/statements/drop_schema.h"
 #include "parser/symbol.h"
 #include "parser/token.h"
 
@@ -19,6 +20,10 @@ namespace sqltoast {
 static const size_t NUM_CREATE_STATEMENT_PARSERS = 1;
 static const parse_func_t create_statement_parsers[1] = {
     &parse_create_schema
+};
+static const size_t NUM_DROP_STATEMENT_PARSERS = 1;
+static const parse_func_t drop_statement_parsers[1] = {
+    &parse_drop_schema
 };
 
 void parse_statement(parse_context_t& ctx) {
@@ -34,6 +39,20 @@ void parse_statement(parse_context_t& ctx) {
             while (ctx.result.code == PARSE_OK &&
                     x++ < NUM_CREATE_STATEMENT_PARSERS) {
                 if (create_statement_parsers[x](ctx))
+                    return;
+            }
+            if (ctx.result.code == PARSE_SYNTAX_ERROR) {
+                // Already have a nicely-formatted error, so just return
+                return;
+            }
+            break;
+        }
+        case SYMBOL_DROP:
+        {
+            size_t x = 0;
+            while (ctx.result.code == PARSE_OK &&
+                    x++ < NUM_DROP_STATEMENT_PARSERS) {
+                if (drop_statement_parsers[x](ctx))
                     return;
             }
             if (ctx.result.code == PARSE_SYNTAX_ERROR) {

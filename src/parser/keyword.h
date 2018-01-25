@@ -20,6 +20,7 @@ typedef enum keyword {
     KEYWORD_CHARACTER,
     KEYWORD_CREATE,
     KEYWORD_DEFAULT,
+    KEYWORD_DROP,
     KEYWORD_SCHEMA,
     KEYWORD_SET
 } keyword_t;

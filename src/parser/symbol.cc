@@ -22,6 +22,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
     m[SYMBOL_CREATE] = std::string("CREATE");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
+    m[SYMBOL_DROP] = std::string("DROP");
 
     // Non-Reserved keywordsr
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");

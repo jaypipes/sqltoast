@@ -39,6 +39,7 @@ typedef enum symbol {
     SYMBOL_CHARACTER,
     SYMBOL_CREATE,
     SYMBOL_DEFAULT,
+    SYMBOL_DROP,
 
     // Non-reserved keywords
     SYMBOL_SCHEMA,
