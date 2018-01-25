@@ -23,10 +23,10 @@ typedef enum drop_behaviour {
 typedef struct drop_schema : statement_t {
     identifier_t schema_identifier;
     drop_behaviour_t drop_behaviour;
-    drop_schema(identifier_t& schema_id) :
+    drop_schema(identifier_t& schema_id, drop_behaviour_t drop_behaviour) :
         statement_t(STATEMENT_TYPE_DROP_SCHEMA),
         schema_identifier(schema_id),
-        drop_behaviour(DROP_BEHAVIOUR_CASCADE)
+        drop_behaviour(drop_behaviour)
     {}
     virtual const std::string to_string();
 } drop_schema_t;

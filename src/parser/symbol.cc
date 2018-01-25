@@ -25,6 +25,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DROP] = std::string("DROP");
 
     // Non-Reserved keywordsr
+    m[SYMBOL_CASCADE] = std::string("CASCADE");
+    m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SET] = std::string("SET");
 

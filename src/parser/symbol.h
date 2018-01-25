@@ -42,6 +42,8 @@ typedef enum symbol {
     SYMBOL_DROP,
 
     // Non-reserved keywords
+    SYMBOL_CASCADE,
+    SYMBOL_RESTRICT,
     SYMBOL_SCHEMA,
     SYMBOL_SET,
 

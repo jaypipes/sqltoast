@@ -17,10 +17,12 @@ namespace sqltoast {
 
 typedef enum keyword {
     KEYWORD_AUTHORIZATION,
+    KEYWORD_CASCADE,
     KEYWORD_CHARACTER,
     KEYWORD_CREATE,
     KEYWORD_DEFAULT,
     KEYWORD_DROP,
+    KEYWORD_RESTRICT,
     KEYWORD_SCHEMA,
     KEYWORD_SET
 } keyword_t;
@@ -40,6 +42,7 @@ struct kw_jump_tables {
     static kw_jump_table_t a;
     static kw_jump_table_t c;
     static kw_jump_table_t d;
+    static kw_jump_table_t r;
     static kw_jump_table_t s;
 };
 

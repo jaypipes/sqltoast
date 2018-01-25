@@ -30,16 +30,13 @@ namespace sqltoast {
 //
 //   <drop behaviour> ::= CASCADE | RESTRICT
 //
-// So far, we only implement up to the <schema name clause> part of the grammar.
-//
-// TODO(jaypipes): Implement the <drop behavior> clause
-//
 
 bool parse_drop_schema(parse_context_t& ctx) {
     tokens_t::iterator tok_it = ctx.tokens.begin();
     tokens_t::iterator tok_ident = ctx.tokens.end();
     symbol_t exp_sym = SYMBOL_DROP;
     symbol_t cur_sym = (*tok_it).symbol;
+    statements::drop_behaviour_t behaviour = statements::DROP_BEHAVIOUR_CASCADE;
 
     goto next_token;
 
@@ -55,7 +52,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             tok_ident = tok_it++;
-            goto statement_ending;
+            goto drop_behaviour_or_statement_ending;
         }
         goto err_expect_identifier;
         SQLTOAST_UNREACHABLE();
@@ -72,6 +69,23 @@ bool parse_drop_schema(parse_context_t& ctx) {
             return false;
         }
         SQLTOAST_UNREACHABLE();
+    drop_behaviour_or_statement_ending:
+        // We get here after successfully parsing the <schema name> element,
+        // which must be followed by either a statement ending or a <drop
+        // behaviour clause>
+        tok_it = ctx.skip_comments(tok_it);
+        if (tok_it == ctx.tokens.end()) {
+            goto push_statement;
+        }
+
+        cur_sym = (*tok_it).symbol;
+        if (cur_sym == SYMBOL_CASCADE || cur_sym == SYMBOL_RESTRICT) {
+            if (cur_sym == SYMBOL_RESTRICT) {
+                behaviour = statements::DROP_BEHAVIOUR_RESTRICT;
+            }
+            tok_it++;
+        }
+        goto statement_ending;
     statement_ending:
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
@@ -102,7 +116,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
             if (ctx.opts.disable_statement_construction)
                 return true;
             identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
-            auto stmt_p = std::make_unique<statements::drop_schema_t>(schema_ident);
+            auto stmt_p = std::make_unique<statements::drop_schema_t>(schema_ident, behaviour);
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
         }
