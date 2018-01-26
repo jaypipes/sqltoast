@@ -71,14 +71,22 @@ bool token_keyword(parse_context_t& ctx) {
             return false;
     }
 
-    parse_cursor_t start = ctx.cursor;
+    parse_position_t start = ctx.cursor;
+    parse_cursor_t end = ctx.cursor;
+    // Find the next space character...
+    while (end != ctx.end_pos && ! std::isspace(*end))
+        end++;
 
+    const std::string lexeme(start, parse_position_t(end));
+    size_t lexeme_len = lexeme.size();
     for (auto entry : *jump_tbl) {
-        const std::string to_end(parse_position_t(ctx.cursor), ctx.end_pos);
-        if (ci_find_substr(to_end, entry.kw_str) != -1) {
-            token_t tok(TOKEN_TYPE_KEYWORD, entry.symbol, start, parse_position_t(ctx.cursor));
+        size_t entry_len = entry.kw_str.size();
+        if (lexeme_len != entry_len)
+            continue;
+        if (ci_find_substr(lexeme, entry.kw_str) == 0) {
+            token_t tok(TOKEN_TYPE_KEYWORD, entry.symbol, start, end);
             ctx.push_token(tok);
-            ctx.cursor += entry.kw_str.size();
+            ctx.cursor += entry_len;
             return true;
         }
     }
