@@ -30,10 +30,12 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/sequence.cc
     src/parser/statement.cc
     src/parser/statements/create_schema.cc
+    src/parser/statements/create_table.cc
     src/parser/statements/drop_schema.cc
     src/parser/symbol.cc
     src/parser/token.cc
     src/statements/create_schema.cc
+    src/statements/create_table.cc
     src/statements/drop_schema.cc
 )
 

@@ -24,7 +24,8 @@ typedef enum keyword {
     KEYWORD_DROP,
     KEYWORD_RESTRICT,
     KEYWORD_SCHEMA,
-    KEYWORD_SET
+    KEYWORD_SET,
+    KEYWORD_TABLE
 } keyword_t;
 
 typedef struct kw_jump_table_entry {
@@ -44,6 +45,7 @@ struct kw_jump_tables {
     static kw_jump_table_t d;
     static kw_jump_table_t r;
     static kw_jump_table_t s;
+    static kw_jump_table_t t;
 };
 
 kw_jump_table_t _init_kw_jump_table(char c);

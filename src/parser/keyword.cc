@@ -34,6 +34,9 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_SCHEMA, SYMBOL_SCHEMA, "SCHEMA"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_SET, SYMBOL_SET, "SET"));
             return t;
+        case 't':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TABLE, SYMBOL_TABLE, "TABLE"));
+            return t;
     }
     return t;
 }
@@ -43,6 +46,7 @@ kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
 kw_jump_table_t kw_jump_tables::r = _init_kw_jump_table('r');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
+kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
 
 bool token_keyword(parse_context_t& ctx) {
     kw_jump_table_t* jump_tbl;
@@ -66,6 +70,10 @@ bool token_keyword(parse_context_t& ctx) {
         case 's':
         case 'S':
             jump_tbl = &kw_jump_tables::s;
+            break;
+        case 't':
+        case 'T':
+            jump_tbl = &kw_jump_tables::t;
             break;
         default:
             return false;

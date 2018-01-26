@@ -11,15 +11,17 @@
 #include "parser/parse.h"
 #include "parser/statement.h"
 #include "parser/statements/create_schema.h"
+#include "parser/statements/create_table.h"
 #include "parser/statements/drop_schema.h"
 #include "parser/symbol.h"
 #include "parser/token.h"
 
 namespace sqltoast {
 
-static const size_t NUM_CREATE_STATEMENT_PARSERS = 1;
-static const parse_func_t create_statement_parsers[1] = {
-    &parse_create_schema
+static const size_t NUM_CREATE_STATEMENT_PARSERS = 2;
+static const parse_func_t create_statement_parsers[2] = {
+    &parse_create_schema,
+    &parse_create_table
 };
 static const size_t NUM_DROP_STATEMENT_PARSERS = 1;
 static const parse_func_t drop_statement_parsers[1] = {

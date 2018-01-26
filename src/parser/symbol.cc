@@ -19,16 +19,17 @@ symbol_map::symbol_map_t  _init_symbol_map() {
 
     // Reserved keywords
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
+    m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
     m[SYMBOL_CREATE] = std::string("CREATE");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
     m[SYMBOL_DROP] = std::string("DROP");
-
-    // Non-Reserved keywordsr
-    m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SET] = std::string("SET");
+    m[SYMBOL_TABLE] = std::string("TABLE");
+
+    // Non-Reserved keywordsr
 
     // Other symbols
     m[SYMBOL_IDENTIFIER] = std::string("<< identifier >>");
