@@ -27,6 +27,12 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DEFAULT, SYMBOL_DEFAULT, "DEFAULT"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DROP, SYMBOL_DROP, "DROP"));
             return t;
+        case 'g':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_GLOBAL, SYMBOL_GLOBAL, "GLOBAL"));
+            return t;
+        case 'l':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_LOCAL, SYMBOL_LOCAL, "LOCAL"));
+            return t;
         case 'r':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_RESTRICT, SYMBOL_RESTRICT, "RESTRICT"));
             return t;
@@ -36,6 +42,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 't':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TABLE, SYMBOL_TABLE, "TABLE"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TEMPORARY, SYMBOL_TEMPORARY, "TEMPORARY"));
             return t;
     }
     return t;
@@ -44,6 +51,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 kw_jump_table_t kw_jump_tables::a = _init_kw_jump_table('a');
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
+kw_jump_table_t kw_jump_tables::g = _init_kw_jump_table('g');
+kw_jump_table_t kw_jump_tables::l = _init_kw_jump_table('l');
 kw_jump_table_t kw_jump_tables::r = _init_kw_jump_table('r');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
@@ -62,6 +71,14 @@ bool token_keyword(parse_context_t& ctx) {
         case 'd':
         case 'D':
             jump_tbl = &kw_jump_tables::d;
+            break;
+        case 'g':
+        case 'G':
+            jump_tbl = &kw_jump_tables::g;
+            break;
+        case 'l':
+        case 'L':
+            jump_tbl = &kw_jump_tables::l;
             break;
         case 'r':
         case 'R':

@@ -15,10 +15,18 @@
 namespace sqltoast {
 namespace statements {
 
+typedef enum table_type {
+    TABLE_TYPE_NORMAL,
+    TABLE_TYPE_TEMPORARY_GLOBAL,
+    TABLE_TYPE_TEMPORARY_LOCAL
+} table_type_t;
+
 typedef struct create_table : statement_t {
+    table_type_t table_type;
     identifier_t table_identifier;
-    create_table(identifier_t& table_id) :
+    create_table(table_type_t table_type, identifier_t& table_id) :
         statement_t(STATEMENT_TYPE_CREATE_TABLE),
+        table_type(table_type),
         table_identifier(table_id)
     {}
     virtual const std::string to_string();

@@ -22,10 +22,13 @@ typedef enum keyword {
     KEYWORD_CREATE,
     KEYWORD_DEFAULT,
     KEYWORD_DROP,
+    KEYWORD_GLOBAL,
+    KEYWORD_LOCAL,
     KEYWORD_RESTRICT,
     KEYWORD_SCHEMA,
     KEYWORD_SET,
-    KEYWORD_TABLE
+    KEYWORD_TABLE,
+    KEYWORD_TEMPORARY
 } keyword_t;
 
 typedef struct kw_jump_table_entry {
@@ -43,6 +46,8 @@ struct kw_jump_tables {
     static kw_jump_table_t a;
     static kw_jump_table_t c;
     static kw_jump_table_t d;
+    static kw_jump_table_t g;
+    static kw_jump_table_t l;
     static kw_jump_table_t r;
     static kw_jump_table_t s;
     static kw_jump_table_t t;

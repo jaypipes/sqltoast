@@ -41,10 +41,13 @@ typedef enum symbol {
     SYMBOL_CREATE,
     SYMBOL_DEFAULT,
     SYMBOL_DROP,
+    SYMBOL_GLOBAL,
+    SYMBOL_LOCAL,
     SYMBOL_RESTRICT,
     SYMBOL_SCHEMA,
     SYMBOL_SET,
     SYMBOL_TABLE,
+    SYMBOL_TEMPORARY,
 
     // Non-reserved keywords
 
