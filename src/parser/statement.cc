@@ -34,37 +34,33 @@ void parse_statement(parse_context_t& ctx) {
     token_t& top_tok = ctx.tokens.front();
     symbol_t& top_sym = top_tok.symbol;
 
+    size_t num_parsers = 0;
+    const parse_func_t* parsers;
     switch (top_sym) {
         case SYMBOL_CREATE:
         {
-            size_t x = 0;
-            while (ctx.result.code == PARSE_OK &&
-                    x++ < NUM_CREATE_STATEMENT_PARSERS) {
-                if (create_statement_parsers[x](ctx))
-                    return;
-            }
-            if (ctx.result.code == PARSE_SYNTAX_ERROR) {
-                // Already have a nicely-formatted error, so just return
-                return;
-            }
+            num_parsers = NUM_CREATE_STATEMENT_PARSERS;
+            parsers = create_statement_parsers;
             break;
         }
         case SYMBOL_DROP:
         {
-            size_t x = 0;
-            while (ctx.result.code == PARSE_OK &&
-                    x++ < NUM_DROP_STATEMENT_PARSERS) {
-                if (drop_statement_parsers[x](ctx))
-                    return;
-            }
-            if (ctx.result.code == PARSE_SYNTAX_ERROR) {
-                // Already have a nicely-formatted error, so just return
-                return;
-            }
+            num_parsers = NUM_DROP_STATEMENT_PARSERS;
+            parsers = drop_statement_parsers;
             break;
         }
         default:
             break;
+    }
+
+    size_t x = 0;
+    while (ctx.result.code == PARSE_OK && x < num_parsers) {
+        if (parsers[x++](ctx))
+            return;
+    }
+    if (ctx.result.code == PARSE_SYNTAX_ERROR) {
+        // Already have a nicely-formatted error, so just return
+        return;
     }
 
     std::stringstream estr;
