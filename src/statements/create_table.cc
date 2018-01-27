@@ -27,7 +27,7 @@ const std::string create_table::to_string() {
     for (auto cdef_it = column_definitions.begin();
             cdef_it != column_definitions.end();
             cdef_it++) {
-        ss << std::endl << "      " << *cdef_it;
+        ss << std::endl << "      " << *(*cdef_it);
     }
     ss << ">" << std::endl;
 

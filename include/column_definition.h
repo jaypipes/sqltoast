@@ -17,8 +17,7 @@ namespace sqltoast {
 typedef struct column_definition {
     std::unique_ptr<data_type_descriptor_t> data_type;
     identifier_t id;
-    column_definition(std::unique_ptr<data_type_descriptor_t>& data_type, identifier_t& id) :
-        data_type(std::move(data_type)),
+    column_definition(identifier_t& id) :
         id(id)
     {}
 } column_definition_t;

@@ -20,6 +20,7 @@ SET(LIBSQLTOAST_SOURCES
     src/identifier.cc
     src/column_definition.cc
     src/data_type.cc
+    src/parser/column_definition.cc
     src/parser/comment.cc
     src/parser/context.cc
     src/parser/error.cc
