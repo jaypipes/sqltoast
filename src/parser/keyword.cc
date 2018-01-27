@@ -20,6 +20,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'c':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CREATE, SYMBOL_CREATE, "CREATE"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHAR, SYMBOL_CHAR, "CHAR"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHARACTER, SYMBOL_CHARACTER, "CHARACTER"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CASCADE, SYMBOL_CASCADE, "CASCADE"));
             return t;
@@ -44,6 +45,10 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TABLE, SYMBOL_TABLE, "TABLE"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TEMPORARY, SYMBOL_TEMPORARY, "TEMPORARY"));
             return t;
+        case 'v':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_VARCHAR, SYMBOL_VARCHAR, "VARCHAR"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_VARYING, SYMBOL_VARYING, "VARYING"));
+            return t;
     }
     return t;
 }
@@ -56,6 +61,7 @@ kw_jump_table_t kw_jump_tables::l = _init_kw_jump_table('l');
 kw_jump_table_t kw_jump_tables::r = _init_kw_jump_table('r');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
+kw_jump_table_t kw_jump_tables::v = _init_kw_jump_table('v');
 
 bool token_keyword(parse_context_t& ctx) {
     kw_jump_table_t* jump_tbl;
@@ -91,6 +97,10 @@ bool token_keyword(parse_context_t& ctx) {
         case 't':
         case 'T':
             jump_tbl = &kw_jump_tables::t;
+            break;
+        case 'v':
+        case 'V':
+            jump_tbl = &kw_jump_tables::v;
             break;
         default:
             return false;
