@@ -48,7 +48,7 @@ bool parse_create_table(parse_context_t& ctx) {
             tok_it++;
             goto table_type;
         } else if (cur_sym == SYMBOL_LOCAL) {
-            table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
+            table_type = statements::TABLE_TYPE_TEMPORARY_LOCAL;
             tok_it++;
             goto table_type;
         } else if (cur_sym == SYMBOL_TEMPORARY) {
@@ -76,6 +76,7 @@ bool parse_create_table(parse_context_t& ctx) {
         cur_sym = (*tok_it).symbol;
         if (cur_sym != SYMBOL_TABLE)
             goto err_expect_table;
+        tok_it++;
         goto table_name;
         SQLTOAST_UNREACHABLE();
     err_expect_temporary:
