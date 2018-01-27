@@ -117,7 +117,7 @@ bool parse_create_table(parse_context_t& ctx) {
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             tok_ident = tok_it++;
-            goto statement_ending;
+            goto expect_column_list;
         }
         goto err_expect_identifier;
         SQLTOAST_UNREACHABLE();
@@ -130,6 +130,63 @@ bool parse_create_table(parse_context_t& ctx) {
             } else {
                 cur_sym = (*tok_it).symbol;
                 estr << "Expected <identifier> after CREATE TABLE keyword but found "
+                     << symbol_map::to_string(cur_sym);
+            }
+            estr << std::endl;
+            create_syntax_error_marker(ctx, estr, err_pos);
+            return false;
+        }
+        SQLTOAST_UNREACHABLE();
+    expect_column_list:
+        // We get here after successfully finding the CREATE ... TABLE <table name>
+        // part of the statement. We now expect to find the <table element
+        // list> clause
+        tok_it = ctx.skip_comments(tok_it);
+        cur_sym = (*tok_it).symbol;
+        if (cur_sym == SYMBOL_LPAREN) {
+            tok_it++;
+            goto expect_column_list_element;
+        }
+        goto err_expect_lparen;
+        SQLTOAST_UNREACHABLE();
+    err_expect_lparen:
+        {
+            parse_position_t err_pos = (*(tok_it)).start;
+            std::stringstream estr;
+            if (tok_it == ctx.tokens.end()) {
+                estr << "Expected opening '(' after CREATE TABLE <table name> but found EOS";
+            } else {
+                cur_sym = (*tok_it).symbol;
+                estr << "Expected '(' after CREATE TABLE <table name> but found "
+                     << symbol_map::to_string(cur_sym);
+            }
+            estr << std::endl;
+            create_syntax_error_marker(ctx, estr, err_pos);
+            return false;
+        }
+        SQLTOAST_UNREACHABLE();
+    expect_column_list_element:
+        // We get here after finding the LPAREN opening the <table element
+        // list> clause. Now we expect to find one or more column or constraint
+        // definitions
+        tok_it = ctx.skip_comments(tok_it);
+        // TODO(jaypipes): Parse the column definitions...
+        cur_sym = (*tok_it).symbol;
+        if (cur_sym == SYMBOL_RPAREN) {
+            tok_it++;
+            goto statement_ending;
+        }
+        goto err_expect_rparen;
+        SQLTOAST_UNREACHABLE();
+    err_expect_rparen:
+        {
+            parse_position_t err_pos = (*(tok_it)).start;
+            std::stringstream estr;
+            if (tok_it == ctx.tokens.end()) {
+                estr << "Expected closing ')' after CREATE TABLE <table name> but found EOS";
+            } else {
+                cur_sym = (*tok_it).symbol;
+                estr << "Expected closing ')' after CREATE TABLE <table name> but found "
                      << symbol_map::to_string(cur_sym);
             }
             estr << std::endl;
