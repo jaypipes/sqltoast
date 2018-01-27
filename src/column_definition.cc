@@ -9,7 +9,12 @@
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const column_definition_t& column_def) {
-    out << column_def.id.name;
+    out << column_def.id.name << " ";
+    if (column_def.data_type.get()) {
+        out << column_def.data_type->to_string();
+    } else {
+        out << " UNKNOWN";
+    }
     return out;
 }
 

@@ -7,6 +7,8 @@
 #ifndef SQLTOAST_DATA_TYPE_H
 #define SQLTOAST_DATA_TYPE_H
 
+#include <string>
+
 namespace sqltoast {
 
 typedef enum data_type {
@@ -27,6 +29,20 @@ typedef enum data_type {
     DATA_TYPE_TIMESTAMP,
     DATA_TYPE_INTERVAL
 } data_type_t;
+
+typedef struct data_type_descriptor {
+    data_type_t type;
+    data_type_descriptor(data_type_t type) : type(type)
+    {}
+    virtual const std::string to_string() = 0;
+} data_type_descriptor_t;
+
+typedef struct character_string : data_type_descriptor_t {
+    character_string() :
+        data_type_descriptor_t(DATA_TYPE_CHAR)
+    {}
+    virtual const std::string to_string();
+} character_string_t;
 
 } // namespace sqltoast
 
