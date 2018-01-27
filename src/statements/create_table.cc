@@ -14,14 +14,18 @@ namespace statements {
 const std::string create_table::to_string() {
     std::stringstream ss;
     ss << "<statement: CREATE TABLE" << std::endl
-       << "   table identifier: " << table_identifier;
+       << "    table identifier: " << table_identifier;
     if (table_type != TABLE_TYPE_NORMAL) {
-        ss << std::endl << "   temporary: true (";
+        ss << std::endl << "    temporary: true (";
         if (table_type == TABLE_TYPE_TEMPORARY_GLOBAL) {
             ss << "global)";
         } else {
             ss << "local)";
         }
+    }
+    ss << std::endl << "    column definitions:";
+    for (auto cdef : column_definitions) {
+        ss << std::endl << "      " << cdef;
     }
     ss << ">" << std::endl;
 

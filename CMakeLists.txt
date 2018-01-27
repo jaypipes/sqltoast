@@ -18,6 +18,7 @@ SET(SQLTOAST_VERSION_MAJOR 0)
 SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
     src/identifier.cc
+    src/column_definition.cc
     src/column_definitions/character_string.cc
     src/parser/comment.cc
     src/parser/context.cc

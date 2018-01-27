@@ -9,6 +9,7 @@
 
 #include <string>
 
+#include "column_definition.h"
 #include "identifier.h"
 #include "statement.h"
 
@@ -24,6 +25,7 @@ typedef enum table_type {
 typedef struct create_table : statement_t {
     table_type_t table_type;
     identifier_t table_identifier;
+    std::vector<column_definition_t> column_definitions;
     create_table(table_type_t table_type, identifier_t& table_id) :
         statement_t(STATEMENT_TYPE_CREATE_TABLE),
         table_type(table_type),

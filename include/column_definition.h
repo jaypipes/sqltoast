@@ -7,6 +7,8 @@
 #ifndef SQLTOAST_COLUMN_DEFINITION_H
 #define SQLTOAST_COLUMN_DEFINITION_H
 
+#include <ostream>
+
 #include "data_type.h"
 #include "identifier.h"
 
@@ -19,8 +21,9 @@ typedef struct column_definition {
         data_type(data_type),
         id(id)
     {}
-    virtual std::ostream& operator<< (std::ostream& out) = 0;
 } column_definition_t;
+
+std::ostream& operator<< (std::ostream& out, const column_definition_t& column_def);
 
 } // namespace sqltoast
 

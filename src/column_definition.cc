@@ -8,4 +8,9 @@
 
 namespace sqltoast {
 
+std::ostream& operator<< (std::ostream& out, const column_definition_t& column_def) {
+    out << column_def.id.name;
+    return out;
+}
+
 } // namespace sqltoast
