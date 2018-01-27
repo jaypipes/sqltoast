@@ -36,16 +36,23 @@ typedef enum symbol {
 
     // Reserved keywords
     SYMBOL_AUTHORIZATION,
+    SYMBOL_CASCADE,
+    SYMBOL_CHAR,
     SYMBOL_CHARACTER,
     SYMBOL_CREATE,
     SYMBOL_DEFAULT,
     SYMBOL_DROP,
-
-    // Non-reserved keywords
-    SYMBOL_CASCADE,
+    SYMBOL_GLOBAL,
+    SYMBOL_LOCAL,
     SYMBOL_RESTRICT,
     SYMBOL_SCHEMA,
     SYMBOL_SET,
+    SYMBOL_TABLE,
+    SYMBOL_TEMPORARY,
+    SYMBOL_VARCHAR,
+    SYMBOL_VARYING,
+
+    // Non-reserved keywords
 
     // Other symbols
     SYMBOL_IDENTIFIER,

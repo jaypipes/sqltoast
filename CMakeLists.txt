@@ -18,6 +18,9 @@ SET(SQLTOAST_VERSION_MAJOR 0)
 SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
     src/identifier.cc
+    src/column_definition.cc
+    src/data_type.cc
+    src/parser/column_definition.cc
     src/parser/comment.cc
     src/parser/context.cc
     src/parser/error.cc
@@ -29,10 +32,12 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/sequence.cc
     src/parser/statement.cc
     src/parser/statements/create_schema.cc
+    src/parser/statements/create_table.cc
     src/parser/statements/drop_schema.cc
     src/parser/symbol.cc
     src/parser/token.cc
     src/statements/create_schema.cc
+    src/statements/create_table.cc
     src/statements/drop_schema.cc
 )
 
