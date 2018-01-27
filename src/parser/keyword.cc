@@ -108,8 +108,10 @@ bool token_keyword(parse_context_t& ctx) {
 
     parse_position_t start = ctx.cursor;
     parse_cursor_t end = ctx.cursor;
-    // Find the next space character...
-    while (end != ctx.end_pos && ! std::isspace(*end))
+    // Find the next space or delimiter character...
+    while (end != ctx.end_pos && (
+            (*end >= 'a' && *end <= 'z') ||
+            (*end >= 'A' && *end <= 'Z')))
         end++;
 
     const std::string lexeme(start, parse_position_t(end));
