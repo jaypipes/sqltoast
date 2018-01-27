@@ -46,21 +46,19 @@ bool parse_create_table(parse_context_t& ctx) {
         if (cur_sym == SYMBOL_GLOBAL) {
             table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
             tok_it++;
-            goto table_type;
+            goto expect_temporary;
         } else if (cur_sym == SYMBOL_LOCAL) {
             table_type = statements::TABLE_TYPE_TEMPORARY_LOCAL;
             tok_it++;
-            goto table_type;
+            goto expect_temporary;
         } else if (cur_sym == SYMBOL_TEMPORARY) {
             table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
             tok_it++;
-            goto table_name;
-        } else {
-            exp_sym = SYMBOL_TABLE;
-            goto next_token;
         }
+        exp_sym = SYMBOL_TABLE;
+        goto next_token;
         SQLTOAST_UNREACHABLE();
-    table_type:
+    expect_temporary:
         // We get here if we successfully matched CREATE followed by either the
         // GLOBAL or LOCAL symbol. If this is the case, we expect to find the
         // TEMPORARY keyword followed by the TABLE keyword.
@@ -77,7 +75,7 @@ bool parse_create_table(parse_context_t& ctx) {
         if (cur_sym != SYMBOL_TABLE)
             goto err_expect_table;
         tok_it++;
-        goto table_name;
+        goto expect_table_name;
         SQLTOAST_UNREACHABLE();
     err_expect_temporary:
         {
@@ -111,7 +109,7 @@ bool parse_create_table(parse_context_t& ctx) {
             return false;
         }
         SQLTOAST_UNREACHABLE();
-    table_name:
+    expect_table_name:
         // We get here after successfully finding CREATE followed by the TABLE
         // symbol (after optionally processing the table type modifier). We now
         // need to find an identifier
@@ -204,7 +202,7 @@ bool parse_create_table(parse_context_t& ctx) {
                 goto next_token;
             case SYMBOL_TABLE:
                 if (exp_sym == SYMBOL_TABLE) {
-                    goto table_name;
+                    goto expect_table_name;
                 }
                 goto next_token;
             default:
