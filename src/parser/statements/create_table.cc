@@ -117,7 +117,7 @@ bool parse_create_table(parse_context_t& ctx) {
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             tok_ident = tok_it++;
-            goto expect_column_list;
+            goto expect_column_list_open;
         }
         goto err_expect_identifier;
         SQLTOAST_UNREACHABLE();
@@ -137,7 +137,7 @@ bool parse_create_table(parse_context_t& ctx) {
             return false;
         }
         SQLTOAST_UNREACHABLE();
-    expect_column_list:
+    expect_column_list_open:
         // We get here after successfully finding the CREATE ... TABLE <table name>
         // part of the statement. We now expect to find the <table element
         // list> clause
@@ -171,6 +171,13 @@ bool parse_create_table(parse_context_t& ctx) {
         // definitions
         tok_it = ctx.skip_comments(tok_it);
         // TODO(jaypipes): Parse the column definitions...
+        goto expect_column_list_close;
+        SQLTOAST_UNREACHABLE();
+    expect_column_list_close:
+        // We get here after successfully parsing the <table element list>
+        // column/constraint definitions and are now expecting the closing
+        // RPAREN to indicate the end of the <table element list>
+        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_RPAREN) {
             tok_it++;
