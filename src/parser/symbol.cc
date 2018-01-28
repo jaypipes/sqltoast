@@ -39,7 +39,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     // Other symbols
     m[SYMBOL_IDENTIFIER] = std::string("<< identifier >>");
     m[SYMBOL_COMMENT] = std::string("<< comment >>");
-    m[SYMBOL_LITERAL_UNSIGNED_NUMERIC] = std::string("<< unsigned numeric literal >>");
+    m[SYMBOL_LITERAL_UNSIGNED_INTEGER] = std::string("<< unsigned integer >>");
 
     return m;
 }

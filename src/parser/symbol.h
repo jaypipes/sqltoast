@@ -33,6 +33,7 @@ typedef enum symbol {
     SYMBOL_COMMA,
     SYMBOL_LPAREN,
     SYMBOL_RPAREN,
+    SYMBOL_PERIOD,
 
     // Reserved keywords
     SYMBOL_AUTHORIZATION,
@@ -57,7 +58,7 @@ typedef enum symbol {
     // Other symbols
     SYMBOL_IDENTIFIER,
     SYMBOL_COMMENT,
-    SYMBOL_LITERAL_UNSIGNED_NUMERIC
+    SYMBOL_LITERAL_UNSIGNED_INTEGER
 } symbol_t;
 
 struct symbol_map {

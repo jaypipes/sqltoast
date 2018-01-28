@@ -22,7 +22,7 @@ bool token_literal(parse_context_t& ctx) {
 try_unsigned_numeric:
     // read to the next separator. if all characters are numbers, this is an
     // unsigned numeric
-    found_sym = SYMBOL_LITERAL_UNSIGNED_NUMERIC;
+    found_sym = SYMBOL_LITERAL_UNSIGNED_INTEGER;
     for (;;) {
         c = *ctx.cursor++;
         if (ctx.cursor == ctx.end_pos)
