@@ -173,27 +173,10 @@ bool parse_create_table(parse_context_t& ctx) {
         // list> clause. Now we expect to find one or more column or constraint
         // definitions
         tok_it = ctx.skip_comments(tok_it);
-        if (parse_column_definition(ctx, tok_it, column_defs)) {
-            tok_it = ctx.tokens.begin();
-            goto expect_column_list_close;
-        }
-        goto err_expect_column_def;
-        SQLTOAST_UNREACHABLE();
-    err_expect_column_def:
-        {
-            parse_position_t err_pos = (*(tok_it)).start;
-            std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
-                estr << "Expected a column definition but found EOS";
-            } else {
-                cur_sym = (*tok_it).symbol;
-                estr << "Expected a column definition but found "
-                     << symbol_map::to_string(cur_sym);
-            }
-            estr << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+        if (! parse_column_definition(ctx, tok_it, column_defs))
             return false;
-        }
+        tok_it = ctx.tokens.begin();
+        goto expect_column_list_close;
         SQLTOAST_UNREACHABLE();
     expect_column_list_close:
         // We get here after successfully parsing the <table element list>

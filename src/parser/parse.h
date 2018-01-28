@@ -19,13 +19,29 @@ namespace sqltoast {
 typedef bool (*parse_func_t) (parse_context_t& ctx);
 
 // Returns true if a column definition clause can be parsed from the supplied
-// token iterator. If the function returns true, then tok_it will be pointing
-// at the next token to be parsed and column_defs will have a new member (if
-// ctx.options.disable_statement_construction is false
+// token iterator. If the function returns true, column_defs will have a new
+// member (if ctx.options.disable_statement_construction is false
 bool parse_column_definition(
         parse_context_t& ctx,
         tokens_t::iterator tok_it,
         std::vector<std::unique_ptr<column_definition_t>>& column_defs);
+
+// Returns true if a data type descriptor clause can be parsed from the supplied
+// token iterator. If the function returns true, the column_def argument will
+// have its data_type attribute set to an allocated data type descriptor
+bool parse_data_type_descriptor(
+        parse_context_t& ctx,
+        tokens_t::iterator tok_it,
+        column_definition_t& column_def);
+
+// Returns true if a character string descriptor clause can be parsed from the
+// supplied token iterator. If the function returns true, the column_def
+// argument will have its data_type attribute set to an allocated char_string_t
+// or varchar_string_t descriptor
+bool parse_character_string(
+        parse_context_t& ctx,
+        tokens_t::iterator tok_it,
+        column_definition_t& column_def);
 
 } // namespace sqltoast
 
