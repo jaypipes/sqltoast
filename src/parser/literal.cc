@@ -21,24 +21,33 @@ bool token_literal(parse_context_t& ctx) {
     }
 try_unsigned_numeric:
     // read to the next separator. if all characters are numbers, this is an
-    // unsigned numeric
+    // unsigned integer or decimal
     found_sym = SYMBOL_LITERAL_UNSIGNED_INTEGER;
-    for (;;) {
-        c = *ctx.cursor++;
-        if (ctx.cursor == ctx.end_pos)
-            goto push_literal;
-        if (std::isspace(c))
-            goto push_literal;
-        if (std::isdigit(c))
-            continue;
-        switch (c) {
-            case ',':
-            case ')':
-            case '(':
-            case ';':
+    {
+        bool found_decimal = false;
+        for (;;) {
+            c = *ctx.cursor++;
+            if (ctx.cursor == ctx.end_pos)
                 goto push_literal;
-            default:
-                goto not_found;
+            if (std::isspace(c))
+                goto push_literal;
+            if (std::isdigit(c))
+                continue;
+            switch (c) {
+                case ',':
+                case ')':
+                case '(':
+                case ';':
+                    goto push_literal;
+                case '.':
+                    if (found_decimal)
+                        goto not_found;
+                    found_decimal = true;
+                    found_sym = SYMBOL_LITERAL_UNSIGNED_DECIMAL;
+                    continue;
+                default:
+                    goto not_found;
+            }
         }
     }
 push_literal:
