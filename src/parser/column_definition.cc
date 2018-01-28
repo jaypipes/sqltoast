@@ -36,6 +36,7 @@ bool parse_column_definition(
         std::vector<std::unique_ptr<column_definition_t>>& column_defs) {
     tokens_t::iterator tok_ident = ctx.tokens.end();
     symbol_t cur_sym = (*tok_it).symbol;
+    std::unique_ptr<column_definition_t> cdef_p;
 
     goto expect_column_name;
 
@@ -48,21 +49,27 @@ bool parse_column_definition(
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             tok_ident = tok_it++;
-            goto push_column_def;
+            goto create_column_def;
         }
         // Just return false, since callers could be looking for
         // a constraint definition
         return false;
+        SQLTOAST_UNREACHABLE();
+    create_column_def:
+        {
+            identifier_t col_name((*tok_ident).start, (*tok_ident).end);
+            cdef_p = std::move(std::make_unique<column_definition_t>(col_name));
+            if (! parse_data_type_descriptor(ctx, tok_it, *cdef_p))
+                return false;
+            tok_it = ctx.tokens.begin();
+            goto push_column_def;
+        }
         SQLTOAST_UNREACHABLE();
     push_column_def:
         {
             ctx.trim_to(tok_it);
             if (ctx.opts.disable_statement_construction)
                 return true;
-            identifier_t col_name((*tok_ident).start, (*tok_ident).end);
-            auto cdef_p = std::make_unique<column_definition_t>(col_name);
-            auto dtd_p = std::make_unique<character_string_t>();
-            (*cdef_p).data_type = std::move(dtd_p);
             column_defs.emplace_back(std::move(cdef_p));
             return true;
         }
