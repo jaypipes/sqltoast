@@ -14,6 +14,7 @@
 #include "parser/comment.h"
 #include "parser/identifier.h"
 #include "parser/lexer.h"
+#include "parser/literal.h"
 #include "parser/keyword.h"
 #include "parser/punctuator.h"
 #include "parser/token.h"
@@ -29,6 +30,10 @@ bool next_token(parse_context_t& ctx) {
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
     if (token_punctuator(ctx))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (token_literal(ctx))
         return true;
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;

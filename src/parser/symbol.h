@@ -56,7 +56,8 @@ typedef enum symbol {
 
     // Other symbols
     SYMBOL_IDENTIFIER,
-    SYMBOL_COMMENT
+    SYMBOL_COMMENT,
+    SYMBOL_LITERAL_UNSIGNED_NUMERIC
 } symbol_t;
 
 struct symbol_map {

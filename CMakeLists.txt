@@ -21,12 +21,14 @@ SET(LIBSQLTOAST_SOURCES
     src/column_definition.cc
     src/data_type.cc
     src/parser/column_definition.cc
+    src/parser/data_type_descriptor.cc
     src/parser/comment.cc
     src/parser/context.cc
     src/parser/error.cc
     src/parser/keyword.cc
     src/parser/identifier.cc
     src/parser/lexer.cc
+    src/parser/literal.cc
     src/parser/parse.cc
     src/parser/punctuator.cc
     src/parser/sequence.cc

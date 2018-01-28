@@ -20,6 +20,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     // Reserved keywords
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
+    m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
     m[SYMBOL_CREATE] = std::string("CREATE");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
@@ -38,6 +39,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     // Other symbols
     m[SYMBOL_IDENTIFIER] = std::string("<< identifier >>");
     m[SYMBOL_COMMENT] = std::string("<< comment >>");
+    m[SYMBOL_LITERAL_UNSIGNED_NUMERIC] = std::string("<< unsigned numeric literal >>");
 
     return m;
 }
