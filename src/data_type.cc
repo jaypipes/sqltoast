@@ -12,14 +12,16 @@
 namespace sqltoast {
 
 const std::string char_string_t::to_string() {
-    std::stringstream ss("CHAR");
+    std::stringstream ss;
+    ss << "CHAR";
     if (size > 0)
         ss << "(" << size << ")";
     return ss.str();
 }
 
 const std::string varchar_string_t::to_string() {
-    std::stringstream ss("VARCHAR");
+    std::stringstream ss;
+    ss << "VARCHAR";
     if (size > 0)
         ss << "(" << size << ")";
     return ss.str();
