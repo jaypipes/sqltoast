@@ -43,6 +43,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_LITERAL_SIGNED_INTEGER] = std::string("<< signed integer >>");
     m[SYMBOL_LITERAL_UNSIGNED_DECIMAL] = std::string("<< unsigned decimal >>");
     m[SYMBOL_LITERAL_SIGNED_DECIMAL] = std::string("<< signed decimal >>");
+    m[SYMBOL_LITERAL_APPROXIMATE_NUMBER] = std::string("<< approximate number >>");
 
     return m;
 }

@@ -35,6 +35,7 @@ try_numeric:
         found_sym = SYMBOL_LITERAL_SIGNED_INTEGER;
     {
         bool found_decimal = false;
+        bool found_e = false;
         for (;;) {
             c = *ctx.cursor++;
             if (ctx.cursor == ctx.end_pos) {
@@ -42,10 +43,23 @@ try_numeric:
                 // least one number...
                 if (*(ctx.cursor - 1) == '.')
                     goto not_found;
+                if (found_e) {
+                    // Make sure the exponent has at least one number
+                    if (! std::isdigit(*(ctx.cursor - 1)))
+                        goto not_found;
+                    found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
+                }
                 goto push_literal;
             }
-            if (std::isspace(c))
+            if (std::isspace(c)) {
+                if (found_e) {
+                    // Make sure the exponent has at least one number
+                    if (! std::isdigit(*(ctx.cursor - 2)))
+                        goto not_found;
+                    found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
+                }
                 goto push_literal;
+            }
             if (std::isdigit(c))
                 continue;
             switch (c) {
@@ -57,6 +71,12 @@ try_numeric:
                     // at least one number...
                     if (*(ctx.cursor - 2) == '.')
                         goto not_found;
+                    if (found_e) {
+                        // Make sure the exponent has at least one number
+                        if (! std::isdigit(*(ctx.cursor - 2)))
+                            goto not_found;
+                        found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
+                    }
                     goto push_literal;
                 case '.':
                     // Make sure we have only one period...
@@ -66,6 +86,26 @@ try_numeric:
                     found_sym = SYMBOL_LITERAL_UNSIGNED_DECIMAL;
                     if (found_sign)
                         found_sym = SYMBOL_LITERAL_SIGNED_DECIMAL;
+                    continue;
+                case 'E':
+                    // Make sure we haven't already found an "E", which would
+                    // indicate we are expecting a signed integer as the
+                    // exponent, not a decimal value
+                    if (found_e)
+                        goto not_found;
+                    // Approximate (scientific-notation) numbers are designated with a
+                    // <exact numeric literal>E<signed integer> grammar
+                    found_e = true;
+                    // Make sure we have found at least a digit before the 'E'
+                    if (! std::isdigit(*(ctx.cursor - 2)))
+                        goto not_found;
+                    continue;
+                case '+':
+                case '-':
+                    // We should ONLY get here if there is an approximate number
+                    // (e.g. 3.667E-10).
+                    if (! found_e)
+                        goto not_found;
                     continue;
                 default:
                     goto not_found;
