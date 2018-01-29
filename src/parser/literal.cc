@@ -16,6 +16,8 @@ bool token_literal(parse_context_t& ctx) {
     if (std::isdigit(c))
         goto try_unsigned_numeric;
     switch (c) {
+        case '.':
+            goto try_unsigned_numeric;
         default:
             goto not_found;
     }
@@ -27,8 +29,13 @@ try_unsigned_numeric:
         bool found_decimal = false;
         for (;;) {
             c = *ctx.cursor++;
-            if (ctx.cursor == ctx.end_pos)
+            if (ctx.cursor == ctx.end_pos) {
+                // Make sure if we got a single . that we followed it with at
+                // least one number...
+                if (*(ctx.cursor - 1) == '.')
+                    goto not_found;
                 goto push_literal;
+            }
             if (std::isspace(c))
                 goto push_literal;
             if (std::isdigit(c))
@@ -38,8 +45,13 @@ try_unsigned_numeric:
                 case ')':
                 case '(':
                 case ';':
+                    // Make sure if we got a single . that we followed it with at
+                    // least one number...
+                    if (*(ctx.cursor - 2) == '.')
+                        goto not_found;
                     goto push_literal;
                 case '.':
+                    // Make sure we have only one period...
                     if (found_decimal)
                         goto not_found;
                     found_decimal = true;
