@@ -12,19 +12,27 @@ namespace sqltoast {
 bool token_literal(parse_context_t& ctx) {
     parse_cursor_t start = ctx.cursor;
     symbol_t found_sym;
+    bool found_sign = false; // set to true if + or - found
+
     char c = *ctx.cursor;
+    if (c == '+' || c == '-') {
+        found_sign = true;
+        c = *(++ctx.cursor);
+    }
     if (std::isdigit(c))
-        goto try_unsigned_numeric;
+        goto try_numeric;
     switch (c) {
         case '.':
-            goto try_unsigned_numeric;
+            goto try_numeric;
         default:
             goto not_found;
     }
-try_unsigned_numeric:
+try_numeric:
     // read to the next separator. if all characters are numbers, this is an
     // unsigned integer or decimal
     found_sym = SYMBOL_LITERAL_UNSIGNED_INTEGER;
+    if (found_sign)
+        found_sym = SYMBOL_LITERAL_SIGNED_INTEGER;
     {
         bool found_decimal = false;
         for (;;) {
@@ -45,8 +53,8 @@ try_unsigned_numeric:
                 case ')':
                 case '(':
                 case ';':
-                    // Make sure if we got a single . that we followed it with at
-                    // least one number...
+                    // Make sure if we got a single . that we followed it with
+                    // at least one number...
                     if (*(ctx.cursor - 2) == '.')
                         goto not_found;
                     goto push_literal;
@@ -56,6 +64,8 @@ try_unsigned_numeric:
                         goto not_found;
                     found_decimal = true;
                     found_sym = SYMBOL_LITERAL_UNSIGNED_DECIMAL;
+                    if (found_sign)
+                        found_sym = SYMBOL_LITERAL_SIGNED_DECIMAL;
                     continue;
                 default:
                     goto not_found;
