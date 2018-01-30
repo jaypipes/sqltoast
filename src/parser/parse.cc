@@ -29,7 +29,6 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
     res.code = PARSE_OK;
     parse_context_t ctx(res, opts, subject);
 
-    skip_ws(ctx);
     if (ctx.cursor == ctx.end_pos) {
         res.code = PARSE_INPUT_ERROR;
         res.error.assign("Nothing to parse.");

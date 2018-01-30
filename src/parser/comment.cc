@@ -46,8 +46,6 @@ bool token_simple_comment(parse_context_t& ctx) {
         return false;
     }
 
-    parse_position_t start = ctx.cursor - 2;
-
     // The comment content is from the cursor until we find a newline of EOS
     do {
         ctx.cursor++;
@@ -64,8 +62,6 @@ bool token_bracketed_comment(parse_context_t& ctx) {
         ctx.cursor--; // rewind
         return false;
     }
-
-    parse_position_t start = ctx.cursor - 2;
 
     // OK, we found the start of a comment. Run through the subject until we
     // find the closing */ marker

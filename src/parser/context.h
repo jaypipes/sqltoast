@@ -59,6 +59,12 @@ typedef struct parse_context {
             tokens.erase(tokens.begin(), pos);
         }
     }
+    // Simply advances the parse context's cursor over any whitespace
+    inline void skip_ws() {
+        while (std::isspace(*cursor))
+            cursor++;
+        return;
+    }
 } parse_context_t;
 
 } // namespace sqltoast
