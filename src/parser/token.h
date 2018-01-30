@@ -38,6 +38,9 @@ typedef struct token {
         parse_position_t end) :
         type(type), symbol(symbol), start(start), end(end)
     {}
+    inline bool is_punctuator() const {
+        return (symbol >= SYMBOL_SEMICOLON && symbol <= SYMBOL_RPAREN);
+    }
     inline bool is_keyword() const {
         return (symbol >= SYMBOL_AUTHORIZATION && symbol <= SYMBOL_VARYING);
     }

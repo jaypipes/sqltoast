@@ -31,12 +31,11 @@ typedef enum symbol {
     SYMBOL_SOS, // Start of the input stream
     SYMBOL_EOS, // End of the input stream
 
-    // Special characters
+    // Punctuators
     SYMBOL_SEMICOLON,
     SYMBOL_COMMA,
     SYMBOL_LPAREN,
     SYMBOL_RPAREN,
-    SYMBOL_PERIOD,
 
     // Reserved keywords
     SYMBOL_AUTHORIZATION,

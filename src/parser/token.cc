@@ -25,11 +25,12 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
         out << "keyword[" << symbol_map::to_string(token.symbol) << "]";
         return out;
     }
+    if (token.is_punctuator()) {
+        out << symbol_map::to_string(token.symbol);
+        return out;
+    }
     token_type_t tt = token.type;
     switch (tt) {
-        case TOKEN_TYPE_PUNCTUATOR:
-            out << symbol_map::to_string(token.symbol);
-            break;
         case TOKEN_TYPE_IDENTIFIER:
             {
                 size_t len = (token.end - token.start);

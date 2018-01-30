@@ -14,7 +14,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_SOS] = std::string("<< start of input >>");
     m[SYMBOL_EOS] = std::string("<< end of input >>");
 
-    // Special characters
+    // Punctuators
     m[SYMBOL_SEMICOLON] = std::string("SEMICOLON");
     m[SYMBOL_COMMA] = std::string("COMMA");
     m[SYMBOL_LPAREN] = std::string("LPAREN");
