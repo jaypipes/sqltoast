@@ -10,14 +10,15 @@
 namespace sqltoast {
 
 bool token_literal(parse_context_t& ctx) {
-    parse_cursor_t start = ctx.cursor;
+    lexer_t& lex = ctx.lexer;
+    parse_cursor_t start = lex.cursor;
     symbol_t found_sym;
     bool found_sign = false; // set to true if + or - found
 
-    char c = *ctx.cursor;
+    char c = *lex.cursor;
     if (c == '+' || c == '-') {
         found_sign = true;
-        c = *(++ctx.cursor);
+        c = *(++lex.cursor);
     }
     if (std::isdigit(c))
         goto try_numeric;
@@ -37,15 +38,15 @@ try_numeric:
         bool found_decimal = false;
         bool found_e = false;
         for (;;) {
-            c = *ctx.cursor++;
-            if (ctx.cursor == ctx.end_pos) {
+            c = *lex.cursor++;
+            if (lex.cursor == lex.end_pos) {
                 // Make sure if we got a single . that we followed it with at
                 // least one number...
-                if (*(ctx.cursor - 1) == '.')
+                if (*(lex.cursor - 1) == '.')
                     goto not_found;
                 if (found_e) {
                     // Make sure the exponent has at least one number
-                    if (! std::isdigit(*(ctx.cursor - 1)))
+                    if (! std::isdigit(*(lex.cursor - 1)))
                         goto not_found;
                     found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
                 }
@@ -54,7 +55,7 @@ try_numeric:
             if (std::isspace(c)) {
                 if (found_e) {
                     // Make sure the exponent has at least one number
-                    if (! std::isdigit(*(ctx.cursor - 2)))
+                    if (! std::isdigit(*(lex.cursor - 2)))
                         goto not_found;
                     found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
                 }
@@ -69,11 +70,11 @@ try_numeric:
                 case ';':
                     // Make sure if we got a single . that we followed it with
                     // at least one number...
-                    if (*(ctx.cursor - 2) == '.')
+                    if (*(lex.cursor - 2) == '.')
                         goto not_found;
                     if (found_e) {
                         // Make sure the exponent has at least one number
-                        if (! std::isdigit(*(ctx.cursor - 2)))
+                        if (! std::isdigit(*(lex.cursor - 2)))
                             goto not_found;
                         found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
                     }
@@ -97,7 +98,7 @@ try_numeric:
                     // <exact numeric literal>E<signed integer> grammar
                     found_e = true;
                     // Make sure we have found at least a digit before the 'E'
-                    if (! std::isdigit(*(ctx.cursor - 2)))
+                    if (! std::isdigit(*(lex.cursor - 2)))
                         goto not_found;
                     continue;
                 case '+':
@@ -113,18 +114,18 @@ try_numeric:
         }
     }
 push_literal:
-    ctx.cursor--;
+    lex.cursor--;
     {
         token_t tok(
             found_sym,
             parse_position_t(start),
-            parse_position_t(ctx.cursor)
+            parse_position_t(lex.cursor)
         );
         ctx.push_token(tok);
     }
     return true;
 not_found:
-    ctx.cursor = start; // rewind... we didn't find a literal
+    lex.cursor = start; // rewind... we didn't find a literal
     return false;
 }
 

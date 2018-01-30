@@ -13,38 +13,22 @@
 
 #include "sqltoast.h"
 
+#include "parser/lexer.h"
 #include "parser/token.h"
 
 namespace sqltoast {
 
-// Possible escape mode for literals and identifiers
-enum escape_mode {
-    ESCAPE_NONE = 0,
-    ESCAPE_SINGLE_QUOTE = 1,
-    ESCAPE_DOUBLE_QUOTE = 2,
-    ESCAPE_TILDE = 3,
-    ESCAPE_UNICODE_AMPERSAND = 4
-};
-
-typedef std::vector<char>::const_iterator parse_position_t;
-typedef std::vector<char>::iterator parse_cursor_t;
 typedef std::deque<token_t> tokens_t;
 
 typedef struct parse_context {
     parse_result_t& result;
     parse_options_t& opts;
-    escape_mode current_escape;
-    parse_position_t start_pos;
-    parse_position_t end_pos;
-    parse_cursor_t cursor;
+    lexer_t lexer;
     tokens_t tokens;
     parse_context(parse_result_t& result, parse_options_t& opts, parse_input_t& subject) :
         result(result),
         opts(opts),
-        current_escape(ESCAPE_NONE),
-        start_pos(subject.cbegin()),
-        end_pos(subject.cend()),
-        cursor(subject.begin())
+        lexer(subject)
     {}
     inline void push_token(token_t& tok) {
         tokens.emplace_back(tok);
@@ -59,16 +43,19 @@ typedef struct parse_context {
             tokens.erase(tokens.begin(), pos);
         }
     }
-    // Simply advances the parse context's cursor over any whitespace
-    inline void skip_ws() {
-        while (std::isspace(*cursor))
-            cursor++;
-        return;
-    }
     inline bool at_end(tokens_t::const_iterator tok_it) const {
         return tok_it == tokens.end();
     }
 } parse_context_t;
+
+// Attempts to find the next token in the parse context. If a token was found,
+// returns true, else false. If true, the parse context's tokens stack will
+// have had a token pushed onto it.
+bool next_token(parse_context_t& ctx);
+
+// Run through the subject string to parse, creating a stack of token_t's on
+// the parse context.
+void tokenize(parse_context_t& ctx);
 
 } // namespace sqltoast
 

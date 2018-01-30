@@ -8,9 +8,6 @@
 
 #include "parser/error.h"
 #include "parser/comment.h"
-#include "parser/peek.h"
-#include "parser/symbol.h"
-#include "parser/token.h"
 
 namespace sqltoast {
 
@@ -37,45 +34,47 @@ bool token_comment(parse_context_t& ctx) {
 }
 
 bool token_simple_comment(parse_context_t& ctx) {
-    if (! peek_char(ctx, '-'))
+    lexer_t& lex = ctx.lexer;
+    if (! lex.peek_char('-'))
         return false;
 
-    ctx.cursor++;
-    if (! peek_char(ctx, '-')) {
-        ctx.cursor--; // rewind
+    lex.cursor++;
+    if (! lex.peek_char('-')) {
+        lex.cursor--; // rewind
         return false;
     }
 
     // The comment content is from the cursor until we find a newline of EOS
     do {
-        ctx.cursor++;
-    } while (ctx.cursor != ctx.end_pos && *ctx.cursor != '\n');
+        lex.cursor++;
+    } while (lex.cursor != lex.end_pos && *lex.cursor != '\n');
     return true;
 }
 
 bool token_bracketed_comment(parse_context_t& ctx) {
-    if (! peek_char(ctx, '/'))
+    lexer_t& lex = ctx.lexer;
+    if (! lex.peek_char('/'))
         return false;
 
-    ctx.cursor++;
-    if (! peek_char(ctx, '*')) {
-        ctx.cursor--; // rewind
+    lex.cursor++;
+    if (! lex.peek_char('*')) {
+        lex.cursor--; // rewind
         return false;
     }
 
     // OK, we found the start of a comment. Run through the subject until we
     // find the closing */ marker
     do {
-        ctx.cursor++;
-        if (ctx.cursor == ctx.end_pos || (ctx.cursor + 1) == ctx.end_pos) {
+        lex.cursor++;
+        if (lex.cursor == lex.end_pos || (lex.cursor + 1) == lex.end_pos) {
             goto err_no_end_marker;
         }
-    } while (*ctx.cursor != '*' || *(ctx.cursor + 1) != '/');
+    } while (*lex.cursor != '*' || *(lex.cursor + 1) != '/');
     goto create_token;
 
     create_token:
     {
-        ctx.cursor += 2;
+        lex.cursor += 2;
         return true;
     }
 
@@ -83,7 +82,7 @@ bool token_bracketed_comment(parse_context_t& ctx) {
     {
         std::stringstream estr;
         estr << "Expected closing */ comment marker but found EOS" << std::endl;
-        create_syntax_error_marker(ctx, estr, ctx.end_pos);
+        create_syntax_error_marker(ctx, estr, lex.end_pos);
         return false;
     }
 }

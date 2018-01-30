@@ -64,8 +64,9 @@ kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
 kw_jump_table_t kw_jump_tables::v = _init_kw_jump_table('v');
 
 bool token_keyword(parse_context_t& ctx) {
+    lexer_t& lex = ctx.lexer;
     kw_jump_table_t* jump_tbl;
-    switch (*ctx.cursor) {
+    switch (*lex.cursor) {
         case 'a':
         case 'A':
             jump_tbl = &kw_jump_tables::a;
@@ -106,10 +107,10 @@ bool token_keyword(parse_context_t& ctx) {
             return false;
     }
 
-    parse_position_t start = ctx.cursor;
-    parse_cursor_t end = ctx.cursor;
+    parse_position_t start = lex.cursor;
+    parse_cursor_t end = lex.cursor;
     // Find the next space or delimiter character...
-    while (end != ctx.end_pos && (
+    while (end != lex.end_pos && (
             (*end >= 'a' && *end <= 'z') ||
             (*end >= 'A' && *end <= 'Z')))
         end++;
@@ -123,7 +124,7 @@ bool token_keyword(parse_context_t& ctx) {
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {
             token_t tok(entry.symbol, start, end);
             ctx.push_token(tok);
-            ctx.cursor += entry_len;
+            lex.cursor += entry_len;
             return true;
         }
     }

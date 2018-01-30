@@ -22,7 +22,7 @@
 namespace sqltoast {
 
 bool next_token(parse_context_t& ctx) {
-    ctx.skip_ws();
+    ctx.lexer.skip_ws();
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
     if (token_comment(ctx))
