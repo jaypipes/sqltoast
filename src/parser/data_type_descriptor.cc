@@ -147,7 +147,7 @@ bool parse_data_type_descriptor(
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected data type after <column name> but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -231,7 +231,7 @@ bool parse_character_string(
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected unsigned integer as length after '(' but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -257,7 +257,7 @@ bool parse_character_string(
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected ')' after length specifier but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;

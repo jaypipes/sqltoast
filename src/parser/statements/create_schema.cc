@@ -101,7 +101,7 @@ bool parse_create_schema(parse_context_t& ctx) {
     authorization_clause:
         // The next non-comment token MUST be an identifier for the
         // AUTHORIZATION clause
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto err_expect_authz_identifier;
         }
         cur_sym = (*tok_it).symbol;
@@ -117,7 +117,7 @@ bool parse_create_schema(parse_context_t& ctx) {
             parse_position_t err_pos = (*(tok_it)).start;
             tok_it++;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected <identifier> after AUTHORIZATION keyword but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -133,7 +133,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here after successfully parsing the <schema name clause>,
         // which must be followed by either a statement ending or a <default
         // character set clause>
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto push_statement;
         }
 
@@ -146,7 +146,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here if we already have the CREATE SCHEMA <identifier> and
         // now we are expecting either the end of the statement OR an
         // AUTHORIZATION clause
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto push_statement;
         }
 
@@ -175,7 +175,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto push_statement;
         }
 
@@ -233,7 +233,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         }
         SQLTOAST_UNREACHABLE();
     next_token:
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto eos;
         }
         cur_sym = (*tok_it).symbol;

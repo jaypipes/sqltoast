@@ -64,13 +64,13 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here if we successfully matched CREATE followed by either the
         // GLOBAL or LOCAL symbol. If this is the case, we expect to find the
         // TEMPORARY keyword followed by the TABLE keyword.
-        if (tok_it == ctx.tokens.end())
+        if (ctx.at_end(tok_it))
             goto err_expect_temporary;
         cur_sym = (*tok_it).symbol;
         if (cur_sym != SYMBOL_TEMPORARY)
             goto err_expect_temporary;
         tok_it++;
-        if (tok_it == ctx.tokens.end())
+        if (ctx.at_end(tok_it))
             goto err_expect_table;
         cur_sym = (*tok_it).symbol;
         if (cur_sym != SYMBOL_TABLE)
@@ -82,7 +82,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -98,7 +98,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -125,7 +125,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected <identifier> after CREATE TABLE but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -152,7 +152,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected opening '(' after CREATE TABLE <table name> but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -188,7 +188,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = (*(tok_it)).start;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (ctx.at_end(tok_it)) {
                 estr << "Expected closing ')' after CREATE TABLE <table name> but found EOS";
             } else {
                 cur_sym = (*tok_it).symbol;
@@ -204,7 +204,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // TABLE statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto push_statement;
         }
 
@@ -251,7 +251,7 @@ bool parse_create_table(parse_context_t& ctx) {
         }
         SQLTOAST_UNREACHABLE();
     next_token:
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto eos;
         }
         cur_sym = (*tok_it).symbol;

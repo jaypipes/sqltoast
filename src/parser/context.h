@@ -65,6 +65,9 @@ typedef struct parse_context {
             cursor++;
         return;
     }
+    inline bool at_end(tokens_t::const_iterator tok_it) const {
+        return tok_it == tokens.end();
+    }
 } parse_context_t;
 
 } // namespace sqltoast

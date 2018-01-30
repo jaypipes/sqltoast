@@ -45,7 +45,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
     identifier:
         // We get here after successfully finding DROP followed by SCHEMA. We
         // now need to find the schema identifier
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto eos;
         }
         cur_sym = (*tok_it).symbol;
@@ -72,7 +72,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         // We get here after successfully parsing the <schema name> element,
         // which must be followed by either a statement ending or a <drop
         // behaviour clause>
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto push_statement;
         }
 
@@ -88,7 +88,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto push_statement;
         }
 
@@ -134,7 +134,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         }
         SQLTOAST_UNREACHABLE();
     next_token:
-        if (tok_it == ctx.tokens.end()) {
+        if (ctx.at_end(tok_it)) {
             goto eos;
         }
         cur_sym = (*tok_it).symbol;
