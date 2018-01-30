@@ -4,9 +4,6 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <iostream>
-#include <cctype>
-#include <sstream>
 #include <vector>
 
 #include "context.h"
@@ -21,8 +18,24 @@
 
 namespace sqltoast {
 
+void lexer_t::skip_simple_comments() {
+    if (! peek_char('-'))
+        return;
+
+    cursor++;
+    if (! peek_char('-')) {
+        cursor--; // rewind
+        return;
+    }
+
+    // The comment content is from the cursor until we find a newline or EOS
+    do {
+        cursor++;
+    } while (cursor != end_pos && *cursor != '\n');
+}
+
 bool next_token(parse_context_t& ctx) {
-    ctx.lexer.skip_ws();
+    ctx.lexer.skip();
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
     if (token_comment(ctx))

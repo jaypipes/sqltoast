@@ -28,30 +28,12 @@ namespace sqltoast {
 // <bracketed comment contents> ::= [ { <comment character> | <separator> }... ]
 //
 // <comment character> ::= <nonquote character> | <quote>
+//
+// Simple comments are skipped over by the lexer completely. Bracketed
+// comments, because they are sometimes used to embed dialect-specific
+// triggers, are consumed as tokens.
 
 bool token_comment(parse_context_t& ctx) {
-    return token_simple_comment(ctx) | token_bracketed_comment(ctx);
-}
-
-bool token_simple_comment(parse_context_t& ctx) {
-    lexer_t& lex = ctx.lexer;
-    if (! lex.peek_char('-'))
-        return false;
-
-    lex.cursor++;
-    if (! lex.peek_char('-')) {
-        lex.cursor--; // rewind
-        return false;
-    }
-
-    // The comment content is from the cursor until we find a newline of EOS
-    do {
-        lex.cursor++;
-    } while (lex.cursor != lex.end_pos && *lex.cursor != '\n');
-    return true;
-}
-
-bool token_bracketed_comment(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     if (! lex.peek_char('/'))
         return false;
@@ -61,6 +43,8 @@ bool token_bracketed_comment(parse_context_t& ctx) {
         lex.cursor--; // rewind
         return false;
     }
+
+    parse_position_t start = lex.cursor;
 
     // OK, we found the start of a comment. Run through the subject until we
     // find the closing */ marker
@@ -74,7 +58,9 @@ bool token_bracketed_comment(parse_context_t& ctx) {
 
     create_token:
     {
+        parse_position_t end = lex.cursor - 1;
         lex.cursor += 2;
+        lex.set_token(SYMBOL_COMMENT, start, end);
         return true;
     }
 

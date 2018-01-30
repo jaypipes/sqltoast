@@ -28,6 +28,11 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
         out << "identifier[length: " << len << "]";
         return out;
     }
+    if (token.symbol == SYMBOL_COMMENT) {
+        size_t len = (token.end - token.start);
+        out << "comment[length: " << len << "]";
+        return out;
+    }
     return out;
 }
 
