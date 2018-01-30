@@ -23,8 +23,7 @@ typedef enum token_type {
     TOKEN_TYPE_LITERAL,
     TOKEN_TYPE_PUNCTUATOR,
     TOKEN_TYPE_OPERATOR,
-    TOKEN_TYPE_IDENTIFIER,
-    TOKEN_TYPE_COMMENT
+    TOKEN_TYPE_IDENTIFIER
 } token_type_t;
 
 typedef struct token {

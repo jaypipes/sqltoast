@@ -101,7 +101,6 @@ bool parse_create_schema(parse_context_t& ctx) {
     authorization_clause:
         // The next non-comment token MUST be an identifier for the
         // AUTHORIZATION clause
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto err_expect_authz_identifier;
         }
@@ -134,7 +133,6 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here after successfully parsing the <schema name clause>,
         // which must be followed by either a statement ending or a <default
         // character set clause>
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto push_statement;
         }
@@ -148,7 +146,6 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here if we already have the CREATE SCHEMA <identifier> and
         // now we are expecting either the end of the statement OR an
         // AUTHORIZATION clause
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto push_statement;
         }
@@ -178,7 +175,6 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto push_statement;
         }
@@ -237,7 +233,6 @@ bool parse_create_schema(parse_context_t& ctx) {
         }
         SQLTOAST_UNREACHABLE();
     next_token:
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto eos;
         }

@@ -133,7 +133,6 @@ bool parse_data_type_descriptor(
     expect_data_type:
         // We start here. The first component of the column definition is the
         // identifier that indicates the column name.
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         switch (cur_sym) {
             case SYMBOL_CHAR:
@@ -178,7 +177,6 @@ bool parse_character_string(
         // We get here after the column name identifier has been found and
         // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
         // were next
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         switch (cur_sym) {
             case SYMBOL_CHAR:
@@ -197,7 +195,6 @@ bool parse_character_string(
         // We get here if we got a CHAR or CHARACTER as the data type. This
         // might be followed by the VARYING symbol, in which case we will
         // process a VARCHAR. Otherwise, we'll process a CHAR type
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_VARYING) {
             data_type = DATA_TYPE_VARCHAR;
@@ -208,7 +205,6 @@ bool parse_character_string(
         // We get here after determining the exact type of the character
         // string. The type will be followed by an optional length specifier
         // clause, which if an unsigned integer enclosed by parentheses.
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_LPAREN) {
             tok_it++;
@@ -219,7 +215,6 @@ bool parse_character_string(
         // We get here if we've processed the opening parentheses of the
         // optional length modifier and now expect to find an unsigned integer
         // followed by a closing parentheses
-        tok_it = ctx.skip_comments(tok_it);
         if ((*tok_it).type == TOKEN_TYPE_LITERAL) {
             // Make sure we can parse our literal token to an unsigned integer
             cur_sym = (*tok_it).symbol;
@@ -278,7 +273,6 @@ bool parse_character_string(
         // We get here after processing the optional length specifier. After
         // that specifier, there may be an optional CHARACTER SET <character
         // set specification> clause
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_CHARACTER) {
             tok_it++;

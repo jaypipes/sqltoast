@@ -44,7 +44,6 @@ bool parse_create_table(parse_context_t& ctx) {
     table_kw_or_table_type:
         // We get here after successfully finding the CREATE symbol. We can
         // either match the table keyword or the table type clause
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_GLOBAL) {
             table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
@@ -65,13 +64,12 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here if we successfully matched CREATE followed by either the
         // GLOBAL or LOCAL symbol. If this is the case, we expect to find the
         // TEMPORARY keyword followed by the TABLE keyword.
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end())
             goto err_expect_temporary;
         cur_sym = (*tok_it).symbol;
         if (cur_sym != SYMBOL_TEMPORARY)
             goto err_expect_temporary;
-        tok_it = ctx.skip_comments(++tok_it);
+        tok_it++;
         if (tok_it == ctx.tokens.end())
             goto err_expect_table;
         cur_sym = (*tok_it).symbol;
@@ -116,7 +114,6 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully finding CREATE followed by the TABLE
         // symbol (after optionally processing the table type modifier). We now
         // need to find an identifier
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             tok_ident = tok_it++;
@@ -144,7 +141,6 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully finding the CREATE ... TABLE <table name>
         // part of the statement. We now expect to find the <table element
         // list> clause
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_LPAREN) {
             tok_it++;
@@ -172,7 +168,6 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after finding the LPAREN opening the <table element
         // list> clause. Now we expect to find one or more column or constraint
         // definitions
-        tok_it = ctx.skip_comments(tok_it);
         if (! parse_column_definition(ctx, tok_it, column_defs))
             return false;
         tok_it = ctx.tokens.begin();
@@ -182,7 +177,6 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully parsing the <table element list>
         // column/constraint definitions and are now expecting the closing
         // RPAREN to indicate the end of the <table element list>
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_RPAREN) {
             tok_it++;
@@ -210,7 +204,6 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // TABLE statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto push_statement;
         }
@@ -258,7 +251,6 @@ bool parse_create_table(parse_context_t& ctx) {
         }
         SQLTOAST_UNREACHABLE();
     next_token:
-        tok_it = ctx.skip_comments(tok_it);
         if (tok_it == ctx.tokens.end()) {
             goto eos;
         }

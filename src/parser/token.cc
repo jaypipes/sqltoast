@@ -14,7 +14,6 @@ token_type_map::tt_map_t  _init_token_type_map() {
     m[TOKEN_TYPE_LITERAL] = std::string("<literal>");
     m[TOKEN_TYPE_PUNCTUATOR] = std::string("<punctuator>");
     m[TOKEN_TYPE_IDENTIFIER] = std::string("<identifier>");
-    m[TOKEN_TYPE_COMMENT] = std::string("<comment>");
 
     return m;
 }
@@ -35,12 +34,6 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
             {
                 size_t len = (token.end - token.start);
                 out << "identifier[length: " << len << "]";
-            }
-            break;
-        case TOKEN_TYPE_COMMENT:
-            {
-                size_t len = (token.end - token.start);
-                out << "comment[length: " << len << "]";
             }
             break;
         case TOKEN_TYPE_LITERAL:

@@ -45,7 +45,6 @@ bool parse_column_definition(
     expect_column_name:
         // We start here. The first component of the column definition is the
         // identifier that indicates the column name.
-        tok_it = ctx.skip_comments(tok_it);
         cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             tok_ident = tok_it++;

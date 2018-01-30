@@ -46,10 +46,6 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
         }
         token_type_t& tt = top_tok.type;
         switch (tt) {
-            case TOKEN_TYPE_COMMENT:
-                // Just remove the comment from the token stack...
-                ctx.tokens.pop_front();
-                break;
             case TOKEN_TYPE_PUNCTUATOR:
             {
                 std::stringstream estr;

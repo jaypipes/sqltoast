@@ -59,13 +59,6 @@ typedef struct parse_context {
             tokens.erase(tokens.begin(), pos);
         }
     }
-    inline tokens_t::iterator skip_comments(tokens_t::iterator pos) {
-        tokens_t::iterator it = pos;
-        while (it != tokens.end() && (*it).type == TOKEN_TYPE_COMMENT) {
-            it++;
-        }
-        return it;
-    }
 } parse_context_t;
 
 } // namespace sqltoast

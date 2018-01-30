@@ -20,7 +20,7 @@ inline bool follows_sequence(parse_context_t& ctx, tokens_t::iterator& cur_tok, 
     symbol_t cur_sym;
     for (unsigned int x = 0; x < num_expected; x++) {
         exp_sym = expected_sequence[x];
-        cur_tok = ctx.skip_comments(++cur_tok);
+        cur_tok++;
         if (cur_tok == ctx.tokens.end())
             goto err_unexpected;
         cur_sym = (*cur_tok).symbol;

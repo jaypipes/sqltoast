@@ -52,9 +52,6 @@ bool token_simple_comment(parse_context_t& ctx) {
     do {
         ctx.cursor++;
     } while (ctx.cursor != ctx.end_pos && *ctx.cursor != '\n');
-
-    token_t tok(TOKEN_TYPE_COMMENT, SYMBOL_COMMENT, start, parse_position_t(ctx.cursor));
-    ctx.push_token(tok);
     return true;
 }
 
@@ -83,8 +80,6 @@ bool token_bracketed_comment(parse_context_t& ctx) {
     create_token:
     {
         ctx.cursor += 2;
-        token_t tok(TOKEN_TYPE_COMMENT, SYMBOL_COMMENT, start, parse_position_t(ctx.cursor));
-        ctx.push_token(tok);
         return true;
     }
 
