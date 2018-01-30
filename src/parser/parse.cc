@@ -40,11 +40,12 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
 
     while (res.code == PARSE_OK && ! ctx.tokens.empty()) {
         token_t &top_tok = ctx.tokens.front();
+        if (top_tok.is_keyword()) {
+            parse_statement(ctx);
+            continue;
+        }
         token_type_t& tt = top_tok.type;
         switch (tt) {
-            case TOKEN_TYPE_KEYWORD:
-                parse_statement(ctx);
-                break;
             case TOKEN_TYPE_COMMENT:
                 // Just remove the comment from the token stack...
                 ctx.tokens.pop_front();

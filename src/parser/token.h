@@ -39,6 +39,9 @@ typedef struct token {
         parse_position_t end) :
         type(type), symbol(symbol), start(start), end(end)
     {}
+    inline bool is_keyword() const {
+        return (symbol >= SYMBOL_AUTHORIZATION && symbol <= SYMBOL_VARYING);
+    }
 } token_t;
 
 std::ostream& operator<< (std::ostream& out, const token_t& token);

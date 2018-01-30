@@ -11,7 +11,6 @@ namespace sqltoast {
 token_type_map::tt_map_t  _init_token_type_map() {
     token_type_map::tt_map_t m;
 
-    m[TOKEN_TYPE_KEYWORD] = std::string("<keyword>");
     m[TOKEN_TYPE_LITERAL] = std::string("<literal>");
     m[TOKEN_TYPE_PUNCTUATOR] = std::string("<punctuator>");
     m[TOKEN_TYPE_IDENTIFIER] = std::string("<identifier>");
@@ -23,11 +22,12 @@ token_type_map::tt_map_t  _init_token_type_map() {
 token_type_map::tt_map_t token_type_map::m = _init_token_type_map();
 
 std::ostream& operator<< (std::ostream& out, const token_t& token) {
+    if (token.is_keyword()) {
+        out << "keyword[" << symbol_map::to_string(token.symbol) << "]";
+        return out;
+    }
     token_type_t tt = token.type;
     switch (tt) {
-        case TOKEN_TYPE_KEYWORD:
-            out << "keyword[" << symbol_map::to_string(token.symbol) << "]";
-            break;
         case TOKEN_TYPE_PUNCTUATOR:
             out << symbol_map::to_string(token.symbol);
             break;
