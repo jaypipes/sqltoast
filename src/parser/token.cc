@@ -33,18 +33,13 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
         out << "literal[length: " << len << "]";
         return out;
     }
-    token_type_t tt = token.type;
-    switch (tt) {
-        case TOKEN_TYPE_IDENTIFIER:
-            {
-                size_t len = (token.end - token.start);
-                out << "identifier[length: " << len << "]";
-            }
-            break;
-        default:
-            out << "token[type: " << token_type_map::to_string(token.type)
-                << " symbol: " << symbol_map::to_string(token.symbol) << "]";
+    if (token.is_identifier()){
+        size_t len = (token.end - token.start);
+        out << "identifier[length: " << len << "]";
+        return out;
     }
+    out << "token[type: " << token_type_map::to_string(token.type)
+        << " symbol: " << symbol_map::to_string(token.symbol) << "]";
     return out;
 }
 

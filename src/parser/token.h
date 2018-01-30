@@ -46,6 +46,9 @@ typedef struct token {
     inline bool is_keyword() const {
         return (symbol >= SYMBOL_AUTHORIZATION && symbol <= SYMBOL_VARYING);
     }
+    inline bool is_identifier() const {
+        return (symbol == SYMBOL_IDENTIFIER);
+    }
 } token_t;
 
 std::ostream& operator<< (std::ostream& out, const token_t& token);
