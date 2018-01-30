@@ -22,7 +22,6 @@ typedef enum token_type {
     TOKEN_TYPE_KEYWORD,
     TOKEN_TYPE_LITERAL,
     TOKEN_TYPE_PUNCTUATOR,
-    TOKEN_TYPE_OPERATOR,
     TOKEN_TYPE_IDENTIFIER
 } token_type_t;
 
@@ -38,6 +37,9 @@ typedef struct token {
         parse_position_t end) :
         type(type), symbol(symbol), start(start), end(end)
     {}
+    inline bool is_literal() const {
+        return (symbol >= SYMBOL_LITERAL_UNSIGNED_INTEGER && symbol <= SYMBOL_LITERAL_APPROXIMATE_NUMBER);
+    }
     inline bool is_punctuator() const {
         return (symbol >= SYMBOL_SEMICOLON && symbol <= SYMBOL_RPAREN);
     }

@@ -51,6 +51,13 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
             create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
             continue;
         }
+        if (top_tok.is_literal()) {
+            std::stringstream estr;
+            estr << "Parse subject must either begin with a keyword or a "
+                    "comment, but found literal." << std::endl;
+            create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
+            continue;
+        }
         token_type_t& tt = top_tok.type;
         switch (tt) {
             case TOKEN_TYPE_IDENTIFIER:

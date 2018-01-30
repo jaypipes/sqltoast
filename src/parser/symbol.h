@@ -60,6 +60,8 @@ typedef enum symbol {
     // Other symbols
     SYMBOL_IDENTIFIER,
     SYMBOL_COMMENT,
+
+    // Literals
     SYMBOL_LITERAL_UNSIGNED_INTEGER,
     SYMBOL_LITERAL_SIGNED_INTEGER,
     SYMBOL_LITERAL_UNSIGNED_DECIMAL,

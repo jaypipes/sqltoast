@@ -11,8 +11,6 @@ namespace sqltoast {
 token_type_map::tt_map_t  _init_token_type_map() {
     token_type_map::tt_map_t m;
 
-    m[TOKEN_TYPE_LITERAL] = std::string("<literal>");
-    m[TOKEN_TYPE_PUNCTUATOR] = std::string("<punctuator>");
     m[TOKEN_TYPE_IDENTIFIER] = std::string("<identifier>");
 
     return m;
@@ -29,19 +27,18 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
         out << symbol_map::to_string(token.symbol);
         return out;
     }
+    if (token.is_literal()){
+        // TODO(jaypipes): Add typing of literal...
+        size_t len = (token.end - token.start);
+        out << "literal[length: " << len << "]";
+        return out;
+    }
     token_type_t tt = token.type;
     switch (tt) {
         case TOKEN_TYPE_IDENTIFIER:
             {
                 size_t len = (token.end - token.start);
                 out << "identifier[length: " << len << "]";
-            }
-            break;
-        case TOKEN_TYPE_LITERAL:
-            {
-                // TODO(jaypipes): Add typing of literal...
-                size_t len = (token.end - token.start);
-                out << "literal[length: " << len << "]";
             }
             break;
         default:
