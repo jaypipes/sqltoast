@@ -11,6 +11,9 @@ namespace sqltoast {
 symbol_map::symbol_map_t  _init_symbol_map() {
     symbol_map::symbol_map_t m;
 
+    m[SYMBOL_SOS] = std::string("<< start of input >>");
+    m[SYMBOL_EOS] = std::string("<< end of input >>");
+
     // Special characters
     m[SYMBOL_SEMICOLON] = std::string("SEMICOLON");
     m[SYMBOL_COMMA] = std::string("COMMA");
