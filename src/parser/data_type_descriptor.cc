@@ -215,7 +215,7 @@ bool parse_character_string(
         // We get here if we've processed the opening parentheses of the
         // optional length modifier and now expect to find an unsigned integer
         // followed by a closing parentheses
-        if ((*tok_it).type == TOKEN_TYPE_LITERAL) {
+        if ((*tok_it).is_literal()) {
             // Make sure we can parse our literal token to an unsigned integer
             cur_sym = (*tok_it).symbol;
             if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)

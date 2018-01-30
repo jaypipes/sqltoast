@@ -121,7 +121,7 @@ bool token_keyword(parse_context_t& ctx) {
         if (lexeme_len != entry_len)
             continue;
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {
-            token_t tok(TOKEN_TYPE_KEYWORD, entry.symbol, start, end);
+            token_t tok(entry.symbol, start, end);
             ctx.push_token(tok);
             ctx.cursor += entry_len;
             return true;

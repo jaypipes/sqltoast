@@ -116,7 +116,6 @@ push_literal:
     ctx.cursor--;
     {
         token_t tok(
-            TOKEN_TYPE_LITERAL,
             found_sym,
             parse_position_t(start),
             parse_position_t(ctx.cursor)
