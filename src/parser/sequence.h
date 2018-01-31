@@ -15,13 +15,14 @@ namespace sqltoast {
 // Returns true if the next sequence of symbols found in the tokens stack
 // follows an expected pattern. Logs a syntax error on the parse context if the
 // expected sequence of symbols was not found.
-inline bool follows_sequence(parse_context_t& ctx, tokens_t::iterator& cur_tok, const symbol_t expected_sequence[], size_t num_expected) {
+inline bool follows_sequence(parse_context_t& ctx, const symbol_t expected_sequence[], size_t num_expected) {
     symbol_t exp_sym;
     symbol_t cur_sym;
+    token_t* cur_tok;
     for (unsigned int x = 0; x < num_expected; x++) {
         exp_sym = expected_sequence[x];
-        cur_tok++;
-        if (cur_tok == ctx.tokens.end())
+        cur_tok = next_token(ctx);
+        if (cur_tok == NULL)
             goto err_unexpected;
         cur_sym = (*cur_tok).symbol;
         if (cur_sym != exp_sym)
@@ -30,9 +31,9 @@ inline bool follows_sequence(parse_context_t& ctx, tokens_t::iterator& cur_tok, 
     return true;
 err_unexpected:
     {
-        parse_position_t err_pos = (*(cur_tok - 1)).lexeme.start;
         std::stringstream estr;
-        if (cur_tok == ctx.tokens.end()) {
+        parse_position_t err_pos = ctx.lexer.cursor;
+        if (cur_tok == NULL) {
             estr << "Expected " << symbol_map::to_string(exp_sym) << " but found EOS";
         } else {
             cur_sym = (*cur_tok).symbol;

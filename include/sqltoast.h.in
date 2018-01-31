@@ -47,6 +47,8 @@ typedef parse_input_t::const_iterator parse_position_t;
 typedef struct lexeme {
     parse_position_t start;
     parse_position_t end;
+    lexeme() :start(0), end(0)
+    {}
     lexeme(
         parse_position_t start,
         parse_position_t end) :

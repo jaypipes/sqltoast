@@ -77,8 +77,7 @@ bool token_identifier(parse_context_t& ctx) {
     // identifier...
     bool res = (start != lex.cursor);
     if (res) {
-        token_t tok(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
-        ctx.push_token(tok);
+        lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
     }
     return res;
 }
@@ -106,8 +105,7 @@ bool token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape
         lex.cursor++;
         c = *lex.cursor;
         if (c == closer) {
-            token_t tok(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
-            ctx.push_token(tok);
+            lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
             return true;
         }
     }

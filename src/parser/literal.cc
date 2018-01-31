@@ -115,14 +115,10 @@ try_numeric:
     }
 push_literal:
     lex.cursor--;
-    {
-        token_t tok(
-            found_sym,
-            parse_position_t(start),
-            parse_position_t(lex.cursor)
-        );
-        ctx.push_token(tok);
-    }
+    lex.set_token(
+        found_sym,
+        parse_position_t(start),
+        parse_position_t(lex.cursor));
     return true;
 not_found:
     lex.cursor = start; // rewind... we didn't find a literal

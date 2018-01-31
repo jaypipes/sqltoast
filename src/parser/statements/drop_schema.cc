@@ -32,37 +32,53 @@ namespace sqltoast {
 //
 
 bool parse_drop_schema(parse_context_t& ctx) {
-    tokens_t::iterator tok_it = ctx.tokens.begin();
-    tokens_t::iterator tok_ident = ctx.tokens.end();
-    symbol_t exp_sym = SYMBOL_DROP;
-    symbol_t cur_sym = (*tok_it).symbol;
+    parse_cursor_t start = ctx.lexer.cursor;
+    lexeme_t ident;
+    token_t* cur_tok;
+    symbol_t cur_sym;
     statements::drop_behaviour_t behaviour = statements::DROP_BEHAVIOUR_CASCADE;
-
-    goto next_token;
 
     // BEGIN STATE MACHINE
 
-    identifier:
+    start:
+        cur_tok = next_token(ctx);
+        if (cur_tok == NULL)
+            return false;
+        cur_sym = cur_tok->symbol;
+        switch (cur_sym) {
+            case SYMBOL_SCHEMA:
+                cur_tok = next_token(ctx);
+                goto expect_identifier;
+            default:
+                // rewind
+                ctx.lexer.cursor = start;
+                return false;
+        }
+        SQLTOAST_UNREACHABLE();
+    expect_identifier:
         // We get here after successfully finding DROP followed by SCHEMA. We
         // now need to find the schema identifier
-        if (ctx.at_end(tok_it)) {
-            goto eos;
-        }
-        cur_sym = (*tok_it).symbol;
+        if (cur_tok == NULL)
+            goto err_expect_identifier;
+        cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
-            tok_ident = tok_it++;
+            fill_lexeme(cur_tok, ident);
+            cur_tok = next_token(ctx);
             goto drop_behaviour_or_statement_ending;
         }
         goto err_expect_identifier;
         SQLTOAST_UNREACHABLE();
     err_expect_identifier:
         {
-            parse_position_t err_pos = (*(tok_it)).lexeme.start;
-            tok_it++;
+            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            cur_sym = (*tok_it).symbol;
-            estr << "Expected <identifier> after DROP SCHEMA but found "
-                 << symbol_map::to_string(cur_sym);
+            if (cur_tok == NULL) {
+                estr << "Expected <identifier> after DROP SCHEMA but found EOS";
+            } else {
+                cur_sym = cur_tok->symbol;
+                estr << "Expected <identifier> after DROP SCHEMA but found "
+                     << symbol_map::to_string(cur_sym);
+            }
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -72,34 +88,32 @@ bool parse_drop_schema(parse_context_t& ctx) {
         // We get here after successfully parsing the <schema name> element,
         // which must be followed by either a statement ending or a <drop
         // behaviour clause>
-        if (ctx.at_end(tok_it)) {
+        if (cur_tok == NULL)
             goto push_statement;
-        }
 
-        cur_sym = (*tok_it).symbol;
+        cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_CASCADE || cur_sym == SYMBOL_RESTRICT) {
             if (cur_sym == SYMBOL_RESTRICT) {
                 behaviour = statements::DROP_BEHAVIOUR_RESTRICT;
             }
-            tok_it++;
+            cur_tok = next_token(ctx);
         }
         goto statement_ending;
     statement_ending:
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        if (ctx.at_end(tok_it)) {
+        if (cur_tok == NULL)
             goto push_statement;
-        }
 
-        cur_sym = (*tok_it).symbol;
+        cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_SEMICOLON) {
             // skip-consume the semicolon token
-            tok_it++;
+            cur_tok = next_token(ctx);
             goto push_statement;
         }
         {
-            parse_position_t err_pos = (*tok_it).lexeme.start;
+            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found "
                  << symbol_map::to_string(cur_sym) << std::endl;
@@ -109,52 +123,13 @@ bool parse_drop_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     push_statement:
         {
-            ctx.trim_to(tok_it);
             if (ctx.opts.disable_statement_construction)
                 return true;
-            identifier_t schema_ident((*tok_ident).lexeme);
+            identifier_t schema_ident(ident);
             auto stmt_p = std::make_unique<statements::drop_schema_t>(schema_ident, behaviour);
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
         }
-    eos:
-        if (exp_sym == SYMBOL_DROP || exp_sym == SYMBOL_SCHEMA) {
-            // Reached the end of the token stack and never found the
-            // DROP SCHEMA so just return false
-            return false;
-        }
-        {
-            // Reached the end of the token stream after already finding the
-            // DROP and SCHEMA symbols. Return a syntax error.
-            parse_position_t err_pos = (*tok_it).lexeme.start;
-            std::stringstream estr;
-            estr << "Expected <schema_name> but found EOS" << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
-    next_token:
-        if (ctx.at_end(tok_it)) {
-            goto eos;
-        }
-        cur_sym = (*tok_it).symbol;
-        tok_it++;
-        switch (cur_sym) {
-            case SYMBOL_DROP:
-                if (exp_sym == SYMBOL_DROP) {
-                    exp_sym = SYMBOL_SCHEMA;
-                }
-                goto next_token;
-            case SYMBOL_SCHEMA:
-                if (exp_sym == SYMBOL_SCHEMA) {
-                    exp_sym = SYMBOL_IDENTIFIER;
-                    goto identifier;
-                }
-                goto next_token;
-            default:
-                return false;
-        }
-        SQLTOAST_UNREACHABLE();
 }
 
 } // namespace sqltoast

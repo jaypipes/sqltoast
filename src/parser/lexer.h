@@ -60,6 +60,8 @@ typedef struct lexer {
     }
 } lexer_t;
 
+void fill_lexeme(token_t* tok, lexeme_t& lexeme);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_LEXER_H */

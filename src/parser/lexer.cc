@@ -18,6 +18,11 @@
 
 namespace sqltoast {
 
+void fill_lexeme(token_t* tok, lexeme_t& lexeme) {
+    lexeme.start = tok->lexeme.start;
+    lexeme.end = tok->lexeme.end;
+}
+
 void lexer_t::skip_simple_comments() {
     if (! peek_char('-'))
         return;
@@ -34,33 +39,22 @@ void lexer_t::skip_simple_comments() {
     } while (cursor != end_pos && *cursor != '\n');
 }
 
-bool next_token(parse_context_t& ctx) {
-    ctx.lexer.skip();
+token_t* next_token(parse_context_t &ctx) {
+    lexer_t& lex = ctx.lexer;
+    lex.skip();
     if (token_comment(ctx))
-        return true;
-    if (ctx.lexer.error != ERR_NONE)
-        return false;
+        return &lex.current_token;
+    if (lex.error != ERR_NONE)
+        return NULL;
     if (token_punctuator(ctx))
-        return true;
+        return &lex.current_token;
     if (token_literal(ctx))
-        return true;
+        return &lex.current_token;
     if (token_keyword(ctx))
-        return true;
+        return &lex.current_token;
     if (token_identifier(ctx))
-        return true;
-    return false;
-}
-
-void tokenize(parse_context_t& ctx) {
-    while (next_token(ctx)) {};
-#ifdef SQLTOAST_DEBUG
-    std::cout << "tokenize() produced:" << std::endl << "  ";
-    for (auto it = ctx.tokens.begin(); it != ctx.tokens.end(); it++) {
-        std::cout << *it << " > ";
-    }
-    std::cout << "EOS" << std::endl;
-#endif /* SQLTOAST_DEBUG */
-    return;
+        return &lex.current_token;
+    return NULL;
 }
 
 } // namespace sqltoast

@@ -4,6 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <iostream>
 #include <cctype>
 #include <sstream>
 
@@ -20,8 +21,8 @@ namespace sqltoast {
 
 static const size_t NUM_CREATE_STATEMENT_PARSERS = 2;
 static const parse_func_t create_statement_parsers[2] = {
-    &parse_create_schema,
-    &parse_create_table
+    &parse_create_table,
+    &parse_create_schema
 };
 static const size_t NUM_DROP_STATEMENT_PARSERS = 1;
 static const parse_func_t drop_statement_parsers[1] = {
@@ -31,12 +32,11 @@ static const parse_func_t drop_statement_parsers[1] = {
 void parse_statement(parse_context_t& ctx) {
     // Assumption: the top token in the stack will be of type
     // TOKEN_TYPE_KEYWORD
-    token_t& top_tok = ctx.tokens.front();
-    symbol_t& top_sym = top_tok.symbol;
+    symbol_t cur_sym = ctx.lexer.current_token.symbol;
 
     size_t num_parsers = 0;
     const parse_func_t* parsers;
-    switch (top_sym) {
+    switch (cur_sym) {
         case SYMBOL_CREATE:
         {
             num_parsers = NUM_CREATE_STATEMENT_PARSERS;
@@ -61,11 +61,11 @@ void parse_statement(parse_context_t& ctx) {
     if (ctx.result.code == PARSE_SYNTAX_ERROR) {
         // Already have a nicely-formatted error, so just return
         return;
+    } else {
+        std::stringstream estr;
+        estr << "Failed to recognize any valid SQL statement." << std::endl;
+        create_syntax_error_marker(ctx, estr, parse_position_t(ctx.lexer.cursor));
     }
-
-    std::stringstream estr;
-    estr << "Failed to recognize any valid SQL statement." << std::endl;
-    create_syntax_error_marker(ctx, estr, parse_position_t(ctx.lexer.cursor));
 }
 
 } // namespace sqltoast

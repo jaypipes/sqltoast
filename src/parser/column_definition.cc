@@ -32,22 +32,20 @@ namespace sqltoast {
 
 bool parse_column_definition(
         parse_context_t& ctx,
-        tokens_t::iterator tok_it,
+        token_t* cur_tok,
         std::vector<std::unique_ptr<column_definition_t>>& column_defs) {
-    tokens_t::iterator tok_ident = ctx.tokens.end();
-    symbol_t cur_sym = (*tok_it).symbol;
+    lexeme_t ident;
+    symbol_t cur_sym = cur_tok->symbol;
     std::unique_ptr<column_definition_t> cdef_p;
-
-    goto expect_column_name;
 
     // BEGIN STATE MACHINE
 
-    expect_column_name:
+    start:
         // We start here. The first component of the column definition is the
         // identifier that indicates the column name.
-        cur_sym = (*tok_it).symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
-            tok_ident = tok_it++;
+            fill_lexeme(cur_tok, ident);
+            cur_tok = next_token(ctx);
             goto create_column_def;
         }
         // Just return false, since callers could be looking for
@@ -56,17 +54,15 @@ bool parse_column_definition(
         SQLTOAST_UNREACHABLE();
     create_column_def:
         {
-            identifier_t col_name((*tok_ident).lexeme);
+            identifier_t col_name(ident);
             cdef_p = std::move(std::make_unique<column_definition_t>(col_name));
-            if (! parse_data_type_descriptor(ctx, tok_it, *cdef_p))
+            if (! parse_data_type_descriptor(ctx, cur_tok, *cdef_p))
                 return false;
-            tok_it = ctx.tokens.begin();
             goto push_column_def;
         }
         SQLTOAST_UNREACHABLE();
     push_column_def:
         {
-            ctx.trim_to(tok_it);
             if (ctx.opts.disable_statement_construction)
                 return true;
             column_defs.emplace_back(std::move(cdef_p));

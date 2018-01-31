@@ -16,7 +16,7 @@ namespace sqltoast {
 // matched and the supplied token iterator is pointing at the token
 // representing the DEFAULT keyword. If true is returned, cur_tok will be
 // pointing to the token representing the charset identifier
-bool require_default_charset_clause(parse_context_t& ctx, tokens_t::iterator& cur_tok);
+bool require_default_charset_clause(parse_context_t& ctx);
 
 // Returns true if the CREATE SCHEMA statement was parsed successfully from
 // the parse context
