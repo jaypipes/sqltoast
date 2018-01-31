@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <cctype>
-#include <vector>
 
 #include "sqltoast.h"
 #include "parser/token.h"
@@ -24,9 +23,6 @@ enum escape_mode {
     ESCAPE_TILDE = 3,
     ESCAPE_UNICODE_AMPERSAND = 4
 };
-
-typedef std::vector<char>::const_iterator parse_position_t;
-typedef std::vector<char>::iterator parse_cursor_t;
 
 typedef struct lexer {
     parse_position_t start_pos;
