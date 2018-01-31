@@ -16,9 +16,7 @@ namespace sqltoast {
 
 typedef struct identifier {
     const std::string name;
-    identifier(
-        parse_input_t::const_iterator start_pos,
-        parse_input_t::const_iterator end_pos) : name(start_pos, end_pos)
+    identifier(lexeme_t& lexeme) : name(lexeme.start, lexeme.end)
     {}
 } identifier_t;
 

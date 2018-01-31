@@ -34,7 +34,30 @@ enum parse_result_code {
     PARSE_SYNTAX_ERROR
 };
 
+typedef enum error {
+    ERR_NONE,
+    ERR_NO_CLOSING_DELIMITER
+} error_t;
+
 typedef std::vector<char> parse_input_t;
+
+typedef parse_input_t::iterator parse_cursor_t;
+typedef parse_input_t::const_iterator parse_position_t;
+
+typedef struct lexeme {
+    parse_position_t start;
+    parse_position_t end;
+    lexeme() :start(0), end(0)
+    {}
+    lexeme(
+        parse_position_t start,
+        parse_position_t end) :
+        start(start), end(end)
+    {}
+    inline size_t size() const {
+        return end - start;
+    }
+} lexeme_t;
 
 typedef struct parse_options {
     // The dialect of SQL to parse the input with

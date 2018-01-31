@@ -10,20 +10,19 @@
 namespace sqltoast {
 
 bool token_punctuator(parse_context_t& ctx) {
-    const char c = *ctx.cursor++;
+    lexer_t& lex = ctx.lexer;
+    const char c = *lex.cursor++;
     for (unsigned int x = 0; x < NUM_PUNCTUATORS; x++) {
         if (c == punctuator_char_map[x]) {
-            token_t tok(
-                TOKEN_TYPE_PUNCTUATOR,
+            lex.set_token(
                 punctuator_symbol_map[x],
-                parse_position_t(ctx.cursor),
-                parse_position_t(ctx.cursor+1)
+                parse_position_t(lex.cursor),
+                parse_position_t(lex.cursor+1)
             );
-            ctx.push_token(tok);
             return true;
         }
     }
-    ctx.cursor--; // rewind... we didn't find a punctuator
+    lex.cursor--; // rewind... we didn't find a punctuator
     return false;
 }
 

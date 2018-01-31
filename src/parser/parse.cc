@@ -28,45 +28,43 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
     parse_result_t res;
     res.code = PARSE_OK;
     parse_context_t ctx(res, opts, subject);
+    lexer_t& lex = ctx.lexer;
+    token_t* cur_tok;
 
-    skip_ws(ctx);
-    if (ctx.cursor == ctx.end_pos) {
+    if (lex.cursor == lex.end_pos) {
         res.code = PARSE_INPUT_ERROR;
         res.error.assign("Nothing to parse.");
         return res;
     }
 
-    tokenize(ctx);
-
-    while (res.code == PARSE_OK && ! ctx.tokens.empty()) {
-        token_t &top_tok = ctx.tokens.front();
-        token_type_t& tt = top_tok.type;
-        switch (tt) {
-            case TOKEN_TYPE_KEYWORD:
-                parse_statement(ctx);
-                break;
-            case TOKEN_TYPE_COMMENT:
-                // Just remove the comment from the token stack...
-                ctx.tokens.pop_front();
-                break;
-            case TOKEN_TYPE_PUNCTUATOR:
-            {
-                std::stringstream estr;
-                estr << "Parse subject must either begin with a keyword or a "
-                        "comment, but found punctuation." << std::endl;
-                create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
-            }
-            break;
-            case TOKEN_TYPE_IDENTIFIER:
-            {
-                std::stringstream estr;
-                estr << "Parse subject must either begin with a keyword or a "
-                        "comment, but found identifier." << std::endl;
-                create_syntax_error_marker(ctx, estr, parse_position_t(ctx.cursor));
-            }
-            break;
-            default:
-                break;
+    while (res.code == PARSE_OK) {
+        cur_tok = next_token(ctx);
+        if (cur_tok == NULL)
+            return res;
+        if (cur_tok->is_keyword()) {
+            parse_statement(ctx);
+            continue;
+        }
+        if (cur_tok->is_punctuator()) {
+            std::stringstream estr;
+            estr << "Parse subject must either begin with a keyword or a "
+                    "comment, but found punctuation." << std::endl;
+            create_syntax_error_marker(ctx, estr, parse_position_t(lex.cursor));
+            continue;
+        }
+        if (cur_tok->is_literal()) {
+            std::stringstream estr;
+            estr << "Parse subject must either begin with a keyword or a "
+                    "comment, but found literal." << std::endl;
+            create_syntax_error_marker(ctx, estr, parse_position_t(lex.cursor));
+            continue;
+        }
+        if (cur_tok->is_identifier()) {
+            std::stringstream estr;
+            estr << "Parse subject must either begin with a keyword or a "
+                    "comment, but found identifier." << std::endl;
+            create_syntax_error_marker(ctx, estr, parse_position_t(lex.cursor));
+            continue;
         }
     }
 

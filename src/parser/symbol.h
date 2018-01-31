@@ -28,12 +28,14 @@ namespace sqltoast {
 // "CREATE" or "DATABASE". So, instead, we'll mark that the token represents
 // the SYMBOL_CREATE or SYMBOL_DATABASE symbols...
 typedef enum symbol {
-    // Special characters
+    SYMBOL_SOS, // Start of the input stream
+    SYMBOL_EOS, // End of the input stream
+
+    // Punctuators
     SYMBOL_SEMICOLON,
     SYMBOL_COMMA,
     SYMBOL_LPAREN,
     SYMBOL_RPAREN,
-    SYMBOL_PERIOD,
 
     // Reserved keywords
     SYMBOL_AUTHORIZATION,
@@ -58,6 +60,8 @@ typedef enum symbol {
     // Other symbols
     SYMBOL_IDENTIFIER,
     SYMBOL_COMMENT,
+
+    // Literals
     SYMBOL_LITERAL_UNSIGNED_INTEGER,
     SYMBOL_LITERAL_SIGNED_INTEGER,
     SYMBOL_LITERAL_UNSIGNED_DECIMAL,

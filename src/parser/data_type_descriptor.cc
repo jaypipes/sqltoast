@@ -122,36 +122,32 @@ namespace sqltoast {
 
 bool parse_data_type_descriptor(
         parse_context_t& ctx,
-        tokens_t::iterator tok_it,
+        token_t* cur_tok,
         column_definition_t& column_def) {
-    symbol_t cur_sym = (*tok_it).symbol;
-
-    goto expect_data_type;
+    symbol_t cur_sym = cur_tok->symbol;
 
     // BEGIN STATE MACHINE
 
-    expect_data_type:
+    start:
         // We start here. The first component of the column definition is the
         // identifier that indicates the column name.
-        tok_it = ctx.skip_comments(tok_it);
-        cur_sym = (*tok_it).symbol;
         switch (cur_sym) {
             case SYMBOL_CHAR:
             case SYMBOL_CHARACTER:
             case SYMBOL_VARCHAR:
-                return parse_character_string(ctx, tok_it, column_def);
+                return parse_character_string(ctx, cur_tok, column_def);
             default:
                 goto err_expect_data_type;
         }
         SQLTOAST_UNREACHABLE();
     err_expect_data_type:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (cur_tok == NULL) {
                 estr << "Expected data type after <column name> but found EOS";
             } else {
-                cur_sym = (*tok_it).symbol;
+                cur_sym = cur_tok->symbol;
                 estr << "Expected data type after <column name> but found "
                      << symbol_map::to_string(cur_sym);
             }
@@ -164,30 +160,25 @@ bool parse_data_type_descriptor(
 
 bool parse_character_string(
         parse_context_t& ctx,
-        tokens_t::iterator tok_it,
+        token_t* cur_tok,
         column_definition_t& column_def) {
-    symbol_t cur_sym = (*tok_it).symbol;
+    symbol_t cur_sym = cur_tok->symbol;
     data_type_t data_type = DATA_TYPE_CHAR;
     size_t char_len = 0;
 
-    goto expect_data_type;
-
     // BEGIN STATE MACHINE
-
-    expect_data_type:
+    start:
         // We get here after the column name identifier has been found and
         // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
         // were next
-        tok_it = ctx.skip_comments(tok_it);
-        cur_sym = (*tok_it).symbol;
         switch (cur_sym) {
             case SYMBOL_CHAR:
             case SYMBOL_CHARACTER:
-                tok_it++;
+                cur_tok = next_token(ctx);
                 goto optional_char_varying;
             case SYMBOL_VARCHAR:
                 data_type = DATA_TYPE_VARCHAR;
-                tok_it++;
+                cur_tok = next_token(ctx);
                 goto optional_length;
             default:
                 return false;
@@ -197,21 +188,23 @@ bool parse_character_string(
         // We get here if we got a CHAR or CHARACTER as the data type. This
         // might be followed by the VARYING symbol, in which case we will
         // process a VARCHAR. Otherwise, we'll process a CHAR type
-        tok_it = ctx.skip_comments(tok_it);
-        cur_sym = (*tok_it).symbol;
+        if (cur_tok == NULL)
+            goto push_descriptor;
+        cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_VARYING) {
             data_type = DATA_TYPE_VARCHAR;
-            tok_it++;
+            cur_tok = next_token(ctx);
         }
         goto optional_length;
     optional_length:
         // We get here after determining the exact type of the character
         // string. The type will be followed by an optional length specifier
         // clause, which if an unsigned integer enclosed by parentheses.
-        tok_it = ctx.skip_comments(tok_it);
-        cur_sym = (*tok_it).symbol;
+        if (cur_tok == NULL)
+            goto push_descriptor;
+        cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_LPAREN) {
-            tok_it++;
+            cur_tok = next_token(ctx);
             goto process_length;
         }
         goto optional_character_set;
@@ -219,27 +212,28 @@ bool parse_character_string(
         // We get here if we've processed the opening parentheses of the
         // optional length modifier and now expect to find an unsigned integer
         // followed by a closing parentheses
-        tok_it = ctx.skip_comments(tok_it);
-        if ((*tok_it).type == TOKEN_TYPE_LITERAL) {
+        if (cur_tok == NULL)
+            goto err_expect_size_literal;
+        if (cur_tok->is_literal()) {
             // Make sure we can parse our literal token to an unsigned integer
-            cur_sym = (*tok_it).symbol;
+            cur_sym = cur_tok->symbol;
             if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
                 goto err_expect_size_literal;
-            const std::string char_len_str((*tok_it).start, (*tok_it).end);
+            const std::string char_len_str(cur_tok->lexeme.start, cur_tok->lexeme.end);
             char_len = atoi(char_len_str.data());
-            tok_it++;
+            cur_tok = next_token(ctx);
             goto length_close;
         } else {
             goto err_expect_size_literal;
         }
     err_expect_size_literal:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (cur_tok == NULL) {
                 estr << "Expected unsigned integer as length after '(' but found EOS";
             } else {
-                cur_sym = (*tok_it).symbol;
+                cur_sym = cur_tok->symbol;
                 estr << "Expected unsigned integer as length after '(' but found "
                      << symbol_map::to_string(cur_sym);
             }
@@ -252,20 +246,22 @@ bool parse_character_string(
         // We get here if we've processed the opening parentheses of the length
         // modifier and the unsigned integer size and now expect a closing
         // parentheses for the length modifier
-        cur_sym = (*tok_it).symbol;
+        if (cur_tok == NULL)
+            goto err_expect_length_rparen;
+        cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_RPAREN) {
-            tok_it++;
+            cur_tok = next_token(ctx);
             goto optional_character_set;
         }
         goto err_expect_length_rparen;
     err_expect_length_rparen:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (tok_it == ctx.tokens.end()) {
+            if (cur_tok == NULL) {
                 estr << "Expected ')' after length specifier but found EOS";
             } else {
-                cur_sym = (*tok_it).symbol;
+                cur_sym = cur_tok->symbol;
                 estr << "Expected ')' after length specifier but found "
                      << symbol_map::to_string(cur_sym);
             }
@@ -278,10 +274,11 @@ bool parse_character_string(
         // We get here after processing the optional length specifier. After
         // that specifier, there may be an optional CHARACTER SET <character
         // set specification> clause
-        tok_it = ctx.skip_comments(tok_it);
-        cur_sym = (*tok_it).symbol;
+        if (cur_tok == NULL)
+            goto push_descriptor;
+        cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_CHARACTER) {
-            tok_it++;
+            cur_tok = next_token(ctx);
             goto process_character_set;
         }
         goto push_descriptor;
@@ -289,7 +286,6 @@ bool parse_character_string(
         goto push_descriptor;
     push_descriptor:
         {
-            ctx.trim_to(tok_it);
             if (ctx.opts.disable_statement_construction)
                 return true;
             std::unique_ptr<data_type_descriptor_t> dtd_p;

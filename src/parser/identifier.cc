@@ -35,56 +35,58 @@ namespace sqltoast {
 // Note that whitespace will have been skipped already so that the character
 // pointed to by the parse context is guaranteed to be not whitespace.
 bool token_identifier(parse_context_t& ctx) {
-    parse_position_t start = ctx.cursor;
+    lexer_t& lex = ctx.lexer;
+    parse_position_t start = lex.cursor;
+    escape_mode current_escape = ESCAPE_NONE;
 
     // Let's first look to see if we have the potential start of a delimited
     // identifier of some sort...
-    switch (*ctx.cursor) {
+    switch (*lex.cursor) {
         case '\'':
-            ctx.current_escape = ESCAPE_SINGLE_QUOTE;
-            ctx.cursor++;
+            current_escape = ESCAPE_SINGLE_QUOTE;
+            lex.cursor++;
             break;
         case '"':
-            ctx.current_escape = ESCAPE_DOUBLE_QUOTE;
-            ctx.cursor++;
+            current_escape = ESCAPE_DOUBLE_QUOTE;
+            lex.cursor++;
             break;
         case '`':
-            ctx.current_escape = ESCAPE_TILDE;
-            ctx.cursor++;
+            current_escape = ESCAPE_TILDE;
+            lex.cursor++;
             break;
         case 'U':
             // TODO(jaypipes): Check for PostgreSQL-style Unicode delimited
             // identifiers that look like U&"\0441\043B\043E\043D"
             break;
     }
-    if (ctx.current_escape != ESCAPE_NONE)
+    if (current_escape != ESCAPE_NONE)
         // handle delimited identifiers...
-        return token_delimited_identifier(ctx);
+        return token_delimited_identifier(ctx, current_escape);
 
     // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
-    while (! std::isspace(*ctx.cursor)
-            && ctx.end_pos != ctx.cursor
-            && *ctx.cursor != ';'
-            && *ctx.cursor != '('
-            && *ctx.cursor != ')'
-            && *ctx.cursor != ',')
-        ctx.cursor++;
+    while (! std::isspace(*lex.cursor)
+            && lex.end_pos != lex.cursor
+            && *lex.cursor != ';'
+            && *lex.cursor != '('
+            && *lex.cursor != ')'
+            && *lex.cursor != ',')
+        lex.cursor++;
 
     // if we went more than a single character, that's an
     // identifier...
-    bool res = (start != ctx.cursor);
+    bool res = (start != lex.cursor);
     if (res) {
-        token_t tok(TOKEN_TYPE_IDENTIFIER, SYMBOL_IDENTIFIER, start, parse_position_t(ctx.cursor));
-        ctx.push_token(tok);
+        lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
     }
     return res;
 }
 
-bool token_delimited_identifier(parse_context_t& ctx) {
-    parse_position_t start = ctx.cursor;
+bool token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape) {
+    lexer_t& lex = ctx.lexer;
+    parse_position_t start = lex.cursor;
     char closer;
-    switch (ctx.current_escape) {
+    switch (current_escape) {
         case ESCAPE_SINGLE_QUOTE:
             closer = '\'';
             break;
@@ -99,13 +101,11 @@ bool token_delimited_identifier(parse_context_t& ctx) {
             return false;
     }
     char c;
-    while (ctx.cursor != ctx.end_pos) {
-        ctx.cursor++;
-        c = *ctx.cursor;
+    while (lex.cursor != lex.end_pos) {
+        lex.cursor++;
+        c = *lex.cursor;
         if (c == closer) {
-            ctx.current_escape = ESCAPE_NONE;
-            token_t tok(TOKEN_TYPE_IDENTIFIER, SYMBOL_IDENTIFIER, start, parse_position_t(ctx.cursor));
-            ctx.push_token(tok);
+            lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
             return true;
         }
     }
@@ -121,6 +121,7 @@ bool token_delimited_identifier(parse_context_t& ctx) {
     }
     create_syntax_error_marker(ctx, estr, start);
     ctx.result.error.assign(estr.str());
+    lex.error = ERR_NO_CLOSING_DELIMITER;
     return false;
 }
 

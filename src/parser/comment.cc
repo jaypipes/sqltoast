@@ -8,9 +8,6 @@
 
 #include "parser/error.h"
 #include "parser/comment.h"
-#include "parser/peek.h"
-#include "parser/symbol.h"
-#include "parser/token.h"
 
 namespace sqltoast {
 
@@ -31,68 +28,48 @@ namespace sqltoast {
 // <bracketed comment contents> ::= [ { <comment character> | <separator> }... ]
 //
 // <comment character> ::= <nonquote character> | <quote>
+//
+// Simple comments are skipped over by the lexer completely. Bracketed
+// comments, because they are sometimes used to embed dialect-specific
+// triggers, are consumed as tokens.
 
 bool token_comment(parse_context_t& ctx) {
-    return token_simple_comment(ctx) | token_bracketed_comment(ctx);
-}
-
-bool token_simple_comment(parse_context_t& ctx) {
-    if (! peek_char(ctx, '-'))
+    lexer_t& lex = ctx.lexer;
+    if (! lex.peek_char('/'))
         return false;
 
-    ctx.cursor++;
-    if (! peek_char(ctx, '-')) {
-        ctx.cursor--; // rewind
+    lex.cursor++;
+    if (! lex.peek_char('*')) {
+        lex.cursor--; // rewind
         return false;
     }
 
-    parse_position_t start = ctx.cursor - 2;
-
-    // The comment content is from the cursor until we find a newline of EOS
-    do {
-        ctx.cursor++;
-    } while (ctx.cursor != ctx.end_pos && *ctx.cursor != '\n');
-
-    token_t tok(TOKEN_TYPE_COMMENT, SYMBOL_COMMENT, start, parse_position_t(ctx.cursor));
-    ctx.push_token(tok);
-    return true;
-}
-
-bool token_bracketed_comment(parse_context_t& ctx) {
-    if (! peek_char(ctx, '/'))
-        return false;
-
-    ctx.cursor++;
-    if (! peek_char(ctx, '*')) {
-        ctx.cursor--; // rewind
-        return false;
-    }
-
-    parse_position_t start = ctx.cursor - 2;
+    parse_position_t start = lex.cursor;
 
     // OK, we found the start of a comment. Run through the subject until we
     // find the closing */ marker
     do {
-        ctx.cursor++;
-        if (ctx.cursor == ctx.end_pos || (ctx.cursor + 1) == ctx.end_pos) {
+        lex.cursor++;
+        if (lex.cursor == lex.end_pos || (lex.cursor + 1) == lex.end_pos) {
             goto err_no_end_marker;
         }
-    } while (*ctx.cursor != '*' || *(ctx.cursor + 1) != '/');
+    } while (*lex.cursor != '*' || *(lex.cursor + 1) != '/');
     goto create_token;
 
     create_token:
     {
-        ctx.cursor += 2;
-        token_t tok(TOKEN_TYPE_COMMENT, SYMBOL_COMMENT, start, parse_position_t(ctx.cursor));
-        ctx.push_token(tok);
+        parse_position_t end = lex.cursor - 1;
+        lex.cursor += 2;
+        lex.set_token(SYMBOL_COMMENT, start, end);
         return true;
     }
 
     err_no_end_marker:
     {
+        lex.error = ERR_NO_CLOSING_DELIMITER;
         std::stringstream estr;
         estr << "Expected closing */ comment marker but found EOS" << std::endl;
-        create_syntax_error_marker(ctx, estr, ctx.end_pos);
+        create_syntax_error_marker(ctx, estr, lex.end_pos);
         return false;
     }
 }
