@@ -57,7 +57,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_identifier:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             tok_it++;
             std::stringstream estr;
             cur_sym = (*tok_it).symbol;
@@ -99,7 +99,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
             goto push_statement;
         }
         {
-            parse_position_t err_pos = (*tok_it).start;
+            parse_position_t err_pos = (*tok_it).lexeme.start;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found "
                  << symbol_map::to_string(cur_sym) << std::endl;
@@ -112,7 +112,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
             ctx.trim_to(tok_it);
             if (ctx.opts.disable_statement_construction)
                 return true;
-            identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
+            identifier_t schema_ident((*tok_ident).lexeme);
             auto stmt_p = std::make_unique<statements::drop_schema_t>(schema_ident, behaviour);
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
@@ -126,7 +126,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         {
             // Reached the end of the token stream after already finding the
             // DROP and SCHEMA symbols. Return a syntax error.
-            parse_position_t err_pos = (*tok_it).start;
+            parse_position_t err_pos = (*tok_it).lexeme.start;
             std::stringstream estr;
             estr << "Expected <schema_name> but found EOS" << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);

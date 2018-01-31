@@ -80,7 +80,7 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_temporary:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found EOS";
@@ -96,7 +96,7 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_table:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found EOS";
@@ -123,7 +123,7 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_identifier:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected <identifier> after CREATE TABLE but found EOS";
@@ -150,7 +150,7 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_lparen:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected opening '(' after CREATE TABLE <table name> but found EOS";
@@ -186,7 +186,7 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_rparen:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected closing ')' after CREATE TABLE <table name> but found EOS";
@@ -215,7 +215,7 @@ bool parse_create_table(parse_context_t& ctx) {
             goto push_statement;
         }
         {
-            parse_position_t err_pos = (*tok_it).start;
+            parse_position_t err_pos = (*tok_it).lexeme.start;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found "
                  << symbol_map::to_string(cur_sym) << std::endl;
@@ -228,7 +228,7 @@ bool parse_create_table(parse_context_t& ctx) {
             ctx.trim_to(tok_it);
             if (ctx.opts.disable_statement_construction)
                 return true;
-            identifier_t table_ident((*tok_ident).start, (*tok_ident).end);
+            identifier_t table_ident((*tok_ident).lexeme);
             auto stmt_p = std::make_unique<statements::create_table_t>(table_type, table_ident);
             (*stmt_p).column_definitions = std::move(column_defs);
             ctx.result.statements.emplace_back(std::move(stmt_p));
@@ -243,7 +243,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             // Reached the end of the token stream after already finding the
             // CREATE and TABLE symbols. Return a syntax error.
-            parse_position_t err_pos = (*tok_it).start;
+            parse_position_t err_pos = (*tok_it).lexeme.start;
             std::stringstream estr;
             estr << "Expected <table_name_clause> but found EOS";
             create_syntax_error_marker(ctx, estr, err_pos);

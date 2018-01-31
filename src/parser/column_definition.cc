@@ -56,7 +56,7 @@ bool parse_column_definition(
         SQLTOAST_UNREACHABLE();
     create_column_def:
         {
-            identifier_t col_name((*tok_ident).start, (*tok_ident).end);
+            identifier_t col_name((*tok_ident).lexeme);
             cdef_p = std::move(std::make_unique<column_definition_t>(col_name));
             if (! parse_data_type_descriptor(ctx, tok_it, *cdef_p))
                 return false;

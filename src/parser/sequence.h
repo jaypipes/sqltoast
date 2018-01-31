@@ -30,7 +30,7 @@ inline bool follows_sequence(parse_context_t& ctx, tokens_t::iterator& cur_tok, 
     return true;
 err_unexpected:
     {
-        parse_position_t err_pos = (*(cur_tok - 1)).start;
+        parse_position_t err_pos = (*(cur_tok - 1)).lexeme.start;
         std::stringstream estr;
         if (cur_tok == ctx.tokens.end()) {
             estr << "Expected " << symbol_map::to_string(exp_sym) << " but found EOS";

@@ -15,18 +15,15 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
     }
     if (token.is_literal()){
         // TODO(jaypipes): Add typing of literal...
-        size_t len = (token.end - token.start);
-        out << "literal[length: " << len << "]";
+        out << "literal[length: " << token.lexeme.size() << "]";
         return out;
     }
     if (token.is_identifier()){
-        size_t len = (token.end - token.start);
-        out << "identifier[length: " << len << "]";
+        out << "identifier[length: " << token.lexeme.size() << "]";
         return out;
     }
     if (token.symbol == SYMBOL_COMMENT) {
-        size_t len = (token.end - token.start);
-        out << "comment[length: " << len << "]";
+        out << "comment[length: " << token.lexeme.size() << "]";
         return out;
     } else {
         out << symbol_map::to_string(token.symbol);

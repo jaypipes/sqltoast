@@ -114,7 +114,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_authz_identifier:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             tok_it++;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
@@ -162,7 +162,7 @@ bool parse_create_schema(parse_context_t& ctx) {
             goto default_charset_clause;
         }
         {
-            parse_position_t err_pos = (*tok_it).start;
+            parse_position_t err_pos = (*tok_it).lexeme.start;
             std::stringstream estr;
             estr << "Expected EOS, SEMICOLON, <default character set clause> "
                  << " or <schema_authorization_clause> but found "
@@ -186,7 +186,7 @@ bool parse_create_schema(parse_context_t& ctx) {
             goto push_statement;
         }
         {
-            parse_position_t err_pos = (*tok_it).start;
+            parse_position_t err_pos = (*tok_it).lexeme.start;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found "
                  << symbol_map::to_string(cur_sym) << std::endl;
@@ -199,18 +199,14 @@ bool parse_create_schema(parse_context_t& ctx) {
             ctx.trim_to(tok_it);
             if (ctx.opts.disable_statement_construction)
                 return true;
-            identifier_t schema_ident((*tok_ident).start, (*tok_ident).end);
+            identifier_t schema_ident((*tok_ident).lexeme);
             auto stmt_p = std::make_unique<statements::create_schema_t>(schema_ident);
             if (found_authz) {
-                parse_position_t id_start = (*tok_authz_ident).start;
-                parse_position_t id_end = (*tok_authz_ident).end;
-                auto p_authz = std::make_unique<identifier_t>(id_start, id_end);
+                auto p_authz = std::make_unique<identifier_t>((*tok_authz_ident).lexeme);
                 (*stmt_p).authorization_identifier = std::move(p_authz);
             }
             if (found_default_charset) {
-                parse_position_t id_start = (*tok_default_charset_ident).start;
-                parse_position_t id_end = (*tok_default_charset_ident).end;
-                auto p_def_charset = std::make_unique<identifier_t>(id_start, id_end);
+                auto p_def_charset = std::make_unique<identifier_t>((*tok_default_charset_ident).lexeme);
                 (*stmt_p).default_charset = std::move(p_def_charset);
             }
             ctx.result.statements.emplace_back(std::move(stmt_p));
@@ -225,7 +221,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         {
             // Reached the end of the token stream after already finding the
             // CREATE and SCHEMA symbols. Return a syntax error.
-            parse_position_t err_pos = (*tok_it).start;
+            parse_position_t err_pos = (*tok_it).lexeme.start;
             std::stringstream estr;
             estr << "Expected <schema_name_clause> but found EOS";
             create_syntax_error_marker(ctx, estr, err_pos);

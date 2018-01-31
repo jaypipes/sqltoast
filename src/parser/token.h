@@ -8,25 +8,20 @@
 #define SQLTOAST_PARSER_TOKEN_H
 
 #include <ostream>
-#include <map>
-#include <string>
-#include <vector>
 
 #include "symbol.h"
+#include "sqltoast.h"
 
 namespace sqltoast {
 
-typedef std::vector<char>::const_iterator parse_position_t;
-
 typedef struct token {
     symbol_t symbol;
-    parse_position_t start;
-    parse_position_t end;
+    lexeme_t lexeme;
     token(
         symbol_t symbol,
         parse_position_t start,
         parse_position_t end) :
-        symbol(symbol), start(start), end(end)
+        symbol(symbol), lexeme(start, end)
     {}
     inline bool is_literal() const {
         return (symbol >= SYMBOL_LITERAL_UNSIGNED_INTEGER && symbol <= SYMBOL_LITERAL_APPROXIMATE_NUMBER);

@@ -145,7 +145,7 @@ bool parse_data_type_descriptor(
         SQLTOAST_UNREACHABLE();
     err_expect_data_type:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected data type after <column name> but found EOS";
@@ -220,7 +220,7 @@ bool parse_character_string(
             cur_sym = (*tok_it).symbol;
             if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
                 goto err_expect_size_literal;
-            const std::string char_len_str((*tok_it).start, (*tok_it).end);
+            const std::string char_len_str((*tok_it).lexeme.start, (*tok_it).lexeme.end);
             char_len = atoi(char_len_str.data());
             tok_it++;
             goto length_close;
@@ -229,7 +229,7 @@ bool parse_character_string(
         }
     err_expect_size_literal:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected unsigned integer as length after '(' but found EOS";
@@ -255,7 +255,7 @@ bool parse_character_string(
         goto err_expect_length_rparen;
     err_expect_length_rparen:
         {
-            parse_position_t err_pos = (*(tok_it)).start;
+            parse_position_t err_pos = (*(tok_it)).lexeme.start;
             std::stringstream estr;
             if (ctx.at_end(tok_it)) {
                 estr << "Expected ')' after length specifier but found EOS";

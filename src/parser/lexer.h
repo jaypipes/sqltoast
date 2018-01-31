@@ -55,8 +55,8 @@ typedef struct lexer {
     }
     inline void set_token(symbol_t sym, parse_position_t start, parse_position_t end) {
         current_token.symbol = sym;
-        current_token.start = start;
-        current_token.end = end;
+        current_token.lexeme.start = start;
+        current_token.lexeme.end = end;
 #ifdef SQLTOAST_DEBUG
         std::cout << current_token << std::endl;
 #endif
