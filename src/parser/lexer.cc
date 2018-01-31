@@ -36,24 +36,16 @@ void lexer_t::skip_simple_comments() {
 
 bool next_token(parse_context_t& ctx) {
     ctx.lexer.skip();
-    if (ctx.result.code == PARSE_SYNTAX_ERROR)
-        return false;
     if (token_comment(ctx))
         return true;
-    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+    if (ctx.lexer.error != ERR_NONE)
         return false;
     if (token_punctuator(ctx))
         return true;
-    if (ctx.result.code == PARSE_SYNTAX_ERROR)
-        return false;
     if (token_literal(ctx))
         return true;
-    if (ctx.result.code == PARSE_SYNTAX_ERROR)
-        return false;
     if (token_keyword(ctx))
         return true;
-    if (ctx.result.code == PARSE_SYNTAX_ERROR)
-        return false;
     if (token_identifier(ctx))
         return true;
     return false;

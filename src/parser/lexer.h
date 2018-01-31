@@ -32,13 +32,13 @@ typedef struct lexer {
     parse_position_t start_pos;
     parse_position_t end_pos;
     parse_cursor_t cursor;
-    escape_mode current_escape;
+    error_t error;
     token_t current_token;
     lexer(parse_input_t& subject) :
         start_pos(subject.cbegin()),
         end_pos(subject.cend()),
         cursor(subject.begin()),
-        current_escape(ESCAPE_NONE),
+        error(ERR_NONE),
         current_token(SYMBOL_SOS, subject.cbegin(), subject.cbegin())
     {}
     void skip_simple_comments();

@@ -34,6 +34,11 @@ enum parse_result_code {
     PARSE_SYNTAX_ERROR
 };
 
+typedef enum error {
+    ERR_NONE,
+    ERR_NO_CLOSING_DELIMITER
+} error_t;
+
 typedef std::vector<char> parse_input_t;
 typedef parse_input_t::const_iterator parse_position_t;
 

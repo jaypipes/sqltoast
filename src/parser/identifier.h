@@ -19,7 +19,7 @@ bool token_identifier(parse_context_t& ctx);
 
 // Returns true if a delimited identifier can be parsed from the parse
 // context's cursor position.
-bool token_delimited_identifier(parse_context_t& ctx);
+bool token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape);
 
 } // namespace sqltoast
 

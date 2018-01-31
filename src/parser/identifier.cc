@@ -37,20 +37,21 @@ namespace sqltoast {
 bool token_identifier(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = lex.cursor;
+    escape_mode current_escape = ESCAPE_NONE;
 
     // Let's first look to see if we have the potential start of a delimited
     // identifier of some sort...
     switch (*lex.cursor) {
         case '\'':
-            lex.current_escape = ESCAPE_SINGLE_QUOTE;
+            current_escape = ESCAPE_SINGLE_QUOTE;
             lex.cursor++;
             break;
         case '"':
-            lex.current_escape = ESCAPE_DOUBLE_QUOTE;
+            current_escape = ESCAPE_DOUBLE_QUOTE;
             lex.cursor++;
             break;
         case '`':
-            lex.current_escape = ESCAPE_TILDE;
+            current_escape = ESCAPE_TILDE;
             lex.cursor++;
             break;
         case 'U':
@@ -58,9 +59,9 @@ bool token_identifier(parse_context_t& ctx) {
             // identifiers that look like U&"\0441\043B\043E\043D"
             break;
     }
-    if (lex.current_escape != ESCAPE_NONE)
+    if (current_escape != ESCAPE_NONE)
         // handle delimited identifiers...
-        return token_delimited_identifier(ctx);
+        return token_delimited_identifier(ctx, current_escape);
 
     // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
@@ -82,11 +83,11 @@ bool token_identifier(parse_context_t& ctx) {
     return res;
 }
 
-bool token_delimited_identifier(parse_context_t& ctx) {
+bool token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = lex.cursor;
     char closer;
-    switch (lex.current_escape) {
+    switch (current_escape) {
         case ESCAPE_SINGLE_QUOTE:
             closer = '\'';
             break;
@@ -105,7 +106,6 @@ bool token_delimited_identifier(parse_context_t& ctx) {
         lex.cursor++;
         c = *lex.cursor;
         if (c == closer) {
-            lex.current_escape = ESCAPE_NONE;
             token_t tok(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
             ctx.push_token(tok);
             return true;
@@ -123,6 +123,7 @@ bool token_delimited_identifier(parse_context_t& ctx) {
     }
     create_syntax_error_marker(ctx, estr, start);
     ctx.result.error.assign(estr.str());
+    lex.error = ERR_NO_CLOSING_DELIMITER;
     return false;
 }
 

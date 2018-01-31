@@ -66,6 +66,7 @@ bool token_comment(parse_context_t& ctx) {
 
     err_no_end_marker:
     {
+        lex.error = ERR_NO_CLOSING_DELIMITER;
         std::stringstream estr;
         estr << "Expected closing */ comment marker but found EOS" << std::endl;
         create_syntax_error_marker(ctx, estr, lex.end_pos);
