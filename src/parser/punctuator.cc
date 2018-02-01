@@ -8,18 +8,17 @@
 
 namespace sqltoast {
 
-tokenize_result_t token_punctuator(lexer_t& lex) {
-    const char c = *lex.cursor++;
+tokenize_result_t token_punctuator(parse_position_t cursor) {
+    const char c = *cursor;
     for (unsigned int x = 0; x < NUM_PUNCTUATORS; x++) {
         if (c == punctuator_char_map[x]) {
             return tokenize_result_t(
                 punctuator_symbol_map[x],
-                parse_position_t(lex.cursor),
-                parse_position_t(lex.cursor+1)
+                parse_position_t(cursor),
+                parse_position_t(cursor)
             );
         }
     }
-    lex.cursor--; // rewind... we didn't find a punctuator
     return tokenize_result_t(TOKEN_NOT_FOUND);
 }
 

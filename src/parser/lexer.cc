@@ -24,11 +24,11 @@ void fill_lexeme(token_t* tok, lexeme_t& lexeme) {
 }
 
 void lexer_t::skip_simple_comments() {
-    if (! peek_char('-'))
+    if (*cursor != '-')
         return;
 
     cursor++;
-    if (! peek_char('-')) {
+    if (*cursor != '-') {
         cursor--; // rewind
         return;
     }
@@ -48,16 +48,38 @@ static tokenize_func_t tokenizers[5] = {
     &token_identifier
 };
 
-token_t* lexer_t::next_token() {
+symbol_t lexer_t::peek() const {
+    parse_position_t cur = cursor;
     // Advance the lexer's cursor over any whitespace or simple comments
-    while (std::isspace(*cursor))
-        cursor++;
+    while (std::isspace(*cur))
+        cur++;
+
+    for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
+        auto tok_res = tokenizers[x](cur);
+        if (tok_res.code == TOKEN_FOUND)
+            return tok_res.token.symbol;
+        if (tok_res.code == TOKEN_NOT_FOUND)
+            continue;
+        // There was an error in tokenizing... return some error marker?
+        return SYMBOL_EOS;
+    }
+    // No more tokens
+    return SYMBOL_EOS;
+}
+
+token_t* lexer_t::next_token() {
+    parse_position_t cur = cursor;
+    // Advance the lexer's cursor over any whitespace or simple comments
+    while (std::isspace(*cur))
+        cur++;
     skip_simple_comments();
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
-        auto tok_res = tokenizers[x](*this);
+        auto tok_res = tokenizers[x](cur);
         if (tok_res.code == TOKEN_FOUND) {
             current_token = tok_res.token;
+            cursor = tok_res.token.lexeme.end;
+            cursor++;
             return &current_token;
         }
         if (tok_res.code == TOKEN_NOT_FOUND)

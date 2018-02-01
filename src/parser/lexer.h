@@ -27,7 +27,7 @@ enum escape_mode {
 typedef struct lexer {
     parse_position_t start_pos;
     parse_position_t end_pos;
-    parse_cursor_t cursor;
+    parse_position_t cursor;
     error_t error;
     token_t current_token;
     lexer(parse_input_t& subject) :
@@ -38,9 +38,7 @@ typedef struct lexer {
         current_token(SYMBOL_SOS, subject.cbegin(), subject.cbegin())
     {}
     void skip_simple_comments();
-    inline bool peek_char(const char c) {
-        return ((cursor != end_pos && (*cursor == c)));
-    }
+    symbol_t peek() const;
 
     // Attempts to find the next token. If a token was found, returns a pointer
     // to that token, else NULL.
@@ -65,7 +63,7 @@ typedef struct tokenize_result {
     {}
 } tokenize_result_t;
 
-typedef tokenize_result_t (*tokenize_func_t) (lexer_t& lex);
+typedef tokenize_result_t (*tokenize_func_t) (parse_position_t cursor);
 
 void fill_lexeme(token_t* tok, lexeme_t& lexeme);
 

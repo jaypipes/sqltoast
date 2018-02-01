@@ -31,7 +31,7 @@ namespace sqltoast {
 
 bool parse_create_table(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
-    parse_cursor_t start = ctx.lexer.cursor;
+    parse_position_t start = ctx.lexer.cursor;
     token_t* cur_tok;
     lexeme_t ident;
     symbol_t cur_sym;

@@ -41,7 +41,6 @@ typedef enum error {
 
 typedef std::vector<char> parse_input_t;
 
-typedef parse_input_t::iterator parse_cursor_t;
 typedef parse_input_t::const_iterator parse_position_t;
 
 typedef struct lexeme {

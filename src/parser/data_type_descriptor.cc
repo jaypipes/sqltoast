@@ -247,7 +247,6 @@ length_close:
         goto err_expect_length_rparen;
     cur_sym = cur_tok->symbol;
     if (cur_sym == SYMBOL_RPAREN) {
-        cur_tok = lex.next_token();
         goto optional_character_set;
     }
     goto err_expect_length_rparen;
@@ -270,12 +269,18 @@ optional_character_set:
     // We get here after processing the optional length specifier. After
     // that specifier, there may be an optional CHARACTER SET <character
     // set specification> clause
-    if (cur_tok == NULL)
-        goto push_descriptor;
-    cur_sym = cur_tok->symbol;
-    if (cur_sym == SYMBOL_CHARACTER) {
-        cur_tok = lex.next_token();
-        goto process_character_set;
+    {
+        symbol_t peek_sym = lex.peek();
+        if (peek_sym == SYMBOL_EOS)
+            goto push_descriptor;
+        if (peek_sym == SYMBOL_COMMA)
+            goto push_descriptor;
+        if (peek_sym == SYMBOL_RPAREN)
+            goto push_descriptor;
+        if (peek_sym == SYMBOL_CHARACTER) {
+            cur_tok = lex.next_token();
+            goto process_character_set;
+        }
     }
     goto push_descriptor;
 process_character_set:

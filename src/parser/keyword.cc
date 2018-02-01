@@ -61,9 +61,9 @@ kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
 kw_jump_table_t kw_jump_tables::v = _init_kw_jump_table('v');
 
-tokenize_result_t token_keyword(lexer_t& lex) {
+tokenize_result_t token_keyword(parse_position_t cursor) {
     kw_jump_table_t* jump_tbl;
-    switch (*lex.cursor) {
+    switch (*cursor) {
         case 'a':
         case 'A':
             jump_tbl = &kw_jump_tables::a;
@@ -104,23 +104,20 @@ tokenize_result_t token_keyword(lexer_t& lex) {
             return tokenize_result_t(TOKEN_NOT_FOUND);
     }
 
-    parse_position_t start = lex.cursor;
-    parse_cursor_t end = lex.cursor;
+    parse_position_t start = cursor;
     // Find the next space or delimiter character...
-    while (end != lex.end_pos && (
-            (*end >= 'a' && *end <= 'z') ||
-            (*end >= 'A' && *end <= 'Z')))
-        end++;
+    while ((*cursor >= 'a' && *cursor <= 'z') ||
+            (*cursor >= 'A' && *cursor <= 'Z'))
+        cursor++;
 
-    const std::string lexeme(start, parse_position_t(end));
+    const std::string lexeme(start, parse_position_t(cursor));
     size_t lexeme_len = lexeme.size();
     for (auto entry : *jump_tbl) {
         size_t entry_len = entry.kw_str.size();
         if (lexeme_len != entry_len)
             continue;
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {
-            lex.cursor += entry_len;
-            return tokenize_result_t(entry.symbol, start, end);
+            return tokenize_result_t(entry.symbol, start, start + entry_len - 1);
         }
     }
     return tokenize_result_t(TOKEN_NOT_FOUND);
