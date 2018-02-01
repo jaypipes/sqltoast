@@ -31,11 +31,6 @@ typedef struct parse_context {
     {}
 } parse_context_t;
 
-// Attempts to find the next token in the parse context. If a token was found,
-// returns true, else false. If true, the parse context's tokens stack will
-// have had a token pushed onto it.
-token_t* next_token(parse_context_t& ctx);
-
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_CONTEXT_H */

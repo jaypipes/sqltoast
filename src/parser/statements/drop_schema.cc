@@ -32,6 +32,7 @@ namespace sqltoast {
 //
 
 bool parse_drop_schema(parse_context_t& ctx) {
+    lexer_t& lex = ctx.lexer;
     parse_cursor_t start = ctx.lexer.cursor;
     lexeme_t ident;
     token_t* cur_tok;
@@ -40,21 +41,20 @@ bool parse_drop_schema(parse_context_t& ctx) {
 
     // BEGIN STATE MACHINE
 
-    start:
-        cur_tok = next_token(ctx);
-        if (cur_tok == NULL)
+    cur_tok = lex.next_token();
+    if (cur_tok == NULL)
+        return false;
+    cur_sym = cur_tok->symbol;
+    switch (cur_sym) {
+        case SYMBOL_SCHEMA:
+            cur_tok = lex.next_token();
+            goto expect_identifier;
+        default:
+            // rewind
+            ctx.lexer.cursor = start;
             return false;
-        cur_sym = cur_tok->symbol;
-        switch (cur_sym) {
-            case SYMBOL_SCHEMA:
-                cur_tok = next_token(ctx);
-                goto expect_identifier;
-            default:
-                // rewind
-                ctx.lexer.cursor = start;
-                return false;
-        }
-        SQLTOAST_UNREACHABLE();
+    }
+
     expect_identifier:
         // We get here after successfully finding DROP followed by SCHEMA. We
         // now need to find the schema identifier
@@ -63,7 +63,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto drop_behaviour_or_statement_ending;
         }
         goto err_expect_identifier;
@@ -96,7 +96,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
             if (cur_sym == SYMBOL_RESTRICT) {
                 behaviour = statements::DROP_BEHAVIOUR_RESTRICT;
             }
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
         }
         goto statement_ending;
     statement_ending:
@@ -109,7 +109,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_SEMICOLON) {
             // skip-consume the semicolon token
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto push_statement;
         }
         {

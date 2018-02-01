@@ -4,13 +4,11 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "literal.h"
-#include "token.h"
+#include "parser/literal.h"
 
 namespace sqltoast {
 
-bool token_literal(parse_context_t& ctx) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_literal(lexer_t& lex) {
     parse_cursor_t start = lex.cursor;
     symbol_t found_sym;
     bool found_sign = false; // set to true if + or - found
@@ -119,10 +117,10 @@ push_literal:
         found_sym,
         parse_position_t(start),
         parse_position_t(lex.cursor));
-    return true;
+    return TOKEN_FOUND;
 not_found:
     lex.cursor = start; // rewind... we didn't find a literal
-    return false;
+    return TOKEN_NOT_FOUND;
 }
 
 } // namespace sqltoast

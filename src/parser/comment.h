@@ -7,13 +7,11 @@
 #ifndef SQLTOAST_PARSER_COMMENT_H
 #define SQLTOAST_PARSER_COMMENT_H
 
-#include "context.h"
+#include "parser/lexer.h"
 
 namespace sqltoast {
 
-bool token_comment(parse_context_t& ctx);
-bool token_simple_comment(parse_context_t& ctx);
-bool token_bracketed_comment(parse_context_t& ctx);
+tokenize_result_t token_comment(lexer_t& lex);
 
 } // namespace sqltoast
 

@@ -4,17 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <sstream>
-#include <string>
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "context.h"
-#include "error.h"
-#include "identifier.h"
-#include "symbol.h"
-#include "token.h"
+#include "parser/identifier.h"
 
 namespace sqltoast {
 
@@ -34,8 +24,7 @@ namespace sqltoast {
 //
 // Note that whitespace will have been skipped already so that the character
 // pointed to by the parse context is guaranteed to be not whitespace.
-bool token_identifier(parse_context_t& ctx) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_identifier(lexer_t& lex) {
     parse_position_t start = lex.cursor;
     escape_mode current_escape = ESCAPE_NONE;
 
@@ -61,7 +50,7 @@ bool token_identifier(parse_context_t& ctx) {
     }
     if (current_escape != ESCAPE_NONE)
         // handle delimited identifiers...
-        return token_delimited_identifier(ctx, current_escape);
+        return token_delimited_identifier(lex, current_escape);
 
     // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
@@ -75,15 +64,14 @@ bool token_identifier(parse_context_t& ctx) {
 
     // if we went more than a single character, that's an
     // identifier...
-    bool res = (start != lex.cursor);
-    if (res) {
+    tokenize_result_t res = (start != lex.cursor) ? TOKEN_FOUND : TOKEN_NOT_FOUND;
+    if (res == TOKEN_FOUND) {
         lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
     }
     return res;
 }
 
-bool token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_delimited_identifier(lexer_t& lex, escape_mode current_escape) {
     parse_position_t start = lex.cursor;
     char closer;
     switch (current_escape) {
@@ -98,7 +86,7 @@ bool token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape
             closer = '`';
             break;
         case ESCAPE_NONE:
-            return false;
+            return TOKEN_NOT_FOUND;
     }
     char c;
     while (lex.cursor != lex.end_pos) {
@@ -106,23 +94,13 @@ bool token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape
         c = *lex.cursor;
         if (c == closer) {
             lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
-            return true;
+            return TOKEN_FOUND;
         }
     }
     // We will get here if there was a start of a delimited escape sequence but we
     // never found the closing escape character(s). Set the parse context's
     // error to indicate the location that an error occurred.
-    std::stringstream estr;
-    estr << "In delimited identifier parsing, failed to find closing escape character ";
-    if (closer == '\'') {
-        estr << "\"\'\".\n";
-    } else {
-        estr << "\'" << closer << "\'.\n";
-    }
-    create_syntax_error_marker(ctx, estr, start);
-    ctx.result.error.assign(estr.str());
-    lex.error = ERR_NO_CLOSING_DELIMITER;
-    return false;
+    return TOKEN_ERR_NO_CLOSING_DELIMITER;
 }
 
 } // namespace sqltoast

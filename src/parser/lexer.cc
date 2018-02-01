@@ -39,21 +39,32 @@ void lexer_t::skip_simple_comments() {
     } while (cursor != end_pos && *cursor != '\n');
 }
 
-token_t* next_token(parse_context_t &ctx) {
-    lexer_t& lex = ctx.lexer;
-    lex.skip();
-    if (token_comment(ctx))
-        return &lex.current_token;
-    if (lex.error != ERR_NONE)
+static size_t NUM_TOKENIZERS = 5;
+static tokenize_func_t tokenizers[5] = {
+    &token_comment,
+    &token_punctuator,
+    &token_keyword,
+    &token_literal,
+    &token_identifier
+};
+
+token_t* lexer_t::next_token() {
+    // Advance the lexer's cursor over any whitespace or simple comments
+    while (std::isspace(*cursor))
+        cursor++;
+    skip_simple_comments();
+
+    tokenize_result_t tok_res;
+    for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
+        tok_res = tokenizers[x](*this);
+        if (tok_res == TOKEN_FOUND)
+            return &current_token;
+        if (tok_res == TOKEN_NOT_FOUND)
+            continue;
+        // There was an error in tokenizing
         return NULL;
-    if (token_punctuator(ctx))
-        return &lex.current_token;
-    if (token_literal(ctx))
-        return &lex.current_token;
-    if (token_keyword(ctx))
-        return &lex.current_token;
-    if (token_identifier(ctx))
-        return &lex.current_token;
+    }
+    // No more tokens
     return NULL;
 }
 

@@ -7,14 +7,14 @@
 #ifndef SQLTOAST_PARSER_LITERAL_H
 #define SQLTOAST_PARSER_LITERAL_H
 
-#include "context.h"
+#include "parser/lexer.h"
 
 namespace sqltoast {
 
 // Moves the supplied parse context's cursor to the next literal found in the
 // context's input stream and adds a token with type literal to the tokens
 // stack.Returns whether a literal was found.
-bool token_literal(parse_context_t& ctx);
+tokenize_result_t token_literal(lexer_t& lex);
 
 } // namespace sqltoast
 

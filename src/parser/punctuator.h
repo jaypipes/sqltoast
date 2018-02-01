@@ -7,17 +7,10 @@
 #ifndef SQLTOAST_PARSER_PUNCTUATOR_H
 #define SQLTOAST_PARSER_PUNCTUATOR_H
 
-#include "context.h"
-#include "symbol.h"
+#include "parser/lexer.h"
+#include "parser/symbol.h"
 
 namespace sqltoast {
-
-typedef enum punctuator {
-    PUNCTUATOR_SEMICOLON,
-    PUNCTUATOR_COMMA,
-    PUNCTUATOR_LPAREN,
-    PUNCTUATOR_RPAREN,
-} punctuator_t;
 
 const unsigned int NUM_PUNCTUATORS = 4;
 
@@ -38,7 +31,7 @@ static const symbol_t punctuator_symbol_map[4] = {
 // Moves the supplied parse context's cursor to the next punctuator found in the
 // context's input stream and sets the context's current symbol to the found
 // punctuator symbol. Returns whether a punctuator was found.
-bool token_punctuator(parse_context_t& ctx);
+tokenize_result_t token_punctuator(lexer_t& lex);
 
 } // namespace sqltoast
 

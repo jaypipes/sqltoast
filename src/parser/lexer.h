@@ -38,14 +38,6 @@ typedef struct lexer {
         current_token(SYMBOL_SOS, subject.cbegin(), subject.cbegin())
     {}
     void skip_simple_comments();
-    // Simply advances the lexer's cursor over any whitespace or simple
-    // comments
-    inline void skip() {
-        while (std::isspace(*cursor))
-            cursor++;
-        skip_simple_comments();
-        return;
-    }
     inline bool peek_char(const char c) {
         return ((cursor != end_pos && (*cursor == c)));
     }
@@ -58,7 +50,19 @@ typedef struct lexer {
 #endif
         return;
     }
+
+    // Attempts to find the next token. If a token was found, returns a pointer
+    // to that token, else NULL.
+    token_t* next_token();
 } lexer_t;
+
+typedef enum tokenize_result {
+    TOKEN_FOUND,
+    TOKEN_NOT_FOUND,
+    TOKEN_ERR_NO_CLOSING_DELIMITER
+} tokenize_result_t;
+
+typedef tokenize_result_t (*tokenize_func_t) (lexer_t& lex);
 
 void fill_lexeme(token_t* tok, lexeme_t& lexeme);
 

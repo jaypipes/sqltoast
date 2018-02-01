@@ -40,35 +40,34 @@ bool parse_column_definition(
 
     // BEGIN STATE MACHINE
 
-    start:
-        // We start here. The first component of the column definition is the
-        // identifier that indicates the column name.
-        if (cur_sym == SYMBOL_IDENTIFIER) {
-            fill_lexeme(cur_tok, ident);
-            cur_tok = next_token(ctx);
-            goto create_column_def;
-        }
-        // Just return false, since callers could be looking for
-        // a constraint definition
-        return false;
-        SQLTOAST_UNREACHABLE();
-    create_column_def:
-        {
-            identifier_t col_name(ident);
-            cdef_p = std::move(std::make_unique<column_definition_t>(col_name));
-            if (! parse_data_type_descriptor(ctx, cur_tok, *cdef_p))
-                return false;
-            goto push_column_def;
-        }
-        SQLTOAST_UNREACHABLE();
-    push_column_def:
-        {
-            if (ctx.opts.disable_statement_construction)
-                return true;
-            column_defs.emplace_back(std::move(cdef_p));
+    // We start here. The first component of the column definition is the
+    // identifier that indicates the column name.
+    if (cur_sym == SYMBOL_IDENTIFIER) {
+        fill_lexeme(cur_tok, ident);
+        cur_tok = ctx.lexer.next_token();
+        goto create_column_def;
+    }
+    // Just return false, since callers could be looking for
+    // a constraint definition
+    return false;
+
+create_column_def:
+    {
+        identifier_t col_name(ident);
+        cdef_p = std::move(std::make_unique<column_definition_t>(col_name));
+        if (! parse_data_type_descriptor(ctx, cur_tok, *cdef_p))
+            return false;
+        goto push_column_def;
+    }
+    SQLTOAST_UNREACHABLE();
+push_column_def:
+    {
+        if (ctx.opts.disable_statement_construction)
             return true;
-        }
-        SQLTOAST_UNREACHABLE();
+        column_defs.emplace_back(std::move(cdef_p));
+        return true;
+    }
+    SQLTOAST_UNREACHABLE();
 }
 
 } // namespace sqltoast
