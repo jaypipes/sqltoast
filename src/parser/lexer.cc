@@ -43,23 +43,22 @@ static size_t NUM_TOKENIZERS = 5;
 static tokenize_func_t tokenizers[5] = {
     &token_comment,
     &token_punctuator,
-    &token_literal,
     &token_keyword,
+    &token_literal,
     &token_identifier
 };
 
-token_t* next_token(parse_context_t &ctx) {
-    lexer_t& lex = ctx.lexer;
+token_t* lexer_t::next_token() {
     // Advance the lexer's cursor over any whitespace or simple comments
-    while (std::isspace(*lex.cursor))
-        lex.cursor++;
-    lex.skip_simple_comments();
+    while (std::isspace(*cursor))
+        cursor++;
+    skip_simple_comments();
 
     tokenize_result_t tok_res;
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
-        tok_res = tokenizers[x](ctx);
+        tok_res = tokenizers[x](*this);
         if (tok_res == TOKEN_FOUND)
-            return &lex.current_token;
+            return &current_token;
         if (tok_res == TOKEN_NOT_FOUND)
             continue;
         // There was an error in tokenizing

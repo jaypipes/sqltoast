@@ -4,17 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <sstream>
-#include <string>
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "context.h"
-#include "error.h"
-#include "identifier.h"
-#include "symbol.h"
-#include "token.h"
+#include "parser/identifier.h"
 
 namespace sqltoast {
 
@@ -34,8 +24,7 @@ namespace sqltoast {
 //
 // Note that whitespace will have been skipped already so that the character
 // pointed to by the parse context is guaranteed to be not whitespace.
-tokenize_result_t token_identifier(parse_context_t& ctx) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_identifier(lexer_t& lex) {
     parse_position_t start = lex.cursor;
     escape_mode current_escape = ESCAPE_NONE;
 
@@ -61,7 +50,7 @@ tokenize_result_t token_identifier(parse_context_t& ctx) {
     }
     if (current_escape != ESCAPE_NONE)
         // handle delimited identifiers...
-        return token_delimited_identifier(ctx, current_escape);
+        return token_delimited_identifier(lex, current_escape);
 
     // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
@@ -82,8 +71,7 @@ tokenize_result_t token_identifier(parse_context_t& ctx) {
     return res;
 }
 
-tokenize_result_t token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_delimited_identifier(lexer_t& lex, escape_mode current_escape) {
     parse_position_t start = lex.cursor;
     char closer;
     switch (current_escape) {

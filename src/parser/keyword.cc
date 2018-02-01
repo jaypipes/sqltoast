@@ -4,10 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "compare.h"
-#include "keyword.h"
-#include "token.h"
-#include "symbol.h"
+#include "parser/compare.h"
+#include "parser/keyword.h"
 
 namespace sqltoast {
 
@@ -63,8 +61,7 @@ kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
 kw_jump_table_t kw_jump_tables::v = _init_kw_jump_table('v');
 
-tokenize_result_t token_keyword(parse_context_t& ctx) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_keyword(lexer_t& lex) {
     kw_jump_table_t* jump_tbl;
     switch (*lex.cursor) {
         case 'a':

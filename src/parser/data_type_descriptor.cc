@@ -128,176 +128,171 @@ bool parse_data_type_descriptor(
 
     // BEGIN STATE MACHINE
 
-    start:
-        // We start here. The first component of the column definition is the
-        // identifier that indicates the column name.
-        switch (cur_sym) {
-            case SYMBOL_CHAR:
-            case SYMBOL_CHARACTER:
-            case SYMBOL_VARCHAR:
-                return parse_character_string(ctx, cur_tok, column_def);
-            default:
-                goto err_expect_data_type;
+    // We start here. The first component of the column definition is the
+    // identifier that indicates the column name.
+    switch (cur_sym) {
+        case SYMBOL_CHAR:
+        case SYMBOL_CHARACTER:
+        case SYMBOL_VARCHAR:
+            return parse_character_string(ctx, cur_tok, column_def);
+        default:
+            goto err_expect_data_type;
+    }
+err_expect_data_type:
+    {
+        parse_position_t err_pos = ctx.lexer.cursor;
+        std::stringstream estr;
+        if (cur_tok == NULL) {
+            estr << "Expected data type after <column name> but found EOS";
+        } else {
+            cur_sym = cur_tok->symbol;
+            estr << "Expected data type after <column name> but found "
+                 << symbol_map::to_string(cur_sym);
         }
-        SQLTOAST_UNREACHABLE();
-    err_expect_data_type:
-        {
-            parse_position_t err_pos = ctx.lexer.cursor;
-            std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected data type after <column name> but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected data type after <column name> but found "
-                     << symbol_map::to_string(cur_sym);
-            }
-            estr << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        estr << std::endl;
+        create_syntax_error_marker(ctx, estr, err_pos);
+        return false;
+    }
 }
 
 bool parse_character_string(
         parse_context_t& ctx,
         token_t* cur_tok,
         column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok->symbol;
     data_type_t data_type = DATA_TYPE_CHAR;
     size_t char_len = 0;
 
     // BEGIN STATE MACHINE
-    start:
-        // We get here after the column name identifier has been found and
-        // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
-        // were next
-        switch (cur_sym) {
-            case SYMBOL_CHAR:
-            case SYMBOL_CHARACTER:
-                cur_tok = next_token(ctx);
-                goto optional_char_varying;
-            case SYMBOL_VARCHAR:
-                data_type = DATA_TYPE_VARCHAR;
-                cur_tok = next_token(ctx);
-                goto optional_length;
-            default:
-                return false;
-        }
-        SQLTOAST_UNREACHABLE();
-    optional_char_varying:
-        // We get here if we got a CHAR or CHARACTER as the data type. This
-        // might be followed by the VARYING symbol, in which case we will
-        // process a VARCHAR. Otherwise, we'll process a CHAR type
-        if (cur_tok == NULL)
-            goto push_descriptor;
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_VARYING) {
+
+    // We get here after the column name identifier has been found and
+    // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
+    // were next
+    switch (cur_sym) {
+        case SYMBOL_CHAR:
+        case SYMBOL_CHARACTER:
+            cur_tok = lex.next_token();
+            goto optional_char_varying;
+        case SYMBOL_VARCHAR:
             data_type = DATA_TYPE_VARCHAR;
-            cur_tok = next_token(ctx);
-        }
-        goto optional_length;
-    optional_length:
-        // We get here after determining the exact type of the character
-        // string. The type will be followed by an optional length specifier
-        // clause, which if an unsigned integer enclosed by parentheses.
-        if (cur_tok == NULL)
-            goto push_descriptor;
+            cur_tok = lex.next_token();
+            goto optional_length;
+        default:
+            return false;
+    }
+
+optional_char_varying:
+    // We get here if we got a CHAR or CHARACTER as the data type. This
+    // might be followed by the VARYING symbol, in which case we will
+    // process a VARCHAR. Otherwise, we'll process a CHAR type
+    if (cur_tok == NULL)
+        goto push_descriptor;
+    cur_sym = cur_tok->symbol;
+    if (cur_sym == SYMBOL_VARYING) {
+        data_type = DATA_TYPE_VARCHAR;
+        cur_tok = lex.next_token();
+    }
+    goto optional_length;
+optional_length:
+    // We get here after determining the exact type of the character
+    // string. The type will be followed by an optional length specifier
+    // clause, which if an unsigned integer enclosed by parentheses.
+    if (cur_tok == NULL)
+        goto push_descriptor;
+    cur_sym = cur_tok->symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next_token();
+        goto process_length;
+    }
+    goto optional_character_set;
+process_length:
+    // We get here if we've processed the opening parentheses of the
+    // optional length modifier and now expect to find an unsigned integer
+    // followed by a closing parentheses
+    if (cur_tok == NULL)
+        goto err_expect_size_literal;
+    if (cur_tok->is_literal()) {
+        // Make sure we can parse our literal token to an unsigned integer
         cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_LPAREN) {
-            cur_tok = next_token(ctx);
-            goto process_length;
-        }
-        goto optional_character_set;
-    process_length:
-        // We get here if we've processed the opening parentheses of the
-        // optional length modifier and now expect to find an unsigned integer
-        // followed by a closing parentheses
-        if (cur_tok == NULL)
+        if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
             goto err_expect_size_literal;
-        if (cur_tok->is_literal()) {
-            // Make sure we can parse our literal token to an unsigned integer
-            cur_sym = cur_tok->symbol;
-            if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
-                goto err_expect_size_literal;
-            const std::string char_len_str(cur_tok->lexeme.start, cur_tok->lexeme.end);
-            char_len = atoi(char_len_str.data());
-            cur_tok = next_token(ctx);
-            goto length_close;
+        const std::string char_len_str(cur_tok->lexeme.start, cur_tok->lexeme.end);
+        char_len = atoi(char_len_str.data());
+        cur_tok = lex.next_token();
+        goto length_close;
+    } else {
+        goto err_expect_size_literal;
+    }
+err_expect_size_literal:
+    {
+        parse_position_t err_pos = ctx.lexer.cursor;
+        std::stringstream estr;
+        if (cur_tok == NULL) {
+            estr << "Expected unsigned integer as length after '(' but found EOS";
         } else {
-            goto err_expect_size_literal;
+            cur_sym = cur_tok->symbol;
+            estr << "Expected unsigned integer as length after '(' but found "
+                 << symbol_map::to_string(cur_sym);
         }
-    err_expect_size_literal:
-        {
-            parse_position_t err_pos = ctx.lexer.cursor;
-            std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected unsigned integer as length after '(' but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected unsigned integer as length after '(' but found "
-                     << symbol_map::to_string(cur_sym);
-            }
-            estr << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
-    length_close:
-        // We get here if we've processed the opening parentheses of the length
-        // modifier and the unsigned integer size and now expect a closing
-        // parentheses for the length modifier
-        if (cur_tok == NULL)
-            goto err_expect_length_rparen;
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_RPAREN) {
-            cur_tok = next_token(ctx);
-            goto optional_character_set;
-        }
+        estr << std::endl;
+        create_syntax_error_marker(ctx, estr, err_pos);
+        return false;
+    }
+length_close:
+    // We get here if we've processed the opening parentheses of the length
+    // modifier and the unsigned integer size and now expect a closing
+    // parentheses for the length modifier
+    if (cur_tok == NULL)
         goto err_expect_length_rparen;
-    err_expect_length_rparen:
-        {
-            parse_position_t err_pos = ctx.lexer.cursor;
-            std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected ')' after length specifier but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected ')' after length specifier but found "
-                     << symbol_map::to_string(cur_sym);
-            }
-            estr << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
-            return false;
+    cur_sym = cur_tok->symbol;
+    if (cur_sym == SYMBOL_RPAREN) {
+        cur_tok = lex.next_token();
+        goto optional_character_set;
+    }
+    goto err_expect_length_rparen;
+err_expect_length_rparen:
+    {
+        parse_position_t err_pos = ctx.lexer.cursor;
+        std::stringstream estr;
+        if (cur_tok == NULL) {
+            estr << "Expected ')' after length specifier but found EOS";
+        } else {
+            cur_sym = cur_tok->symbol;
+            estr << "Expected ')' after length specifier but found "
+                 << symbol_map::to_string(cur_sym);
         }
-        SQLTOAST_UNREACHABLE();
-    optional_character_set:
-        // We get here after processing the optional length specifier. After
-        // that specifier, there may be an optional CHARACTER SET <character
-        // set specification> clause
-        if (cur_tok == NULL)
-            goto push_descriptor;
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_CHARACTER) {
-            cur_tok = next_token(ctx);
-            goto process_character_set;
-        }
+        estr << std::endl;
+        create_syntax_error_marker(ctx, estr, err_pos);
+        return false;
+    }
+optional_character_set:
+    // We get here after processing the optional length specifier. After
+    // that specifier, there may be an optional CHARACTER SET <character
+    // set specification> clause
+    if (cur_tok == NULL)
         goto push_descriptor;
-    process_character_set:
-        goto push_descriptor;
-    push_descriptor:
-        {
-            if (ctx.opts.disable_statement_construction)
-                return true;
-            std::unique_ptr<data_type_descriptor_t> dtd_p;
-            if (data_type == DATA_TYPE_CHAR) {
-                dtd_p = std::move(std::make_unique<char_string_t>(char_len));
-            } else {
-                dtd_p = std::move(std::make_unique<varchar_string_t>(char_len));
-            }
-            column_def.data_type = std::move(dtd_p);
+    cur_sym = cur_tok->symbol;
+    if (cur_sym == SYMBOL_CHARACTER) {
+        cur_tok = lex.next_token();
+        goto process_character_set;
+    }
+    goto push_descriptor;
+process_character_set:
+    goto push_descriptor;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
             return true;
+        std::unique_ptr<data_type_descriptor_t> dtd_p;
+        if (data_type == DATA_TYPE_CHAR) {
+            dtd_p = std::move(std::make_unique<char_string_t>(char_len));
+        } else {
+            dtd_p = std::move(std::make_unique<varchar_string_t>(char_len));
         }
-        SQLTOAST_UNREACHABLE();
+        column_def.data_type = std::move(dtd_p);
+        return true;
+    }
 }
 
 } // namespace sqltoast

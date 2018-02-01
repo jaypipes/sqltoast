@@ -8,8 +8,7 @@
 
 namespace sqltoast {
 
-tokenize_result_t token_literal(parse_context_t& ctx) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_literal(lexer_t& lex) {
     parse_cursor_t start = lex.cursor;
     symbol_t found_sym;
     bool found_sign = false; // set to true if + or - found

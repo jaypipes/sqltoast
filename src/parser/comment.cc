@@ -4,9 +4,6 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <sstream>
-
-#include "parser/error.h"
 #include "parser/comment.h"
 
 namespace sqltoast {
@@ -33,8 +30,7 @@ namespace sqltoast {
 // comments, because they are sometimes used to embed dialect-specific
 // triggers, are consumed as tokens.
 
-tokenize_result_t token_comment(parse_context_t& ctx) {
-    lexer_t& lex = ctx.lexer;
+tokenize_result_t token_comment(lexer_t& lex) {
     if (! lex.peek_char('/'))
         return TOKEN_NOT_FOUND;
 

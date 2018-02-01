@@ -66,6 +66,7 @@ bool require_default_charset_clause(parse_context_t& ctx) {
 }
 
 bool parse_create_schema(parse_context_t& ctx) {
+    lexer_t& lex = ctx.lexer;
     parse_cursor_t start = ctx.lexer.cursor;
     token_t* cur_tok;
     lexeme_t ident;
@@ -77,7 +78,7 @@ bool parse_create_schema(parse_context_t& ctx) {
 
     // BEGIN STATE MACHINE
 
-    cur_tok = next_token(ctx);
+    cur_tok = lex.next_token();
     if (cur_tok == NULL)
         return false;
     cur_sym = cur_tok->symbol;
@@ -94,11 +95,11 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here after successfully finding CREATE followed by SCHEMA. We
         // now need to find either an identifier or the schema authorization
         // clause
-        cur_tok = next_token(ctx);
+        cur_tok = lex.next_token();
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto authz_or_statement_ending;
         }
         goto authorization_clause;
@@ -107,7 +108,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         if (require_default_charset_clause(ctx)) {
             found_default_charset = true;
             fill_lexeme(cur_tok, default_charset_ident);
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto statement_ending;
         }
         return false;
@@ -119,7 +120,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         if (cur_sym == SYMBOL_IDENTIFIER) {
             found_authz = true;
             fill_lexeme(cur_tok, authz_ident);
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto default_charset_or_statement_ending;
         }
         goto err_expect_authz_identifier;
@@ -164,10 +165,10 @@ bool parse_create_schema(parse_context_t& ctx) {
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_SEMICOLON) {
             // skip-consume the semicolon token
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto push_statement;
         } else if (cur_sym == SYMBOL_AUTHORIZATION) {
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto authorization_clause;
         } else if (cur_sym == SYMBOL_DEFAULT) {
             goto default_charset_clause;
@@ -193,7 +194,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_SEMICOLON) {
             // skip-consume the semicolon token
-            cur_tok = next_token(ctx);
+            cur_tok = lex.next_token();
             goto push_statement;
         }
         {

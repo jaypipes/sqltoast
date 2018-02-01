@@ -50,7 +50,19 @@ typedef struct lexer {
 #endif
         return;
     }
+
+    // Attempts to find the next token. If a token was found, returns a pointer
+    // to that token, else NULL.
+    token_t* next_token();
 } lexer_t;
+
+typedef enum tokenize_result {
+    TOKEN_FOUND,
+    TOKEN_NOT_FOUND,
+    TOKEN_ERR_NO_CLOSING_DELIMITER
+} tokenize_result_t;
+
+typedef tokenize_result_t (*tokenize_func_t) (lexer_t& lex);
 
 void fill_lexeme(token_t* tok, lexeme_t& lexeme);
 

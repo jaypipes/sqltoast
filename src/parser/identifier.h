@@ -7,19 +7,17 @@
 #ifndef SQLTOAST_IDENTIFIER_H
 #define SQLTOAST_IDENTIFIER_H
 
-#include <string>
-
-#include "context.h"
+#include "parser/lexer.h"
 
 namespace sqltoast {
 
 // Returns true if an identifier (of any kind) can be parsed from the parse
 // context's cursor position
-tokenize_result_t token_identifier(parse_context_t& ctx);
+tokenize_result_t token_identifier(lexer_t& lex);
 
 // Returns true if a delimited identifier can be parsed from the parse
 // context's cursor position.
-tokenize_result_t token_delimited_identifier(parse_context_t& ctx, escape_mode current_escape);
+tokenize_result_t token_delimited_identifier(lexer_t& lex, escape_mode current_escape);
 
 } // namespace sqltoast
 

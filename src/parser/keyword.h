@@ -10,8 +10,7 @@
 #include <vector>
 #include <string>
 
-#include "context.h"
-#include "symbol.h"
+#include "parser/lexer.h"
 
 namespace sqltoast {
 
@@ -62,7 +61,7 @@ kw_jump_table_t _init_kw_jump_table(char c);
 // Moves the supplied parse context's cursor to the next keyword found in the
 // context's input stream and sets the context's current symbol to the found
 // keyword symbol. Returns whether a keyword was found.
-tokenize_result_t token_keyword(parse_context_t& ctx);
+tokenize_result_t token_keyword(lexer_t& lex);
 
 } // namespace sqltoast
 

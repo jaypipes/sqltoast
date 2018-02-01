@@ -21,7 +21,7 @@ inline bool follows_sequence(parse_context_t& ctx, const symbol_t expected_seque
     token_t* cur_tok;
     for (unsigned int x = 0; x < num_expected; x++) {
         exp_sym = expected_sequence[x];
-        cur_tok = next_token(ctx);
+        cur_tok = ctx.lexer.next_token();
         if (cur_tok == NULL)
             goto err_unexpected;
         cur_sym = (*cur_tok).symbol;
