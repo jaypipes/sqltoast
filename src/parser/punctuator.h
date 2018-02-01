@@ -31,7 +31,7 @@ static const symbol_t punctuator_symbol_map[4] = {
 // Moves the supplied parse context's cursor to the next punctuator found in the
 // context's input stream and sets the context's current symbol to the found
 // punctuator symbol. Returns whether a punctuator was found.
-tokenize_result_t token_punctuator(lexer_t& lex);
+tokenize_result_t token_punctuator(parse_position_t cursor);
 
 } // namespace sqltoast
 

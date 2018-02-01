@@ -33,7 +33,7 @@ namespace sqltoast {
 
 bool parse_drop_schema(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
-    parse_cursor_t start = ctx.lexer.cursor;
+    parse_position_t start = ctx.lexer.cursor;
     lexeme_t ident;
     token_t* cur_tok;
     symbol_t cur_sym;

@@ -67,7 +67,7 @@ bool require_default_charset_clause(parse_context_t& ctx) {
 
 bool parse_create_schema(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
-    parse_cursor_t start = ctx.lexer.cursor;
+    parse_position_t start = ctx.lexer.cursor;
     token_t* cur_tok;
     lexeme_t ident;
     bool found_authz = false;

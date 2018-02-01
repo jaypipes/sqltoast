@@ -27,7 +27,7 @@ enum escape_mode {
 typedef struct lexer {
     parse_position_t start_pos;
     parse_position_t end_pos;
-    parse_cursor_t cursor;
+    parse_position_t cursor;
     error_t error;
     token_t current_token;
     lexer(parse_input_t& subject) :
@@ -38,31 +38,32 @@ typedef struct lexer {
         current_token(SYMBOL_SOS, subject.cbegin(), subject.cbegin())
     {}
     void skip_simple_comments();
-    inline bool peek_char(const char c) {
-        return ((cursor != end_pos && (*cursor == c)));
-    }
-    inline void set_token(symbol_t sym, parse_position_t start, parse_position_t end) {
-        current_token.symbol = sym;
-        current_token.lexeme.start = start;
-        current_token.lexeme.end = end;
-#ifdef SQLTOAST_DEBUG
-        std::cout << current_token << std::endl;
-#endif
-        return;
-    }
+    symbol_t peek() const;
 
     // Attempts to find the next token. If a token was found, returns a pointer
     // to that token, else NULL.
     token_t* next_token();
 } lexer_t;
 
-typedef enum tokenize_result {
+typedef enum tokenize_result_code {
     TOKEN_FOUND,
     TOKEN_NOT_FOUND,
     TOKEN_ERR_NO_CLOSING_DELIMITER
+} tokenize_result_code_t;
+
+typedef struct tokenize_result {
+    tokenize_result_code_t code;
+    token_t token;
+    tokenize_result(tokenize_result_code_t code) :
+        code(code), token()
+    {}
+    tokenize_result(symbol_t sym, parse_position_t start, parse_position_t end) :
+        code(TOKEN_FOUND),
+        token(sym, start, end)
+    {}
 } tokenize_result_t;
 
-typedef tokenize_result_t (*tokenize_func_t) (lexer_t& lex);
+typedef tokenize_result_t (*tokenize_func_t) (parse_position_t cursor);
 
 void fill_lexeme(token_t* tok, lexeme_t& lexeme);
 

@@ -11,7 +11,7 @@
 
 namespace sqltoast {
 
-tokenize_result_t token_comment(lexer_t& lex);
+tokenize_result_t token_comment(parse_position_t cursor);
 
 } // namespace sqltoast
 

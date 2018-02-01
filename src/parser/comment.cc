@@ -30,32 +30,24 @@ namespace sqltoast {
 // comments, because they are sometimes used to embed dialect-specific
 // triggers, are consumed as tokens.
 
-tokenize_result_t token_comment(lexer_t& lex) {
-    if (! lex.peek_char('/'))
-        return TOKEN_NOT_FOUND;
+tokenize_result_t token_comment(parse_position_t cursor) {
+    parse_position_t start = cursor;
+    if (*cursor != '/')
+        return tokenize_result_t(TOKEN_NOT_FOUND);
 
-    lex.cursor++;
-    if (! lex.peek_char('*')) {
-        lex.cursor--; // rewind
-        return TOKEN_NOT_FOUND;
-    }
-
-    parse_position_t start = lex.cursor;
+    cursor++;
+    if (*cursor != '*')
+        return tokenize_result_t(TOKEN_NOT_FOUND);
 
     // OK, we found the start of a comment. Run through the subject until we
     // find the closing */ marker
     do {
-        lex.cursor++;
-        if (lex.cursor == lex.end_pos || (lex.cursor + 1) == lex.end_pos) {
-            return TOKEN_ERR_NO_CLOSING_DELIMITER;
+        cursor++;
+        if (*cursor == '\0' || *(cursor + 1) == '\0') {
+            return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER);
         }
-    } while (*lex.cursor != '*' || *(lex.cursor + 1) != '/');
-    {
-        parse_position_t end = lex.cursor - 1;
-        lex.cursor += 2;
-        lex.set_token(SYMBOL_COMMENT, start, end);
-        return TOKEN_FOUND;
-    }
+    } while (*cursor != '*' || *(cursor + 1) != '/');
+    return tokenize_result_t(SYMBOL_COMMENT, start, cursor + 1);
 }
 
 } // namespace sqltoast
