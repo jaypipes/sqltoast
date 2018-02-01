@@ -17,6 +17,10 @@ namespace sqltoast {
 typedef struct token {
     symbol_t symbol;
     lexeme_t lexeme;
+    token() :
+        symbol(SYMBOL_NONE),
+        lexeme()
+    {}
     token(
         symbol_t symbol,
         parse_position_t start,

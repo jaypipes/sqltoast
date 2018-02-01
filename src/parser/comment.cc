@@ -32,12 +32,12 @@ namespace sqltoast {
 
 tokenize_result_t token_comment(lexer_t& lex) {
     if (! lex.peek_char('/'))
-        return TOKEN_NOT_FOUND;
+        return tokenize_result_t(TOKEN_NOT_FOUND);
 
     lex.cursor++;
     if (! lex.peek_char('*')) {
         lex.cursor--; // rewind
-        return TOKEN_NOT_FOUND;
+        return tokenize_result_t(TOKEN_NOT_FOUND);
     }
 
     parse_position_t start = lex.cursor;
@@ -47,14 +47,13 @@ tokenize_result_t token_comment(lexer_t& lex) {
     do {
         lex.cursor++;
         if (lex.cursor == lex.end_pos || (lex.cursor + 1) == lex.end_pos) {
-            return TOKEN_ERR_NO_CLOSING_DELIMITER;
+            return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER);
         }
     } while (*lex.cursor != '*' || *(lex.cursor + 1) != '/');
     {
         parse_position_t end = lex.cursor - 1;
         lex.cursor += 2;
-        lex.set_token(SYMBOL_COMMENT, start, end);
-        return TOKEN_FOUND;
+        return tokenize_result_t(SYMBOL_COMMENT, start, end);
     }
 }
 

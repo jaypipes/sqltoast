@@ -113,14 +113,13 @@ try_numeric:
     }
 push_literal:
     lex.cursor--;
-    lex.set_token(
+    return tokenize_result_t(
         found_sym,
         parse_position_t(start),
         parse_position_t(lex.cursor));
-    return TOKEN_FOUND;
 not_found:
     lex.cursor = start; // rewind... we didn't find a literal
-    return TOKEN_NOT_FOUND;
+    return tokenize_result_t(TOKEN_NOT_FOUND);
 }
 
 } // namespace sqltoast

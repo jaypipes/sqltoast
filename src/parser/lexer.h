@@ -41,10 +41,10 @@ typedef struct lexer {
     inline bool peek_char(const char c) {
         return ((cursor != end_pos && (*cursor == c)));
     }
-    inline void set_token(symbol_t sym, parse_position_t start, parse_position_t end) {
-        current_token.symbol = sym;
-        current_token.lexeme.start = start;
-        current_token.lexeme.end = end;
+    inline void set_token(token_t& tok) {
+        current_token.symbol = tok.symbol;
+        current_token.lexeme.start = tok.lexeme.start;
+        current_token.lexeme.end = tok.lexeme.end;
 #ifdef SQLTOAST_DEBUG
         std::cout << current_token << std::endl;
 #endif
@@ -56,10 +56,22 @@ typedef struct lexer {
     token_t* next_token();
 } lexer_t;
 
-typedef enum tokenize_result {
+typedef enum tokenize_result_code {
     TOKEN_FOUND,
     TOKEN_NOT_FOUND,
     TOKEN_ERR_NO_CLOSING_DELIMITER
+} tokenize_result_code_t;
+
+typedef struct tokenize_result {
+    tokenize_result_code_t code;
+    token_t token;
+    tokenize_result(tokenize_result_code_t code) :
+        code(code), token()
+    {}
+    tokenize_result(symbol_t sym, parse_position_t start, parse_position_t end) :
+        code(TOKEN_FOUND),
+        token(sym, start, end)
+    {}
 } tokenize_result_t;
 
 typedef tokenize_result_t (*tokenize_func_t) (lexer_t& lex);

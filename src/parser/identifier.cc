@@ -64,11 +64,9 @@ tokenize_result_t token_identifier(lexer_t& lex) {
 
     // if we went more than a single character, that's an
     // identifier...
-    tokenize_result_t res = (start != lex.cursor) ? TOKEN_FOUND : TOKEN_NOT_FOUND;
-    if (res == TOKEN_FOUND) {
-        lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
-    }
-    return res;
+    if (start != lex.cursor)
+        return tokenize_result_t(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
+    return tokenize_result_t(TOKEN_NOT_FOUND);
 }
 
 tokenize_result_t token_delimited_identifier(lexer_t& lex, escape_mode current_escape) {
@@ -86,21 +84,20 @@ tokenize_result_t token_delimited_identifier(lexer_t& lex, escape_mode current_e
             closer = '`';
             break;
         case ESCAPE_NONE:
-            return TOKEN_NOT_FOUND;
+            return tokenize_result_t(TOKEN_NOT_FOUND);
     }
     char c;
     while (lex.cursor != lex.end_pos) {
         lex.cursor++;
         c = *lex.cursor;
         if (c == closer) {
-            lex.set_token(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
-            return TOKEN_FOUND;
+            return tokenize_result_t(SYMBOL_IDENTIFIER, start, parse_position_t(lex.cursor));
         }
     }
     // We will get here if there was a start of a delimited escape sequence but we
     // never found the closing escape character(s). Set the parse context's
     // error to indicate the location that an error occurred.
-    return TOKEN_ERR_NO_CLOSING_DELIMITER;
+    return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER);
 }
 
 } // namespace sqltoast

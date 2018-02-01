@@ -101,7 +101,7 @@ tokenize_result_t token_keyword(lexer_t& lex) {
             jump_tbl = &kw_jump_tables::v;
             break;
         default:
-            return TOKEN_NOT_FOUND;
+            return tokenize_result_t(TOKEN_NOT_FOUND);
     }
 
     parse_position_t start = lex.cursor;
@@ -119,12 +119,11 @@ tokenize_result_t token_keyword(lexer_t& lex) {
         if (lexeme_len != entry_len)
             continue;
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {
-            lex.set_token(entry.symbol, start, end);
             lex.cursor += entry_len;
-            return TOKEN_FOUND;
+            return tokenize_result_t(entry.symbol, start, end);
         }
     }
-    return TOKEN_NOT_FOUND;
+    return tokenize_result_t(TOKEN_NOT_FOUND);
 }
 
 } // namespace sqltoast
