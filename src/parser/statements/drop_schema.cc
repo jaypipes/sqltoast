@@ -40,21 +40,20 @@ bool parse_drop_schema(parse_context_t& ctx) {
 
     // BEGIN STATE MACHINE
 
-    start:
-        cur_tok = next_token(ctx);
-        if (cur_tok == NULL)
+    cur_tok = next_token(ctx);
+    if (cur_tok == NULL)
+        return false;
+    cur_sym = cur_tok->symbol;
+    switch (cur_sym) {
+        case SYMBOL_SCHEMA:
+            cur_tok = next_token(ctx);
+            goto expect_identifier;
+        default:
+            // rewind
+            ctx.lexer.cursor = start;
             return false;
-        cur_sym = cur_tok->symbol;
-        switch (cur_sym) {
-            case SYMBOL_SCHEMA:
-                cur_tok = next_token(ctx);
-                goto expect_identifier;
-            default:
-                // rewind
-                ctx.lexer.cursor = start;
-                return false;
-        }
-        SQLTOAST_UNREACHABLE();
+    }
+
     expect_identifier:
         // We get here after successfully finding DROP followed by SCHEMA. We
         // now need to find the schema identifier

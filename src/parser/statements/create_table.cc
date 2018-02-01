@@ -38,24 +38,24 @@ bool parse_create_table(parse_context_t& ctx) {
     std::vector<std::unique_ptr<column_definition_t>> column_defs;
 
     // BEGIN STATE MACHINE
-    start:
-        cur_tok = next_token(ctx);
-        if (cur_tok == NULL)
+
+    cur_tok = next_token(ctx);
+    if (cur_tok == NULL)
+        return false;
+    cur_sym = cur_tok->symbol;
+    switch (cur_sym) {
+        case SYMBOL_TABLE:
+            goto expect_table_name;
+        case SYMBOL_GLOBAL:
+        case SYMBOL_LOCAL:
+        case SYMBOL_TEMPORARY:
+            goto table_kw_or_table_type;
+        default:
+            // rewind
+            ctx.lexer.cursor = start;
             return false;
-        cur_sym = cur_tok->symbol;
-        switch (cur_sym) {
-            case SYMBOL_TABLE:
-                goto expect_table_name;
-            case SYMBOL_GLOBAL:
-            case SYMBOL_LOCAL:
-            case SYMBOL_TEMPORARY:
-                goto table_kw_or_table_type;
-            default:
-                // rewind
-                ctx.lexer.cursor = start;
-                return false;
-        }
-        SQLTOAST_UNREACHABLE();
+    }
+
     table_kw_or_table_type:
         // We get here after successfully finding the CREATE symbol. We can
         // either match the table keyword or the table type clause

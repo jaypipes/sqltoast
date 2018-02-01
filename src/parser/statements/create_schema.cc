@@ -77,20 +77,18 @@ bool parse_create_schema(parse_context_t& ctx) {
 
     // BEGIN STATE MACHINE
 
-    start:
-        cur_tok = next_token(ctx);
-        if (cur_tok == NULL)
+    cur_tok = next_token(ctx);
+    if (cur_tok == NULL)
+        return false;
+    cur_sym = cur_tok->symbol;
+    switch (cur_sym) {
+        case SYMBOL_SCHEMA:
+            goto identifier_or_authorization_clause;
+        default:
+            // rewind
+            ctx.lexer.cursor = start;
             return false;
-        cur_sym = cur_tok->symbol;
-        switch (cur_sym) {
-            case SYMBOL_SCHEMA:
-                goto identifier_or_authorization_clause;
-            default:
-                // rewind
-                ctx.lexer.cursor = start;
-                return false;
-        }
-        SQLTOAST_UNREACHABLE();
+    }
 
     identifier_or_authorization_clause:
         // We get here after successfully finding CREATE followed by SCHEMA. We
@@ -224,17 +222,6 @@ bool parse_create_schema(parse_context_t& ctx) {
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
         }
-    eos:
-        {
-            // Reached the end of the token stream after already finding the
-            // CREATE and SCHEMA symbols. Return a syntax error.
-            parse_position_t err_pos = ctx.lexer.cursor;
-            std::stringstream estr;
-            estr << "Expected <schema_name_clause> but found EOS";
-            create_syntax_error_marker(ctx, estr, err_pos);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
 }
 
 } // namespace sqltoast
