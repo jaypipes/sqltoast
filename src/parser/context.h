@@ -36,6 +36,14 @@ typedef struct parse_context {
 // have had a token pushed onto it.
 token_t* next_token(parse_context_t& ctx);
 
+typedef enum tokenize_result {
+    TOKEN_FOUND,
+    TOKEN_NOT_FOUND,
+    TOKEN_ERR_NO_CLOSING_DELIMITER
+} tokenize_result_t;
+
+typedef tokenize_result_t (*tokenize_func_t) (parse_context_t& ctx);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_CONTEXT_H */

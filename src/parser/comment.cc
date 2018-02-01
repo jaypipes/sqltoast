@@ -33,15 +33,15 @@ namespace sqltoast {
 // comments, because they are sometimes used to embed dialect-specific
 // triggers, are consumed as tokens.
 
-bool token_comment(parse_context_t& ctx) {
+tokenize_result_t token_comment(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     if (! lex.peek_char('/'))
-        return false;
+        return TOKEN_NOT_FOUND;
 
     lex.cursor++;
     if (! lex.peek_char('*')) {
         lex.cursor--; // rewind
-        return false;
+        return TOKEN_NOT_FOUND;
     }
 
     parse_position_t start = lex.cursor;
@@ -51,26 +51,14 @@ bool token_comment(parse_context_t& ctx) {
     do {
         lex.cursor++;
         if (lex.cursor == lex.end_pos || (lex.cursor + 1) == lex.end_pos) {
-            goto err_no_end_marker;
+            return TOKEN_ERR_NO_CLOSING_DELIMITER;
         }
     } while (*lex.cursor != '*' || *(lex.cursor + 1) != '/');
-    goto create_token;
-
-    create_token:
     {
         parse_position_t end = lex.cursor - 1;
         lex.cursor += 2;
         lex.set_token(SYMBOL_COMMENT, start, end);
-        return true;
-    }
-
-    err_no_end_marker:
-    {
-        lex.error = ERR_NO_CLOSING_DELIMITER;
-        std::stringstream estr;
-        estr << "Expected closing */ comment marker but found EOS" << std::endl;
-        create_syntax_error_marker(ctx, estr, lex.end_pos);
-        return false;
+        return TOKEN_FOUND;
     }
 }
 

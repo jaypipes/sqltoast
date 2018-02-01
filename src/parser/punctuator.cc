@@ -4,12 +4,11 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "punctuator.h"
-#include "token.h"
+#include "parser/punctuator.h"
 
 namespace sqltoast {
 
-bool token_punctuator(parse_context_t& ctx) {
+tokenize_result_t token_punctuator(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     const char c = *lex.cursor++;
     for (unsigned int x = 0; x < NUM_PUNCTUATORS; x++) {
@@ -19,11 +18,11 @@ bool token_punctuator(parse_context_t& ctx) {
                 parse_position_t(lex.cursor),
                 parse_position_t(lex.cursor+1)
             );
-            return true;
+            return TOKEN_FOUND;
         }
     }
     lex.cursor--; // rewind... we didn't find a punctuator
-    return false;
+    return TOKEN_NOT_FOUND;
 }
 
 } // namespace sqltoast

@@ -63,7 +63,7 @@ kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
 kw_jump_table_t kw_jump_tables::v = _init_kw_jump_table('v');
 
-bool token_keyword(parse_context_t& ctx) {
+tokenize_result_t token_keyword(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     kw_jump_table_t* jump_tbl;
     switch (*lex.cursor) {
@@ -104,7 +104,7 @@ bool token_keyword(parse_context_t& ctx) {
             jump_tbl = &kw_jump_tables::v;
             break;
         default:
-            return false;
+            return TOKEN_NOT_FOUND;
     }
 
     parse_position_t start = lex.cursor;
@@ -124,10 +124,10 @@ bool token_keyword(parse_context_t& ctx) {
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {
             lex.set_token(entry.symbol, start, end);
             lex.cursor += entry_len;
-            return true;
+            return TOKEN_FOUND;
         }
     }
-    return false;
+    return TOKEN_NOT_FOUND;
 }
 
 } // namespace sqltoast
