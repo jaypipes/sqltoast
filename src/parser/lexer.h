@@ -41,15 +41,6 @@ typedef struct lexer {
     inline bool peek_char(const char c) {
         return ((cursor != end_pos && (*cursor == c)));
     }
-    inline void set_token(token_t& tok) {
-        current_token.symbol = tok.symbol;
-        current_token.lexeme.start = tok.lexeme.start;
-        current_token.lexeme.end = tok.lexeme.end;
-#ifdef SQLTOAST_DEBUG
-        std::cout << current_token << std::endl;
-#endif
-        return;
-    }
 
     // Attempts to find the next token. If a token was found, returns a pointer
     // to that token, else NULL.

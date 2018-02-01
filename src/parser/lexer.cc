@@ -57,7 +57,7 @@ token_t* lexer_t::next_token() {
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](*this);
         if (tok_res.code == TOKEN_FOUND) {
-            set_token(tok_res.token);
+            current_token = tok_res.token;
             return &current_token;
         }
         if (tok_res.code == TOKEN_NOT_FOUND)
