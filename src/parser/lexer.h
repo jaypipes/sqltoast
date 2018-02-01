@@ -38,14 +38,6 @@ typedef struct lexer {
         current_token(SYMBOL_SOS, subject.cbegin(), subject.cbegin())
     {}
     void skip_simple_comments();
-    // Simply advances the lexer's cursor over any whitespace or simple
-    // comments
-    inline void skip() {
-        while (std::isspace(*cursor))
-            cursor++;
-        skip_simple_comments();
-        return;
-    }
     inline bool peek_char(const char c) {
         return ((cursor != end_pos && (*cursor == c)));
     }

@@ -41,7 +41,10 @@ void lexer_t::skip_simple_comments() {
 
 token_t* next_token(parse_context_t &ctx) {
     lexer_t& lex = ctx.lexer;
-    lex.skip();
+    // Advance the lexer's cursor over any whitespace or simple comments
+    while (std::isspace(*lex.cursor))
+        lex.cursor++;
+    lex.skip_simple_comments();
     if (token_comment(ctx))
         return &lex.current_token;
     if (lex.error != ERR_NONE)
