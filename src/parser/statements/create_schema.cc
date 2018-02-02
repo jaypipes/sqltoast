@@ -49,7 +49,7 @@ namespace sqltoast {
 //      | <collation definition>
 //      | <translation definition>
 //
-// So far, we only implement up to the <schema name clause> part of the grammar.
+// So far, we only implement up to the <schema element> part of the grammar.
 //
 // TODO(jaypipes): Implement the <schema element> list
 //
@@ -129,9 +129,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected <identifier> after AUTHORIZATION keyword but found "
-                 << symbol_map::to_string(cur_sym);
-            estr << std::endl;
+            estr << "Expected <identifier> after AUTHORIZATION keyword but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -166,7 +164,7 @@ bool parse_create_schema(parse_context_t& ctx) {
             std::stringstream estr;
             estr << "Expected EOS, SEMICOLON, <default character set clause> "
                  << " or <schema_authorization_clause> but found "
-                 << symbol_map::to_string(cur_sym) << std::endl;
+                 << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -184,8 +182,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected EOS or SEMICOLON but found "
-                 << symbol_map::to_string(cur_sym) << std::endl;
+            estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }

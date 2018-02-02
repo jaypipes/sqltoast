@@ -84,9 +84,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found "
-                 << symbol_map::to_string(cur_sym);
-            estr << std::endl;
+            estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -102,9 +100,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found "
-                 << symbol_map::to_string(cur_sym);
-            estr << std::endl;
+            estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -125,9 +121,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected <identifier> after CREATE TABLE keyword but found "
-                 << symbol_map::to_string(cur_sym);
-            estr << std::endl;
+            estr << "Expected <identifier> after CREATE TABLE keyword but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -147,9 +141,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected '(' after CREATE TABLE <table name> but found "
-                 << symbol_map::to_string(cur_sym);
-            estr << std::endl;
+            estr << "Expected '(' after CREATE TABLE <table name> but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -167,7 +159,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected column definition but got EOS" << std::endl;
+            estr << "Expected column definition but got " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -188,9 +180,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected closing ')' after CREATE TABLE <table name> but found "
-                 << cur_tok;
-            estr << std::endl;
+            estr << "Expected closing ')' after CREATE TABLE <table name> but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -208,8 +198,7 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected EOS or SEMICOLON but found "
-                 << symbol_map::to_string(cur_sym) << std::endl;
+            estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }

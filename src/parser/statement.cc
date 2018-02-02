@@ -64,7 +64,7 @@ void parse_statement(parse_context_t& ctx) {
     } else {
         std::stringstream estr;
         estr << "Failed to recognize any valid SQL statement." << std::endl;
-        create_syntax_error_marker(ctx, estr, parse_position_t(ctx.lexer.cursor));
+        create_syntax_error_marker(ctx, estr, ctx.lexer.cursor);
     }
 }
 

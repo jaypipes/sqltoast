@@ -70,9 +70,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected <identifier> after DROP SCHEMA but found "
-                 << symbol_map::to_string(cur_sym);
-            estr << std::endl;
+            estr << "Expected <identifier> after DROP SCHEMA but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
@@ -102,8 +100,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            estr << "Expected EOS or SEMICOLON but found "
-                 << symbol_map::to_string(cur_sym) << std::endl;
+            estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
         }
