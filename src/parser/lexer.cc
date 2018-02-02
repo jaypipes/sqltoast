@@ -58,10 +58,10 @@ symbol_t lexer_t::peek() const {
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](cur);
-        if (tok_res.code == TOKEN_FOUND)
-            return tok_res.token.symbol;
         if (tok_res.code == TOKEN_NOT_FOUND)
             continue;
+        if (tok_res.code == TOKEN_FOUND)
+            return tok_res.token.symbol;
         // There was an error in tokenizing... return some error marker?
         return SYMBOL_EOS;
     }
@@ -78,14 +78,14 @@ token_t* lexer_t::next() {
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](cur);
+        if (tok_res.code == TOKEN_NOT_FOUND)
+            continue;
         if (tok_res.code == TOKEN_FOUND) {
             current_token = tok_res.token;
             cursor = tok_res.token.lexeme.end;
             cursor++;
             return &current_token;
         }
-        if (tok_res.code == TOKEN_NOT_FOUND)
-            continue;
         // There was an error in tokenizing
         return NULL;
     }
