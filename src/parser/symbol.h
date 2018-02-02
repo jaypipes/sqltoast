@@ -29,6 +29,7 @@ namespace sqltoast {
 // the SYMBOL_CREATE or SYMBOL_DATABASE symbols...
 typedef enum symbol {
     SYMBOL_NONE,
+    SYMBOL_ERROR,
 
     SYMBOL_SOS, // Start of the input stream
     SYMBOL_EOS, // End of the input stream

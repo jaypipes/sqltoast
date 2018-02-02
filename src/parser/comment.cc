@@ -44,7 +44,7 @@ tokenize_result_t token_comment(parse_position_t cursor) {
     do {
         cursor++;
         if (*cursor == '\0' || *(cursor + 1) == '\0') {
-            return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER);
+            return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER, start, cursor);
         }
     } while (*cursor != '*' || *(cursor + 1) != '/');
     return tokenize_result_t(SYMBOL_COMMENT, start, cursor + 1);

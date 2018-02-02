@@ -112,10 +112,7 @@ try_numeric:
         }
     }
 push_literal:
-    return tokenize_result_t(
-        found_sym,
-        parse_position_t(start),
-        parse_position_t(cursor - 1));
+    return tokenize_result_t(found_sym, start, cursor);
 not_found:
     return tokenize_result_t(TOKEN_NOT_FOUND);
 }

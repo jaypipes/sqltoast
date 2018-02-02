@@ -117,7 +117,7 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         if (lexeme_len != entry_len)
             continue;
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {
-            return tokenize_result_t(entry.symbol, start, start + entry_len - 1);
+            return tokenize_result_t(entry.symbol, start, start + entry_len);
         }
     }
     return tokenize_result_t(TOKEN_NOT_FOUND);
