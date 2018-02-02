@@ -49,21 +49,21 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
             std::stringstream estr;
             estr << "Parse subject must either begin with a keyword or a "
                     "comment, but found punctuation." << std::endl;
-            create_syntax_error_marker(ctx, estr, parse_position_t(lex.cursor));
+            create_syntax_error_marker(ctx, estr);
             continue;
         }
         if (cur_tok.is_literal()) {
             std::stringstream estr;
             estr << "Parse subject must either begin with a keyword or a "
                     "comment, but found literal." << std::endl;
-            create_syntax_error_marker(ctx, estr, parse_position_t(lex.cursor));
+            create_syntax_error_marker(ctx, estr);
             continue;
         }
         if (cur_tok.is_identifier()) {
             std::stringstream estr;
             estr << "Parse subject must either begin with a keyword or a "
                     "comment, but found identifier." << std::endl;
-            create_syntax_error_marker(ctx, estr, parse_position_t(lex.cursor));
+            create_syntax_error_marker(ctx, estr);
             continue;
         }
     }

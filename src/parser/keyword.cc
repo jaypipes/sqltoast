@@ -105,19 +105,18 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
     }
 
     parse_position_t start = cursor;
-    // Find the next space or delimiter character...
-    while ((*cursor >= 'a' && *cursor <= 'z') ||
-            (*cursor >= 'A' && *cursor <= 'Z'))
+    // Find the next delimiter character...
+    while (std::isalnum(*cursor))
         cursor++;
 
-    const std::string lexeme(start, parse_position_t(cursor));
+    const std::string lexeme(start, cursor);
     size_t lexeme_len = lexeme.size();
     for (auto entry : *jump_tbl) {
         size_t entry_len = entry.kw_str.size();
         if (lexeme_len != entry_len)
             continue;
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {
-            return tokenize_result_t(entry.symbol, start, start + entry_len);
+            return tokenize_result_t(entry.symbol, start, cursor);
         }
     }
     return tokenize_result_t(TOKEN_NOT_FOUND);

@@ -142,10 +142,9 @@ bool parse_data_type_descriptor(
     }
 err_expect_data_type:
     {
-        parse_position_t err_pos = ctx.lexer.cursor;
         std::stringstream estr;
         estr << "Expected data type after <column name> but found " << cur_tok << std::endl;
-        create_syntax_error_marker(ctx, estr, err_pos);
+        create_syntax_error_marker(ctx, estr);
         return false;
     }
 optional_character_set:
@@ -252,10 +251,9 @@ process_length:
     goto err_expect_size_literal;
 err_expect_size_literal:
     {
-        parse_position_t err_pos = ctx.lexer.cursor;
         std::stringstream estr;
         estr << "Expected unsigned integer as length after '(' but found " << cur_tok << std::endl;
-        create_syntax_error_marker(ctx, estr, err_pos);
+        create_syntax_error_marker(ctx, estr);
         return false;
     }
 length_close:
@@ -269,10 +267,9 @@ length_close:
     goto err_expect_length_rparen;
 err_expect_length_rparen:
     {
-        parse_position_t err_pos = ctx.lexer.cursor;
         std::stringstream estr;
         estr << "Expected ')' after length specifier but found " << cur_tok << std::endl;
-        create_syntax_error_marker(ctx, estr, err_pos);
+        create_syntax_error_marker(ctx, estr);
         return false;
     }
 push_descriptor:

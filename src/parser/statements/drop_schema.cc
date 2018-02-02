@@ -68,10 +68,9 @@ bool parse_drop_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_identifier:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected <identifier> after DROP SCHEMA but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -98,10 +97,9 @@ bool parse_drop_schema(parse_context_t& ctx) {
             goto push_statement;
         }
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();

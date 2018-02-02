@@ -82,10 +82,9 @@ bool parse_create_table(parse_context_t& ctx) {
         goto expect_table;
     err_expect_temporary:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -98,10 +97,9 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_table:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -119,10 +117,9 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_identifier:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected <identifier> after CREATE TABLE keyword but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -139,10 +136,9 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_lparen:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected '(' after CREATE TABLE <table name> but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -157,10 +153,9 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_column_definition:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected column definition but got " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -178,10 +173,9 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_rparen:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected closing ')' after CREATE TABLE <table name> but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -196,10 +190,9 @@ bool parse_create_table(parse_context_t& ctx) {
             goto push_statement;
         }
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();

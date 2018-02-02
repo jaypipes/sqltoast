@@ -127,10 +127,9 @@ bool parse_create_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     err_expect_authz_identifier:
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected <identifier> after AUTHORIZATION keyword but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -160,12 +159,11 @@ bool parse_create_schema(parse_context_t& ctx) {
             goto default_charset_clause;
         }
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected EOS, SEMICOLON, <default character set clause> "
                  << " or <schema_authorization_clause> but found "
                  << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();
@@ -180,10 +178,9 @@ bool parse_create_schema(parse_context_t& ctx) {
             goto push_statement;
         }
         {
-            parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
             estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr, err_pos);
+            create_syntax_error_marker(ctx, estr);
             return false;
         }
         SQLTOAST_UNREACHABLE();

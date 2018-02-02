@@ -14,8 +14,9 @@ namespace sqltoast {
 
 // TODO(jaypipes): Limit the amount of output to something like 200 characters
 // before the syntax error position...
-void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es, parse_position_t err_pos) {
+void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es) {
     lexer_t& lex = ctx.lexer;
+    parse_position_t err_pos = lex.current_token.lexeme.start;
     std::string original(lex.start_pos, lex.end_pos);
     std::string location(original);
     auto start_pos = err_pos - lex.start_pos;
