@@ -34,4 +34,11 @@ void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es) {
     ctx.result.code = PARSE_SYNTAX_ERROR;
 }
 
+void expect_error(parse_context_t& ctx, symbol_t expected) {
+    std::stringstream es;
+    es << "Expected to find " << symbol_map::to_string(expected)
+        << " but found " << ctx.lexer.current_token << std::endl;
+    create_syntax_error_marker(ctx, es);
+}
+
 } // namespace sqltoast

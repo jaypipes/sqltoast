@@ -18,6 +18,9 @@ namespace sqltoast {
 // shows where the syntax error occurred
 void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es);
 
+// Helper function to generate a syntax error about expecting to find a
+// particular symbol
+void expect_error(parse_context_t& ctx, symbol_t expected);
 } // namespace sqltoast
 
 #endif /* SQLTOAST_ERROR_H */

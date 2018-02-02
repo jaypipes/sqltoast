@@ -67,13 +67,8 @@ bool parse_drop_schema(parse_context_t& ctx) {
         goto err_expect_identifier;
         SQLTOAST_UNREACHABLE();
     err_expect_identifier:
-        {
-            std::stringstream estr;
-            estr << "Expected <identifier> after DROP SCHEMA but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_error(ctx, SYMBOL_IDENTIFIER);
+        return false;
     drop_behaviour_or_statement_ending:
         // We get here after successfully parsing the <schema name> element,
         // which must be followed by either a statement ending or a <drop

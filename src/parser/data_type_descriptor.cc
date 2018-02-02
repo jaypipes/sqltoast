@@ -266,12 +266,8 @@ length_close:
     }
     goto err_expect_length_rparen;
 err_expect_length_rparen:
-    {
-        std::stringstream estr;
-        estr << "Expected ')' after length specifier but found " << cur_tok << std::endl;
-        create_syntax_error_marker(ctx, estr);
-        return false;
-    }
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 push_descriptor:
     {
         if (ctx.opts.disable_statement_construction)

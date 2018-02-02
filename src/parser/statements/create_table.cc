@@ -81,13 +81,8 @@ bool parse_create_table(parse_context_t& ctx) {
             goto err_expect_temporary;
         goto expect_table;
     err_expect_temporary:
-        {
-            std::stringstream estr;
-            estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_error(ctx, SYMBOL_TEMPORARY);
+        return false;
     expect_table:
         cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
@@ -96,13 +91,8 @@ bool parse_create_table(parse_context_t& ctx) {
         goto expect_table_name;
         SQLTOAST_UNREACHABLE();
     err_expect_table:
-        {
-            std::stringstream estr;
-            estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_error(ctx, SYMBOL_TABLE);
+        return false;
     expect_table_name:
         // We get here after successfully finding CREATE followed by the TABLE
         // symbol (after optionally processing the table type modifier). We now
@@ -116,13 +106,8 @@ bool parse_create_table(parse_context_t& ctx) {
         goto err_expect_identifier;
         SQLTOAST_UNREACHABLE();
     err_expect_identifier:
-        {
-            std::stringstream estr;
-            estr << "Expected <identifier> after CREATE TABLE keyword but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_error(ctx, SYMBOL_IDENTIFIER);
+        return false;
     expect_column_list_open:
         // We get here after successfully finding the CREATE ... TABLE <table name>
         // part of the statement. We now expect to find the <table element
@@ -135,13 +120,8 @@ bool parse_create_table(parse_context_t& ctx) {
         goto err_expect_lparen;
         SQLTOAST_UNREACHABLE();
     err_expect_lparen:
-        {
-            std::stringstream estr;
-            estr << "Expected '(' after CREATE TABLE <table name> but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_error(ctx, SYMBOL_LPAREN);
+        return false;
     expect_column_list_element:
         // We get here after finding the LPAREN opening the <table element
         // list> clause. Now we expect to find one or more column or constraint
@@ -172,13 +152,8 @@ bool parse_create_table(parse_context_t& ctx) {
         goto err_expect_rparen;
         SQLTOAST_UNREACHABLE();
     err_expect_rparen:
-        {
-            std::stringstream estr;
-            estr << "Expected closing ')' after CREATE TABLE <table name> but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_error(ctx, SYMBOL_RPAREN);
+        return false;
     statement_ending:
         // We get here if we have already successfully processed the CREATE
         // TABLE statement and are expecting EOS or SEMICOLON as the next
