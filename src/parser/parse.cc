@@ -38,7 +38,7 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
     }
 
     while (res.code == PARSE_OK) {
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         if (cur_tok == NULL)
             return res;
         if (cur_tok->is_keyword()) {

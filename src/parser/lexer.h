@@ -42,7 +42,7 @@ typedef struct lexer {
 
     // Attempts to find the next token. If a token was found, returns a pointer
     // to that token, else NULL.
-    token_t* next_token();
+    token_t* next();
 } lexer_t;
 
 typedef enum tokenize_result_code {

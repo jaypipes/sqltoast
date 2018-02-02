@@ -41,13 +41,13 @@ bool parse_drop_schema(parse_context_t& ctx) {
 
     // BEGIN STATE MACHINE
 
-    cur_tok = lex.next_token();
+    cur_tok = lex.next();
     if (cur_tok == NULL)
         return false;
     cur_sym = cur_tok->symbol;
     switch (cur_sym) {
         case SYMBOL_SCHEMA:
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto expect_identifier;
         default:
             // rewind
@@ -63,7 +63,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto drop_behaviour_or_statement_ending;
         }
         goto err_expect_identifier;
@@ -96,7 +96,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
             if (cur_sym == SYMBOL_RESTRICT) {
                 behaviour = statements::DROP_BEHAVIOUR_RESTRICT;
             }
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
         }
         goto statement_ending;
     statement_ending:
@@ -109,7 +109,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_SEMICOLON) {
             // skip-consume the semicolon token
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto push_statement;
         }
         {

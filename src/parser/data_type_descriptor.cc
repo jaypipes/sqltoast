@@ -172,11 +172,11 @@ bool parse_character_string(
     switch (cur_sym) {
         case SYMBOL_CHAR:
         case SYMBOL_CHARACTER:
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto optional_char_varying;
         case SYMBOL_VARCHAR:
             data_type = DATA_TYPE_VARCHAR;
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto optional_length;
         default:
             return false;
@@ -191,7 +191,7 @@ optional_char_varying:
     cur_sym = cur_tok->symbol;
     if (cur_sym == SYMBOL_VARYING) {
         data_type = DATA_TYPE_VARCHAR;
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
     }
     goto optional_length;
 optional_length:
@@ -202,7 +202,7 @@ optional_length:
         goto push_descriptor;
     cur_sym = cur_tok->symbol;
     if (cur_sym == SYMBOL_LPAREN) {
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         goto process_length;
     }
     goto optional_character_set;
@@ -219,7 +219,7 @@ process_length:
             goto err_expect_size_literal;
         const std::string char_len_str(cur_tok->lexeme.start, cur_tok->lexeme.end);
         char_len = atoi(char_len_str.data());
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         goto length_close;
     } else {
         goto err_expect_size_literal;
@@ -278,7 +278,7 @@ optional_character_set:
         if (peek_sym == SYMBOL_RPAREN)
             goto push_descriptor;
         if (peek_sym == SYMBOL_CHARACTER) {
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto process_character_set;
         }
     }

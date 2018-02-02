@@ -67,7 +67,7 @@ symbol_t lexer_t::peek() const {
     return SYMBOL_EOS;
 }
 
-token_t* lexer_t::next_token() {
+token_t* lexer_t::next() {
     parse_position_t cur = cursor;
     // Advance the lexer's cursor over any whitespace or simple comments
     while (std::isspace(*cur))

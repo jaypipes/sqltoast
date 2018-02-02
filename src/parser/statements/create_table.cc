@@ -40,7 +40,7 @@ bool parse_create_table(parse_context_t& ctx) {
 
     // BEGIN STATE MACHINE
 
-    cur_tok = lex.next_token();
+    cur_tok = lex.next();
     if (cur_tok == NULL)
         return false;
     cur_sym = cur_tok->symbol;
@@ -75,7 +75,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here if we successfully matched CREATE followed by either the
         // GLOBAL or LOCAL symbol. If this is the case, we expect to find the
         // TEMPORARY keyword followed by the TABLE keyword.
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         if (cur_tok == NULL)
             goto err_expect_temporary;
         cur_sym = cur_tok->symbol;
@@ -99,7 +99,7 @@ bool parse_create_table(parse_context_t& ctx) {
         }
         SQLTOAST_UNREACHABLE();
     expect_table:
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         if (cur_tok == NULL)
             goto err_expect_table;
         cur_sym = cur_tok->symbol;
@@ -127,7 +127,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully finding CREATE followed by the TABLE
         // symbol (after optionally processing the table type modifier). We now
         // need to find an identifier
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         if (cur_tok == NULL)
             goto err_expect_identifier;
         cur_sym = cur_tok->symbol;
@@ -157,7 +157,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully finding the CREATE ... TABLE <table name>
         // part of the statement. We now expect to find the <table element
         // list> clause
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         if (cur_tok == NULL)
             goto err_expect_lparen;
         cur_sym = cur_tok->symbol;
@@ -186,7 +186,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after finding the LPAREN opening the <table element
         // list> clause. Now we expect to find one or more column or constraint
         // definitions
-        cur_tok = lex.next_token();
+        cur_tok = lex.next();
         if (cur_tok == NULL)
             goto err_expect_column_definition;
         if (! parse_column_definition(ctx, cur_tok, column_defs))
@@ -210,7 +210,7 @@ bool parse_create_table(parse_context_t& ctx) {
             goto err_expect_rparen;
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_RPAREN) {
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto statement_ending;
         }
         goto err_expect_rparen;
@@ -242,7 +242,7 @@ bool parse_create_table(parse_context_t& ctx) {
         cur_sym = cur_tok->symbol;
         if (cur_sym == SYMBOL_SEMICOLON) {
             // skip-consume the semicolon token
-            cur_tok = lex.next_token();
+            cur_tok = lex.next();
             goto push_statement;
         }
         {

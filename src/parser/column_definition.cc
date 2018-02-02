@@ -44,7 +44,7 @@ bool parse_column_definition(
     // identifier that indicates the column name.
     if (cur_sym == SYMBOL_IDENTIFIER) {
         fill_lexeme(cur_tok, ident);
-        cur_tok = ctx.lexer.next_token();
+        cur_tok = ctx.lexer.next();
         goto create_column_def;
     }
     // Just return false, since callers could be looking for
