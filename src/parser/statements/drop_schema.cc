@@ -91,13 +91,8 @@ bool parse_drop_schema(parse_context_t& ctx) {
             cur_tok = lex.next();
             goto push_statement;
         }
-        {
-            std::stringstream estr;
-            estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
+        return false;
     push_statement:
         {
             if (ctx.opts.disable_statement_construction)

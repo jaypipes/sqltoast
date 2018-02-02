@@ -250,12 +250,8 @@ process_length:
     }
     goto err_expect_size_literal;
 err_expect_size_literal:
-    {
-        std::stringstream estr;
-        estr << "Expected unsigned integer as length after '(' but found " << cur_tok << std::endl;
-        create_syntax_error_marker(ctx, estr);
-        return false;
-    }
+    expect_error(ctx, SYMBOL_LITERAL_UNSIGNED_INTEGER);
+    return false;
 length_close:
     // We get here if we've processed the opening parentheses of the length
     // modifier and the unsigned integer size and now expect a closing

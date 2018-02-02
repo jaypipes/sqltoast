@@ -126,13 +126,8 @@ bool parse_create_schema(parse_context_t& ctx) {
         goto err_expect_authz_identifier;
         SQLTOAST_UNREACHABLE();
     err_expect_authz_identifier:
-        {
-            std::stringstream estr;
-            estr << "Expected <identifier> after AUTHORIZATION keyword but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_error(ctx, SYMBOL_IDENTIFIER);
+        return false;
     default_charset_or_statement_ending:
         // We get here after successfully parsing the <schema name clause>,
         // which must be followed by either a statement ending or a <default
@@ -158,15 +153,8 @@ bool parse_create_schema(parse_context_t& ctx) {
         } else if (cur_sym == SYMBOL_DEFAULT) {
             goto default_charset_clause;
         }
-        {
-            std::stringstream estr;
-            estr << "Expected EOS, SEMICOLON, <default character set clause> "
-                 << " or <schema_authorization_clause> but found "
-                 << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
+        return false;
     statement_ending:
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
@@ -177,13 +165,8 @@ bool parse_create_schema(parse_context_t& ctx) {
             cur_tok = lex.next();
             goto push_statement;
         }
-        {
-            std::stringstream estr;
-            estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
+        return false;
     push_statement:
         {
             if (ctx.opts.disable_statement_construction)

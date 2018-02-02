@@ -128,16 +128,8 @@ bool parse_create_table(parse_context_t& ctx) {
         // definitions
         cur_tok = lex.next();
         if (! parse_column_definition(ctx, cur_tok, column_defs))
-            goto err_expect_column_definition;
-        goto expect_column_list_close;
-        SQLTOAST_UNREACHABLE();
-    err_expect_column_definition:
-        {
-            std::stringstream estr;
-            estr << "Expected column definition but got " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
             return false;
-        }
+        goto expect_column_list_close;
         SQLTOAST_UNREACHABLE();
     expect_column_list_close:
         // We get here after successfully parsing the <table element list>
@@ -164,13 +156,8 @@ bool parse_create_table(parse_context_t& ctx) {
             cur_tok = lex.next();
             goto push_statement;
         }
-        {
-            std::stringstream estr;
-            estr << "Expected EOS or SEMICOLON but found " << cur_tok << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            return false;
-        }
-        SQLTOAST_UNREACHABLE();
+        expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
+        return false;
     push_statement:
         {
             if (ctx.opts.disable_statement_construction)
