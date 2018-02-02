@@ -23,20 +23,21 @@ void fill_lexeme(token_t* tok, lexeme_t& lexeme) {
     lexeme.end = tok->lexeme.end;
 }
 
-void lexer_t::skip_simple_comments() {
+parse_position_t skip_simple_comments(parse_position_t cursor) {
+    parse_position_t start = cursor;
     if (*cursor != '-')
-        return;
+        return start;
 
     cursor++;
     if (*cursor != '-') {
-        cursor--; // rewind
-        return;
+        return start;
     }
 
     // The comment content is from the cursor until we find a newline or EOS
     do {
         cursor++;
-    } while (cursor != end_pos && *cursor != '\n');
+    } while (*cursor != '\0' && *cursor != '\n');
+    return cursor;
 }
 
 static size_t NUM_TOKENIZERS = 5;
@@ -53,6 +54,7 @@ symbol_t lexer_t::peek() const {
     // Advance the lexer's cursor over any whitespace or simple comments
     while (std::isspace(*cur))
         cur++;
+    cur = skip_simple_comments(cur);
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](cur);
@@ -72,7 +74,7 @@ token_t* lexer_t::next() {
     // Advance the lexer's cursor over any whitespace or simple comments
     while (std::isspace(*cur))
         cur++;
-    skip_simple_comments();
+    cur = skip_simple_comments(cur);
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](cur);
