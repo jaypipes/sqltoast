@@ -65,7 +65,7 @@ tokenize_result_t token_identifier(parse_position_t cursor) {
     // if we went more than a single character, that's an
     // identifier...
     if (start != cursor)
-        return tokenize_result_t(SYMBOL_IDENTIFIER, start, parse_position_t(cursor));
+        return tokenize_result_t(SYMBOL_IDENTIFIER, start, cursor);
     return tokenize_result_t(TOKEN_NOT_FOUND);
 }
 
@@ -91,13 +91,13 @@ tokenize_result_t token_delimited_identifier(parse_position_t cursor, escape_mod
         cursor++;
         c = *cursor;
         if (c == closer) {
-            return tokenize_result_t(SYMBOL_IDENTIFIER, start, parse_position_t(cursor));
+            return tokenize_result_t(SYMBOL_IDENTIFIER, start, cursor);
         }
     }
     // We will get here if there was a start of a delimited escape sequence but we
     // never found the closing escape character(s). Set the parse context's
     // error to indicate the location that an error occurred.
-    return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER);
+    return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER, start, cursor);
 }
 
 } // namespace sqltoast

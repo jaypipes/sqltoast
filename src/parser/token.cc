@@ -15,11 +15,21 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
     }
     if (token.is_literal()){
         // TODO(jaypipes): Add typing of literal...
-        out << "literal[length: " << token.lexeme.size() << "]";
+        size_t tok_len = token.lexeme.size();
+        if (tok_len < 20) {
+            out << "literal[" << std::string(token.lexeme.start, token.lexeme.end) << "]";
+        } else {
+            out << "literal[length: " << tok_len << "]";
+        }
         return out;
     }
     if (token.is_identifier()){
-        out << "identifier[length: " << token.lexeme.size() << "]";
+        size_t tok_len = token.lexeme.size();
+        if (tok_len < 20) {
+            out << "identifier[" << std::string(token.lexeme.start, token.lexeme.end) << "]";
+        } else {
+            out << "identifier[length: " << tok_len << "]";
+        }
         return out;
     }
     if (token.symbol == SYMBOL_COMMENT) {

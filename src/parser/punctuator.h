@@ -12,16 +12,18 @@
 
 namespace sqltoast {
 
-const unsigned int NUM_PUNCTUATORS = 4;
+const unsigned int NUM_PUNCTUATORS = 5;
 
-static const char punctuator_char_map[4] = {
-    ';', // PUNCTUATOR_SEMICOLON
-    ',', // PUNCTUATOR_COMMA
-    '(', // PUNCTUATOR_LPAREN
-    ')', // PUNCTUATOR_RPAREN
+static const char punctuator_char_map[5] = {
+    '\0',
+    ';',
+    ',',
+    '(',
+    ')',
 };
 
-static const symbol_t punctuator_symbol_map[4] = {
+static const symbol_t punctuator_symbol_map[5] = {
+    SYMBOL_EOS,
     SYMBOL_SEMICOLON,
     SYMBOL_COMMA,
     SYMBOL_LPAREN,

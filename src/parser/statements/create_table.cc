@@ -32,7 +32,7 @@ namespace sqltoast {
 bool parse_create_table(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
-    token_t* cur_tok;
+    token_t& cur_tok = lex.current_token;
     lexeme_t ident;
     symbol_t cur_sym;
     statements::table_type_t table_type = statements::TABLE_TYPE_NORMAL;
@@ -41,10 +41,10 @@ bool parse_create_table(parse_context_t& ctx) {
     // BEGIN STATE MACHINE
 
     cur_tok = lex.next();
-    if (cur_tok == NULL)
-        return false;
-    cur_sym = cur_tok->symbol;
+    cur_sym = cur_tok.symbol;
     switch (cur_sym) {
+        case SYMBOL_ERROR:
+            return false;
         case SYMBOL_TABLE:
             goto expect_table_name;
         case SYMBOL_GLOBAL:
@@ -76,9 +76,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // GLOBAL or LOCAL symbol. If this is the case, we expect to find the
         // TEMPORARY keyword followed by the TABLE keyword.
         cur_tok = lex.next();
-        if (cur_tok == NULL)
-            goto err_expect_temporary;
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym != SYMBOL_TEMPORARY)
             goto err_expect_temporary;
         goto expect_table;
@@ -86,13 +84,8 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found "
-                     << symbol_map::to_string(cur_sym);
-            }
+            estr << "Expected TEMPORARY after CREATE {GLOBAL | LOCAL} but found "
+                 << symbol_map::to_string(cur_sym);
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -100,9 +93,7 @@ bool parse_create_table(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     expect_table:
         cur_tok = lex.next();
-        if (cur_tok == NULL)
-            goto err_expect_table;
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym != SYMBOL_TABLE)
             goto err_expect_table;
         goto expect_table_name;
@@ -111,13 +102,8 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found "
-                     << symbol_map::to_string(cur_sym);
-            }
+            estr << "Expected TABLE after CREATE {GLOBAL | LOCAL} TEMPORARY but found "
+                 << symbol_map::to_string(cur_sym);
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -128,9 +114,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // symbol (after optionally processing the table type modifier). We now
         // need to find an identifier
         cur_tok = lex.next();
-        if (cur_tok == NULL)
-            goto err_expect_identifier;
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
             goto expect_column_list_open;
@@ -141,13 +125,8 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected <identifier> after CREATE TABLE but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected <identifier> after CREATE TABLE keyword but found "
-                     << symbol_map::to_string(cur_sym);
-            }
+            estr << "Expected <identifier> after CREATE TABLE keyword but found "
+                 << symbol_map::to_string(cur_sym);
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -158,9 +137,7 @@ bool parse_create_table(parse_context_t& ctx) {
         // part of the statement. We now expect to find the <table element
         // list> clause
         cur_tok = lex.next();
-        if (cur_tok == NULL)
-            goto err_expect_lparen;
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_LPAREN) {
             goto expect_column_list_element;
         }
@@ -170,13 +147,8 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected opening '(' after CREATE TABLE <table name> but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected '(' after CREATE TABLE <table name> but found "
-                     << symbol_map::to_string(cur_sym);
-            }
+            estr << "Expected '(' after CREATE TABLE <table name> but found "
+                 << symbol_map::to_string(cur_sym);
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -187,10 +159,8 @@ bool parse_create_table(parse_context_t& ctx) {
         // list> clause. Now we expect to find one or more column or constraint
         // definitions
         cur_tok = lex.next();
-        if (cur_tok == NULL)
-            goto err_expect_column_definition;
         if (! parse_column_definition(ctx, cur_tok, column_defs))
-            return false;
+            goto err_expect_column_definition;
         goto expect_column_list_close;
         SQLTOAST_UNREACHABLE();
     err_expect_column_definition:
@@ -206,9 +176,8 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully parsing the <table element list>
         // column/constraint definitions and are now expecting the closing
         // RPAREN to indicate the end of the <table element list>
-        if (cur_tok == NULL)
-            goto err_expect_rparen;
-        cur_sym = cur_tok->symbol;
+        cur_tok = lex.current_token;
+        cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_RPAREN) {
             cur_tok = lex.next();
             goto statement_ending;
@@ -219,13 +188,8 @@ bool parse_create_table(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected closing ')' after CREATE TABLE <table name> but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected closing ')' after CREATE TABLE <table name> but found "
-                     << symbol_map::to_string(cur_sym);
-            }
+            estr << "Expected closing ')' after CREATE TABLE <table name> but found "
+                 << cur_tok;
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -235,13 +199,9 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // TABLE statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        if (cur_tok == NULL) {
-            goto push_statement;
-        }
-
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_SEMICOLON) {
-            // skip-consume the semicolon token
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
+            // skip-consume the semicolon or EOS token
             cur_tok = lex.next();
             goto push_statement;
         }

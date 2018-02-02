@@ -35,17 +35,17 @@ bool parse_drop_schema(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
     lexeme_t ident;
-    token_t* cur_tok;
+    token_t& cur_tok = lex.current_token;
     symbol_t cur_sym;
     statements::drop_behaviour_t behaviour = statements::DROP_BEHAVIOUR_CASCADE;
 
     // BEGIN STATE MACHINE
 
     cur_tok = lex.next();
-    if (cur_tok == NULL)
-        return false;
-    cur_sym = cur_tok->symbol;
+    cur_sym = cur_tok.symbol;
     switch (cur_sym) {
+        case SYMBOL_ERROR:
+            return false;
         case SYMBOL_SCHEMA:
             cur_tok = lex.next();
             goto expect_identifier;
@@ -58,9 +58,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
     expect_identifier:
         // We get here after successfully finding DROP followed by SCHEMA. We
         // now need to find the schema identifier
-        if (cur_tok == NULL)
-            goto err_expect_identifier;
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
             cur_tok = lex.next();
@@ -72,13 +70,8 @@ bool parse_drop_schema(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected <identifier> after DROP SCHEMA but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected <identifier> after DROP SCHEMA but found "
-                     << symbol_map::to_string(cur_sym);
-            }
+            estr << "Expected <identifier> after DROP SCHEMA but found "
+                 << symbol_map::to_string(cur_sym);
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -88,10 +81,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         // We get here after successfully parsing the <schema name> element,
         // which must be followed by either a statement ending or a <drop
         // behaviour clause>
-        if (cur_tok == NULL)
-            goto push_statement;
-
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_CASCADE || cur_sym == SYMBOL_RESTRICT) {
             if (cur_sym == SYMBOL_RESTRICT) {
                 behaviour = statements::DROP_BEHAVIOUR_RESTRICT;
@@ -103,11 +93,8 @@ bool parse_drop_schema(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        if (cur_tok == NULL)
-            goto push_statement;
-
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_SEMICOLON) {
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
             // skip-consume the semicolon token
             cur_tok = lex.next();
             goto push_statement;

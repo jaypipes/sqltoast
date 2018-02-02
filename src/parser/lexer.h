@@ -28,25 +28,29 @@ typedef struct lexer {
     parse_position_t start_pos;
     parse_position_t end_pos;
     parse_position_t cursor;
-    error_t error;
     token_t current_token;
     lexer(parse_input_t& subject) :
         start_pos(subject.cbegin()),
         end_pos(subject.cend()),
-        cursor(subject.begin()),
-        error(ERR_NONE),
+        cursor(subject.cbegin()),
         current_token(SYMBOL_SOS, subject.cbegin(), subject.cbegin())
     {}
+    // Returns the next symbol after the lexer's current cursor.
     symbol_t peek() const;
+    // Populates a supplied symbol pointer with the value of the symbol found
+    // after the supplied cursor. If not symbol was found, the symbol pointer
+    // will contain SYMBOL_EOS. Returns the cursor's position after having
+    // found the next symbol.
+    parse_position_t peek_from(parse_position_t cur, symbol_t* sym) const;
 
     // Attempts to find the next token. If a token was found, returns a pointer
     // to that token, else NULL.
-    token_t* next();
+    token_t& next();
 } lexer_t;
 
 typedef enum tokenize_result_code {
-    TOKEN_FOUND,
     TOKEN_NOT_FOUND,
+    TOKEN_FOUND,
     TOKEN_ERR_NO_CLOSING_DELIMITER
 } tokenize_result_code_t;
 
@@ -55,6 +59,10 @@ typedef struct tokenize_result {
     token_t token;
     tokenize_result(tokenize_result_code_t code) :
         code(code), token()
+    {}
+    tokenize_result(tokenize_result_code_t errcode, parse_position_t start, parse_position_t end) :
+        code(errcode),
+        token(SYMBOL_ERROR, start, end)
     {}
     tokenize_result(symbol_t sym, parse_position_t start, parse_position_t end) :
         code(TOKEN_FOUND),
@@ -67,7 +75,7 @@ typedef tokenize_result_t (*tokenize_func_t) (parse_position_t cursor);
 // Advances the supplied cursor past any simple SQL comments and returns the
 // location of the cursor after skipping
 parse_position_t skip_simple_comments(parse_position_t cursor);
-void fill_lexeme(token_t* tok, lexeme_t& lexeme);
+void fill_lexeme(token_t& tok, lexeme_t& lexeme);
 
 } // namespace sqltoast
 

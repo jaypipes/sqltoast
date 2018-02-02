@@ -32,10 +32,10 @@ namespace sqltoast {
 
 bool parse_column_definition(
         parse_context_t& ctx,
-        token_t* cur_tok,
+        token_t& cur_tok,
         std::vector<std::unique_ptr<column_definition_t>>& column_defs) {
     lexeme_t ident;
-    symbol_t cur_sym = cur_tok->symbol;
+    symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<column_definition_t> cdef_p;
 
     // BEGIN STATE MACHINE

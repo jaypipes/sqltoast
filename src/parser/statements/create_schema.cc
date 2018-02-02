@@ -62,13 +62,13 @@ bool require_default_charset_clause(parse_context_t& ctx) {
         SYMBOL_SET,
         SYMBOL_IDENTIFIER
     };
-    return follows_sequence(ctx, exp_sym_seq, 3);
+    return expect_sequence(ctx, exp_sym_seq, 3);
 }
 
 bool parse_create_schema(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
-    token_t* cur_tok;
+    token_t& cur_tok = lex.current_token;
     lexeme_t ident;
     bool found_authz = false;
     lexeme_t authz_ident;
@@ -79,10 +79,10 @@ bool parse_create_schema(parse_context_t& ctx) {
     // BEGIN STATE MACHINE
 
     cur_tok = lex.next();
-    if (cur_tok == NULL)
-        return false;
-    cur_sym = cur_tok->symbol;
+    cur_sym = cur_tok.symbol;
     switch (cur_sym) {
+        case SYMBOL_ERROR:
+            return false;
         case SYMBOL_SCHEMA:
             goto identifier_or_authorization_clause;
         default:
@@ -96,7 +96,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         // now need to find either an identifier or the schema authorization
         // clause
         cur_tok = lex.next();
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
             cur_tok = lex.next();
@@ -116,7 +116,7 @@ bool parse_create_schema(parse_context_t& ctx) {
     authorization_clause:
         // The next non-comment token MUST be an identifier for the
         // AUTHORIZATION clause
-        cur_sym = cur_tok->symbol;
+        cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             found_authz = true;
             fill_lexeme(cur_tok, authz_ident);
@@ -129,13 +129,8 @@ bool parse_create_schema(parse_context_t& ctx) {
         {
             parse_position_t err_pos = ctx.lexer.cursor;
             std::stringstream estr;
-            if (cur_tok == NULL) {
-                estr << "Expected <identifier> after AUTHORIZATION keyword but found EOS";
-            } else {
-                cur_sym = cur_tok->symbol;
-                estr << "Expected <identifier> after AUTHORIZATION keyword but found "
-                     << symbol_map::to_string(cur_sym);
-            }
+            estr << "Expected <identifier> after AUTHORIZATION keyword but found "
+                 << symbol_map::to_string(cur_sym);
             estr << std::endl;
             create_syntax_error_marker(ctx, estr, err_pos);
             return false;
@@ -145,25 +140,18 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here after successfully parsing the <schema name clause>,
         // which must be followed by either a statement ending or a <default
         // character set clause>
-        if (cur_tok == NULL) {
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_EOS)
             goto push_statement;
-        }
-
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_DEFAULT) {
+        if (cur_sym == SYMBOL_DEFAULT)
             goto default_charset_clause;
-        }
         goto statement_ending;
     authz_or_statement_ending:
         // We get here if we already have the CREATE SCHEMA <identifier> and
         // now we are expecting either the end of the statement OR an
         // AUTHORIZATION clause
-        if (cur_tok == NULL) {
-            goto push_statement;
-        }
-
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_SEMICOLON) {
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
             // skip-consume the semicolon token
             cur_tok = lex.next();
             goto push_statement;
@@ -187,12 +175,8 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
-        if (cur_tok == NULL) {
-            goto push_statement;
-        }
-
-        cur_sym = cur_tok->symbol;
-        if (cur_sym == SYMBOL_SEMICOLON) {
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
             // skip-consume the semicolon token
             cur_tok = lex.next();
             goto push_statement;
