@@ -169,9 +169,8 @@ process_character_set:
             SYMBOL_SET,
             SYMBOL_IDENTIFIER
         };
-        if (! expect_sequence(ctx, exp_sym_seq, 3)) {
+        if (! expect_sequence(ctx, exp_sym_seq, 3))
             return false;
-        }
         // tack the character set onto the char_string_t data type descriptor
         char_string_t* dtd = static_cast<char_string_t*>(column_def.data_type.get());
         return true;
@@ -257,9 +256,8 @@ length_close:
     // modifier and the unsigned integer size and now expect a closing
     // parentheses for the length modifier
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_RPAREN) {
+    if (cur_sym == SYMBOL_RPAREN)
         goto push_descriptor;
-    }
     goto err_expect_length_rparen;
 err_expect_length_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
@@ -269,11 +267,7 @@ push_descriptor:
         if (ctx.opts.disable_statement_construction)
             return true;
         std::unique_ptr<data_type_descriptor_t> dtd_p;
-        if (data_type == DATA_TYPE_CHAR) {
-            dtd_p = std::move(std::make_unique<char_string_t>(char_len));
-        } else {
-            dtd_p = std::move(std::make_unique<varchar_string_t>(char_len));
-        }
+        dtd_p = std::move(std::make_unique<char_string_t>(data_type, char_len));
         column_def.data_type = std::move(dtd_p);
         return true;
     }

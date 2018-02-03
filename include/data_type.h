@@ -39,21 +39,12 @@ typedef struct data_type_descriptor {
 
 typedef struct char_string : data_type_descriptor_t {
     size_t size;
-    char_string(size_t size) :
-        data_type_descriptor_t(DATA_TYPE_CHAR),
+    char_string(data_type_t type, size_t size) :
+        data_type_descriptor_t(type),
         size(size)
     {}
     virtual const std::string to_string();
 } char_string_t;
-
-typedef struct varchar_string : data_type_descriptor_t {
-    size_t size;
-    varchar_string(size_t size) :
-        data_type_descriptor_t(DATA_TYPE_VARCHAR),
-        size(size)
-    {}
-    virtual const std::string to_string();
-} varchar_string_t;
 
 } // namespace sqltoast
 
