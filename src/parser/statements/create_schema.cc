@@ -132,39 +132,40 @@ bool parse_create_schema(parse_context_t& ctx) {
         // We get here after successfully parsing the <schema name clause>,
         // which must be followed by either a statement ending or a <default
         // character set clause>
-        cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_EOS)
-            goto push_statement;
-        if (cur_sym == SYMBOL_DEFAULT)
-            goto default_charset_clause;
-        goto statement_ending;
+        switch (cur_sym) {
+            case SYMBOL_SEMICOLON:
+            case SYMBOL_EOS:
+                goto push_statement;
+            case SYMBOL_DEFAULT:
+                goto default_charset_clause;
+            default:
+                goto statement_ending;
+        }
     authz_or_statement_ending:
         // We get here if we already have the CREATE SCHEMA <identifier> and
         // now we are expecting either the end of the statement OR an
         // AUTHORIZATION clause
         cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
-            // skip-consume the semicolon token
-            cur_tok = lex.next();
-            goto push_statement;
-        } else if (cur_sym == SYMBOL_AUTHORIZATION) {
-            cur_tok = lex.next();
-            goto authorization_clause;
-        } else if (cur_sym == SYMBOL_DEFAULT) {
-            goto default_charset_clause;
+        switch (cur_sym) {
+            case SYMBOL_SEMICOLON:
+            case SYMBOL_EOS:
+                goto push_statement;
+            case SYMBOL_AUTHORIZATION:
+                cur_tok = lex.next();
+                goto authorization_clause;
+            case SYMBOL_DEFAULT:
+                goto default_charset_clause;
+            default:
+                expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
+                return false;
         }
-        expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
-        return false;
     statement_ending:
         // We get here if we have already successfully processed the CREATE
         // SCHEMA statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
         cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
-            // skip-consume the semicolon token
-            cur_tok = lex.next();
+        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS)
             goto push_statement;
-        }
         expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
         return false;
     push_statement:

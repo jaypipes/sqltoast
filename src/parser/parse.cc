@@ -72,4 +72,3 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
 }
 
 } // namespace sqltoast
-

@@ -114,9 +114,8 @@ bool parse_create_table(parse_context_t& ctx) {
         // list> clause
         cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_LPAREN) {
+        if (cur_sym == SYMBOL_LPAREN)
             goto expect_column_list_element;
-        }
         goto err_expect_lparen;
         SQLTOAST_UNREACHABLE();
     err_expect_lparen:
@@ -151,11 +150,8 @@ bool parse_create_table(parse_context_t& ctx) {
         // TABLE statement and are expecting EOS or SEMICOLON as the next
         // non-comment token
         cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
-            // skip-consume the semicolon or EOS token
-            cur_tok = lex.next();
+        if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS)
             goto push_statement;
-        }
         expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
         return false;
     push_statement:

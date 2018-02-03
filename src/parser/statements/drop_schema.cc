@@ -87,8 +87,6 @@ bool parse_drop_schema(parse_context_t& ctx) {
         // non-comment token
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
-            // skip-consume the semicolon token
-            cur_tok = lex.next();
             goto push_statement;
         }
         expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
