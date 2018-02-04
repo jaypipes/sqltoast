@@ -167,15 +167,9 @@ optional_character_set:
     // We get here after processing the optional length specifier. After
     // that specifier, there may be an optional CHARACTER SET <character
     // set specification> clause
-    {
-        symbol_t cur_sym = ctx.lexer.current_token.symbol;
-        if (cur_sym == SYMBOL_EOS ||
-                cur_sym == SYMBOL_COMMA ||
-                cur_sym == SYMBOL_RPAREN)
-            return true;
-        if (cur_sym == SYMBOL_CHARACTER)
-            goto process_character_set;
-    }
+    cur_sym = ctx.lexer.current_token.symbol;
+    if (cur_sym == SYMBOL_CHARACTER)
+        goto process_character_set;
     return true;
 process_character_set:
     {
