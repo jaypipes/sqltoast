@@ -46,6 +46,7 @@ bool parse_create_table(parse_context_t& ctx) {
         case SYMBOL_ERROR:
             return false;
         case SYMBOL_TABLE:
+            cur_tok = lex.next();
             goto expect_table_name;
         case SYMBOL_GLOBAL:
         case SYMBOL_LOCAL:
@@ -62,12 +63,15 @@ bool parse_create_table(parse_context_t& ctx) {
         // either match the table keyword or the table type clause
         if (cur_sym == SYMBOL_GLOBAL) {
             table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
+            cur_tok = lex.next();
             goto expect_temporary;
         } else if (cur_sym == SYMBOL_LOCAL) {
             table_type = statements::TABLE_TYPE_TEMPORARY_LOCAL;
+            cur_tok = lex.next();
             goto expect_temporary;
         } else if (cur_sym == SYMBOL_TEMPORARY) {
             table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
+            cur_tok = lex.next();
             goto expect_table;
         }
         SQLTOAST_UNREACHABLE();
@@ -75,20 +79,22 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here if we successfully matched CREATE followed by either the
         // GLOBAL or LOCAL symbol. If this is the case, we expect to find the
         // TEMPORARY keyword followed by the TABLE keyword.
-        cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
-        if (cur_sym != SYMBOL_TEMPORARY)
-            goto err_expect_temporary;
-        goto expect_table;
+        if (cur_sym == SYMBOL_TEMPORARY) {
+            cur_tok = lex.next();
+            goto expect_table;
+        }
+        goto err_expect_temporary;
     err_expect_temporary:
         expect_error(ctx, SYMBOL_TEMPORARY);
         return false;
     expect_table:
-        cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
-        if (cur_sym != SYMBOL_TABLE)
-            goto err_expect_table;
-        goto expect_table_name;
+        if (cur_sym == SYMBOL_TABLE) {
+            cur_tok = lex.next();
+            goto expect_table_name;
+        }
+        goto err_expect_table;
         SQLTOAST_UNREACHABLE();
     err_expect_table:
         expect_error(ctx, SYMBOL_TABLE);
@@ -97,10 +103,10 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully finding CREATE followed by the TABLE
         // symbol (after optionally processing the table type modifier). We now
         // need to find an identifier
-        cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
+            cur_tok = lex.next();
             goto expect_column_list_open;
         }
         goto err_expect_identifier;
@@ -112,10 +118,11 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after successfully finding the CREATE ... TABLE <table name>
         // part of the statement. We now expect to find the <table element
         // list> clause
-        cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_LPAREN)
+        if (cur_sym == SYMBOL_LPAREN) {
+            cur_tok = lex.next();
             goto expect_column_list_element;
+        }
         goto err_expect_lparen;
         SQLTOAST_UNREACHABLE();
     err_expect_lparen:
@@ -125,7 +132,6 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after finding the LPAREN opening the <table element
         // list> clause. Now we expect to find one or more column or constraint
         // definitions
-        cur_tok = lex.next();
         if (! parse_column_definition(ctx, cur_tok, column_defs))
             return false;
         goto expect_column_list_close;
@@ -136,14 +142,18 @@ bool parse_create_table(parse_context_t& ctx) {
         // RPAREN to indicate the end of the <table element list>
         cur_tok = lex.current_token;
         cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_RPAREN) {
-            cur_tok = lex.next();
-            goto statement_ending;
+        switch (cur_sym) {
+            case SYMBOL_RPAREN:
+                cur_tok = lex.next();
+                goto statement_ending;
+            case SYMBOL_COMMA:
+                cur_tok = lex.next();
+                goto expect_column_list_element;
+            default:
+                goto err_expect_rparen_or_comma;
         }
-        goto err_expect_rparen;
-        SQLTOAST_UNREACHABLE();
-    err_expect_rparen:
-        expect_error(ctx, SYMBOL_RPAREN);
+    err_expect_rparen_or_comma:
+        expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_RPAREN});
         return false;
     statement_ending:
         // We get here if we have already successfully processed the CREATE
