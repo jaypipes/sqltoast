@@ -95,7 +95,6 @@ bool parse_create_table(parse_context_t& ctx) {
             goto expect_table_name;
         }
         goto err_expect_table;
-        SQLTOAST_UNREACHABLE();
     err_expect_table:
         expect_error(ctx, SYMBOL_TABLE);
         return false;
@@ -110,7 +109,6 @@ bool parse_create_table(parse_context_t& ctx) {
             goto expect_column_list_open;
         }
         goto err_expect_identifier;
-        SQLTOAST_UNREACHABLE();
     err_expect_identifier:
         expect_error(ctx, SYMBOL_IDENTIFIER);
         return false;
@@ -124,7 +122,6 @@ bool parse_create_table(parse_context_t& ctx) {
             goto expect_column_list_element;
         }
         goto err_expect_lparen;
-        SQLTOAST_UNREACHABLE();
     err_expect_lparen:
         expect_error(ctx, SYMBOL_LPAREN);
         return false;
@@ -135,7 +132,6 @@ bool parse_create_table(parse_context_t& ctx) {
         if (! parse_column_definition(ctx, cur_tok, column_defs))
             return false;
         goto expect_column_list_close;
-        SQLTOAST_UNREACHABLE();
     expect_column_list_close:
         // We get here after successfully parsing the <table element list>
         // column/constraint definitions and are now expecting the closing
