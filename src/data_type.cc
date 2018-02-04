@@ -44,4 +44,27 @@ const std::string bit_string_t::to_string() {
     return ss.str();
 }
 
+const std::string exact_numeric_t::to_string() {
+    std::stringstream ss;
+    switch (type) {
+        case DATA_TYPE_INT:
+            ss << "INT";
+            break;
+        case DATA_TYPE_SMALLINT:
+            ss << "SMALLINT";
+            break;
+        case DATA_TYPE_NUMERIC:
+            ss << "NUMERIC";
+            break;
+    }
+    if (precision > 0) {
+        ss << "(" << precision;
+        if (scale > 0) {
+            ss << "," << scale;
+        }
+        ss << ")";
+    }
+    return ss.str();
+}
+
 } // namespace sqltoast

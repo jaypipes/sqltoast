@@ -21,7 +21,6 @@ typedef enum data_type {
     DATA_TYPE_BIT,
     DATA_TYPE_VARBIT,
     DATA_TYPE_NUMERIC,
-    DATA_TYPE_DECIMAL,
     DATA_TYPE_INT,
     DATA_TYPE_SMALLINT,
     DATA_TYPE_FLOAT,
@@ -57,6 +56,17 @@ typedef struct bit_string : data_type_descriptor_t {
     {}
     virtual const std::string to_string();
 } bit_string_t;
+
+typedef struct exact_numeric : data_type_descriptor_t {
+    size_t precision;
+    size_t scale;
+    exact_numeric(data_type_t type, size_t prec, size_t scale) :
+        data_type_descriptor_t(type),
+        precision(prec),
+        scale(scale)
+    {}
+    virtual const std::string to_string();
+} exact_numeric_t;
 
 } // namespace sqltoast
 

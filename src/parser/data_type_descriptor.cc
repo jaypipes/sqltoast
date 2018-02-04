@@ -142,6 +142,13 @@ bool parse_data_type_descriptor(
             return parse_character_string(ctx, cur_tok, column_def);
         case SYMBOL_BIT:
             return parse_bit_string(ctx, cur_tok, column_def);
+        case SYMBOL_INT:
+        case SYMBOL_INTEGER:
+        case SYMBOL_SMALLINT:
+        case SYMBOL_NUMERIC:
+        case SYMBOL_DEC:
+        case SYMBOL_DECIMAL:
+            return parse_exact_numeric(ctx, cur_tok, column_def);
         default:
             goto err_expect_data_type;
     }
@@ -357,6 +364,140 @@ length_close:
     }
     goto err_expect_length_rparen;
 err_expect_length_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+}
+
+// <exact numeric type> ::=
+//     NUMERIC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+//     | DECIMAL [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+//     | DEC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+//     | INTEGER
+//     | INT
+//     | SMALLINT
+bool parse_exact_numeric(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    data_type_t data_type = DATA_TYPE_INT;
+    size_t prec = 0;
+    size_t scale = 0;
+
+    // BEGIN STATE MACHINE
+
+    // We get here after the column name identifier has been found and
+    // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
+    // were next
+    switch (cur_sym) {
+        case SYMBOL_INT:
+        case SYMBOL_INTEGER:
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_SMALLINT:
+            data_type = DATA_TYPE_SMALLINT;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_NUMERIC:
+        case SYMBOL_DEC:
+        case SYMBOL_DECIMAL:
+            data_type = DATA_TYPE_NUMERIC;
+            cur_tok = lex.next();
+            goto optional_precision_scale;
+        default:
+            return false;
+    }
+optional_precision_scale:
+    // We get here after determining the exact type of the character
+    // string. The type will be followed by an optional length specifier
+    // clause, which if an unsigned integer enclosed by parentheses.
+    if (! parse_precision_scale(ctx, cur_tok, &prec, &scale))
+        return false;
+    goto push_descriptor;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        std::unique_ptr<data_type_descriptor_t> dtd_p;
+        dtd_p = std::move(std::make_unique<exact_numeric_t>(data_type, prec, scale));
+        column_def.data_type = std::move(dtd_p);
+        return true;
+    }
+}
+
+// [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+// <precision> ::= <unsigned integer>
+//
+// <scale> ::= <unsigned integer>
+bool parse_precision_scale(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        size_t* out_precision,
+        size_t* out_scale) {
+    lexer_t& lex = ctx.lexer;
+    *out_precision = 0;
+    *out_scale = 0;
+
+    // BEGIN STATE MACHINE
+
+    symbol_t cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        goto process_precision;
+    }
+    return true;
+process_precision:
+    // We get here if we've processed the opening parentheses of the
+    // optional length modifier and now expect to find an unsigned integer
+    // followed by a closing parentheses
+    if (cur_tok.is_literal()) {
+        // Make sure we can parse our literal token to an unsigned integer
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
+            goto err_expect_uint_literal;
+        const std::string prec_str(cur_tok.lexeme.start, cur_tok.lexeme.end);
+        *out_precision = atoi(prec_str.data());
+        cur_tok = lex.next();
+        goto optional_scale;
+    }
+    goto err_expect_uint_literal;
+err_expect_uint_literal:
+    expect_error(ctx, SYMBOL_LITERAL_UNSIGNED_INTEGER);
+    return false;
+optional_scale:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_scale;
+    }
+    goto precision_close;
+process_scale:
+    // We get here if we've processed the comma that delimits the optional
+    // scale specifier and now expect to find an unsigned integer followed by a
+    // closing parentheses
+    if (cur_tok.is_literal()) {
+        // Make sure we can parse our literal token to an unsigned integer
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
+            goto err_expect_uint_literal;
+        const std::string scale_str(cur_tok.lexeme.start, cur_tok.lexeme.end);
+        *out_scale = atoi(scale_str.data());
+        cur_tok = lex.next();
+        goto precision_close;
+    }
+    goto err_expect_uint_literal;
+precision_close:
+    // We get here if we've processed the opening parentheses of the precision
+    // specifier and the unsigned integer precision and now expect a closing
+    // parentheses
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_RPAREN) {
+        cur_tok = lex.next();
+        return true;
+    }
+    goto err_expect_rparen;
+err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
 }

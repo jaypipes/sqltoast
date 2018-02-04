@@ -60,6 +60,24 @@ bool parse_length_specifier(
         token_t& cur_tok,
         size_t* len);
 
+// Returns true if an exact numeric descriptor clause can be parsed from the
+// supplied token iterator. If the function returns true, the column_def
+// argument will have its data_type attribute set to an allocated
+// exact_numeric_t descriptor
+bool parse_exact_numeric(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def);
+
+// Returns true if a precision/scale specifier clause can be parsed from the
+// supplied token iterator. If the function returns true, the scale and precision
+// arguments will be set to the parsed length.
+bool parse_precision_scale(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        size_t* prec,
+        size_t* scale);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_PARSE_H */
