@@ -68,6 +68,15 @@ typedef struct exact_numeric : data_type_descriptor_t {
     virtual const std::string to_string();
 } exact_numeric_t;
 
+typedef struct approximate_numeric : data_type_descriptor_t {
+    size_t precision;
+    approximate_numeric(data_type_t type, size_t prec) :
+        data_type_descriptor_t(type),
+        precision(prec)
+    {}
+    virtual const std::string to_string();
+} approximate_numeric_t;
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_DATA_TYPE_H */

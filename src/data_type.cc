@@ -67,4 +67,20 @@ const std::string exact_numeric_t::to_string() {
     return ss.str();
 }
 
+const std::string approximate_numeric_t::to_string() {
+    std::stringstream ss;
+    switch (type) {
+        case DATA_TYPE_FLOAT:
+            ss << "FLOAT";
+            break;
+        case DATA_TYPE_DOUBLE:
+            ss << "DOUBLE PRECISION";
+            break;
+    }
+    if (precision > 0) {
+        ss << "(" << precision << ")";
+    }
+    return ss.str();
+}
+
 } // namespace sqltoast

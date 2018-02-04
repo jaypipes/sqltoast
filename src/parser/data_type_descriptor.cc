@@ -149,6 +149,10 @@ bool parse_data_type_descriptor(
         case SYMBOL_DEC:
         case SYMBOL_DECIMAL:
             return parse_exact_numeric(ctx, cur_tok, column_def);
+        case SYMBOL_FLOAT:
+        case SYMBOL_REAL:
+        case SYMBOL_DOUBLE:
+            return parse_approximate_numeric(ctx, cur_tok, column_def);
         default:
             goto err_expect_data_type;
     }
@@ -500,6 +504,70 @@ precision_close:
 err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
+}
+
+// <approximate numeric type> ::=
+//     FLOAT [ <left paren> <precision> <right paren> ]
+//     | REAL
+//     | DOUBLE PRECISION
+bool parse_approximate_numeric(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    data_type_t data_type = DATA_TYPE_FLOAT;
+    size_t prec = 0;
+
+    // BEGIN STATE MACHINE
+
+    // We get here after the column name identifier has been found and
+    // we've determined that either the FLOAT, REAL, or DOUBLE symbols
+    // were next
+    switch (cur_sym) {
+        case SYMBOL_FLOAT:
+            cur_tok = lex.next();
+            goto optional_precision;
+        case SYMBOL_REAL:
+            // REAL is a synonym for FLOAT(24)
+            prec = 24;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_DOUBLE:
+            data_type = DATA_TYPE_DOUBLE;
+            cur_tok = lex.next();
+            goto expect_precision_sym;
+        default:
+            return false;
+    }
+optional_precision:
+    // We get here after getting a FLOAT symbol. This can be followed by an
+    // optional LPAREN <precision> RPAREN. Since the length specifier is an
+    // identical structure, we use that...
+    if (! parse_length_specifier(ctx, cur_tok, &prec))
+        return false;
+    goto push_descriptor;
+expect_precision_sym:
+    // We get here if we got the DOUBLE symbol, which according to ANSI-92 SQL
+    // must be followed by the keyword "PRECISION"
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_PRECISION) {
+        cur_tok = lex.next();
+        goto push_descriptor;
+    }
+    goto err_expect_precision_sym;
+err_expect_precision_sym:
+    expect_error(ctx, SYMBOL_PRECISION);
+    return false;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        std::unique_ptr<data_type_descriptor_t> dtd_p;
+        dtd_p = std::move(std::make_unique<approximate_numeric_t>(data_type, prec));
+        column_def.data_type = std::move(dtd_p);
+        return true;
+    }
 }
 
 } // namespace sqltoast

@@ -31,6 +31,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DECIMAL] = std::string("DECIMAL");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
     m[SYMBOL_DROP] = std::string("DROP");
+    m[SYMBOL_DOUBLE] = std::string("DOUBLE");
+    m[SYMBOL_FLOAT] = std::string("FLOAT");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
     m[SYMBOL_INT] = std::string("INT");
     m[SYMBOL_INTEGER] = std::string("INTEGER");
@@ -38,6 +40,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_NATIONAL] = std::string("NATIONAL");
     m[SYMBOL_NCHAR] = std::string("NCHAR");
     m[SYMBOL_NUMERIC] = std::string("NUMERIC");
+    m[SYMBOL_PRECISION] = std::string("PRECISION");
+    m[SYMBOL_REAL] = std::string("REAL");
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SET] = std::string("SET");

@@ -25,6 +25,8 @@ typedef enum keyword {
     KEYWORD_DECIMAL,
     KEYWORD_DEFAULT,
     KEYWORD_DROP,
+    KEYWORD_DOUBLE,
+    KEYWORD_FLOAT,
     KEYWORD_GLOBAL,
     KEYWORD_INT,
     KEYWORD_INTEGER,
@@ -32,6 +34,8 @@ typedef enum keyword {
     KEYWORD_NATIONAL,
     KEYWORD_NCHAR,
     KEYWORD_NUMERIC,
+    KEYWORD_PRECISION,
+    KEYWORD_REAL,
     KEYWORD_RESTRICT,
     KEYWORD_SCHEMA,
     KEYWORD_SET,
@@ -58,10 +62,12 @@ struct kw_jump_tables {
     static kw_jump_table_t b;
     static kw_jump_table_t c;
     static kw_jump_table_t d;
+    static kw_jump_table_t f;
     static kw_jump_table_t g;
     static kw_jump_table_t i;
     static kw_jump_table_t l;
     static kw_jump_table_t n;
+    static kw_jump_table_t p;
     static kw_jump_table_t r;
     static kw_jump_table_t s;
     static kw_jump_table_t t;

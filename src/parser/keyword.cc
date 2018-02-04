@@ -30,6 +30,10 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DECIMAL, SYMBOL_DECIMAL, "DECIMAL"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DEFAULT, SYMBOL_DEFAULT, "DEFAULT"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DROP, SYMBOL_DROP, "DROP"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DOUBLE, SYMBOL_DOUBLE, "DOUBLE"));
+            return t;
+        case 'f':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_FLOAT, SYMBOL_FLOAT, "FLOAT"));
             return t;
         case 'g':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_GLOBAL, SYMBOL_GLOBAL, "GLOBAL"));
@@ -46,7 +50,11 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_NCHAR, SYMBOL_NCHAR, "NCHAR"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_NUMERIC, SYMBOL_NUMERIC, "NUMERIC"));
             return t;
+        case 'p':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_PRECISION, SYMBOL_PRECISION, "PRECISION"));
+            return t;
         case 'r':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_REAL, SYMBOL_REAL, "REAL"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_RESTRICT, SYMBOL_RESTRICT, "RESTRICT"));
             return t;
         case 's':
@@ -69,10 +77,12 @@ kw_jump_table_t kw_jump_tables::a = _init_kw_jump_table('a');
 kw_jump_table_t kw_jump_tables::b = _init_kw_jump_table('b');
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
+kw_jump_table_t kw_jump_tables::f = _init_kw_jump_table('f');
 kw_jump_table_t kw_jump_tables::g = _init_kw_jump_table('g');
 kw_jump_table_t kw_jump_tables::i = _init_kw_jump_table('i');
 kw_jump_table_t kw_jump_tables::l = _init_kw_jump_table('l');
 kw_jump_table_t kw_jump_tables::n = _init_kw_jump_table('n');
+kw_jump_table_t kw_jump_tables::p = _init_kw_jump_table('p');
 kw_jump_table_t kw_jump_tables::r = _init_kw_jump_table('r');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
@@ -97,6 +107,10 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         case 'D':
             jump_tbl = &kw_jump_tables::d;
             break;
+        case 'f':
+        case 'F':
+            jump_tbl = &kw_jump_tables::f;
+            break;
         case 'g':
         case 'G':
             jump_tbl = &kw_jump_tables::g;
@@ -112,6 +126,10 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         case 'n':
         case 'N':
             jump_tbl = &kw_jump_tables::n;
+            break;
+        case 'p':
+        case 'P':
+            jump_tbl = &kw_jump_tables::p;
             break;
         case 'r':
         case 'R':

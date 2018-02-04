@@ -78,6 +78,15 @@ bool parse_precision_scale(
         size_t* prec,
         size_t* scale);
 
+// Returns true if an approximate numeric descriptor clause can be parsed from
+// the supplied token iterator. If the function returns true, the column_def
+// argument will have its data_type attribute set to an allocated
+// approximate_numeric_t descriptor
+bool parse_approximate_numeric(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_PARSE_H */
