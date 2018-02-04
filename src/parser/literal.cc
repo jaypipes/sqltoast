@@ -68,7 +68,7 @@ try_numeric:
                 case ';':
                     // Make sure if we got a single . that we followed it with
                     // at least one number...
-                    if (*(cursor - 2) == '.')
+                    if (found_decimal && *(cursor - 2) == '.')
                         goto not_found;
                     if (found_e) {
                         // Make sure the exponent has at least one number
@@ -76,6 +76,7 @@ try_numeric:
                             goto not_found;
                         found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
                     }
+                    cursor--;
                     goto push_literal;
                 case '.':
                     // Make sure we have only one period...

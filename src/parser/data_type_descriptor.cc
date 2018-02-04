@@ -157,9 +157,8 @@ optional_character_set:
                 cur_sym == SYMBOL_COMMA ||
                 cur_sym == SYMBOL_RPAREN)
             return true;
-        if (cur_sym == SYMBOL_CHARACTER) {
+        if (cur_sym == SYMBOL_CHARACTER)
             goto process_character_set;
-        }
     }
     return true;
 process_character_set:
@@ -172,7 +171,12 @@ process_character_set:
         if (! expect_sequence(ctx, exp_sym_seq, 3))
             return false;
         // tack the character set onto the char_string_t data type descriptor
+        lexer_t& lex = ctx.lexer;
         char_string_t* dtd = static_cast<char_string_t*>(column_def.data_type.get());
+        auto p_def_charset = std::make_unique<identifier_t>(lex.current_token.lexeme);
+        dtd->charset = std::move(p_def_charset);
+        cur_tok = ctx.lexer.next();
+
         return true;
     }
 }
@@ -256,8 +260,10 @@ length_close:
     // modifier and the unsigned integer size and now expect a closing
     // parentheses for the length modifier
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_RPAREN)
+    if (cur_sym == SYMBOL_RPAREN) {
+        cur_tok = lex.next();
         goto push_descriptor;
+    }
     goto err_expect_length_rparen;
 err_expect_length_rparen:
     expect_error(ctx, SYMBOL_RPAREN);

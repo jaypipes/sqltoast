@@ -38,7 +38,8 @@ inline bool expect_sequence(parse_context_t& ctx, const symbol_t expected_sequen
         cur_sym = cur_tok.symbol;
         if (cur_sym != exp_sym)
             goto err_unexpected;
-        cur_tok = ctx.lexer.next();
+        if (x < (num_expected - 1))
+            cur_tok = ctx.lexer.next();
     }
     return true;
 err_unexpected:

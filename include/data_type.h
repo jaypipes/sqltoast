@@ -9,6 +9,8 @@
 
 #include <string>
 
+#include "identifier.h"
+
 namespace sqltoast {
 
 typedef enum data_type {
@@ -39,6 +41,7 @@ typedef struct data_type_descriptor {
 
 typedef struct char_string : data_type_descriptor_t {
     size_t size;
+    std::unique_ptr<identifier_t> charset;
     char_string(data_type_t type, size_t size) :
         data_type_descriptor_t(type),
         size(size)

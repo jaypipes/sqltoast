@@ -18,6 +18,8 @@ const std::string char_string_t::to_string() {
     ss << "CHAR";
     if (size > 0)
         ss << "(" << size << ")";
+    if (charset.get())
+        ss << " CHARACTER SET " << *charset;
     return ss.str();
 }
 
