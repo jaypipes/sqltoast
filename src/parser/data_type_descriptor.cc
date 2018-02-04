@@ -186,15 +186,12 @@ process_character_set:
     }
 }
 
-//
 // <character string type> ::=
 //     CHARACTER [ <left paren> <length> <right paren> ]
 //     | CHAR [ <left paren> <length> <right paren> ]
 //     | CHARACTER VARYING [ <left paren> <length> <right paren> ]
 //     | CHAR VARYING [ <left paren> <length> <right paren> ]
 //     | VARCHAR [ <left paren> <length> <right paren> ]
-//
-// <length> ::= <unsigned integer>
 bool parse_character_string(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -254,43 +251,9 @@ optional_length:
     // We get here after determining the exact type of the character
     // string. The type will be followed by an optional length specifier
     // clause, which if an unsigned integer enclosed by parentheses.
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_LPAREN) {
-        cur_tok = lex.next();
-        goto process_length;
-    }
+    if (! parse_length_specifier(ctx, cur_tok, &char_len))
+        return false;
     goto push_descriptor;
-process_length:
-    // We get here if we've processed the opening parentheses of the
-    // optional length modifier and now expect to find an unsigned integer
-    // followed by a closing parentheses
-    if (cur_tok.is_literal()) {
-        // Make sure we can parse our literal token to an unsigned integer
-        cur_sym = cur_tok.symbol;
-        if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
-            goto err_expect_size_literal;
-        const std::string char_len_str(cur_tok.lexeme.start, cur_tok.lexeme.end);
-        char_len = atoi(char_len_str.data());
-        cur_tok = lex.next();
-        goto length_close;
-    }
-    goto err_expect_size_literal;
-err_expect_size_literal:
-    expect_error(ctx, SYMBOL_LITERAL_UNSIGNED_INTEGER);
-    return false;
-length_close:
-    // We get here if we've processed the opening parentheses of the length
-    // modifier and the unsigned integer size and now expect a closing
-    // parentheses for the length modifier
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_RPAREN) {
-        cur_tok = lex.next();
-        goto push_descriptor;
-    }
-    goto err_expect_length_rparen;
-err_expect_length_rparen:
-    expect_error(ctx, SYMBOL_RPAREN);
-    return false;
 push_descriptor:
     {
         if (ctx.opts.disable_statement_construction)
@@ -302,12 +265,9 @@ push_descriptor:
     }
 }
 
-//
 // <bit string type> ::=
 //     BIT [ <left paren> <length> <right paren> ]
 //     | BIT VARYING [ <left paren> <length> <right paren> ]
-//
-// <length> ::= <unsigned integer>
 bool parse_bit_string(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -338,12 +298,36 @@ optional_length:
     // We get here after determining the exact type of the bit string. The type
     // will be followed by an optional length specifier clause, which if an
     // unsigned integer enclosed by parentheses.
-    cur_sym = cur_tok.symbol;
+    if (! parse_length_specifier(ctx, cur_tok, &bit_len))
+        return false;
+    goto push_descriptor;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        std::unique_ptr<data_type_descriptor_t> dtd_p;
+        dtd_p = std::move(std::make_unique<bit_string_t>(data_type, bit_len));
+        column_def.data_type = std::move(dtd_p);
+        return true;
+    }
+}
+
+// <length> ::= <unsigned integer>
+bool parse_length_specifier(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        size_t* out) {
+    lexer_t& lex = ctx.lexer;
+    *out = 0;
+
+    // BEGIN STATE MACHINE
+
+    symbol_t cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_LPAREN) {
         cur_tok = lex.next();
         goto process_length;
     }
-    goto push_descriptor;
+    return true;
 process_length:
     // We get here if we've processed the opening parentheses of the
     // optional length modifier and now expect to find an unsigned integer
@@ -353,8 +337,8 @@ process_length:
         cur_sym = cur_tok.symbol;
         if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
             goto err_expect_size_literal;
-        const std::string bit_len_str(cur_tok.lexeme.start, cur_tok.lexeme.end);
-        bit_len = atoi(bit_len_str.data());
+        const std::string len_str(cur_tok.lexeme.start, cur_tok.lexeme.end);
+        *out = atoi(len_str.data());
         cur_tok = lex.next();
         goto length_close;
     }
@@ -369,21 +353,12 @@ length_close:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_RPAREN) {
         cur_tok = lex.next();
-        goto push_descriptor;
+        return true;
     }
     goto err_expect_length_rparen;
 err_expect_length_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
-push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<data_type_descriptor_t> dtd_p;
-        dtd_p = std::move(std::make_unique<bit_string_t>(data_type, bit_len));
-        column_def.data_type = std::move(dtd_p);
-        return true;
-    }
 }
 
 } // namespace sqltoast

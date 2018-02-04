@@ -52,6 +52,14 @@ bool parse_bit_string(
         token_t& cur_tok,
         column_definition_t& column_def);
 
+// Returns true if a length specifier clause can be parsed from the
+// supplied token iterator. If the function returns true, the len
+// argument will be set to the parsed length.
+bool parse_length_specifier(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        size_t* len);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_PARSE_H */
