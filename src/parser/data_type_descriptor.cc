@@ -137,6 +137,9 @@ bool parse_data_type_descriptor(
             if (! parse_character_string(ctx, cur_tok, column_def))
                 return false;
             goto optional_character_set;
+        case SYMBOL_NCHAR:
+        case SYMBOL_NATIONAL:
+            return parse_character_string(ctx, cur_tok, column_def);
         default:
             goto err_expect_data_type;
     }
@@ -205,10 +208,16 @@ bool parse_character_string(
     // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
     // were next
     switch (cur_sym) {
+        case SYMBOL_NATIONAL:
+            data_type = DATA_TYPE_NCHAR;
+            cur_tok = lex.next();
+            goto expect_char;
+        case SYMBOL_NCHAR:
+            data_type = DATA_TYPE_NCHAR;
         case SYMBOL_CHAR:
         case SYMBOL_CHARACTER:
             cur_tok = lex.next();
-            goto optional_char_varying;
+            goto optional_varying;
         case SYMBOL_VARCHAR:
             data_type = DATA_TYPE_VARCHAR;
             cur_tok = lex.next();
@@ -216,14 +225,26 @@ bool parse_character_string(
         default:
             return false;
     }
-
-optional_char_varying:
+expect_char:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_CHAR || cur_sym == SYMBOL_CHARACTER) {
+        cur_tok = lex.next();
+        goto optional_varying;
+    }
+    goto err_expect_char;
+err_expect_char:
+    expect_any_error(ctx, {SYMBOL_CHAR, SYMBOL_CHARACTER});
+    return false;
+optional_varying:
     // We get here if we got a CHAR or CHARACTER as the data type. This
     // might be followed by the VARYING symbol, in which case we will
     // process a VARCHAR. Otherwise, we'll process a CHAR type
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_VARYING) {
-        data_type = DATA_TYPE_VARCHAR;
+        if (data_type == DATA_TYPE_CHAR)
+            data_type = DATA_TYPE_VARCHAR;
+        else
+            data_type = DATA_TYPE_NVARCHAR;
         cur_tok = lex.next();
     }
     goto optional_length;

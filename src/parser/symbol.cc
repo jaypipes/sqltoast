@@ -30,6 +30,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
     m[SYMBOL_LOCAL] = std::string("LOCAL");
+    m[SYMBOL_NATIONAL] = std::string("NATIONAL");
+    m[SYMBOL_NCHAR] = std::string("NCHAR");
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SET] = std::string("SET");

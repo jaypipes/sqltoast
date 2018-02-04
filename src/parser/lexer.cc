@@ -40,6 +40,14 @@ parse_position_t skip_simple_comments(parse_position_t cursor) {
     return cursor;
 }
 
+parse_position_t skip(parse_position_t cur) {
+    // Advance the lexer's cursor over any whitespace or simple comments
+    while (std::isspace(*cur))
+        cur++;
+    cur = skip_simple_comments(cur);
+    return cur;
+}
+
 static size_t NUM_TOKENIZERS = 5;
 static tokenize_func_t tokenizers[5] = {
     &token_comment,
@@ -52,9 +60,9 @@ static tokenize_func_t tokenizers[5] = {
 parse_position_t lexer_t::peek_from(parse_position_t cur, symbol_t* found) const {
     // Advance the lexer's cursor over any whitespace or simple comments
     *found = SYMBOL_EOS;
-    while (std::isspace(*cur))
-        cur++;
-    cur = skip_simple_comments(cur);
+    cur = skip(cur);
+    if (cur >= end_pos)
+        return cur;
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](cur);
@@ -73,10 +81,9 @@ parse_position_t lexer_t::peek_from(parse_position_t cur, symbol_t* found) const
 
 symbol_t lexer_t::peek() const {
     parse_position_t cur = cursor;
-    // Advance the lexer's cursor over any whitespace or simple comments
-    while (std::isspace(*cur))
-        cur++;
-    cur = skip_simple_comments(cur);
+    cur = skip(cur);
+    if (cur >= end_pos)
+        return SYMBOL_EOS;
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](cur);
@@ -93,10 +100,14 @@ symbol_t lexer_t::peek() const {
 
 token_t& lexer_t::next() {
     parse_position_t cur = cursor;
-    // Advance the lexer's cursor over any whitespace or simple comments
-    while (std::isspace(*cur))
-        cur++;
-    cur = skip_simple_comments(cur);
+    cur = skip(cur);
+    if (cur >= end_pos) {
+        current_token.symbol = SYMBOL_EOS;
+        current_token.lexeme.start = end_pos;
+        current_token.lexeme.end = end_pos;
+        cursor = cur;
+        return current_token;
+    }
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
         auto tok_res = tokenizers[x](cur);
@@ -107,9 +118,10 @@ token_t& lexer_t::next() {
         // will contain SYMBOL_ERROR and the lexeme will point to the place
         // where the lexing error occurring.
         current_token = tok_res.token;
-        cursor = tok_res.token.lexeme.end;
+        cur = tok_res.token.lexeme.end;
         break;
     }
+    cursor = cur;
     return current_token;
 }
 

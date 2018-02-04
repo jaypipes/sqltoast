@@ -13,9 +13,20 @@ namespace sqltoast {
 
 const std::string char_string_t::to_string() {
     std::stringstream ss;
-    if (type == DATA_TYPE_VARCHAR)
-        ss << "VAR";
-    ss << "CHAR";
+    switch (type) {
+        case DATA_TYPE_CHAR:
+            ss << "CHAR";
+            break;
+        case DATA_TYPE_NCHAR:
+            ss << "NCHAR";
+            break;
+        case DATA_TYPE_VARCHAR:
+            ss << "VARCHAR";
+            break;
+        case DATA_TYPE_NVARCHAR:
+            ss << "NVARCHAR";
+            break;
+    }
     if (size > 0)
         ss << "(" << size << ")";
     if (charset.get())

@@ -72,6 +72,9 @@ typedef struct tokenize_result {
 
 typedef tokenize_result_t (*tokenize_func_t) (parse_position_t cursor);
 
+// Advances the supplied cursor past any whitespace and simple SQL comments and
+// returns the location of the cursor after skipping
+parse_position_t skip(parse_position_t cur);
 // Advances the supplied cursor past any simple SQL comments and returns the
 // location of the cursor after skipping
 parse_position_t skip_simple_comments(parse_position_t cursor);
