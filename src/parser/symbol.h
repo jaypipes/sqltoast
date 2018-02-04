@@ -42,6 +42,7 @@ typedef enum symbol {
 
     // Reserved keywords
     SYMBOL_AUTHORIZATION,
+    SYMBOL_BIT,
     SYMBOL_CASCADE,
     SYMBOL_CHAR,
     SYMBOL_CHARACTER,

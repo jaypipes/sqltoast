@@ -140,6 +140,8 @@ bool parse_data_type_descriptor(
         case SYMBOL_NCHAR:
         case SYMBOL_NATIONAL:
             return parse_character_string(ctx, cur_tok, column_def);
+        case SYMBOL_BIT:
+            return parse_bit_string(ctx, cur_tok, column_def);
         default:
             goto err_expect_data_type;
     }
@@ -295,6 +297,90 @@ push_descriptor:
             return true;
         std::unique_ptr<data_type_descriptor_t> dtd_p;
         dtd_p = std::move(std::make_unique<char_string_t>(data_type, char_len));
+        column_def.data_type = std::move(dtd_p);
+        return true;
+    }
+}
+
+//
+// <bit string type> ::=
+//     BIT [ <left paren> <length> <right paren> ]
+//     | BIT VARYING [ <left paren> <length> <right paren> ]
+//
+// <length> ::= <unsigned integer>
+bool parse_bit_string(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    data_type_t data_type = DATA_TYPE_BIT;
+    size_t bit_len = 0;
+
+    // BEGIN STATE MACHINE
+
+    // We get here after the column name identifier has been found and
+    // we've determined that the BIT symbol is the current symbol.
+    // were next
+    cur_tok = lex.next(); // consume the BIT symbol
+    symbol_t cur_sym = cur_tok.symbol;
+    goto optional_varying;
+optional_varying:
+    // We get here if we got a CHAR or CHARACTER as the data type. This
+    // might be followed by the VARYING symbol, in which case we will
+    // process a VARCHAR. Otherwise, we'll process a CHAR type
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_VARYING) {
+        data_type = DATA_TYPE_VARBIT;
+        cur_tok = lex.next();
+    }
+    goto optional_length;
+optional_length:
+    // We get here after determining the exact type of the bit string. The type
+    // will be followed by an optional length specifier clause, which if an
+    // unsigned integer enclosed by parentheses.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        goto process_length;
+    }
+    goto push_descriptor;
+process_length:
+    // We get here if we've processed the opening parentheses of the
+    // optional length modifier and now expect to find an unsigned integer
+    // followed by a closing parentheses
+    if (cur_tok.is_literal()) {
+        // Make sure we can parse our literal token to an unsigned integer
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER)
+            goto err_expect_size_literal;
+        const std::string bit_len_str(cur_tok.lexeme.start, cur_tok.lexeme.end);
+        bit_len = atoi(bit_len_str.data());
+        cur_tok = lex.next();
+        goto length_close;
+    }
+    goto err_expect_size_literal;
+err_expect_size_literal:
+    expect_error(ctx, SYMBOL_LITERAL_UNSIGNED_INTEGER);
+    return false;
+length_close:
+    // We get here if we've processed the opening parentheses of the length
+    // modifier and the unsigned integer size and now expect a closing
+    // parentheses for the length modifier
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_RPAREN) {
+        cur_tok = lex.next();
+        goto push_descriptor;
+    }
+    goto err_expect_length_rparen;
+err_expect_length_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        std::unique_ptr<data_type_descriptor_t> dtd_p;
+        dtd_p = std::move(std::make_unique<bit_string_t>(data_type, bit_len));
         column_def.data_type = std::move(dtd_p);
         return true;
     }

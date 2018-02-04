@@ -34,4 +34,14 @@ const std::string char_string_t::to_string() {
     return ss.str();
 }
 
+const std::string bit_string_t::to_string() {
+    std::stringstream ss;
+    ss << "BIT";
+    if (type == DATA_TYPE_VARBIT)
+        ss << " VARYING";
+    if (size > 0)
+        ss << "(" << size << ")";
+    return ss.str();
+}
+
 } // namespace sqltoast

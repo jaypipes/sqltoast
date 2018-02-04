@@ -22,6 +22,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
 
     // Reserved keywords
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
+    m[SYMBOL_BIT] = std::string("BIT");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");

@@ -49,6 +49,15 @@ typedef struct char_string : data_type_descriptor_t {
     virtual const std::string to_string();
 } char_string_t;
 
+typedef struct bit_string : data_type_descriptor_t {
+    size_t size;
+    bit_string(data_type_t type, size_t size) :
+        data_type_descriptor_t(type),
+        size(size)
+    {}
+    virtual const std::string to_string();
+} bit_string_t;
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_DATA_TYPE_H */

@@ -16,6 +16,9 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'a':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_AUTHORIZATION, SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
+        case 'b':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_BIT, SYMBOL_BIT, "BIT"));
+            return t;
         case 'c':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CREATE, SYMBOL_CREATE, "CREATE"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHAR, SYMBOL_CHAR, "CHAR"));
@@ -56,6 +59,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 }
 
 kw_jump_table_t kw_jump_tables::a = _init_kw_jump_table('a');
+kw_jump_table_t kw_jump_tables::b = _init_kw_jump_table('b');
 kw_jump_table_t kw_jump_tables::c = _init_kw_jump_table('c');
 kw_jump_table_t kw_jump_tables::d = _init_kw_jump_table('d');
 kw_jump_table_t kw_jump_tables::g = _init_kw_jump_table('g');
@@ -72,6 +76,10 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         case 'a':
         case 'A':
             jump_tbl = &kw_jump_tables::a;
+            break;
+        case 'b':
+        case 'B':
+            jump_tbl = &kw_jump_tables::b;
             break;
         case 'c':
         case 'C':

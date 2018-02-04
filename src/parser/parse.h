@@ -37,8 +37,17 @@ bool parse_data_type_descriptor(
 // Returns true if a character string descriptor clause can be parsed from the
 // supplied token iterator. If the function returns true, the column_def
 // argument will have its data_type attribute set to an allocated char_string_t
-// or varchar_string_t descriptor
+// descriptor
 bool parse_character_string(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def);
+
+// Returns true if a bit descriptor clause can be parsed from the
+// supplied token iterator. If the function returns true, the column_def
+// argument will have its data_type attribute set to an allocated bit_string_t
+// descriptor
+bool parse_bit_string(
         parse_context_t& ctx,
         token_t& cur_tok,
         column_definition_t& column_def);
