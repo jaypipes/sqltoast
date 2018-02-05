@@ -21,6 +21,7 @@ typedef enum keyword {
     KEYWORD_CHAR,
     KEYWORD_CHARACTER,
     KEYWORD_CREATE,
+    KEYWORD_DATE,
     KEYWORD_DEC,
     KEYWORD_DECIMAL,
     KEYWORD_DEFAULT,
@@ -42,8 +43,12 @@ typedef enum keyword {
     KEYWORD_SMALLINT,
     KEYWORD_TABLE,
     KEYWORD_TEMPORARY,
+    KEYWORD_TIME,
+    KEYWORD_TIMESTAMP,
     KEYWORD_VARCHAR,
-    KEYWORD_VARYING
+    KEYWORD_VARYING,
+    KEYWORD_WITH,
+    KEYWORD_ZONE
 } keyword_t;
 
 typedef struct kw_jump_table_entry {
@@ -72,6 +77,8 @@ struct kw_jump_tables {
     static kw_jump_table_t s;
     static kw_jump_table_t t;
     static kw_jump_table_t v;
+    static kw_jump_table_t w;
+    static kw_jump_table_t z;
 };
 
 kw_jump_table_t _init_kw_jump_table(char c);

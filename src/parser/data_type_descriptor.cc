@@ -153,6 +153,10 @@ bool parse_data_type_descriptor(
         case SYMBOL_REAL:
         case SYMBOL_DOUBLE:
             return parse_approximate_numeric(ctx, cur_tok, column_def);
+        case SYMBOL_DATE:
+        case SYMBOL_TIME:
+        case SYMBOL_TIMESTAMP:
+            return parse_datetime(ctx, cur_tok, column_def);
         default:
             goto err_expect_data_type;
     }
@@ -559,6 +563,79 @@ push_descriptor:
             return true;
         std::unique_ptr<data_type_descriptor_t> dtd_p;
         dtd_p = std::move(std::make_unique<approximate_numeric_t>(data_type, prec));
+        column_def.data_type = std::move(dtd_p);
+        return true;
+    }
+}
+
+// <datetime type> ::=
+//     DATE
+//     | TIME [ <left paren> <time precision> <right paren> ] [ WITH TIME ZONE ]
+//     | TIMESTAMP [ <left paren> <timestamp precision> <right paren> ] [ WITH TIME ZONE ]
+//
+// <time precision> ::= <time fractional seconds precision>
+//
+// <time fractional seconds precision> ::= <unsigned integer>
+//
+// <timestamp precision> ::= <time fractional seconds precision>
+bool parse_datetime(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    data_type_t data_type = DATA_TYPE_DATE;
+    bool with_tz = false;
+    size_t prec = 0;
+
+    // BEGIN STATE MACHINE
+
+    // We get here after the column name identifier has been found and
+    // we've determined that either the FLOAT, REAL, or DOUBLE symbols
+    // were next
+    switch (cur_sym) {
+        case SYMBOL_DATE:
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_TIME:
+            data_type = DATA_TYPE_TIME;
+            cur_tok = lex.next();
+            goto optional_precision;
+        case SYMBOL_TIMESTAMP:
+            data_type = DATA_TYPE_TIMESTAMP;
+            cur_tok = lex.next();
+            goto optional_precision;
+        default:
+            return false;
+    }
+optional_precision:
+    // We get here after getting a FLOAT symbol. This can be followed by an
+    // optional LPAREN <precision> RPAREN. Since the length specifier is an
+    // identical structure, we use that...
+    if (! parse_length_specifier(ctx, cur_tok, &prec))
+        return false;
+    goto optional_with_tz;
+optional_with_tz:
+    cur_tok = lex.current_token;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_WITH) {
+        symbol_t exp_sym_seq[3] = {
+            SYMBOL_WITH,
+            SYMBOL_TIME,
+            SYMBOL_ZONE
+        };
+        if (! expect_sequence(ctx, exp_sym_seq, 3))
+            return false;
+        with_tz = true;
+        cur_tok = ctx.lexer.next();
+        goto push_descriptor;
+    }
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        std::unique_ptr<data_type_descriptor_t> dtd_p;
+        dtd_p = std::move(std::make_unique<datetime_t>(data_type, prec, with_tz));
         column_def.data_type = std::move(dtd_p);
         return true;
     }

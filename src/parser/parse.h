@@ -87,6 +87,14 @@ bool parse_approximate_numeric(
         token_t& cur_tok,
         column_definition_t& column_def);
 
+// Returns true if a datetime descriptor clause can be parsed from the supplied
+// token iterator. If the function returns true, the column_def argument will
+// have its data_type attribute set to an allocated datetime_t descriptor
+bool parse_datetime(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_PARSE_H */

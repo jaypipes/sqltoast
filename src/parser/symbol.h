@@ -47,6 +47,7 @@ typedef enum symbol {
     SYMBOL_CHAR,
     SYMBOL_CHARACTER,
     SYMBOL_CREATE,
+    SYMBOL_DATE,
     SYMBOL_DEC,
     SYMBOL_DECIMAL,
     SYMBOL_DEFAULT,
@@ -68,8 +69,12 @@ typedef enum symbol {
     SYMBOL_SMALLINT,
     SYMBOL_TABLE,
     SYMBOL_TEMPORARY,
+    SYMBOL_TIME,
+    SYMBOL_TIMESTAMP,
     SYMBOL_VARCHAR,
     SYMBOL_VARYING,
+    SYMBOL_WITH,
+    SYMBOL_ZONE,
 
     // Non-reserved keywords
 

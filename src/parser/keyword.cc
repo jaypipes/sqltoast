@@ -26,6 +26,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CASCADE, SYMBOL_CASCADE, "CASCADE"));
             return t;
         case 'd':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DATE, SYMBOL_DATE, "DATE"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DEC, SYMBOL_DEC, "DEC"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DECIMAL, SYMBOL_DECIMAL, "DECIMAL"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DEFAULT, SYMBOL_DEFAULT, "DEFAULT"));
@@ -63,11 +64,19 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 't':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TABLE, SYMBOL_TABLE, "TABLE"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TIME, SYMBOL_TIME, "TIME"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TIMESTAMP, SYMBOL_TIMESTAMP, "TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TEMPORARY, SYMBOL_TEMPORARY, "TEMPORARY"));
             return t;
         case 'v':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_VARCHAR, SYMBOL_VARCHAR, "VARCHAR"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_VARYING, SYMBOL_VARYING, "VARYING"));
+            return t;
+        case 'w':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_WITH, SYMBOL_WITH, "WITH"));
+            return t;
+        case 'z':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_ZONE, SYMBOL_ZONE, "ZONE"));
             return t;
     }
     return t;
@@ -87,6 +96,8 @@ kw_jump_table_t kw_jump_tables::r = _init_kw_jump_table('r');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
 kw_jump_table_t kw_jump_tables::v = _init_kw_jump_table('v');
+kw_jump_table_t kw_jump_tables::w = _init_kw_jump_table('w');
+kw_jump_table_t kw_jump_tables::z = _init_kw_jump_table('z');
 
 tokenize_result_t token_keyword(parse_position_t cursor) {
     kw_jump_table_t* jump_tbl;
@@ -146,6 +157,14 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         case 'v':
         case 'V':
             jump_tbl = &kw_jump_tables::v;
+            break;
+        case 'w':
+        case 'W':
+            jump_tbl = &kw_jump_tables::w;
+            break;
+        case 'z':
+        case 'Z':
+            jump_tbl = &kw_jump_tables::z;
             break;
         default:
             return tokenize_result_t(TOKEN_NOT_FOUND);

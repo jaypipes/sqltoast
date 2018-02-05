@@ -83,4 +83,26 @@ const std::string approximate_numeric_t::to_string() {
     return ss.str();
 }
 
+const std::string datetime_t::to_string() {
+    std::stringstream ss;
+    switch (type) {
+        case DATA_TYPE_DATE:
+            ss << "DATE";
+            break;
+        case DATA_TYPE_TIME:
+            ss << "TIME";
+            break;
+        case DATA_TYPE_TIMESTAMP:
+            ss << "TIMESTAMP";
+            break;
+    }
+    if (precision > 0) {
+        ss << "(" << precision << ")";
+    }
+    if (with_tz) {
+        ss << " WITH TIME ZONE";
+    }
+    return ss.str();
+}
+
 } // namespace sqltoast

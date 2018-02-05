@@ -77,6 +77,17 @@ typedef struct approximate_numeric : data_type_descriptor_t {
     virtual const std::string to_string();
 } approximate_numeric_t;
 
+typedef struct datetime : data_type_descriptor_t {
+    size_t precision;
+    bool with_tz;
+    datetime(data_type_t type, size_t prec, bool with_tz) :
+        data_type_descriptor_t(type),
+        precision(prec),
+        with_tz(with_tz)
+    {}
+    virtual const std::string to_string();
+} datetime_t;
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_DATA_TYPE_H */

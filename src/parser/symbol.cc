@@ -27,6 +27,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
     m[SYMBOL_CREATE] = std::string("CREATE");
+    m[SYMBOL_DATE] = std::string("DATE");
     m[SYMBOL_DEC] = std::string("DEC");
     m[SYMBOL_DECIMAL] = std::string("DECIMAL");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
@@ -48,7 +49,12 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_SMALLINT] = std::string("SMALLINT");
     m[SYMBOL_TABLE] = std::string("TABLE");
     m[SYMBOL_TEMPORARY] = std::string("TEMPORARY");
+    m[SYMBOL_TIME] = std::string("TIME");
+    m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
+    m[SYMBOL_VARYING] = std::string("VARYING");
+    m[SYMBOL_WITH] = std::string("WITH");
+    m[SYMBOL_ZONE] = std::string("ZONE");
 
     // Non-Reserved keywordsr
 
