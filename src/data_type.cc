@@ -77,9 +77,8 @@ const std::string approximate_numeric_t::to_string() {
             ss << "DOUBLE PRECISION";
             break;
     }
-    if (precision > 0) {
+    if (precision > 0)
         ss << "(" << precision << ")";
-    }
     return ss.str();
 }
 
@@ -96,11 +95,38 @@ const std::string datetime_t::to_string() {
             ss << "TIMESTAMP";
             break;
     }
-    if (precision > 0) {
+    if (precision > 0)
         ss << "(" << precision << ")";
-    }
-    if (with_tz) {
+    if (with_tz)
         ss << " WITH TIME ZONE";
+    return ss.str();
+}
+
+const std::string interval_t::to_string() {
+    std::stringstream ss;
+    ss << "INTERVAL (";
+    switch (unit) {
+        case INTERVAL_UNIT_YEAR:
+            ss << "YEAR)";
+            break;
+        case INTERVAL_UNIT_MONTH:
+            ss << "MONTH)";
+            break;
+        case INTERVAL_UNIT_DAY:
+            ss << "DAY)";
+            break;
+        case INTERVAL_UNIT_HOUR:
+            ss << "HOUR)";
+            break;
+        case INTERVAL_UNIT_MINUTE:
+            ss << "MINUTE)";
+            break;
+        case INTERVAL_UNIT_SECOND:
+            ss << "SECOND";
+            if (precision > 0)
+                ss << "(" << precision << ")";
+            ss << ")";
+            break;
     }
     return ss.str();
 }

@@ -31,6 +31,15 @@ typedef enum data_type {
     DATA_TYPE_INTERVAL
 } data_type_t;
 
+typedef enum interval_unit {
+    INTERVAL_UNIT_YEAR,
+    INTERVAL_UNIT_MONTH,
+    INTERVAL_UNIT_DAY,
+    INTERVAL_UNIT_HOUR,
+    INTERVAL_UNIT_MINUTE,
+    INTERVAL_UNIT_SECOND
+} interval_unit_t;
+
 typedef struct data_type_descriptor {
     data_type_t type;
     data_type_descriptor(data_type_t type) : type(type)
@@ -87,6 +96,17 @@ typedef struct datetime : data_type_descriptor_t {
     {}
     virtual const std::string to_string();
 } datetime_t;
+
+typedef struct interval : data_type_descriptor_t {
+    interval_unit_t unit;
+    size_t precision;
+    interval(interval_unit_t unit, size_t prec) :
+        data_type_descriptor_t(DATA_TYPE_INTERVAL),
+        unit(unit),
+        precision(prec)
+    {}
+    virtual const std::string to_string();
+} interval_t;
 
 } // namespace sqltoast
 

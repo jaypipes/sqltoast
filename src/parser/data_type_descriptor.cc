@@ -81,44 +81,6 @@ namespace sqltoast {
 //
 // <timestamp precision> ::= <time fractional seconds precision>
 //
-// <interval type> ::= INTERVAL <interval qualifier>
-//
-// <interval qualifier> ::=
-//     <start field> TO <end field>
-//     | <single datetime field>
-//
-// <start field> ::=
-//     <non-second datetime field> [ <left paren> <interval leading field precision> <right paren> ]
-//
-// <non-second datetime field> ::= YEAR | MONTH | DAY | HOUR | MINUTE
-//
-// <interval leading field precision> ::= <unsigned integer>
-//
-// <end field> ::=
-//     <non-second datetime field>
-//     | SECOND [ <left paren> <interval fractional seconds precision> <right paren> ]
-//
-// <interval fractional seconds precision> ::= <unsigned integer>
-//
-// <single datetime field> ::=
-//     <non-second datetime field> [ <left paren> <interval leading field precision> <right paren> ]
-//     | SECOND [ <left paren> <interval leading field precision> [ <comma> <left paren> <interval fractional seconds precision> ] <right paren> ]
-//
-// <domain name> ::= <qualified name>
-//
-// <qualified name> ::= [ <schema name> <period> ] <qualified identifier>
-//
-// <default clause> ::= DEFAULT <default option>
-//
-// <default option> ::=
-//     <literal>
-//     |     <datetime value function>
-//     |     USER
-//     |     CURRENT_USER
-//     |     SESSION_USER
-//     |     SYSTEM_USER
-//     |     NULL
-//
 
 bool parse_data_type_descriptor(
         parse_context_t& ctx,
@@ -157,6 +119,8 @@ bool parse_data_type_descriptor(
         case SYMBOL_TIME:
         case SYMBOL_TIMESTAMP:
             return parse_datetime(ctx, cur_tok, column_def);
+        case SYMBOL_INTERVAL:
+            return parse_interval(ctx, cur_tok, column_def);
         default:
             goto err_expect_data_type;
     }
@@ -636,6 +600,88 @@ push_descriptor:
             return true;
         std::unique_ptr<data_type_descriptor_t> dtd_p;
         dtd_p = std::move(std::make_unique<datetime_t>(data_type, prec, with_tz));
+        column_def.data_type = std::move(dtd_p);
+        return true;
+    }
+}
+
+// <interval type> ::= INTERVAL <interval qualifier>
+//
+// <interval qualifier> ::=
+//     <start field> TO <end field>
+//     | <single datetime field>
+//
+// <start field> ::=
+//     <non-second datetime field> [ <left paren> <interval leading field precision> <right paren> ]
+//
+// <non-second datetime field> ::= YEAR | MONTH | DAY | HOUR | MINUTE
+//
+// <interval leading field precision> ::= <unsigned integer>
+//
+// <end field> ::=
+//     <non-second datetime field>
+//     | SECOND [ <left paren> <interval fractional seconds precision> <right paren> ]
+//
+// <interval fractional seconds precision> ::= <unsigned integer>
+//
+// <single datetime field> ::=
+//     <non-second datetime field> [ <left paren> <interval leading field precision> <right paren> ]
+//     | SECOND [ <left paren> <interval leading field precision> [ <comma> <left paren> <interval fractional seconds precision> ] <right paren> ]
+bool parse_interval(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    interval_unit_t unit = INTERVAL_UNIT_YEAR;
+    size_t prec = 0;
+
+    cur_tok = lex.next(); // consume the INTERVAL token
+    symbol_t cur_sym = cur_tok.symbol;
+
+    // BEGIN STATE MACHINE
+
+    switch (cur_sym) {
+        case SYMBOL_YEAR:
+            unit = INTERVAL_UNIT_YEAR;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_MONTH:
+            unit = INTERVAL_UNIT_MONTH;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_DAY:
+            unit = INTERVAL_UNIT_DAY;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_HOUR:
+            unit = INTERVAL_UNIT_HOUR;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_MINUTE:
+            unit = INTERVAL_UNIT_MINUTE;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_SECOND:
+            unit = INTERVAL_UNIT_SECOND;
+            cur_tok = lex.next();
+            goto optional_precision;
+        default:
+            return false;
+    }
+optional_precision:
+    // We get here after getting a SECOND symbol, which is the only interval
+    // unit that can have a precision to it. This can be followed by an
+    // optional LPAREN <precision> RPAREN. Since the length specifier is an
+    // identical structure, we use that...
+    if (! parse_length_specifier(ctx, cur_tok, &prec))
+        return false;
+    goto push_descriptor;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        std::unique_ptr<data_type_descriptor_t> dtd_p;
+        dtd_p = std::move(std::make_unique<interval_t>(unit, prec));
         column_def.data_type = std::move(dtd_p);
         return true;
     }

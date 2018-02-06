@@ -22,6 +22,7 @@ typedef enum keyword {
     KEYWORD_CHARACTER,
     KEYWORD_CREATE,
     KEYWORD_DATE,
+    KEYWORD_DAY,
     KEYWORD_DEC,
     KEYWORD_DECIMAL,
     KEYWORD_DEFAULT,
@@ -29,16 +30,21 @@ typedef enum keyword {
     KEYWORD_DOUBLE,
     KEYWORD_FLOAT,
     KEYWORD_GLOBAL,
+    KEYWORD_HOUR,
     KEYWORD_INT,
     KEYWORD_INTEGER,
+    KEYWORD_INTERVAL,
     KEYWORD_LOCAL,
     KEYWORD_NATIONAL,
+    KEYWORD_MINUTE,
+    KEYWORD_MONTH,
     KEYWORD_NCHAR,
     KEYWORD_NUMERIC,
     KEYWORD_PRECISION,
     KEYWORD_REAL,
     KEYWORD_RESTRICT,
     KEYWORD_SCHEMA,
+    KEYWORD_SECOND,
     KEYWORD_SET,
     KEYWORD_SMALLINT,
     KEYWORD_TABLE,
@@ -48,6 +54,7 @@ typedef enum keyword {
     KEYWORD_VARCHAR,
     KEYWORD_VARYING,
     KEYWORD_WITH,
+    KEYWORD_YEAR,
     KEYWORD_ZONE
 } keyword_t;
 
@@ -69,8 +76,10 @@ struct kw_jump_tables {
     static kw_jump_table_t d;
     static kw_jump_table_t f;
     static kw_jump_table_t g;
+    static kw_jump_table_t h;
     static kw_jump_table_t i;
     static kw_jump_table_t l;
+    static kw_jump_table_t m;
     static kw_jump_table_t n;
     static kw_jump_table_t p;
     static kw_jump_table_t r;
@@ -78,6 +87,7 @@ struct kw_jump_tables {
     static kw_jump_table_t t;
     static kw_jump_table_t v;
     static kw_jump_table_t w;
+    static kw_jump_table_t y;
     static kw_jump_table_t z;
 };
 
