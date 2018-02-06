@@ -24,6 +24,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHAR, SYMBOL_CHAR, "CHAR"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHARACTER, SYMBOL_CHARACTER, "CHARACTER"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CASCADE, SYMBOL_CASCADE, "CASCADE"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_USER, SYMBOL_CURRENT_USER, "CURRENT_USER"));
             return t;
         case 'd':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_DATE, SYMBOL_DATE, "DATE"));
@@ -56,6 +57,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_MONTH, SYMBOL_MONTH, "MONTH"));
             return t;
         case 'n':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_NULL, SYMBOL_NULL, "NULL"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_NATIONAL, SYMBOL_NATIONAL, "NATIONAL"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_NCHAR, SYMBOL_NCHAR, "NCHAR"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_NUMERIC, SYMBOL_NUMERIC, "NUMERIC"));
@@ -71,12 +73,17 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_SCHEMA, SYMBOL_SCHEMA, "SCHEMA"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_SECOND, SYMBOL_SECOND, "SECOND"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_SET, SYMBOL_SET, "SET"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SESSION_USER, SYMBOL_SESSION_USER, "SESSION_USER"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SYSTEM_USER, SYMBOL_SYSTEM_USER, "SYSTEM_USER"));
             return t;
         case 't':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TABLE, SYMBOL_TABLE, "TABLE"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TIME, SYMBOL_TIME, "TIME"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TIMESTAMP, SYMBOL_TIMESTAMP, "TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_TEMPORARY, SYMBOL_TEMPORARY, "TEMPORARY"));
+            return t;
+        case 'u':
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_USER, SYMBOL_USER, "USER"));
             return t;
         case 'v':
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_VARCHAR, SYMBOL_VARCHAR, "VARCHAR"));
@@ -110,6 +117,7 @@ kw_jump_table_t kw_jump_tables::p = _init_kw_jump_table('p');
 kw_jump_table_t kw_jump_tables::r = _init_kw_jump_table('r');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
 kw_jump_table_t kw_jump_tables::t = _init_kw_jump_table('t');
+kw_jump_table_t kw_jump_tables::u = _init_kw_jump_table('u');
 kw_jump_table_t kw_jump_tables::v = _init_kw_jump_table('v');
 kw_jump_table_t kw_jump_tables::w = _init_kw_jump_table('w');
 kw_jump_table_t kw_jump_tables::y = _init_kw_jump_table('y');
@@ -178,6 +186,10 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         case 'T':
             jump_tbl = &kw_jump_tables::t;
             break;
+        case 'u':
+        case 'U':
+            jump_tbl = &kw_jump_tables::u;
+            break;
         case 'v':
         case 'V':
             jump_tbl = &kw_jump_tables::v;
@@ -200,7 +212,7 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
 
     parse_position_t start = cursor;
     // Find the next delimiter character...
-    while (std::isalnum(*cursor))
+    while (std::isalnum(*cursor) || *cursor == '_')
         cursor++;
 
     const std::string lexeme(start, cursor);

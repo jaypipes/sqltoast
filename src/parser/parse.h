@@ -26,6 +26,14 @@ bool parse_column_definition(
         token_t& cur_tok,
         std::vector<std::unique_ptr<column_definition_t>>& column_defs);
 
+// Returns true if a default clause can be parsed from the supplied
+// token iterator. If the function returns true, column_def will have a its
+// default_def member populated.
+bool parse_default_clause(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def);
+
 // Returns true if a data type descriptor clause can be parsed from the supplied
 // token iterator. If the function returns true, the column_def argument will
 // have its data_type attribute set to an allocated data type descriptor

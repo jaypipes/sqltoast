@@ -7,6 +7,7 @@
 #ifndef SQLTOAST_DATA_TYPE_H
 #define SQLTOAST_DATA_TYPE_H
 
+#include <memory>
 #include <string>
 
 #include "identifier.h"

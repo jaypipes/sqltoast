@@ -76,7 +76,6 @@ try_numeric:
                             goto not_found;
                         found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
                     }
-                    cursor--;
                     goto push_literal;
                 case '.':
                     // Make sure we have only one period...
@@ -113,7 +112,7 @@ try_numeric:
         }
     }
 push_literal:
-    return tokenize_result_t(found_sym, start, cursor);
+    return tokenize_result_t(found_sym, start, cursor - 1);
 not_found:
     return tokenize_result_t(TOKEN_NOT_FOUND);
 }

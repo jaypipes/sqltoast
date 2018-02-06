@@ -28,59 +28,6 @@ namespace sqltoast {
 //     | <datetime type>
 //     | <interval type>
 //
-// <character string type> ::=
-//     CHARACTER [ <left paren> <length> <right paren> ]
-//     | CHAR [ <left paren> <length> <right paren> ]
-//     | CHARACTER VARYING [ <left paren> <length> <right paren> ]
-//     | CHAR VARYING [ <left paren> <length> <right paren> ]
-//     | VARCHAR [ <left paren> <length> <right paren> ]
-//
-// <length> ::= <unsigned integer>
-//
-// <national character string type> ::=
-//     NATIONAL CHARACTER [ <left paren> <length> <right paren> ]
-//     | NATIONAL CHAR [ <left paren> <length> <right paren> ]
-//     | NCHAR [ <left paren> <length> <right paren> ]
-//     | NATIONAL CHARACTER VARYING [ <left paren> <length> <right paren> ]
-//     | NATIONAL CHAR VARYING [ <left paren> <length> <right paren> ]
-//     | NCHAR VARYING [ <left paren> <length> <right paren> ]
-//
-// <bit string type> ::=
-//     BIT [ <left paren> <length> <right paren> ]
-//     | BIT VARYING [ <left paren> <length> <right paren> ]
-//
-// <numeric type> ::=
-//     <exact numeric type>
-//     | <approximate numeric type>
-//
-// <exact numeric type> ::=
-//     NUMERIC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
-//     | DECIMAL [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
-//     | DEC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
-//     | INTEGER
-//     | INT
-//     | SMALLINT
-//
-// <precision> ::= <unsigned integer>
-//
-// <scale> ::= <unsigned integer>
-//
-// <approximate numeric type> ::=
-//     FLOAT [ <left paren> <precision> <right paren> ]
-//     | REAL
-//     | DOUBLE PRECISION
-//
-// <datetime type> ::=
-//     DATE
-//     | TIME [ <left paren> <time precision> <right paren> ] [ WITH TIME ZONE ]
-//     | TIMESTAMP [ <left paren> <timestamp precision> <right paren> ] [ WITH TIME ZONE ]
-//
-// <time precision> ::= <time fractional seconds precision>
-//
-// <time fractional seconds precision> ::= <unsigned integer>
-//
-// <timestamp precision> ::= <time fractional seconds precision>
-//
 
 bool parse_data_type_descriptor(
         parse_context_t& ctx,
