@@ -14,6 +14,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 
     switch (lead_char) {
         case 'a':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
         case 'b':
@@ -33,6 +34,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CONSTRAINT, "CONSTRAINT"));
             return t;
         case 'd':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DELETE, "DELETE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DATE, "DATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DAY, "DAY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DEC, "DEC"));
@@ -69,10 +71,14 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'n':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NOT, "NOT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_NO, "NO"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NULL, "NULL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NATIONAL, "NATIONAL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NCHAR, "NCHAR"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NUMERIC, "NUMERIC"));
+            return t;
+        case 'o':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ON, "ON"));
             return t;
         case 'p':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRECISION, "PRECISION"));
@@ -98,6 +104,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TEMPORARY, "TEMPORARY"));
             return t;
         case 'u':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_UPDATE, "UPDATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_USER, "USER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UNIQUE, "UNIQUE"));
             return t;
@@ -130,6 +137,7 @@ kw_jump_table_t kw_jump_tables::k = _init_kw_jump_table('k');
 kw_jump_table_t kw_jump_tables::l = _init_kw_jump_table('l');
 kw_jump_table_t kw_jump_tables::m = _init_kw_jump_table('m');
 kw_jump_table_t kw_jump_tables::n = _init_kw_jump_table('n');
+kw_jump_table_t kw_jump_tables::o = _init_kw_jump_table('o');
 kw_jump_table_t kw_jump_tables::p = _init_kw_jump_table('p');
 kw_jump_table_t kw_jump_tables::r = _init_kw_jump_table('r');
 kw_jump_table_t kw_jump_tables::s = _init_kw_jump_table('s');
@@ -190,6 +198,10 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         case 'n':
         case 'N':
             jump_tbl = &kw_jump_tables::n;
+            break;
+        case 'o':
+        case 'O':
+            jump_tbl = &kw_jump_tables::o;
             break;
         case 'p':
         case 'P':
