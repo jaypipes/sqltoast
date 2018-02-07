@@ -324,6 +324,7 @@ bool parse_references_constraint(
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t table_ident;
     std::vector<identifier_t> column_names;
+    references_match_type_t match_type = REFERENCES_MATCH_TYPE_NONE;
 
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
@@ -366,7 +367,31 @@ expect_rparen:
     if (cur_sym != SYMBOL_RPAREN)
         goto err_expect_rparen;
     cur_tok = lex.next();
+    goto optional_match_type;
+optional_match_type:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_MATCH) {
+        cur_tok = lex.next();
+        goto process_match_type;
+    }
     goto push_constraint;
+process_match_type:
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_FULL:
+            match_type = REFERENCES_MATCH_TYPE_FULL;
+            cur_tok = lex.next();
+            goto push_constraint;
+        case SYMBOL_PARTIAL:
+            match_type = REFERENCES_MATCH_TYPE_PARTIAL;
+            cur_tok = lex.next();
+            goto push_constraint;
+        default:
+            goto err_expect_match_type;
+    }
+err_expect_match_type:
+    expect_any_error(ctx, {SYMBOL_FULL, SYMBOL_PARTIAL});
+    return false;
 err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
@@ -375,7 +400,8 @@ push_constraint:
         if (ctx.opts.disable_statement_construction)
             return true;
         identifier_t table_name(table_ident);
-        std::unique_ptr<references_constraint_t> constraint_p = std::make_unique<references_constraint_t>(table_name);
+        std::unique_ptr<references_constraint_t> constraint_p =
+            std::make_unique<references_constraint_t>(table_name, match_type);
         if (constraint_name.get())
             constraint_p->name = std::move(constraint_name);
         constraint_p->column_names = std::move(column_names);

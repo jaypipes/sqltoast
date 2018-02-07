@@ -50,6 +50,16 @@ std::ostream& operator<< (std::ostream& out, const references_constraint_t& cons
             }
             out << ")";
         }
+        switch (constraint.match_type) {
+            case REFERENCES_MATCH_TYPE_FULL:
+                out << " MATCH FULL";
+                break;
+            case REFERENCES_MATCH_TYPE_PARTIAL:
+                out << " MATCH PARTIAL";
+                break;
+            default:
+                break;
+        }
         return out;
 }
 
