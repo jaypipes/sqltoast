@@ -24,7 +24,6 @@ namespace sqltoast {
 //      [ <column constraint definition> ... ]
 //      [ <collate clause> ]
 //
-// TODO(jaypipes): Handle <default > clause
 // TODO(jaypipes): Handle <column constraint definition> clause
 // TODO(jaypipes): Handle <collate> clause
 //
@@ -95,42 +94,65 @@ bool parse_default_clause(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     default_type_t default_type;
+    size_t prec;
 
     // BEGIN STATE MACHINE
 
     switch (cur_sym) {
         case SYMBOL_NULL:
             default_type = DEFAULT_TYPE_NULL;
+            cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_USER:
             default_type = DEFAULT_TYPE_USER;
+            cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_CURRENT_USER:
             default_type = DEFAULT_TYPE_CURRENT_USER;
+            cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_SESSION_USER:
             default_type = DEFAULT_TYPE_SESSION_USER;
+            cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_SYSTEM_USER:
             default_type = DEFAULT_TYPE_SYSTEM_USER;
+            cur_tok = lex.next();
             goto push_descriptor;
+        case SYMBOL_CURRENT_DATE:
+            default_type = DEFAULT_TYPE_CURRENT_DATE;
+            cur_tok = lex.next();
+            goto push_descriptor;
+        case SYMBOL_CURRENT_TIME:
+            default_type = DEFAULT_TYPE_CURRENT_TIME;
+            cur_tok = lex.next();
+            goto optional_precision;
+        case SYMBOL_CURRENT_TIMESTAMP:
+            default_type = DEFAULT_TYPE_CURRENT_TIMESTAMP;
+            cur_tok = lex.next();
+            goto optional_precision;
         default:
             if (cur_tok.is_literal()) {
                 default_type = DEFAULT_TYPE_LITERAL;
+                cur_tok = lex.next();
                 goto push_descriptor;
             }
             return false;
     }
+optional_precision:
+    // We get here after getting either a CURRENT_TIME or CURRENT_TIMESTAMP
+    // symbol. This can be followed by an optional LPAREN <precision> RPAREN.
+    // Since the length specifier is an identical structure, we use that...
+    if (! parse_length_specifier(ctx, cur_tok, &prec))
+        return false;
+    goto push_descriptor;
 push_descriptor:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
         std::unique_ptr<default_descriptor_t> dd_p;
-        dd_p = std::move(std::make_unique<default_descriptor_t>(default_type, cur_tok.lexeme));
+        dd_p = std::move(std::make_unique<default_descriptor_t>(default_type, cur_tok.lexeme, prec));
         column_def.default_descriptor = std::move(dd_p);
-        // Advance the next token here now that we've consumed the lexeme from
-        // the current token above
-        cur_tok = lex.next();
         return true;
     }
 }

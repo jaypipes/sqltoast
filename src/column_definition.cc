@@ -26,11 +26,21 @@ std::ostream& operator<< (std::ostream& out, const default_descriptor_t& default
         case DEFAULT_TYPE_USER:
             out << "USER";
             break;
+        case DEFAULT_TYPE_CURRENT_DATE:
+            out << "CURRENT_DATE";
+            break;
+        case DEFAULT_TYPE_CURRENT_TIME:
+            out << "CURRENT_TIME";
+            if (default_desc.precision > 0)
+                out << "(" << default_desc.precision << ")";
+            break;
+        case DEFAULT_TYPE_CURRENT_TIMESTAMP:
+            out << "CURRENT_TIMESTAMP";
+            if (default_desc.precision > 0)
+                out << "(" << default_desc.precision << ")";
+            break;
         case DEFAULT_TYPE_LITERAL:
             out << "'" << std::string(default_desc.lexeme.start, default_desc.lexeme.end) << "'";
-            break;
-        case DEFAULT_TYPE_DATETIME_FUNC:
-            // TODO
             break;
         default:
             break;

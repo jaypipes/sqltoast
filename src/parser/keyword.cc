@@ -24,6 +24,9 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHAR, SYMBOL_CHAR, "CHAR"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHARACTER, SYMBOL_CHARACTER, "CHARACTER"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CASCADE, SYMBOL_CASCADE, "CASCADE"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_DATE, SYMBOL_CURRENT_DATE, "CURRENT_DATE"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_TIME, SYMBOL_CURRENT_TIME, "CURRENT_TIME"));
+            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_TIMESTAMP, SYMBOL_CURRENT_TIMESTAMP, "CURRENT_TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_USER, SYMBOL_CURRENT_USER, "CURRENT_USER"));
             return t;
         case 'd':

@@ -27,6 +27,9 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
     m[SYMBOL_CREATE] = std::string("CREATE");
+    m[SYMBOL_CURRENT_DATE] = std::string("CURRENT_DATE");
+    m[SYMBOL_CURRENT_TIME] = std::string("CURRENT_TIME");
+    m[SYMBOL_CURRENT_TIMESTAMP] = std::string("CURRENT_TIMESTAMP");
     m[SYMBOL_CURRENT_USER] = std::string("CURRENT_USER");
     m[SYMBOL_DATE] = std::string("DATE");
     m[SYMBOL_DAY] = std::string("DAY");
