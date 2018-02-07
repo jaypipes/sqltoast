@@ -26,7 +26,9 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
+    m[SYMBOL_CHECK] = std::string("CHECK");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
+    m[SYMBOL_CONSTRAINT] = std::string("CONSTRAINT");
     m[SYMBOL_CREATE] = std::string("CREATE");
     m[SYMBOL_CURRENT_DATE] = std::string("CURRENT_DATE");
     m[SYMBOL_CURRENT_TIME] = std::string("CURRENT_TIME");
@@ -46,14 +48,18 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_INTEGER] = std::string("INTEGER");
     m[SYMBOL_INTERVAL] = std::string("INTERVAL");
     m[SYMBOL_LOCAL] = std::string("LOCAL");
+    m[SYMBOL_KEY] = std::string("KEY");
     m[SYMBOL_MINUTE] = std::string("MINUTE");
     m[SYMBOL_MONTH] = std::string("MONTH");
     m[SYMBOL_NATIONAL] = std::string("NATIONAL");
     m[SYMBOL_NCHAR] = std::string("NCHAR");
+    m[SYMBOL_NOT] = std::string("NOT");
     m[SYMBOL_NUMERIC] = std::string("NUMERIC");
     m[SYMBOL_NULL] = std::string("NULL");
     m[SYMBOL_PRECISION] = std::string("PRECISION");
+    m[SYMBOL_PRIMARY] = std::string("PRIMARY");
     m[SYMBOL_REAL] = std::string("REAL");
+    m[SYMBOL_REFERENCES] = std::string("REFERENCES");
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SECOND] = std::string("SECOND");
@@ -65,6 +71,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TEMPORARY] = std::string("TEMPORARY");
     m[SYMBOL_TIME] = std::string("TIME");
     m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
+    m[SYMBOL_UNIQUE] = std::string("UNIQUE");
     m[SYMBOL_USER] = std::string("USER");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
     m[SYMBOL_VARYING] = std::string("VARYING");

@@ -33,6 +33,7 @@ struct kw_jump_tables {
     static kw_jump_table_t g;
     static kw_jump_table_t h;
     static kw_jump_table_t i;
+    static kw_jump_table_t k;
     static kw_jump_table_t l;
     static kw_jump_table_t m;
     static kw_jump_table_t n;

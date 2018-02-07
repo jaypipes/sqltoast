@@ -8,6 +8,7 @@
 #define SQLTOAST_COLUMN_DEFINITION_H
 
 #include <memory>
+#include <vector>
 #include <ostream>
 
 #include "data_type.h"
@@ -42,11 +43,30 @@ typedef struct default_descriptor {
 
 std::ostream& operator<< (std::ostream& out, const default_descriptor_t& column_def);
 
+typedef enum column_constraint_type {
+    COLUMN_CONSTRAINT_TYPE_NOT_NULL,
+    COLUMN_CONSTRAINT_TYPE_UNIQUE,
+    COLUMN_CONSTRAINT_TYPE_PRIMARY_KEY,
+    COLUMN_CONSTRAINT_TYPE_REFERENCES,
+    COLUMN_CONSTRAINT_TYPE_CHECK
+} column_constraint_type_t;
+
+typedef struct column_constraint {
+    column_constraint_type_t type;
+    std::unique_ptr<identifier_t> name;
+    column_constraint(column_constraint_type_t type) :
+        type(type)
+    {}
+} column_constraint_t;
+
+std::ostream& operator<< (std::ostream& out, const column_constraint_t& constraint);
+
 typedef struct column_definition {
     identifier_t id;
     std::unique_ptr<data_type_descriptor_t> data_type;
     std::unique_ptr<default_descriptor_t> default_descriptor;
     std::unique_ptr<identifier_t> collate;
+    std::vector<column_constraint_t> constraints;
     column_definition(identifier_t& id) :
         id(id)
     {}
