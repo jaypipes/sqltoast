@@ -323,15 +323,52 @@ bool parse_references_constraint(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t table_ident;
+    std::vector<identifier_t> column_names;
 
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
     fill_lexeme(cur_tok, table_ident);
     cur_tok = lex.next();
-    goto push_constraint;
+    goto optional_column_names;
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+optional_column_names:
+    // We get here after processing the <table_name> which is followed by an
+    // optional parens-enclosed, comma-delimited list of column names
+    // (identifiers)
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        goto process_column;
+    }
+    goto push_constraint;
+process_column:
+    // We have already consumed the LPAREN opening of a column list or a COMMA
+    // and now expect a column name
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    column_names.emplace_back(identifier_t(cur_tok.lexeme));
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_column;
+    }
+    goto expect_rparen;
+expect_rparen:
+    // We get here after processing a column name and not finding a COMMA,
+    // indicating another column name should be expected. So, we now expect to
+    // find a closing RPAREN from the <column name list> clause
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_constraint;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
     return false;
 push_constraint:
     {
@@ -341,6 +378,7 @@ push_constraint:
         std::unique_ptr<references_constraint_t> constraint_p = std::make_unique<references_constraint_t>(table_name);
         if (constraint_name.get())
             constraint_p->name = std::move(constraint_name);
+        constraint_p->column_names = std::move(column_names);
         column_def.constraints.emplace_back(std::move(constraint_p));
         return true;
     }

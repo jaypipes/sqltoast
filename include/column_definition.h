@@ -63,6 +63,7 @@ std::ostream& operator<< (std::ostream& out, const column_constraint_t& constrai
 
 typedef struct references_constraint : column_constraint_t {
     identifier_t table_name;
+    std::vector<identifier_t> column_names;
     references_constraint(identifier_t& table_name) :
         column_constraint(COLUMN_CONSTRAINT_TYPE_REFERENCES),
         table_name(table_name)

@@ -39,6 +39,17 @@ std::ostream& operator<< (std::ostream& out, const column_constraint_t& constrai
 
 std::ostream& operator<< (std::ostream& out, const references_constraint_t& constraint) {
         out << "REFERENCES " << constraint.table_name;
+        size_t num_columns = constraint.column_names.size();
+        if (num_columns > 0) {
+            out << "(";
+            size_t x = 0;
+            for (const identifier_t& col_name : constraint.column_names) {
+                out << col_name;
+                if (x++ != (num_columns - 1))
+                    out << ",";
+            }
+            out << ")";
+        }
         return out;
 }
 
