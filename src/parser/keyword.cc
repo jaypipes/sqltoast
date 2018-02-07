@@ -43,6 +43,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'f':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FLOAT, "FLOAT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_FULL, "FULL"));
             return t;
         case 'g':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GLOBAL, "GLOBAL"));
@@ -62,6 +63,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOCAL, "LOCAL"));
             return t;
         case 'm':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_MATCH, "MATCH"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_MINUTE, "MINUTE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_MONTH, "MONTH"));
             return t;
@@ -75,6 +77,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'p':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRECISION, "PRECISION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRIMARY, "PRIMARY"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_PARTIAL, "PARTIAL"));
             return t;
         case 'r':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_REAL, "REAL"));

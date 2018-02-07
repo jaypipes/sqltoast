@@ -42,6 +42,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
+    m[SYMBOL_FULL] = std::string("FULL");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
     m[SYMBOL_HOUR] = std::string("HOUR");
     m[SYMBOL_INT] = std::string("INT");
@@ -49,6 +50,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_INTERVAL] = std::string("INTERVAL");
     m[SYMBOL_LOCAL] = std::string("LOCAL");
     m[SYMBOL_KEY] = std::string("KEY");
+    m[SYMBOL_MATCH] = std::string("MATCH");
     m[SYMBOL_MINUTE] = std::string("MINUTE");
     m[SYMBOL_MONTH] = std::string("MONTH");
     m[SYMBOL_NATIONAL] = std::string("NATIONAL");
@@ -56,6 +58,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_NOT] = std::string("NOT");
     m[SYMBOL_NUMERIC] = std::string("NUMERIC");
     m[SYMBOL_NULL] = std::string("NULL");
+    m[SYMBOL_PARTIAL] = std::string("PARTIAL");
     m[SYMBOL_PRECISION] = std::string("PRECISION");
     m[SYMBOL_PRIMARY] = std::string("PRIMARY");
     m[SYMBOL_REAL] = std::string("REAL");
