@@ -14,92 +14,92 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 
     switch (lead_char) {
         case 'a':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_AUTHORIZATION, SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
         case 'b':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_BIT, SYMBOL_BIT, "BIT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_BIT, "BIT"));
             return t;
         case 'c':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CREATE, SYMBOL_CREATE, "CREATE"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHAR, SYMBOL_CHAR, "CHAR"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CHARACTER, SYMBOL_CHARACTER, "CHARACTER"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CASCADE, SYMBOL_CASCADE, "CASCADE"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_DATE, SYMBOL_CURRENT_DATE, "CURRENT_DATE"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_TIME, SYMBOL_CURRENT_TIME, "CURRENT_TIME"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_TIMESTAMP, SYMBOL_CURRENT_TIMESTAMP, "CURRENT_TIMESTAMP"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_CURRENT_USER, SYMBOL_CURRENT_USER, "CURRENT_USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CREATE, "CREATE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHAR, "CHAR"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHARACTER, "CHARACTER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CASCADE, "CASCADE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_DATE, "CURRENT_DATE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIME, "CURRENT_TIME"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIMESTAMP, "CURRENT_TIMESTAMP"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_USER, "CURRENT_USER"));
             return t;
         case 'd':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DATE, SYMBOL_DATE, "DATE"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DAY, SYMBOL_DAY, "DAY"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DEC, SYMBOL_DEC, "DEC"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DECIMAL, SYMBOL_DECIMAL, "DECIMAL"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DEFAULT, SYMBOL_DEFAULT, "DEFAULT"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DROP, SYMBOL_DROP, "DROP"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_DOUBLE, SYMBOL_DOUBLE, "DOUBLE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DATE, "DATE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DAY, "DAY"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DEC, "DEC"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DECIMAL, "DECIMAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DEFAULT, "DEFAULT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DROP, "DROP"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DOUBLE, "DOUBLE"));
             return t;
         case 'f':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_FLOAT, SYMBOL_FLOAT, "FLOAT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_FLOAT, "FLOAT"));
             return t;
         case 'g':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_GLOBAL, SYMBOL_GLOBAL, "GLOBAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_GLOBAL, "GLOBAL"));
             return t;
         case 'h':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_HOUR, SYMBOL_HOUR, "HOUR"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_HOUR, "HOUR"));
             return t;
         case 'i':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_INTERVAL, SYMBOL_INTERVAL, "INTERVAL"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_INT, SYMBOL_INT, "INT"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_INTEGER, SYMBOL_INTEGER, "INTEGER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_INTERVAL, "INTERVAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_INT, "INT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_INTEGER, "INTEGER"));
             return t;
         case 'l':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_LOCAL, SYMBOL_LOCAL, "LOCAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOCAL, "LOCAL"));
             return t;
         case 'm':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_MINUTE, SYMBOL_MINUTE, "MINUTE"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_MONTH, SYMBOL_MONTH, "MONTH"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_MINUTE, "MINUTE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_MONTH, "MONTH"));
             return t;
         case 'n':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_NULL, SYMBOL_NULL, "NULL"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_NATIONAL, SYMBOL_NATIONAL, "NATIONAL"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_NCHAR, SYMBOL_NCHAR, "NCHAR"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_NUMERIC, SYMBOL_NUMERIC, "NUMERIC"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_NULL, "NULL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_NATIONAL, "NATIONAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_NCHAR, "NCHAR"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_NUMERIC, "NUMERIC"));
             return t;
         case 'p':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_PRECISION, SYMBOL_PRECISION, "PRECISION"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRECISION, "PRECISION"));
             return t;
         case 'r':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_REAL, SYMBOL_REAL, "REAL"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_RESTRICT, SYMBOL_RESTRICT, "RESTRICT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_REAL, "REAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_RESTRICT, "RESTRICT"));
             return t;
         case 's':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SCHEMA, SYMBOL_SCHEMA, "SCHEMA"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SECOND, SYMBOL_SECOND, "SECOND"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SET, SYMBOL_SET, "SET"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SESSION_USER, SYMBOL_SESSION_USER, "SESSION_USER"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_SYSTEM_USER, SYMBOL_SYSTEM_USER, "SYSTEM_USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SCHEMA, "SCHEMA"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SECOND, "SECOND"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SET, "SET"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SESSION_USER, "SESSION_USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SYSTEM_USER, "SYSTEM_USER"));
             return t;
         case 't':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TABLE, SYMBOL_TABLE, "TABLE"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TIME, SYMBOL_TIME, "TIME"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TIMESTAMP, SYMBOL_TIMESTAMP, "TIMESTAMP"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_TEMPORARY, SYMBOL_TEMPORARY, "TEMPORARY"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TABLE, "TABLE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIME, "TIME"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIMESTAMP, "TIMESTAMP"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TEMPORARY, "TEMPORARY"));
             return t;
         case 'u':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_USER, SYMBOL_USER, "USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_USER, "USER"));
             return t;
         case 'v':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_VARCHAR, SYMBOL_VARCHAR, "VARCHAR"));
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_VARYING, SYMBOL_VARYING, "VARYING"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_VARCHAR, "VARCHAR"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_VARYING, "VARYING"));
             return t;
         case 'w':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_WITH, SYMBOL_WITH, "WITH"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_WITH, "WITH"));
             return t;
         case 'y':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_YEAR, SYMBOL_YEAR, "YEAR"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_YEAR, "YEAR"));
             return t;
         case 'z':
-            t.emplace_back(kw_jump_table_entry_t(KEYWORD_ZONE, SYMBOL_ZONE, "ZONE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ZONE, "ZONE"));
             return t;
     }
     return t;
