@@ -68,6 +68,7 @@ optional_default:
 optional_constraints:
     cur_sym = lex.current_token.symbol;
     switch (cur_sym) {
+        case SYMBOL_CONSTRAINT:
         case SYMBOL_NOT:
         case SYMBOL_UNIQUE:
         case SYMBOL_PRIMARY:
@@ -240,10 +241,18 @@ bool parse_column_constraint(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     column_constraint_type_t type;
+    std::unique_ptr<identifier_t> name;
 
     // We get here after getting one of the symbols that precede a constraint
     // definition, which include the CONSTRAINT, NOT, UNIQUE, PRIMARY,
     // REFERENCES or CHECK keywords.
+    if (cur_sym == SYMBOL_CONSTRAINT) {
+        cur_tok = lex.next();
+        goto process_name;
+    }
+
+process_constraint_type:
+    cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_NOT:
             cur_tok = lex.next();
@@ -265,6 +274,16 @@ bool parse_column_constraint(
             // should not get here...
             return false;
     }
+process_name:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    name = std::move(std::make_unique<identifier_t>(cur_tok.lexeme));
+    cur_tok = lex.next();
+    goto process_constraint_type;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
 not_null_constraint:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_NULL)
@@ -289,7 +308,11 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        column_def.constraints.emplace_back(column_constraint_t(type));
+        column_constraint_t constraint(type);
+        if (name.get()) {
+            constraint.name = std::move(name);
+        }
+        column_def.constraints.emplace_back(std::move(constraint));
         return true;
     }
 }
