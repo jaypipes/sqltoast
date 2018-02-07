@@ -8,6 +8,32 @@
 
 namespace sqltoast {
 
+std::ostream& operator<< (std::ostream& out, const column_constraint_t& constraint) {
+    if (constraint.name.get())
+        out << "CONSTRAINT " << *constraint.name << " ";
+    switch (constraint.type) {
+        case COLUMN_CONSTRAINT_TYPE_NOT_NULL:
+            out << "NOT NULL";
+            break;
+        case COLUMN_CONSTRAINT_TYPE_UNIQUE:
+            out << "UNIQUE";
+            break;
+        case COLUMN_CONSTRAINT_TYPE_PRIMARY_KEY:
+            out << "PRIMARY KEY";
+            break;
+        case COLUMN_CONSTRAINT_TYPE_REFERENCES:
+            out << "REFERENCES ";
+            // TODO
+            break;
+        case COLUMN_CONSTRAINT_TYPE_CHECK:
+            out << "CHECK ";
+            // TODO
+            break;
+        default:
+            break;
+    }
+}
+
 std::ostream& operator<< (std::ostream& out, const default_descriptor_t& default_desc) {
     out << "DEFAULT ";
     switch (default_desc.type) {
@@ -56,6 +82,16 @@ std::ostream& operator<< (std::ostream& out, const column_definition_t& column_d
     }
     if (column_def.default_descriptor.get()) {
         out << " " << *column_def.default_descriptor;
+    }
+    if (column_def.constraints.size() > 0) {
+        for (auto constraint_it = column_def.constraints.begin();
+             constraint_it != column_def.constraints.end();
+             constraint_it++) {
+            out << " " << *constraint_it;
+        }
+    }
+    if (column_def.collate.get()) {
+        out << " COLLATE " << *column_def.collate;
     }
     return out;
 }

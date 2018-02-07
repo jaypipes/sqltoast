@@ -25,7 +25,6 @@ namespace sqltoast {
 //      [ <collate clause> ]
 //
 // TODO(jaypipes): Handle <column constraint definition> clause
-// TODO(jaypipes): Handle <collate> clause
 
 bool parse_column_definition(
         parse_context_t& ctx,
@@ -46,7 +45,7 @@ bool parse_column_definition(
         goto create_column_def;
     }
     // Just return false, since callers could be looking for
-    // a constraint definition
+    // a constraint definition (on the table)
     return false;
 
 create_column_def:
@@ -63,6 +62,28 @@ optional_default:
     if (cur_sym == SYMBOL_DEFAULT) {
         cur_tok = lex.next();
         if (! parse_default_clause(ctx, cur_tok, *cdef_p))
+            return false;
+    }
+    goto optional_constraints;
+optional_constraints:
+    cur_sym = lex.current_token.symbol;
+    switch (cur_sym) {
+        case SYMBOL_NOT:
+        case SYMBOL_UNIQUE:
+        case SYMBOL_PRIMARY:
+        case SYMBOL_REFERENCES:
+        case SYMBOL_CHECK:
+            if (! parse_column_constraint(ctx, cur_tok, *cdef_p))
+                return false;
+            goto optional_constraints; // there may be >1 constraint...
+        default:
+            goto optional_collate;
+    }
+optional_collate:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COLLATE) {
+        cur_tok = lex.next();
+        if (! parse_collate_clause(ctx, cur_tok, *cdef_p))
             return false;
     }
     goto push_column_def;
@@ -165,6 +186,139 @@ push_descriptor:
         std::unique_ptr<default_descriptor_t> dd_p;
         dd_p = std::move(std::make_unique<default_descriptor_t>(default_type, cur_tok.lexeme, prec));
         column_def.default_descriptor = std::move(dd_p);
+        return true;
+    }
+}
+
+// <column constraint definition> ::=
+//     [ <constraint name definition> ]
+//     <column constraint> [ <constraint attributes> ]
+//
+// <constraint name definition> ::= CONSTRAINT <constraint name>
+//
+// <constraint name> ::= <qualified name>
+//
+// <column constraint> ::=
+//     NOT NULL
+//     | <unique specification>
+//     | <references specification>
+//     | <check constraint definition>
+//
+// <unique specification> ::= UNIQUE | PRIMARY KEY
+//
+// <references specification>    ::=
+//     REFERENCES <referenced table and columns>
+//     [ MATCH <match type> ] [ <referential triggered action> ]
+//
+// <referenced table and columns> ::=
+//     <table name> [ <left paren> <reference column list> <right paren> ]
+//
+// <table name> ::= <qualified name> | <qualified local table name>
+//
+// <reference column list> ::= <column name list>
+//
+// <column name list> ::= <column name> [ { <comma> <column name> }... ]
+//
+// <match type> ::= FULL | PARTIAL
+//
+// <referential triggered action> ::=
+//     <update rule> [ <delete rule> ]
+//     | <delete rule> [ <update rule> ]
+//
+// <update rule> ::= ON UPDATE <referential action>
+//
+// <referential action> ::= CASCADE | SET NULL | SET DEFAULT | NO ACTION
+//
+// <delete rule> ::= ON DELETE <referential action>
+//
+// <check constraint definition> ::=
+//     CHECK <left paren> <search condition> <right paren>
+bool parse_column_constraint(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    column_constraint_type_t type;
+
+    // We get here after getting one of the symbols that precede a constraint
+    // definition, which include the CONSTRAINT, NOT, UNIQUE, PRIMARY,
+    // REFERENCES or CHECK keywords.
+    switch (cur_sym) {
+        case SYMBOL_NOT:
+            cur_tok = lex.next();
+            goto not_null_constraint;
+        case SYMBOL_UNIQUE:
+            cur_tok = lex.next();
+            type = COLUMN_CONSTRAINT_TYPE_UNIQUE;
+            goto push_constraint;
+        case SYMBOL_PRIMARY:
+            cur_tok = lex.next();
+            goto primary_key_constraint;
+        case SYMBOL_REFERENCES:
+            // TODO
+            return false;
+        case SYMBOL_CHECK:
+            // TODO
+            return false;
+        default:
+            // should not get here...
+            return false;
+    }
+not_null_constraint:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_NULL)
+        goto err_expect_null;
+    type = COLUMN_CONSTRAINT_TYPE_NOT_NULL;
+    cur_tok = lex.next();
+    goto push_constraint;
+err_expect_null:
+    expect_error(ctx, SYMBOL_NULL);
+    return false;
+primary_key_constraint:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_KEY)
+        goto err_expect_key;
+    type = COLUMN_CONSTRAINT_TYPE_PRIMARY_KEY;
+    cur_tok = lex.next();
+    goto push_constraint;
+err_expect_key:
+    expect_error(ctx, SYMBOL_KEY);
+    return false;
+push_constraint:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        column_def.constraints.emplace_back(column_constraint_t(type));
+        return true;
+    }
+}
+
+//  <collate clause> ::= COLLATE <qualified identifier>
+bool parse_collate_clause(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    lexeme_t collate_ident;
+
+    // We get here after getting the COLLATE symbol while processing the column
+    // definition. We expect an identifier (the collation) at this point.
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+
+    collate_ident = cur_tok.lexeme;
+    cur_tok = lex.next();
+    goto push_descriptor;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        column_def.collate = std::move(std::make_unique<identifier_t>(collate_ident));
         return true;
     }
 }
