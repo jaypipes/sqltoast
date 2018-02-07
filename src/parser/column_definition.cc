@@ -207,31 +207,6 @@ push_descriptor:
 //
 // <unique specification> ::= UNIQUE | PRIMARY KEY
 //
-// <references specification>    ::=
-//     REFERENCES <referenced table and columns>
-//     [ MATCH <match type> ] [ <referential triggered action> ]
-//
-// <referenced table and columns> ::=
-//     <table name> [ <left paren> <reference column list> <right paren> ]
-//
-// <table name> ::= <qualified name> | <qualified local table name>
-//
-// <reference column list> ::= <column name list>
-//
-// <column name list> ::= <column name> [ { <comma> <column name> }... ]
-//
-// <match type> ::= FULL | PARTIAL
-//
-// <referential triggered action> ::=
-//     <update rule> [ <delete rule> ]
-//     | <delete rule> [ <update rule> ]
-//
-// <update rule> ::= ON UPDATE <referential action>
-//
-// <referential action> ::= CASCADE | SET NULL | SET DEFAULT | NO ACTION
-//
-// <delete rule> ::= ON DELETE <referential action>
-//
 // <check constraint definition> ::=
 //     CHECK <left paren> <search condition> <right paren>
 bool parse_column_constraint(
@@ -256,17 +231,17 @@ process_constraint_type:
     switch (cur_sym) {
         case SYMBOL_NOT:
             cur_tok = lex.next();
-            goto not_null_constraint;
+            goto process_not_null;
         case SYMBOL_UNIQUE:
             cur_tok = lex.next();
             type = COLUMN_CONSTRAINT_TYPE_UNIQUE;
             goto push_constraint;
         case SYMBOL_PRIMARY:
             cur_tok = lex.next();
-            goto primary_key_constraint;
+            goto process_primary_key;
         case SYMBOL_REFERENCES:
-            // TODO
-            return false;
+            cur_tok = lex.next();
+            return parse_references_constraint(ctx, cur_tok, column_def, name);
         case SYMBOL_CHECK:
             // TODO
             return false;
@@ -284,7 +259,7 @@ process_name:
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
     return false;
-not_null_constraint:
+process_not_null:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_NULL)
         goto err_expect_null;
@@ -294,7 +269,7 @@ not_null_constraint:
 err_expect_null:
     expect_error(ctx, SYMBOL_NULL);
     return false;
-primary_key_constraint:
+process_primary_key:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_KEY)
         goto err_expect_key;
@@ -308,11 +283,65 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        column_constraint_t constraint(type);
-        if (name.get()) {
-            constraint.name = std::move(name);
-        }
-        column_def.constraints.emplace_back(std::move(constraint));
+        std::unique_ptr<column_constraint_t> constraint_p = std::make_unique<column_constraint_t>(type);
+        if (name.get())
+            constraint_p->name = std::move(name);
+        column_def.constraints.emplace_back(std::move(constraint_p));
+        return true;
+    }
+}
+
+// <references specification>    ::=
+//     REFERENCES <referenced table and columns>
+//     [ MATCH <match type> ] [ <referential triggered action> ]
+//
+// <referenced table and columns> ::=
+//     <table name> [ <left paren> <reference column list> <right paren> ]
+//
+// <table name> ::= <qualified name> | <qualified local table name>
+//
+// <reference column list> ::= <column name list>
+//
+// <column name list> ::= <column name> [ { <comma> <column name> }... ]
+//
+// <match type> ::= FULL | PARTIAL
+//
+// <referential triggered action> ::=
+//     <update rule> [ <delete rule> ]
+//     | <delete rule> [ <update rule> ]
+//
+// <update rule> ::= ON UPDATE <referential action>
+//
+// <referential action> ::= CASCADE | SET NULL | SET DEFAULT | NO ACTION
+//
+// <delete rule> ::= ON DELETE <referential action>
+bool parse_references_constraint(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def,
+        std::unique_ptr<identifier_t>& constraint_name) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    lexeme_t table_ident;
+
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    fill_lexeme(cur_tok, table_ident);
+    cur_tok = lex.next();
+    goto push_constraint;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+push_constraint:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        identifier_t table_name(table_ident);
+        std::unique_ptr<references_constraint_t> constraint_p = std::make_unique<references_constraint_t>(table_name);
+        if (constraint_name.get())
+            constraint_p->name = std::move(constraint_name);
+        column_def.constraints.emplace_back(std::move(constraint_p));
         return true;
     }
 }

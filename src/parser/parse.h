@@ -42,6 +42,15 @@ bool parse_column_constraint(
         token_t& cur_tok,
         column_definition_t& column_def);
 
+// Returns true if a references column constraint can be parsed from the
+// supplied token iterator. If the function returns true, column_def will have
+// a new references_constraint_t added to its constraints member.
+bool parse_references_constraint(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def,
+        std::unique_ptr<identifier_t>& constraint_name);
+
 // Returns true if a collate clause can be parsed from the supplied
 // token iterator. If the function returns true, column_def will have a its
 // collate member populated.

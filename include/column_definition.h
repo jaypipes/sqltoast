@@ -61,12 +61,22 @@ typedef struct column_constraint {
 
 std::ostream& operator<< (std::ostream& out, const column_constraint_t& constraint);
 
+typedef struct references_constraint : column_constraint_t {
+    identifier_t table_name;
+    references_constraint(identifier_t& table_name) :
+        column_constraint(COLUMN_CONSTRAINT_TYPE_REFERENCES),
+        table_name(table_name)
+    {}
+} references_constraint_t;
+
+std::ostream& operator<< (std::ostream& out, const references_constraint_t& constraint);
+
 typedef struct column_definition {
     identifier_t id;
     std::unique_ptr<data_type_descriptor_t> data_type;
     std::unique_ptr<default_descriptor_t> default_descriptor;
     std::unique_ptr<identifier_t> collate;
-    std::vector<column_constraint_t> constraints;
+    std::vector<std::unique_ptr<column_constraint_t>> constraints;
     column_definition(identifier_t& id) :
         id(id)
     {}
