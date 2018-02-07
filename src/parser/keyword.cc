@@ -28,6 +28,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIME, "CURRENT_TIME"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIMESTAMP, "CURRENT_TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_USER, "CURRENT_USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_COLLATE, "COLLATE"));
             return t;
         case 'd':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DATE, "DATE"));

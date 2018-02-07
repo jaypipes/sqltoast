@@ -57,6 +57,9 @@ std::ostream& operator<< (std::ostream& out, const column_definition_t& column_d
     if (column_def.default_descriptor.get()) {
         out << " " << *column_def.default_descriptor;
     }
+    if (column_def.collate.get()) {
+        out << " COLLATE " << *column_def.collate;
+    }
     return out;
 }
 

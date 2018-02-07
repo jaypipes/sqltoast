@@ -26,6 +26,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
+    m[SYMBOL_COLLATE] = std::string("COLLATE");
     m[SYMBOL_CREATE] = std::string("CREATE");
     m[SYMBOL_CURRENT_DATE] = std::string("CURRENT_DATE");
     m[SYMBOL_CURRENT_TIME] = std::string("CURRENT_TIME");

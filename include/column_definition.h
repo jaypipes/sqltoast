@@ -46,6 +46,7 @@ typedef struct column_definition {
     identifier_t id;
     std::unique_ptr<data_type_descriptor_t> data_type;
     std::unique_ptr<default_descriptor_t> default_descriptor;
+    std::unique_ptr<identifier_t> collate;
     column_definition(identifier_t& id) :
         id(id)
     {}

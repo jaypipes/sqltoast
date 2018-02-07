@@ -25,7 +25,6 @@ namespace sqltoast {
 //      [ <collate clause> ]
 //
 // TODO(jaypipes): Handle <column constraint definition> clause
-// TODO(jaypipes): Handle <collate> clause
 
 bool parse_column_definition(
         parse_context_t& ctx,
@@ -63,6 +62,14 @@ optional_default:
     if (cur_sym == SYMBOL_DEFAULT) {
         cur_tok = lex.next();
         if (! parse_default_clause(ctx, cur_tok, *cdef_p))
+            return false;
+    }
+    goto optional_collate;
+optional_collate:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COLLATE) {
+        cur_tok = lex.next();
+        if (! parse_collate_clause(ctx, cur_tok, *cdef_p))
             return false;
     }
     goto push_column_def;
@@ -165,6 +172,35 @@ push_descriptor:
         std::unique_ptr<default_descriptor_t> dd_p;
         dd_p = std::move(std::make_unique<default_descriptor_t>(default_type, cur_tok.lexeme, prec));
         column_def.default_descriptor = std::move(dd_p);
+        return true;
+    }
+}
+
+//  <collate clause> ::= COLLATE <qualified identifier>
+bool parse_collate_clause(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        column_definition_t& column_def) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    lexeme_t collate_ident;
+
+    // We get here after getting the COLLATE symbol while processing the column
+    // definition. We expect an identifier (the collation) at this point.
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+
+    collate_ident = cur_tok.lexeme;
+    cur_tok = lex.next();
+    goto push_descriptor;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+push_descriptor:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        column_def.collate = std::move(std::make_unique<identifier_t>(collate_ident));
         return true;
     }
 }
