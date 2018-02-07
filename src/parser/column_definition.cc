@@ -26,7 +26,6 @@ namespace sqltoast {
 //
 // TODO(jaypipes): Handle <column constraint definition> clause
 // TODO(jaypipes): Handle <collate> clause
-//
 
 bool parse_column_definition(
         parse_context_t& ctx,
@@ -87,6 +86,19 @@ push_column_def:
 //      | SESSION_USER
 //      | SYSTEM_USER
 //      | NULL
+//
+//  <datetime value function> ::=
+//      <current date value function>
+//      | <current time value function>
+//      | <current timestamp value function>
+//
+//  <current date value function> ::= CURRENT_DATE
+//
+//  <current time value function> ::=
+//      CURRENT_TIME [ <left paren> <time precision> <right paren> ]
+//
+//  <current timestamp value function> ::=
+//      CURRENT_TIMESTAMP [ <left paren> <timestamp precision> <right paren> ]
 bool parse_default_clause(
         parse_context_t& ctx,
         token_t& cur_tok,
