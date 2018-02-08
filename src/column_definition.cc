@@ -22,8 +22,10 @@ std::ostream& operator<< (std::ostream& out, const column_constraint_t& constrai
             out << "PRIMARY KEY";
             break;
         case COLUMN_CONSTRAINT_TYPE_REFERENCES:
-            out << "REFERENCES ";
-            // TODO
+            {
+                const references_constraint_t& ref_c = static_cast<const references_constraint_t&>(constraint);
+                out << ref_c;
+            }
             break;
         case COLUMN_CONSTRAINT_TYPE_CHECK:
             out << "CHECK ";
@@ -32,6 +34,59 @@ std::ostream& operator<< (std::ostream& out, const column_constraint_t& constrai
         default:
             break;
     }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const references_constraint_t& constraint) {
+        out << "REFERENCES " << constraint.table_name;
+        size_t num_columns = constraint.column_names.size();
+        if (num_columns > 0) {
+            out << "(";
+            size_t x = 0;
+            for (const identifier_t& col_name : constraint.column_names) {
+                out << col_name;
+                if (x++ != (num_columns - 1))
+                    out << ",";
+            }
+            out << ")";
+        }
+        switch (constraint.match_type) {
+            case REFERENCES_MATCH_TYPE_FULL:
+                out << " MATCH FULL";
+                break;
+            case REFERENCES_MATCH_TYPE_PARTIAL:
+                out << " MATCH PARTIAL";
+                break;
+            default:
+                break;
+        }
+        switch (constraint.on_update) {
+            case REFERENTIAL_ACTION_SET_NULL:
+                out << " ON UPDATE SET NULL";
+                break;
+            case REFERENTIAL_ACTION_SET_DEFAULT:
+                out << " ON UPDATE SET DEFAULT";
+                break;
+            case REFERENTIAL_ACTION_CASCADE:
+                out << " ON UPDATE CASCADE";
+                break;
+            default:
+                break;
+        }
+        switch (constraint.on_delete) {
+            case REFERENTIAL_ACTION_SET_NULL:
+                out << " ON DELETE SET NULL";
+                break;
+            case REFERENTIAL_ACTION_SET_DEFAULT:
+                out << " ON DELETE SET DEFAULT";
+                break;
+            case REFERENTIAL_ACTION_CASCADE:
+                out << " ON DELETE CASCADE";
+                break;
+            default:
+                break;
+        }
+        return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const default_descriptor_t& default_desc) {
@@ -71,6 +126,7 @@ std::ostream& operator<< (std::ostream& out, const default_descriptor_t& default
         default:
             break;
     }
+    return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const column_definition_t& column_def) {
@@ -87,7 +143,7 @@ std::ostream& operator<< (std::ostream& out, const column_definition_t& column_d
         for (auto constraint_it = column_def.constraints.begin();
              constraint_it != column_def.constraints.end();
              constraint_it++) {
-            out << " " << *constraint_it;
+            out << " " << *(*constraint_it);
         }
     }
     if (column_def.collate.get()) {

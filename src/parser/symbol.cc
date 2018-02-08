@@ -21,6 +21,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_RPAREN] = std::string("RPAREN");
 
     // Reserved keywords
+    m[SYMBOL_ACTION] = std::string("ACTION");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_BIT] = std::string("BIT");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
@@ -39,9 +40,11 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DEC] = std::string("DEC");
     m[SYMBOL_DECIMAL] = std::string("DECIMAL");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
+    m[SYMBOL_DELETE] = std::string("DELETE");
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
+    m[SYMBOL_FULL] = std::string("FULL");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
     m[SYMBOL_HOUR] = std::string("HOUR");
     m[SYMBOL_INT] = std::string("INT");
@@ -49,13 +52,17 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_INTERVAL] = std::string("INTERVAL");
     m[SYMBOL_LOCAL] = std::string("LOCAL");
     m[SYMBOL_KEY] = std::string("KEY");
+    m[SYMBOL_MATCH] = std::string("MATCH");
     m[SYMBOL_MINUTE] = std::string("MINUTE");
     m[SYMBOL_MONTH] = std::string("MONTH");
     m[SYMBOL_NATIONAL] = std::string("NATIONAL");
     m[SYMBOL_NCHAR] = std::string("NCHAR");
+    m[SYMBOL_NO] = std::string("NO");
     m[SYMBOL_NOT] = std::string("NOT");
     m[SYMBOL_NUMERIC] = std::string("NUMERIC");
     m[SYMBOL_NULL] = std::string("NULL");
+    m[SYMBOL_ON] = std::string("ON");
+    m[SYMBOL_PARTIAL] = std::string("PARTIAL");
     m[SYMBOL_PRECISION] = std::string("PRECISION");
     m[SYMBOL_PRIMARY] = std::string("PRIMARY");
     m[SYMBOL_REAL] = std::string("REAL");
@@ -72,6 +79,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TIME] = std::string("TIME");
     m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
     m[SYMBOL_UNIQUE] = std::string("UNIQUE");
+    m[SYMBOL_UPDATE] = std::string("UPDATE");
     m[SYMBOL_USER] = std::string("USER");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
     m[SYMBOL_VARYING] = std::string("VARYING");
