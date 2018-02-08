@@ -67,14 +67,29 @@ typedef enum references_match_type {
     REFERENCES_MATCH_TYPE_PARTIAL
 } references_match_type_t;
 
+typedef enum referential_action {
+    REFERENTIAL_ACTION_NONE,
+    REFERENTIAL_ACTION_CASCADE,
+    REFERENTIAL_ACTION_SET_NULL,
+    REFERENTIAL_ACTION_SET_DEFAULT
+} referential_action_t;
+
 typedef struct references_constraint : column_constraint_t {
     identifier_t table_name;
     references_match_type_t match_type;
+    referential_action_t on_update;
+    referential_action_t on_delete;
     std::vector<identifier_t> column_names;
-    references_constraint(identifier_t& table_name, references_match_type_t match_type) :
+    references_constraint(
+            identifier_t& table_name,
+            references_match_type_t match_type,
+            referential_action_t on_update,
+            referential_action_t on_delete) :
         column_constraint(COLUMN_CONSTRAINT_TYPE_REFERENCES),
         table_name(table_name),
-        match_type(match_type)
+        match_type(match_type),
+        on_update(on_update),
+        on_delete(on_delete)
     {}
 } references_constraint_t;
 

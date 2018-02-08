@@ -324,7 +324,11 @@ bool parse_references_constraint(
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t table_ident;
     std::vector<identifier_t> column_names;
+    bool found_on_update = false;
+    bool found_on_delete = false;
     references_match_type_t match_type = REFERENCES_MATCH_TYPE_NONE;
+    referential_action_t on_update = REFERENTIAL_ACTION_NONE;
+    referential_action_t on_delete = REFERENTIAL_ACTION_NONE;
 
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
@@ -368,32 +372,158 @@ expect_rparen:
         goto err_expect_rparen;
     cur_tok = lex.next();
     goto optional_match_type;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 optional_match_type:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_MATCH) {
         cur_tok = lex.next();
         goto process_match_type;
     }
-    goto push_constraint;
+    goto optional_trigger;
 process_match_type:
     cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_FULL:
             match_type = REFERENCES_MATCH_TYPE_FULL;
             cur_tok = lex.next();
-            goto push_constraint;
+            goto optional_trigger;
         case SYMBOL_PARTIAL:
             match_type = REFERENCES_MATCH_TYPE_PARTIAL;
             cur_tok = lex.next();
-            goto push_constraint;
+            goto optional_trigger;
         default:
             goto err_expect_match_type;
     }
 err_expect_match_type:
     expect_any_error(ctx, {SYMBOL_FULL, SYMBOL_PARTIAL});
     return false;
-err_expect_rparen:
-    expect_error(ctx, SYMBOL_RPAREN);
+optional_trigger:
+    // We get here after successfully processing the <table name>,
+    // <column_name_list> and <match_type> clauses. We now look for an optional
+    // referential trigger clause
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ON) {
+        cur_tok = lex.next();
+        goto process_trigger;
+    }
+    goto push_constraint;
+process_trigger:
+    // A trigger can be either ON UPDATE or ON DELETE. By this point, we've
+    // already consumed the ON symbol
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_UPDATE:
+            if (found_on_update)
+                goto err_already_found_on_update;
+            found_on_update = true;
+            cur_tok = lex.next();
+            goto process_on_update_trigger;
+            break;
+        case SYMBOL_DELETE:
+            if (found_on_delete)
+                goto err_already_found_on_delete;
+            found_on_delete = true;
+            cur_tok = lex.next();
+            goto process_on_delete_trigger;
+            break;
+        default:
+            goto err_expect_update_or_delete;
+    }
+err_expect_update_or_delete:
+    expect_any_error(ctx, {SYMBOL_UPDATE, SYMBOL_DELETE});
+    return false;
+err_already_found_on_update:
+    {
+        std::stringstream estr;
+        estr << "Already found ON UPDATE constraint." << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+err_already_found_on_delete:
+    {
+        std::stringstream estr;
+        estr << "Already found ON DELETE constraint." << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+process_on_update_trigger:
+    // We get here if we've already successfully consume the ON followed by
+    // UPDATE symbols and now expect to find a trigger action
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_SET:
+            // Either SET NULL or SET DEFAULT are allowed
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym == SYMBOL_NULL) {
+                cur_tok = lex.next();
+                on_update = REFERENTIAL_ACTION_SET_NULL;
+                goto optional_trigger;
+            } else if (cur_sym == SYMBOL_DEFAULT) {
+                cur_tok = lex.next();
+                on_update = REFERENTIAL_ACTION_SET_DEFAULT;
+                goto optional_trigger;
+            } else {
+                goto err_expect_null_or_default;
+            }
+        case SYMBOL_CASCADE:
+            cur_tok = lex.next();
+            on_update = REFERENTIAL_ACTION_CASCADE;
+            goto optional_trigger;
+        case SYMBOL_NO:
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym != SYMBOL_ACTION)
+                goto err_expect_action;
+            on_update = REFERENTIAL_ACTION_NONE;
+            goto optional_trigger;
+        default:
+            goto err_expect_action_trigger;
+    }
+process_on_delete_trigger:
+    // We get here if we've already successfully consume the ON followed by
+    // DELETE symbols and now expect to find a trigger action
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_SET:
+            // Either SET NULL or SET DEFAULT are allowed
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym == SYMBOL_NULL) {
+                cur_tok = lex.next();
+                on_delete = REFERENTIAL_ACTION_SET_NULL;
+                goto optional_trigger;
+            } else if (cur_sym == SYMBOL_DEFAULT) {
+                cur_tok = lex.next();
+                on_delete = REFERENTIAL_ACTION_SET_DEFAULT;
+                goto optional_trigger;
+            } else {
+                goto err_expect_null_or_default;
+            }
+        case SYMBOL_CASCADE:
+            cur_tok = lex.next();
+            on_delete = REFERENTIAL_ACTION_CASCADE;
+            goto optional_trigger;
+        case SYMBOL_NO:
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym != SYMBOL_ACTION)
+                goto err_expect_action;
+            on_delete = REFERENTIAL_ACTION_NONE;
+            goto optional_trigger;
+        default:
+            goto err_expect_action_trigger;
+    }
+err_expect_null_or_default:
+    expect_any_error(ctx, {SYMBOL_NULL, SYMBOL_DEFAULT});
+    return false;
+err_expect_action:
+    expect_error(ctx, SYMBOL_ACTION);
+    return false;
+err_expect_action_trigger:
+    expect_any_error(ctx, {SYMBOL_SET, SYMBOL_NO, SYMBOL_CASCADE});
     return false;
 push_constraint:
     {
@@ -401,7 +531,7 @@ push_constraint:
             return true;
         identifier_t table_name(table_ident);
         std::unique_ptr<references_constraint_t> constraint_p =
-            std::make_unique<references_constraint_t>(table_name, match_type);
+            std::make_unique<references_constraint_t>(table_name, match_type, on_update, on_delete);
         if (constraint_name.get())
             constraint_p->name = std::move(constraint_name);
         constraint_p->column_names = std::move(column_names);

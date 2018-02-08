@@ -60,6 +60,32 @@ std::ostream& operator<< (std::ostream& out, const references_constraint_t& cons
             default:
                 break;
         }
+        switch (constraint.on_update) {
+            case REFERENTIAL_ACTION_SET_NULL:
+                out << " ON UPDATE SET NULL";
+                break;
+            case REFERENTIAL_ACTION_SET_DEFAULT:
+                out << " ON UPDATE SET DEFAULT";
+                break;
+            case REFERENTIAL_ACTION_CASCADE:
+                out << " ON UPDATE CASCADE";
+                break;
+            default:
+                break;
+        }
+        switch (constraint.on_delete) {
+            case REFERENTIAL_ACTION_SET_NULL:
+                out << " ON DELETE SET NULL";
+                break;
+            case REFERENTIAL_ACTION_SET_DEFAULT:
+                out << " ON DELETE SET DEFAULT";
+                break;
+            case REFERENTIAL_ACTION_CASCADE:
+                out << " ON DELETE CASCADE";
+                break;
+            default:
+                break;
+        }
         return out;
 }
 
