@@ -9,6 +9,7 @@
 #include <sstream>
 
 #include "column_definition.h"
+#include "constraint.h"
 #include "parser/parse.h"
 #include "parser/statements/create_table.h"
 #include "parser/error.h"
@@ -37,6 +38,7 @@ bool parse_create_table(parse_context_t& ctx) {
     symbol_t cur_sym;
     statements::table_type_t table_type = statements::TABLE_TYPE_NORMAL;
     std::vector<std::unique_ptr<column_definition_t>> column_defs;
+    std::vector<std::unique_ptr<constraint_t>> constraints;
 
     // BEGIN STATE MACHINE
 
@@ -74,7 +76,6 @@ bool parse_create_table(parse_context_t& ctx) {
             cur_tok = lex.next();
             goto expect_table;
         }
-        SQLTOAST_UNREACHABLE();
     expect_temporary:
         // We get here if we successfully matched CREATE followed by either the
         // GLOBAL or LOCAL symbol. If this is the case, we expect to find the
@@ -106,33 +107,43 @@ bool parse_create_table(parse_context_t& ctx) {
         if (cur_sym == SYMBOL_IDENTIFIER) {
             fill_lexeme(cur_tok, ident);
             cur_tok = lex.next();
-            goto expect_column_list_open;
+            goto expect_table_list_open;
         }
         goto err_expect_identifier;
     err_expect_identifier:
         expect_error(ctx, SYMBOL_IDENTIFIER);
         return false;
-    expect_column_list_open:
+    expect_table_list_open:
         // We get here after successfully finding the CREATE ... TABLE <table name>
         // part of the statement. We now expect to find the <table element
         // list> clause
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_LPAREN) {
             cur_tok = lex.next();
-            goto expect_column_list_element;
+            goto expect_table_list_element;
         }
         goto err_expect_lparen;
     err_expect_lparen:
         expect_error(ctx, SYMBOL_LPAREN);
         return false;
-    expect_column_list_element:
+    expect_table_list_element:
         // We get here after finding the LPAREN opening the <table element
         // list> clause. Now we expect to find one or more column or constraint
         // definitions
-        if (! parse_column_definition(ctx, cur_tok, column_defs))
-            return false;
-        goto expect_column_list_close;
-    expect_column_list_close:
+        if (! parse_column_definition(ctx, cur_tok, column_defs, constraints) &&
+                ! parse_constraint(ctx, cur_tok, constraints))
+            goto err_expect_column_def_or_constraint;
+        goto expect_table_list_close;
+err_expect_column_def_or_constraint:
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false; // There was a syntax error written already to the context...
+    else {
+        std::stringstream estr;
+        estr << "Expected either a column definition or a constraint but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+    expect_table_list_close:
         // We get here after successfully parsing the <table element list>
         // column/constraint definitions and are now expecting the closing
         // RPAREN to indicate the end of the <table element list>
@@ -144,7 +155,7 @@ bool parse_create_table(parse_context_t& ctx) {
                 goto statement_ending;
             case SYMBOL_COMMA:
                 cur_tok = lex.next();
-                goto expect_column_list_element;
+                goto expect_table_list_element;
             default:
                 goto err_expect_rparen_or_comma;
         }
@@ -166,7 +177,8 @@ bool parse_create_table(parse_context_t& ctx) {
                 return true;
             identifier_t table_ident(ident);
             auto stmt_p = std::make_unique<statements::create_table_t>(table_type, table_ident);
-            (*stmt_p).column_definitions = std::move(column_defs);
+            stmt_p->column_definitions = std::move(column_defs);
+            stmt_p->constraints = std::move(constraints);
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
         }
