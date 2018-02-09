@@ -345,35 +345,11 @@ optional_column_names:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_LPAREN) {
         cur_tok = lex.next();
-        goto process_column;
+        if (! parse_identifier_list(ctx, cur_tok, referenced_column_names))
+            return false;
+        goto optional_match_type;
     }
     goto push_constraint;
-process_column:
-    // We have already consumed the LPAREN opening of a column list or a COMMA
-    // and now expect a column name
-    cur_sym = cur_tok.symbol;
-    if (cur_sym != SYMBOL_IDENTIFIER)
-        goto err_expect_identifier;
-    referenced_column_names.emplace_back(identifier_t(cur_tok.lexeme));
-    cur_tok = lex.next();
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_COMMA) {
-        cur_tok = lex.next();
-        goto process_column;
-    }
-    goto expect_rparen;
-expect_rparen:
-    // We get here after processing a column name and not finding a COMMA,
-    // indicating another column name should be expected. So, we now expect to
-    // find a closing RPAREN from the <column name list> clause
-    cur_sym = cur_tok.symbol;
-    if (cur_sym != SYMBOL_RPAREN)
-        goto err_expect_rparen;
-    cur_tok = lex.next();
-    goto optional_match_type;
-err_expect_rparen:
-    expect_error(ctx, SYMBOL_RPAREN);
-    return false;
 optional_match_type:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_MATCH) {
@@ -448,6 +424,48 @@ push_constraint:
         constraints.emplace_back(std::move(constraint_p));
         return true;
     }
+}
+
+// <column name list> ::= <column name> [ { <comma> <column name> }... ]
+bool parse_identifier_list(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::vector<identifier_t>& identifiers) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    // We get here after processing the LPAREN opening and now expect a
+    // comma-delimited list of identifiers and a closing RPAREN symbol
+
+process_column:
+    // We have already consumed the LPAREN opening of a column list or a COMMA
+    // and now expect a column name
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    identifiers.emplace_back(identifier_t(cur_tok.lexeme));
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_column;
+    }
+    goto expect_rparen;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+expect_rparen:
+    // We get here after processing an identifier and not finding a COMMA,
+    // indicating another identifier should be expected. So, we now expect to
+    // find a closing RPAREN
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    return true;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 }
 
 // <match type> ::= FULL | PARTIAL
