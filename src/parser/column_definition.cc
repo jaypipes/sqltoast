@@ -218,7 +218,7 @@ bool parse_column_constraint(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<identifier_t> name;
-    bool is_primary = false;
+    std::unique_ptr<constraint_t> constraint_p;
 
     // We get here after getting one of the symbols that precede a constraint
     // definition, which include the CONSTRAINT, NOT, UNIQUE, PRIMARY,
@@ -227,29 +227,7 @@ bool parse_column_constraint(
         cur_tok = lex.next();
         goto process_name;
     }
-
-process_constraint_type:
-    cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_NOT:
-            cur_tok = lex.next();
-            goto process_not_null;
-        case SYMBOL_UNIQUE:
-            cur_tok = lex.next();
-            goto push_constraint;
-        case SYMBOL_PRIMARY:
-            cur_tok = lex.next();
-            goto process_primary_key;
-        case SYMBOL_REFERENCES:
-            cur_tok = lex.next();
-            return parse_references_constraint(ctx, cur_tok, column_def, name, constraints);
-        case SYMBOL_CHECK:
-            // TODO
-            return false;
-        default:
-            // should not get here...
-            return false;
-    }
+    goto process_constraint_type;
 process_name:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
@@ -260,6 +238,33 @@ process_name:
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
     return false;
+process_constraint_type:
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_NOT:
+            cur_tok = lex.next();
+            goto process_not_null;
+        case SYMBOL_UNIQUE:
+            cur_tok = lex.next();
+            constraint_p = std::make_unique<unique_constraint_t>(false);
+            goto push_constraint;
+        case SYMBOL_PRIMARY:
+            cur_tok = lex.next();
+            goto process_primary_key;
+        case SYMBOL_REFERENCES:
+        {
+            cur_tok = lex.next();
+            if (! parse_references_specification(ctx, cur_tok, constraint_p))
+                return false;
+            goto push_constraint;
+        }
+        case SYMBOL_CHECK:
+            // TODO
+            return false;
+        default:
+            // should not get here...
+            return false;
+    }
 process_not_null:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_NULL)
@@ -274,7 +279,7 @@ process_primary_key:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_KEY)
         goto err_expect_key;
-    is_primary = true;
+    constraint_p = std::make_unique<unique_constraint_t>(true);
     cur_tok = lex.next();
     goto push_constraint;
 err_expect_key:
@@ -284,7 +289,6 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        std::unique_ptr<unique_constraint_t> constraint_p = std::make_unique<unique_constraint_t>(is_primary);
         constraint_p->columns.emplace_back(std::move(column_def.id));
         if (name.get())
             constraint_p->name = std::move(name);
@@ -313,12 +317,10 @@ push_constraint:
 // <update rule> ::= ON UPDATE <referential action>
 //
 // <delete rule> ::= ON DELETE <referential action>
-bool parse_references_constraint(
+bool parse_references_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def,
-        std::unique_ptr<identifier_t>& constraint_name,
-        std::vector<std::unique_ptr<constraint_t>>& constraints) {
+        std::unique_ptr<constraint_t>& constraint_p) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t ref_table;
@@ -415,13 +417,10 @@ push_constraint:
         if (ctx.opts.disable_statement_construction)
             return true;
         identifier_t ref_table_ident(ref_table);
-        std::unique_ptr<foreign_key_constraint_t> constraint_p =
-            std::make_unique<foreign_key_constraint_t>(ref_table_ident, match_type, on_update, on_delete);
-        if (constraint_name.get())
-            constraint_p->name = std::move(constraint_name);
-        constraint_p->columns.emplace_back(std::move(column_def.id));
-        constraint_p->referenced_columns = std::move(referenced_column_names);
-        constraints.emplace_back(std::move(constraint_p));
+        auto fk_constraint_p = std::make_unique<foreign_key_constraint_t>(
+                ref_table_ident, match_type, on_update, on_delete);
+        fk_constraint_p->referenced_columns = std::move(referenced_column_names);
+        constraint_p = std::move(fk_constraint_p);
         return true;
     }
 }
