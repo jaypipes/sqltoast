@@ -63,6 +63,30 @@ bool parse_references_constraint(
         std::unique_ptr<identifier_t>& constraint_name,
         std::vector<std::unique_ptr<constraint_t>>& constraints);
 
+// Returns true if one or more identifiers, delimited by commas, can be parsed
+// from the supplied token iterator. If the function returns true, identifiers
+// will have been populated with identifier_t structs.
+bool parse_identifier_list(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::vector<identifier_t>& identifiers);
+
+// Returns true if a match type can be parsed from the
+// supplied token iterator. If the function returns true, the match_type
+// argument will be set to the found match type.
+bool parse_match_type(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        match_type* match_type);
+
+// Returns true if a referential action can be parsed from the
+// supplied token iterator. If the function returns true, the action
+// argument will be set to the found referential action.
+bool parse_referential_action(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        referential_action_t* action);
+
 // Returns true if a collate clause can be parsed from the supplied
 // token iterator. If the function returns true, column_def will have a its
 // collate member populated.

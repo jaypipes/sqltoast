@@ -72,7 +72,7 @@ std::ostream& operator<< (std::ostream& out, const foreign_key_constraint_t& con
                 out << ",";
         }
         size_t num_referenced_columns = constraint.referenced_columns.size();
-        out << ") REFERENCES " << constraint.table_name;
+        out << ") REFERENCES " << constraint.referenced_table;
         if (num_referenced_columns > 0) {
             out << "(";
             x = 0;
