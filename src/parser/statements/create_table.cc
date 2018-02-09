@@ -130,9 +130,12 @@ bool parse_create_table(parse_context_t& ctx) {
         // We get here after finding the LPAREN opening the <table element
         // list> clause. Now we expect to find one or more column or constraint
         // definitions
-        if (! parse_column_definition(ctx, cur_tok, column_defs, constraints) &&
-                ! parse_constraint(ctx, cur_tok, constraints))
-            goto err_expect_column_def_or_constraint;
+        if (! parse_column_definition(ctx, cur_tok, column_defs, constraints)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            if (! parse_constraint(ctx, cur_tok, constraints))
+                goto err_expect_column_def_or_constraint;
+        }
         goto expect_table_list_close;
 err_expect_column_def_or_constraint:
     if (ctx.result.code == PARSE_SYNTAX_ERROR)

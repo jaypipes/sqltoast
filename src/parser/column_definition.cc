@@ -382,26 +382,11 @@ optional_match_type:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_MATCH) {
         cur_tok = lex.next();
-        goto process_match_type;
+        if (! parse_match_type(ctx, cur_tok, &match_type))
+            return false;
+        cur_tok = lex.current_token;
     }
     goto optional_trigger;
-process_match_type:
-    cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_FULL:
-            match_type = MATCH_TYPE_FULL;
-            cur_tok = lex.next();
-            goto optional_trigger;
-        case SYMBOL_PARTIAL:
-            match_type = MATCH_TYPE_PARTIAL;
-            cur_tok = lex.next();
-            goto optional_trigger;
-        default:
-            goto err_expect_match_type;
-    }
-err_expect_match_type:
-    expect_any_error(ctx, {SYMBOL_FULL, SYMBOL_PARTIAL});
-    return false;
 optional_trigger:
     // We get here after successfully processing the <table name>,
     // <column_name_list> and <match_type> clauses. We now look for an optional
@@ -542,6 +527,33 @@ push_constraint:
         constraints.emplace_back(std::move(constraint_p));
         return true;
     }
+}
+
+// <match type> ::= FULL | PARTIAL
+bool parse_match_type(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        match_type* match_type) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    // We get here after finding the MATCH symbol and now expecting either FULL
+    // or PARTIAL symbol
+    switch (cur_sym) {
+        case SYMBOL_FULL:
+            *match_type = MATCH_TYPE_FULL;
+            cur_tok = lex.next();
+            return true;
+        case SYMBOL_PARTIAL:
+            *match_type = MATCH_TYPE_PARTIAL;
+            cur_tok = lex.next();
+            return true;
+        default:
+            goto err_expect_match_type;
+    }
+err_expect_match_type:
+    expect_any_error(ctx, {SYMBOL_FULL, SYMBOL_PARTIAL});
+    return false;
 }
 
 //  <collate clause> ::= COLLATE <qualified identifier>

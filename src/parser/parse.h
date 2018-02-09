@@ -63,6 +63,14 @@ bool parse_references_constraint(
         std::unique_ptr<identifier_t>& constraint_name,
         std::vector<std::unique_ptr<constraint_t>>& constraints);
 
+// Returns true if a match type can be parsed from the
+// supplied token iterator. If the function returns true, the match_type
+// argument will be set to the found match type.
+bool parse_match_type(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        match_type* match_type);
+
 // Returns true if a collate clause can be parsed from the supplied
 // token iterator. If the function returns true, column_def will have a its
 // collate member populated.
