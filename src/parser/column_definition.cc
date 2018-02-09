@@ -325,7 +325,7 @@ bool parse_references_constraint(
         std::vector<std::unique_ptr<constraint_t>>& constraints) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    lexeme_t table_ident;
+    lexeme_t ref_table;
     std::vector<identifier_t> referenced_column_names;
     bool found_on_update = false;
     bool found_on_delete = false;
@@ -336,7 +336,7 @@ bool parse_references_constraint(
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    fill_lexeme(cur_tok, table_ident);
+    fill_lexeme(cur_tok, ref_table);
     cur_tok = lex.next();
     goto optional_column_names;
 err_expect_identifier:
@@ -532,9 +532,9 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        identifier_t table_name(table_ident);
+        identifier_t ref_table_ident(ref_table);
         std::unique_ptr<foreign_key_constraint_t> constraint_p =
-            std::make_unique<foreign_key_constraint_t>(table_name, match_type, on_update, on_delete);
+            std::make_unique<foreign_key_constraint_t>(ref_table_ident, match_type, on_update, on_delete);
         if (constraint_name.get())
             constraint_p->name = std::move(constraint_name);
         constraint_p->columns.emplace_back(std::move(column_def.id));

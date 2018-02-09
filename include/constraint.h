@@ -56,18 +56,18 @@ typedef enum referential_action {
 } referential_action_t;
 
 typedef struct foreign_key_constraint : constraint_t {
-    identifier_t table_name;
+    identifier_t referenced_table;
     match_type_t match_type;
     referential_action_t on_update;
     referential_action_t on_delete;
     std::vector<identifier_t> referenced_columns;
     foreign_key_constraint(
-            identifier_t& table_name,
+            identifier_t& ref_table,
             match_type_t match_type,
             referential_action_t on_update,
             referential_action_t on_delete) :
         constraint(CONSTRAINT_TYPE_FOREIGN_KEY),
-        table_name(table_name),
+        referenced_table(ref_table),
         match_type(match_type),
         on_update(on_update),
         on_delete(on_delete)
