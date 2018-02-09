@@ -24,12 +24,12 @@ namespace sqltoast {
 //
 // * SQL_DIALECT_ANSI_1992
 //
-//  <table definition> ::=
-//      CREATE [{GLOBAL|LOCAL} TEMPORARY] TABLE <table name>
-//      <table element list>
-//      [ON COMMIT {DELETE|PRESERVE} ROWS]
+// <table definition> ::=
+//     CREATE [{GLOBAL|LOCAL} TEMPORARY] TABLE <table name>
+//     <table element list>
+//     [ON COMMIT {DELETE|PRESERVE} ROWS]
 //
-
+// TODO: Maybe support the ON COMMIT modifier (it's very rarely used)
 bool parse_create_table(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
@@ -59,7 +59,6 @@ bool parse_create_table(parse_context_t& ctx) {
             ctx.lexer.cursor = start;
             return false;
     }
-
 table_kw_or_table_type:
     // We get here after successfully finding the CREATE symbol. We can
     // either match the table keyword or the table type clause
