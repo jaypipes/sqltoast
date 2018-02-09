@@ -64,6 +64,7 @@ typedef enum symbol {
     SYMBOL_DOUBLE,
     SYMBOL_DROP,
     SYMBOL_FLOAT,
+    SYMBOL_FOREIGN,
     SYMBOL_FULL,
     SYMBOL_GLOBAL,
     SYMBOL_HOUR,

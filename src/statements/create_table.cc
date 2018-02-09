@@ -29,6 +29,14 @@ const std::string create_table::to_string() {
             cdef_it++) {
         ss << std::endl << "      " << *(*cdef_it);
     }
+    if (constraints.size() > 0) {
+        ss << std::endl << "    constraints:";
+        for (auto constraint_it = constraints.begin();
+             constraint_it != constraints.end();
+             constraint_it++) {
+            ss << std::endl << "      " << *(*constraint_it);
+        }
+    }
     ss << ">" << std::endl;
 
     return ss.str();

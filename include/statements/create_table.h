@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "column_definition.h"
+#include "constraint.h"
 #include "identifier.h"
 #include "statement.h"
 
@@ -28,6 +29,7 @@ typedef struct create_table : statement_t {
     table_type_t table_type;
     identifier_t table_identifier;
     std::vector<std::unique_ptr<column_definition_t>> column_definitions;
+    std::vector<std::unique_ptr<constraint_t>> constraints;
     create_table(table_type_t table_type, identifier_t& table_id) :
         statement_t(STATEMENT_TYPE_CREATE_TABLE),
         table_type(table_type),

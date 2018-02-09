@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "column_definition.h"
+#include "constraint.h"
 #include "context.h"
 #include "token.h"
 
@@ -18,13 +19,22 @@ namespace sqltoast {
 
 typedef bool (*parse_func_t) (parse_context_t& ctx);
 
+// Returns true if a table constraint can be parsed from the supplied token
+// iterator. If the function returns true, constraints will have a new member
+// (if ctx.options.disable_statement_construction is false
+bool parse_constraint(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::vector<std::unique_ptr<constraint_t>>& constraints);
+
 // Returns true if a column definition clause can be parsed from the supplied
 // token iterator. If the function returns true, column_defs will have a new
 // member (if ctx.options.disable_statement_construction is false
 bool parse_column_definition(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::vector<std::unique_ptr<column_definition_t>>& column_defs);
+        std::vector<std::unique_ptr<column_definition_t>>& column_defs,
+        std::vector<std::unique_ptr<constraint_t>>& constraints);
 
 // Returns true if a default clause can be parsed from the supplied
 // token iterator. If the function returns true, column_def will have a its
@@ -40,7 +50,8 @@ bool parse_default_clause(
 bool parse_column_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        column_definition_t& column_def,
+        std::vector<std::unique_ptr<constraint_t>>& constraints);
 
 // Returns true if a references column constraint can be parsed from the
 // supplied token iterator. If the function returns true, column_def will have
@@ -49,7 +60,8 @@ bool parse_references_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
         column_definition_t& column_def,
-        std::unique_ptr<identifier_t>& constraint_name);
+        std::unique_ptr<identifier_t>& constraint_name,
+        std::vector<std::unique_ptr<constraint_t>>& constraints);
 
 // Returns true if a collate clause can be parsed from the supplied
 // token iterator. If the function returns true, column_def will have a its

@@ -46,6 +46,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'f':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FLOAT, "FLOAT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FULL, "FULL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_FOREIGN, "FOREIGN"));
             return t;
         case 'g':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GLOBAL, "GLOBAL"));
