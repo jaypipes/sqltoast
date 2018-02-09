@@ -53,15 +53,13 @@ bool parse_column_constraint(
         column_definition_t& column_def,
         std::vector<std::unique_ptr<constraint_t>>& constraints);
 
-// Returns true if a references column constraint can be parsed from the
-// supplied token iterator. If the function returns true, column_def will have
-// a new references_constraint_t added to its constraints member.
-bool parse_references_constraint(
+// Returns true if a references specification can be parsed from the
+// supplied token iterator. If the function returns true, constraint_p will be
+// a populated foreign_key_constraint_t
+bool parse_references_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def,
-        std::unique_ptr<identifier_t>& constraint_name,
-        std::vector<std::unique_ptr<constraint_t>>& constraints);
+        std::unique_ptr<constraint_t>& constraint_p);
 
 // Returns true if one or more identifiers, delimited by commas, can be parsed
 // from the supplied token iterator. If the function returns true, identifiers
