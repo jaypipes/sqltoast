@@ -306,15 +306,11 @@ push_constraint:
 //
 // <column name list> ::= <column name> [ { <comma> <column name> }... ]
 //
-// <match type> ::= FULL | PARTIAL
-//
 // <referential triggered action> ::=
 //     <update rule> [ <delete rule> ]
 //     | <delete rule> [ <update rule> ]
 //
 // <update rule> ::= ON UPDATE <referential action>
-//
-// <referential action> ::= CASCADE | SET NULL | SET DEFAULT | NO ACTION
 //
 // <delete rule> ::= ON DELETE <referential action>
 bool parse_references_constraint(
@@ -407,15 +403,17 @@ process_trigger:
                 goto err_already_found_on_update;
             found_on_update = true;
             cur_tok = lex.next();
-            goto process_on_update_trigger;
-            break;
+            if (! parse_referential_action(ctx, cur_tok, &on_update))
+                return false;
+            goto push_constraint;
         case SYMBOL_DELETE:
             if (found_on_delete)
                 goto err_already_found_on_delete;
             found_on_delete = true;
             cur_tok = lex.next();
-            goto process_on_delete_trigger;
-            break;
+            if (! parse_referential_action(ctx, cur_tok, &on_delete))
+                return false;
+            goto push_constraint;
         default:
             goto err_expect_update_or_delete;
     }
@@ -436,83 +434,6 @@ err_already_found_on_delete:
         create_syntax_error_marker(ctx, estr);
         return false;
     }
-process_on_update_trigger:
-    // We get here if we've already successfully consume the ON followed by
-    // UPDATE symbols and now expect to find a trigger action
-    cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_SET:
-            // Either SET NULL or SET DEFAULT are allowed
-            cur_tok = lex.next();
-            cur_sym = cur_tok.symbol;
-            if (cur_sym == SYMBOL_NULL) {
-                cur_tok = lex.next();
-                on_update = REFERENTIAL_ACTION_SET_NULL;
-                goto optional_trigger;
-            } else if (cur_sym == SYMBOL_DEFAULT) {
-                cur_tok = lex.next();
-                on_update = REFERENTIAL_ACTION_SET_DEFAULT;
-                goto optional_trigger;
-            } else {
-                goto err_expect_null_or_default;
-            }
-        case SYMBOL_CASCADE:
-            cur_tok = lex.next();
-            on_update = REFERENTIAL_ACTION_CASCADE;
-            goto optional_trigger;
-        case SYMBOL_NO:
-            cur_tok = lex.next();
-            cur_sym = cur_tok.symbol;
-            if (cur_sym != SYMBOL_ACTION)
-                goto err_expect_action;
-            on_update = REFERENTIAL_ACTION_NONE;
-            goto optional_trigger;
-        default:
-            goto err_expect_action_trigger;
-    }
-process_on_delete_trigger:
-    // We get here if we've already successfully consume the ON followed by
-    // DELETE symbols and now expect to find a trigger action
-    cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_SET:
-            // Either SET NULL or SET DEFAULT are allowed
-            cur_tok = lex.next();
-            cur_sym = cur_tok.symbol;
-            if (cur_sym == SYMBOL_NULL) {
-                cur_tok = lex.next();
-                on_delete = REFERENTIAL_ACTION_SET_NULL;
-                goto optional_trigger;
-            } else if (cur_sym == SYMBOL_DEFAULT) {
-                cur_tok = lex.next();
-                on_delete = REFERENTIAL_ACTION_SET_DEFAULT;
-                goto optional_trigger;
-            } else {
-                goto err_expect_null_or_default;
-            }
-        case SYMBOL_CASCADE:
-            cur_tok = lex.next();
-            on_delete = REFERENTIAL_ACTION_CASCADE;
-            goto optional_trigger;
-        case SYMBOL_NO:
-            cur_tok = lex.next();
-            cur_sym = cur_tok.symbol;
-            if (cur_sym != SYMBOL_ACTION)
-                goto err_expect_action;
-            on_delete = REFERENTIAL_ACTION_NONE;
-            goto optional_trigger;
-        default:
-            goto err_expect_action_trigger;
-    }
-err_expect_null_or_default:
-    expect_any_error(ctx, {SYMBOL_NULL, SYMBOL_DEFAULT});
-    return false;
-err_expect_action:
-    expect_error(ctx, SYMBOL_ACTION);
-    return false;
-err_expect_action_trigger:
-    expect_any_error(ctx, {SYMBOL_SET, SYMBOL_NO, SYMBOL_CASCADE});
-    return false;
 push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
@@ -553,6 +474,60 @@ bool parse_match_type(
     }
 err_expect_match_type:
     expect_any_error(ctx, {SYMBOL_FULL, SYMBOL_PARTIAL});
+    return false;
+}
+
+// <referential action> ::= CASCADE | SET NULL | SET DEFAULT | NO ACTION
+//
+// <delete rule> ::= ON DELETE <referential action>
+bool parse_referential_action(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        referential_action_t* action) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    // We get here if we've already successfully consume the ON followed by
+    // either the UPDATE or DELETE symbols and now expect to find a trigger
+    // action
+    switch (cur_sym) {
+        case SYMBOL_SET:
+            // Either SET NULL or SET DEFAULT are allowed
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym == SYMBOL_NULL) {
+                cur_tok = lex.next();
+                *action = REFERENTIAL_ACTION_SET_NULL;
+                return true;
+            } else if (cur_sym == SYMBOL_DEFAULT) {
+                cur_tok = lex.next();
+                *action = REFERENTIAL_ACTION_SET_DEFAULT;
+                return true;
+            } else {
+                goto err_expect_null_or_default;
+            }
+        case SYMBOL_CASCADE:
+            cur_tok = lex.next();
+            *action = REFERENTIAL_ACTION_CASCADE;
+            return true;
+        case SYMBOL_NO:
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym != SYMBOL_ACTION)
+                goto err_expect_action;
+            *action = REFERENTIAL_ACTION_NONE;
+            return true;
+        default:
+            goto err_expect_action_trigger;
+    }
+err_expect_null_or_default:
+    expect_any_error(ctx, {SYMBOL_NULL, SYMBOL_DEFAULT});
+    return false;
+err_expect_action:
+    expect_error(ctx, SYMBOL_ACTION);
+    return false;
+err_expect_action_trigger:
+    expect_any_error(ctx, {SYMBOL_SET, SYMBOL_NO, SYMBOL_CASCADE});
     return false;
 }
 

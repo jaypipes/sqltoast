@@ -71,6 +71,14 @@ bool parse_match_type(
         token_t& cur_tok,
         match_type* match_type);
 
+// Returns true if a referential action can be parsed from the
+// supplied token iterator. If the function returns true, the action
+// argument will be set to the found referential action.
+bool parse_referential_action(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        referential_action_t* action);
+
 // Returns true if a collate clause can be parsed from the supplied
 // token iterator. If the function returns true, column_def will have a its
 // collate member populated.
