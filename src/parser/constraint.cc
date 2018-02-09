@@ -61,6 +61,10 @@ expect_constraint_type:
             cur_tok = ctx.lexer.next();
             goto expect_key;
         case SYMBOL_FOREIGN:
+            cur_tok = ctx.lexer.next();
+            if (! parse_foreign_key_constraint(ctx, cur_tok, constraint_p))
+                return false;
+            goto push_constraint;
         case SYMBOL_CHECK:
             // TODO
         default:
@@ -125,6 +129,65 @@ push_constraint:
         if (constraint_name_p.get())
             constraint_p->name = std::move(constraint_name_p);
         constraints.emplace_back(std::move(constraint_p));
+        return true;
+    }
+}
+
+// <referential constraint definition> ::=
+//     FOREIGN KEY <left paren> <referencing columns> <right paren>
+//     <references specification>
+//
+// <referencing columns> ::= <reference column list>
+bool parse_foreign_key_constraint(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<constraint_t>& constraint_p) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::vector<identifier_t> referencing_columns;
+
+    // We get here after successfully processing a FOREIGN symbol, which must
+    // now be followed by the KEY symbol, a list of referencing columns and a
+    // <references specification> clause
+    if (cur_sym == SYMBOL_KEY) {
+        cur_tok = ctx.lexer.next();
+        goto process_referencing_columns;
+    }
+    goto err_expect_key;
+err_expect_key:
+    expect_error(ctx, SYMBOL_KEY);
+    return false;
+process_referencing_columns:
+    // We get here if we've successfully parsed the FOREIGN KEY symbols and now
+    // expect the parens-enclosed <referencing columns> clause
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        if (! parse_identifier_list(ctx, cur_tok, referencing_columns))
+            return false;
+        goto expect_references_specification;
+    }
+    goto err_expect_lparen;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+expect_references_specification:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_REFERENCES) {
+        cur_tok = lex.next();
+        if (! parse_references_specification(ctx, cur_tok, constraint_p))
+            return false;
+        goto push_constraint;
+    }
+    goto err_expect_references;
+err_expect_references:
+    expect_error(ctx, SYMBOL_REFERENCES);
+    return false;
+push_constraint:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        constraint_p->columns = std::move(referencing_columns);
         return true;
     }
 }

@@ -27,6 +27,14 @@ bool parse_constraint(
         token_t& cur_tok,
         std::vector<std::unique_ptr<constraint_t>>& constraints);
 
+// Returns true if a foreign key constraint can be parsed from the supplied
+// token iterator. If the function returns true, constraint_p will be filled
+// appropriately with attributes of the referential constraint
+bool parse_foreign_key_constraint(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<constraint_t>& constraint_p);
+
 // Returns true if a column definition clause can be parsed from the supplied
 // token iterator. If the function returns true, column_defs will have a new
 // member (if ctx.options.disable_statement_construction is false
