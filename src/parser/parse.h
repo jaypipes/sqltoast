@@ -19,6 +19,10 @@ namespace sqltoast {
 
 typedef bool (*parse_func_t) (parse_context_t& ctx);
 
+// Returns true if a SELECT statement was parsed successfully from
+// the parse context
+bool parse_select(parse_context_t& ctx);
+
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member
 // (if ctx.options.disable_statement_construction is false

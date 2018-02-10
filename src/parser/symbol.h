@@ -42,6 +42,7 @@ typedef enum symbol {
 
     // Reserved keywords
     SYMBOL_ACTION,
+    SYMBOL_ALL,
     SYMBOL_AUTHORIZATION,
     SYMBOL_BIT,
     SYMBOL_CASCADE,
@@ -61,6 +62,7 @@ typedef enum symbol {
     SYMBOL_DECIMAL,
     SYMBOL_DEFAULT,
     SYMBOL_DELETE,
+    SYMBOL_DISTINCT,
     SYMBOL_DOUBLE,
     SYMBOL_DROP,
     SYMBOL_FLOAT,
@@ -91,6 +93,7 @@ typedef enum symbol {
     SYMBOL_RESTRICT,
     SYMBOL_SCHEMA,
     SYMBOL_SECOND,
+    SYMBOL_SELECT,
     SYMBOL_SET,
     SYMBOL_SMALLINT,
     SYMBOL_SESSION_USER,

@@ -9,12 +9,15 @@
 
 namespace sqltoast {
 
+// NOTE(jaypipes): These keywords are inserted in order of FREQUENCY of
+// appearance in SQL statements, not alphabetically.
 kw_jump_table_t _init_kw_jump_table(char lead_char) {
     kw_jump_table_t t;
 
     switch (lead_char) {
         case 'a':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALL, "ALL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
         case 'b':
@@ -35,6 +38,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'd':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DELETE, "DELETE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DISTINCT, "DISTINCT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DATE, "DATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DAY, "DAY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DEC, "DEC"));
@@ -92,6 +96,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_RESTRICT, "RESTRICT"));
             return t;
         case 's':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SELECT, "SELECT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SCHEMA, "SCHEMA"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SECOND, "SECOND"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SET, "SET"));

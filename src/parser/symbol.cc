@@ -21,6 +21,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_RPAREN] = std::string("RPAREN");
 
     // Reserved keywords
+    m[SYMBOL_ALL] = std::string("ALL");
     m[SYMBOL_ACTION] = std::string("ACTION");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_BIT] = std::string("BIT");
@@ -41,6 +42,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DECIMAL] = std::string("DECIMAL");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
     m[SYMBOL_DELETE] = std::string("DELETE");
+    m[SYMBOL_DISTINCT] = std::string("DISTINCT");
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
@@ -71,6 +73,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SECOND] = std::string("SECOND");
+    m[SYMBOL_SELECT] = std::string("SELECT");
     m[SYMBOL_SESSION_USER] = std::string("SESSION_USER");
     m[SYMBOL_SET] = std::string("SET");
     m[SYMBOL_SMALLINT] = std::string("SMALLINT");

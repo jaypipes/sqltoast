@@ -28,10 +28,13 @@ static const size_t NUM_DROP_STATEMENT_PARSERS = 1;
 static const parse_func_t drop_statement_parsers[1] = {
     &parse_drop_schema
 };
+static const size_t NUM_SELECT_STATEMENT_PARSERS = 1;
+static const parse_func_t select_statement_parsers[1] = {
+    &parse_select
+};
 
 void parse_statement(parse_context_t& ctx) {
-    // Assumption: the top token in the stack will be of type
-    // TOKEN_TYPE_KEYWORD
+    // Assumption: the current token will be a keyword
     symbol_t cur_sym = ctx.lexer.current_token.symbol;
 
     size_t num_parsers = 0;
@@ -47,6 +50,12 @@ void parse_statement(parse_context_t& ctx) {
         {
             num_parsers = NUM_DROP_STATEMENT_PARSERS;
             parsers = drop_statement_parsers;
+            break;
+        }
+        case SYMBOL_SELECT:
+        {
+            num_parsers = NUM_SELECT_STATEMENT_PARSERS;
+            parsers = select_statement_parsers;
             break;
         }
         default:
