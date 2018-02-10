@@ -31,10 +31,10 @@ typedef struct token {
         return (symbol >= SYMBOL_LITERAL_UNSIGNED_INTEGER && symbol <= SYMBOL_LITERAL_APPROXIMATE_NUMBER);
     }
     inline bool is_punctuator() const {
-        return (symbol >= SYMBOL_SEMICOLON && symbol <= SYMBOL_RPAREN);
+        return (symbol >= SYMBOL_SEMICOLON && symbol <= SYMBOL_ASTERISK);
     }
     inline bool is_keyword() const {
-        return (symbol >= SYMBOL_AUTHORIZATION && symbol <= SYMBOL_VARYING);
+        return (symbol >= SYMBOL_ALL && symbol <= SYMBOL_VARYING);
     }
     inline bool is_identifier() const {
         return (symbol == SYMBOL_IDENTIFIER);

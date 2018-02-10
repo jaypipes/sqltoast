@@ -19,10 +19,12 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_COMMA] = std::string("COMMA");
     m[SYMBOL_LPAREN] = std::string("LPAREN");
     m[SYMBOL_RPAREN] = std::string("RPAREN");
+    m[SYMBOL_ASTERISK] = std::string("ASTERISK");
 
     // Reserved keywords
-    m[SYMBOL_ALL] = std::string("ALL");
     m[SYMBOL_ACTION] = std::string("ACTION");
+    m[SYMBOL_ALL] = std::string("ALL");
+    m[SYMBOL_AS] = std::string("AS");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_BIT] = std::string("BIT");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
@@ -47,6 +49,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
     m[SYMBOL_FOREIGN] = std::string("FOREIGN");
+    m[SYMBOL_FROM] = std::string("FROM");
     m[SYMBOL_FULL] = std::string("FULL");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
     m[SYMBOL_HOUR] = std::string("HOUR");

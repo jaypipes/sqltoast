@@ -8,6 +8,7 @@
 #define SQLTOAST_STATEMENTS_SELECT_H
 
 #include <string>
+#include <vector>
 
 #include "statement.h"
 
@@ -16,6 +17,7 @@ namespace statements {
 
 typedef struct select : statement_t {
     bool distinct;
+    std::vector<derived_column_t> selected_columns;
     select() :
         statement_t(STATEMENT_TYPE_SELECT),
         distinct(false)

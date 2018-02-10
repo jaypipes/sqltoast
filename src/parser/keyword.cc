@@ -16,6 +16,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
 
     switch (lead_char) {
         case 'a':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_AS, "AS"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALL, "ALL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
@@ -48,6 +49,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DOUBLE, "DOUBLE"));
             return t;
         case 'f':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_FROM, "FROM"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FLOAT, "FLOAT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FULL, "FULL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FOREIGN, "FOREIGN"));
@@ -255,9 +257,10 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         cursor++;
 
     const std::string lexeme(start, cursor);
-    size_t lexeme_len = lexeme.size();
+    const size_t lexeme_len = cursor - start;
+    size_t entry_len;
     for (auto entry : *jump_tbl) {
-        size_t entry_len = entry.kw_str.size();
+        entry_len = entry.kw_str.size();
         if (lexeme_len != entry_len)
             continue;
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {

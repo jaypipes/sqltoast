@@ -6,6 +6,7 @@
 
 #include <sstream>
 
+#include "derived_column.h"
 #include "statements/select.h"
 
 namespace sqltoast {
@@ -16,6 +17,11 @@ const std::string select_t::to_string() {
     ss << "<statement: SELECT";
     if (distinct)
        ss << std::endl << "   distinct: true";
+    ss << std::endl << "   select list: ";
+    size_t x = 0;
+    for (const derived_column_t& dc : selected_columns) {
+        ss << std::endl << "     " << x++ << ": " << dc;
+    }
     ss << ">" << std::endl;
 
     return ss.str();

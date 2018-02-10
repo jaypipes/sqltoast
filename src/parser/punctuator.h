@@ -12,22 +12,24 @@
 
 namespace sqltoast {
 
-const unsigned int NUM_PUNCTUATORS = 5;
+const unsigned int NUM_PUNCTUATORS = 6;
 
-static const char punctuator_char_map[5] = {
+static const char punctuator_char_map[6] = {
     '\0',
     ';',
     ',',
     '(',
     ')',
+    '*'
 };
 
-static const symbol_t punctuator_symbol_map[5] = {
+static const symbol_t punctuator_symbol_map[6] = {
     SYMBOL_EOS,
     SYMBOL_SEMICOLON,
     SYMBOL_COMMA,
     SYMBOL_LPAREN,
-    SYMBOL_RPAREN
+    SYMBOL_RPAREN,
+    SYMBOL_ASTERISK
 };
 
 // Moves the supplied parse context's cursor to the next punctuator found in the

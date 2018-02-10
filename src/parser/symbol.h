@@ -39,10 +39,12 @@ typedef enum symbol {
     SYMBOL_COMMA,
     SYMBOL_LPAREN,
     SYMBOL_RPAREN,
+    SYMBOL_ASTERISK,
 
     // Reserved keywords
     SYMBOL_ACTION,
     SYMBOL_ALL,
+    SYMBOL_AS,
     SYMBOL_AUTHORIZATION,
     SYMBOL_BIT,
     SYMBOL_CASCADE,
@@ -67,6 +69,7 @@ typedef enum symbol {
     SYMBOL_DROP,
     SYMBOL_FLOAT,
     SYMBOL_FOREIGN,
+    SYMBOL_FROM,
     SYMBOL_FULL,
     SYMBOL_GLOBAL,
     SYMBOL_HOUR,
