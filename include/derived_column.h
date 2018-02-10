@@ -27,7 +27,7 @@ typedef struct derived_column {
     }
 } derived_column_t;
 
-std::ostream& operator<< (std::ostream& out, const derived_column_t& column_def);
+std::ostream& operator<< (std::ostream& out, const derived_column_t& dc);
 
 } // namespace sqltoast
 

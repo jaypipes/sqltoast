@@ -8,6 +8,7 @@
 #include "parser/error.h"
 #include "parser/parse.h"
 #include "statements/select.h"
+#include "table_reference.h"
 
 namespace sqltoast {
 
@@ -39,6 +40,7 @@ bool parse_select(parse_context_t& ctx) {
     token_t& cur_tok = lex.current_token;
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<derived_column_t> selected_columns;
+    std::vector<table_reference_t> referenced_tables;
     bool distinct = false;
 
     // BEGIN STATE MACHINE
@@ -106,13 +108,55 @@ comma_or_from:
     if (cur_sym != SYMBOL_FROM)
         goto err_expect_comma_or_from;
     cur_tok = lex.next();
-    goto from_clause;
+    goto expect_table_reference;
 err_expect_comma_or_from:
     expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_FROM});
     return false;
-from_clause:
-    // TODO
-    goto statement_ending;
+expect_table_reference:
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_IDENTIFIER:
+            referenced_tables.emplace_back(table_reference_t(cur_tok.lexeme));
+            cur_tok = lex.next();
+            goto optional_table_alias;
+        default:
+            goto err_expect_table_reference;
+    }
+err_expect_table_reference:
+    expect_any_error(ctx, {SYMBOL_IDENTIFIER});
+    return false;
+optional_table_alias:
+    // We get here after consuming an identifier, derived table specifier or
+    // joined table specifier. An alias can be provided for this table
+    // reference either by specifying an identifier immediately after the value
+    // expression or the keyword AS followed by the alias.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_AS) {
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_IDENTIFIER)
+            goto err_expect_identifier;
+    }
+    if (cur_sym == SYMBOL_IDENTIFIER) {
+        table_reference_t& tr = referenced_tables.back();
+        tr.alias = cur_tok.lexeme;
+        cur_tok = lex.next();
+    }
+    goto comma_or_where_group_having;
+comma_or_where_group_having:
+    // We get here after consuming a table reference and now we expect to find
+    // either a comma, indicating another table reference should be next, or
+    // one of the GROUP BY, WHERE or HAVING symbols, indicating those clauses
+    // are to follow
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_COMMA:
+            cur_tok = lex.next();
+            goto expect_table_reference;
+        default:
+            // TODO
+            goto statement_ending;
+    }
 statement_ending:
     // We get here if we have already successfully processed the SELECT
     // statement and are expecting EOS or SEMICOLON as the next non-comment
@@ -129,6 +173,7 @@ push_statement:
         auto stmt_p = std::make_unique<statements::select_t>();
         stmt_p->distinct = distinct;
         stmt_p->selected_columns = std::move(selected_columns);
+        stmt_p->referenced_tables = std::move(referenced_tables);
         ctx.result.statements.emplace_back(std::move(stmt_p));
         return true;
     }

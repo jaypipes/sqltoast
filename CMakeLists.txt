@@ -46,6 +46,7 @@ SET(LIBSQLTOAST_SOURCES
     src/statements/create_table.cc
     src/statements/drop_schema.cc
     src/statements/select.cc
+    src/table_reference.cc
 )
 
 # Header file for configuration templated variables

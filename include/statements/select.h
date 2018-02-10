@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "derived_column.h"
+#include "table_reference.h"
 #include "statement.h"
 
 namespace sqltoast {
@@ -18,6 +20,7 @@ namespace statements {
 typedef struct select : statement_t {
     bool distinct;
     std::vector<derived_column_t> selected_columns;
+    std::vector<table_reference_t> referenced_tables;
     select() :
         statement_t(STATEMENT_TYPE_SELECT),
         distinct(false)
