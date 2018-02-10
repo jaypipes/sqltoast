@@ -252,12 +252,10 @@ process_constraint_type:
             cur_tok = lex.next();
             goto process_primary_key;
         case SYMBOL_REFERENCES:
-        {
             cur_tok = lex.next();
             if (! parse_references_specification(ctx, cur_tok, constraint_p))
                 return false;
             goto push_constraint;
-        }
         case SYMBOL_CHECK:
             // TODO
             return false;

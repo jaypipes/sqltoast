@@ -13,6 +13,7 @@
 #include "column_definition.h"
 #include "constraint.h"
 #include "context.h"
+#include "search_condition.h"
 #include "token.h"
 
 namespace sqltoast {
@@ -22,6 +23,20 @@ typedef bool (*parse_func_t) (parse_context_t& ctx);
 // Returns true if a SELECT statement was parsed successfully from
 // the parse context
 bool parse_select(parse_context_t& ctx);
+
+// Returns true if a search condition could be parsed. If true, the conditions
+// argument will have a new pointer to a search_condition_t added to it.
+bool parse_search_condition(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::vector<std::unique_ptr<search_condition_t>>& conditions);
+
+// Returns true if a search condition could be parsed. If true, the cond_p
+// argument will be a new pointer to a search_condition_t
+bool parse_comparison_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p);
 
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member

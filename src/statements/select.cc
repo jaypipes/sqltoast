@@ -6,9 +6,7 @@
 
 #include <sstream>
 
-#include "derived_column.h"
 #include "statements/select.h"
-#include "table_reference.h"
 
 namespace sqltoast {
 namespace statements {
@@ -27,6 +25,13 @@ const std::string select_t::to_string() {
     x = 0;
     for (const table_reference_t& tr : referenced_tables) {
         ss << std::endl << "     " << x++ << ": " << tr;
+    }
+    if (where_conditions.size() > 0) {
+        ss << std::endl << "   where conditions: ";
+        x = 0;
+        for (const std::unique_ptr<search_condition_t>& sc : where_conditions) {
+            ss << std::endl << "     " << x++ << ": " << *sc;
+        }
     }
     ss << ">" << std::endl;
 

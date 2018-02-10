@@ -46,6 +46,7 @@ SET(LIBSQLTOAST_SOURCES
     src/statements/create_table.cc
     src/statements/drop_schema.cc
     src/statements/select.cc
+    src/search_condition.cc
     src/table_reference.cc
 )
 

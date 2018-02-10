@@ -8,6 +8,7 @@
 #include "parser/error.h"
 #include "parser/parse.h"
 #include "statements/select.h"
+#include "search_condition.h"
 #include "table_reference.h"
 
 namespace sqltoast {
@@ -34,13 +35,13 @@ namespace sqltoast {
 //     [ <where clause> ]
 //     [ <group by clause> ]
 //     [ <having clause> ]
-
 bool parse_select(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     token_t& cur_tok = lex.current_token;
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
+    std::vector<std::unique_ptr<search_condition_t>> where_conditions;
     bool distinct = false;
 
     // BEGIN STATE MACHINE
@@ -153,10 +154,18 @@ comma_or_where_group_having:
         case SYMBOL_COMMA:
             cur_tok = lex.next();
             goto expect_table_reference;
+        case SYMBOL_WHERE:
+            cur_tok = lex.next();
+            goto expect_where_condition;
         default:
             // TODO
             goto statement_ending;
     }
+expect_where_condition:
+    cur_sym = cur_tok.symbol;
+    if (! parse_search_condition(ctx, cur_tok, where_conditions))
+        return false;
+    goto statement_ending;
 statement_ending:
     // We get here if we have already successfully processed the SELECT
     // statement and are expecting EOS or SEMICOLON as the next non-comment
@@ -174,9 +183,134 @@ push_statement:
         stmt_p->distinct = distinct;
         stmt_p->selected_columns = std::move(selected_columns);
         stmt_p->referenced_tables = std::move(referenced_tables);
+        stmt_p->where_conditions = std::move(where_conditions);
         ctx.result.statements.emplace_back(std::move(stmt_p));
         return true;
     }
+}
+
+// <search condition> ::=
+//     <boolean term>
+//     | <search condition> OR <boolean term>
+//
+// <boolean term> ::=
+//     <boolean factor>
+//     | <boolean term> AND <boolean factor>
+//
+// <boolean factor> ::= [ NOT ] <boolean test>
+//
+// <boolean test> ::= <boolean primary> [ IS [ NOT ] <truth value> ]
+//
+// <boolean primary> ::= <predicate> | <left paren> <search condition> <right paren>
+//
+// <predicate> ::=
+//     <comparison predicate>
+//     | <between predicate>
+//     | <in predicate>
+//     | <like predicate>
+//     | <null predicate>
+//     | <quantified comparison predicate>
+//     | <exists predicate>
+//     | <match predicate>
+//     | <overlaps predicate>
+bool parse_search_condition(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::vector<std::unique_ptr<search_condition_t>>& conditions) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    bool reverse_op = false; // true when NOT precedes a predicate
+    std::unique_ptr<search_condition_t> cond_p;
+
+    // We get here after getting one of the symbols that precede a search
+    // condition's definition, which include the WHERE and HAVING symbols, as
+    // well as the AND and OR symbols when constructing compound predicates
+
+    if (cur_sym == SYMBOL_NOT) {
+        cur_tok = lex.next();
+        reverse_op = true;
+    }
+    goto process_left;
+process_left:
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_IDENTIFIER:
+            // A number of different types of predicates start with an
+            // identifier, including simple comparison predicates, between
+            // predicates, in predicates, etc.
+            //
+            // NOTE(jaypipes): We deliberately don't advance the cursor with a
+            // call to lex.next() here because the current token is pointing at
+            // an identifier, and the parse_xxx_predicate() functions will use
+            // this identifier as their "left" attributes for the constructed
+            // predicate structs.
+            if (! parse_comparison_predicate(ctx, cur_tok, cond_p))
+                return false;
+            goto push_condition;
+        case SYMBOL_CHECK:
+            // TODO
+            return false;
+        default:
+            // should not get here...
+            return false;
+    }
+push_condition:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        cond_p->reverse_op = reverse_op;
+        conditions.emplace_back(std::move(cond_p));
+        return true;
+    }
+}
+
+bool parse_comparison_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    comp_op_t op = COMP_OP_EQUAL;
+    lexeme_t left = cur_tok.lexeme;
+    lexeme_t right;
+
+    // We get here after getting an identifier while trying to parse a search
+    // condition. An identifier can be followed by one of the comparison
+    // operators and then an identifier for the right side of the comparison
+    // operation. The cursor is currently pointing at the left side identifier
+    // of the predicate.
+
+    symbol_t next_sym = lex.peek();
+    switch (next_sym) {
+        case SYMBOL_EQUAL:
+            op = COMP_OP_EQUAL;
+            lex.next(); // consume the peeked symbol...
+            cur_tok = lex.next();
+            goto expect_right;
+        default:
+            return false;
+    }
+expect_right:
+    // We get here after successfully parsing the left side of the predicate
+    // and the operator and now expect to find the right side of the predicate
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_IDENTIFIER:
+            right = cur_tok.lexeme;
+            cur_tok = lex.next();
+            goto push_condition;
+        default:
+            goto err_expect_identifier;
+    }
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+push_condition:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    cond_p = std::make_unique<comp_predicate_t>(op, left, right);
+    return true;
 }
 
 } // namespace sqltoast

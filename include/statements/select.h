@@ -8,9 +8,11 @@
 #define SQLTOAST_STATEMENTS_SELECT_H
 
 #include <string>
+#include <memory>
 #include <vector>
 
 #include "derived_column.h"
+#include "search_condition.h"
 #include "table_reference.h"
 #include "statement.h"
 
@@ -21,6 +23,7 @@ typedef struct select : statement_t {
     bool distinct;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
+    std::vector<std::unique_ptr<search_condition_t>> where_conditions;
     select() :
         statement_t(STATEMENT_TYPE_SELECT),
         distinct(false)

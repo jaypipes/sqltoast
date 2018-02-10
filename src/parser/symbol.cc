@@ -15,11 +15,14 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_EOS] = std::string("EOS");
 
     // Punctuators
-    m[SYMBOL_SEMICOLON] = std::string("SEMICOLON");
-    m[SYMBOL_COMMA] = std::string("COMMA");
-    m[SYMBOL_LPAREN] = std::string("LPAREN");
-    m[SYMBOL_RPAREN] = std::string("RPAREN");
-    m[SYMBOL_ASTERISK] = std::string("ASTERISK");
+    m[SYMBOL_SEMICOLON] = std::string("';'");
+    m[SYMBOL_COMMA] = std::string("','");
+    m[SYMBOL_LPAREN] = std::string("'()'");
+    m[SYMBOL_RPAREN] = std::string("')'");
+    m[SYMBOL_ASTERISK] = std::string("'*'");
+    m[SYMBOL_LESS_THAN] = std::string("'<'");
+    m[SYMBOL_GREATER_THAN] = std::string("'>'");
+    m[SYMBOL_EQUAL] = std::string("'='");
 
     // Reserved keywords
     m[SYMBOL_ACTION] = std::string("ACTION");
@@ -27,6 +30,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_AS] = std::string("AS");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_BIT] = std::string("BIT");
+    m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
@@ -52,6 +56,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_FROM] = std::string("FROM");
     m[SYMBOL_FULL] = std::string("FULL");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
+    m[SYMBOL_GROUP] = std::string("GROUP");
+    m[SYMBOL_HAVING] = std::string("HAVING");
     m[SYMBOL_HOUR] = std::string("HOUR");
     m[SYMBOL_INT] = std::string("INT");
     m[SYMBOL_INTEGER] = std::string("INTEGER");
@@ -90,6 +96,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_USER] = std::string("USER");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
     m[SYMBOL_VARYING] = std::string("VARYING");
+    m[SYMBOL_WHERE] = std::string("WHERE");
     m[SYMBOL_WITH] = std::string("WITH");
     m[SYMBOL_YEAR] = std::string("YEAR");
     m[SYMBOL_ZONE] = std::string("ZONE");

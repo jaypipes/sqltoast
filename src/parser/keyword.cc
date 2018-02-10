@@ -22,6 +22,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
         case 'b':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_BY, "BY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BIT, "BIT"));
             return t;
         case 'c':
@@ -55,9 +56,11 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FOREIGN, "FOREIGN"));
             return t;
         case 'g':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_GROUP, "GROUP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GLOBAL, "GLOBAL"));
             return t;
         case 'h':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_HAVING, "HAVING"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_HOUR, "HOUR"));
             return t;
         case 'i':
@@ -121,6 +124,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_VARYING, "VARYING"));
             return t;
         case 'w':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_WHERE, "WHERE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_WITH, "WITH"));
             return t;
         case 'y':
