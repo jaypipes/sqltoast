@@ -16,7 +16,7 @@ namespace sqltoast {
 
 typedef struct kw_jump_table_entry {
     symbol_t symbol;
-    std::string kw_str;
+    const std::string kw_str;
     kw_jump_table_entry(symbol_t sym, const char *kw_str) :
         symbol(sym), kw_str(kw_str)
     {}

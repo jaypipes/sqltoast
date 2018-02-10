@@ -9,15 +9,20 @@
 
 namespace sqltoast {
 
+// NOTE(jaypipes): These keywords are inserted in order of FREQUENCY of
+// appearance in SQL statements, not alphabetically.
 kw_jump_table_t _init_kw_jump_table(char lead_char) {
     kw_jump_table_t t;
 
     switch (lead_char) {
         case 'a':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_AS, "AS"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALL, "ALL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
         case 'b':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_BY, "BY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BIT, "BIT"));
             return t;
         case 'c':
@@ -35,6 +40,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'd':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DELETE, "DELETE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DISTINCT, "DISTINCT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DATE, "DATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DAY, "DAY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DEC, "DEC"));
@@ -44,14 +50,17 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DOUBLE, "DOUBLE"));
             return t;
         case 'f':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_FROM, "FROM"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FLOAT, "FLOAT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FULL, "FULL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_FOREIGN, "FOREIGN"));
             return t;
         case 'g':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_GROUP, "GROUP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GLOBAL, "GLOBAL"));
             return t;
         case 'h':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_HAVING, "HAVING"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_HOUR, "HOUR"));
             return t;
         case 'i':
@@ -92,6 +101,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_RESTRICT, "RESTRICT"));
             return t;
         case 's':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SELECT, "SELECT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SCHEMA, "SCHEMA"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SECOND, "SECOND"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SET, "SET"));
@@ -114,6 +124,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_VARYING, "VARYING"));
             return t;
         case 'w':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_WHERE, "WHERE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_WITH, "WITH"));
             return t;
         case 'y':
@@ -250,9 +261,10 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
         cursor++;
 
     const std::string lexeme(start, cursor);
-    size_t lexeme_len = lexeme.size();
+    const size_t lexeme_len = cursor - start;
+    size_t entry_len;
     for (auto entry : *jump_tbl) {
-        size_t entry_len = entry.kw_str.size();
+        entry_len = entry.kw_str.size();
         if (lexeme_len != entry_len)
             continue;
         if (ci_find_substr(lexeme, entry.kw_str) == 0) {

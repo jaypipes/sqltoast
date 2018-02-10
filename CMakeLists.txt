@@ -20,6 +20,7 @@ SET(LIBSQLTOAST_SOURCES
     src/identifier.cc
     src/constraint.cc
     src/column_definition.cc
+    src/derived_column.cc
     src/data_type.cc
     src/parser/column_definition.cc
     src/parser/data_type_descriptor.cc
@@ -38,11 +39,15 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/statements/create_schema.cc
     src/parser/statements/create_table.cc
     src/parser/statements/drop_schema.cc
+    src/parser/statements/select.cc
     src/parser/symbol.cc
     src/parser/token.cc
     src/statements/create_schema.cc
     src/statements/create_table.cc
     src/statements/drop_schema.cc
+    src/statements/select.cc
+    src/search_condition.cc
+    src/table_reference.cc
 )
 
 # Header file for configuration templated variables

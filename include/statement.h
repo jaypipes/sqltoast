@@ -12,7 +12,8 @@ namespace sqltoast {
 typedef enum statement_type {
     STATEMENT_TYPE_CREATE_SCHEMA,
     STATEMENT_TYPE_CREATE_TABLE,
-    STATEMENT_TYPE_DROP_SCHEMA
+    STATEMENT_TYPE_DROP_SCHEMA,
+    STATEMENT_TYPE_SELECT
 } statement_type_t;
 
 typedef struct statement {

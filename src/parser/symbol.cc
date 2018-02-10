@@ -15,15 +15,22 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_EOS] = std::string("EOS");
 
     // Punctuators
-    m[SYMBOL_SEMICOLON] = std::string("SEMICOLON");
-    m[SYMBOL_COMMA] = std::string("COMMA");
-    m[SYMBOL_LPAREN] = std::string("LPAREN");
-    m[SYMBOL_RPAREN] = std::string("RPAREN");
+    m[SYMBOL_SEMICOLON] = std::string("';'");
+    m[SYMBOL_COMMA] = std::string("','");
+    m[SYMBOL_LPAREN] = std::string("'()'");
+    m[SYMBOL_RPAREN] = std::string("')'");
+    m[SYMBOL_ASTERISK] = std::string("'*'");
+    m[SYMBOL_LESS_THAN] = std::string("'<'");
+    m[SYMBOL_GREATER_THAN] = std::string("'>'");
+    m[SYMBOL_EQUAL] = std::string("'='");
 
     // Reserved keywords
     m[SYMBOL_ACTION] = std::string("ACTION");
+    m[SYMBOL_ALL] = std::string("ALL");
+    m[SYMBOL_AS] = std::string("AS");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_BIT] = std::string("BIT");
+    m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
@@ -41,12 +48,16 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DECIMAL] = std::string("DECIMAL");
     m[SYMBOL_DEFAULT] = std::string("DEFAULT");
     m[SYMBOL_DELETE] = std::string("DELETE");
+    m[SYMBOL_DISTINCT] = std::string("DISTINCT");
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
     m[SYMBOL_FOREIGN] = std::string("FOREIGN");
+    m[SYMBOL_FROM] = std::string("FROM");
     m[SYMBOL_FULL] = std::string("FULL");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
+    m[SYMBOL_GROUP] = std::string("GROUP");
+    m[SYMBOL_HAVING] = std::string("HAVING");
     m[SYMBOL_HOUR] = std::string("HOUR");
     m[SYMBOL_INT] = std::string("INT");
     m[SYMBOL_INTEGER] = std::string("INTEGER");
@@ -71,6 +82,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SECOND] = std::string("SECOND");
+    m[SYMBOL_SELECT] = std::string("SELECT");
     m[SYMBOL_SESSION_USER] = std::string("SESSION_USER");
     m[SYMBOL_SET] = std::string("SET");
     m[SYMBOL_SMALLINT] = std::string("SMALLINT");
@@ -84,6 +96,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_USER] = std::string("USER");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
     m[SYMBOL_VARYING] = std::string("VARYING");
+    m[SYMBOL_WHERE] = std::string("WHERE");
     m[SYMBOL_WITH] = std::string("WITH");
     m[SYMBOL_YEAR] = std::string("YEAR");
     m[SYMBOL_ZONE] = std::string("ZONE");
