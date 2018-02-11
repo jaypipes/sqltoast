@@ -34,7 +34,7 @@ bool parse_create_table(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
     token_t& cur_tok = lex.current_token;
-    lexeme_t ident;
+    lexeme_t table_name;
     symbol_t cur_sym;
     statements::table_type_t table_type = statements::TABLE_TYPE_NORMAL;
     std::vector<std::unique_ptr<column_definition_t>> column_defs;
@@ -104,7 +104,7 @@ expect_table_name:
     // need to find an identifier
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_IDENTIFIER) {
-        fill_lexeme(cur_tok, ident);
+        table_name = cur_tok.lexeme;
         cur_tok = lex.next();
         goto expect_table_list_open;
     }
@@ -177,8 +177,7 @@ push_statement:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        identifier_t table_ident(ident);
-        auto stmt_p = std::make_unique<statements::create_table_t>(table_type, table_ident);
+        auto stmt_p = std::make_unique<statements::create_table_t>(table_type, table_name);
         stmt_p->column_definitions = std::move(column_defs);
         stmt_p->constraints = std::move(constraints);
         ctx.result.statements.emplace_back(std::move(stmt_p));

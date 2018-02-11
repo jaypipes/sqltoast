@@ -13,7 +13,6 @@
 
 #include "column_definition.h"
 #include "constraint.h"
-#include "identifier.h"
 #include "statement.h"
 
 namespace sqltoast {
@@ -27,13 +26,13 @@ typedef enum table_type {
 
 typedef struct create_table : statement_t {
     table_type_t table_type;
-    identifier_t table_identifier;
+    lexeme_t table_name;
     std::vector<std::unique_ptr<column_definition_t>> column_definitions;
     std::vector<std::unique_ptr<constraint_t>> constraints;
-    create_table(table_type_t table_type, identifier_t& table_id) :
+    create_table(table_type_t table_type, lexeme_t& table_name) :
         statement_t(STATEMENT_TYPE_CREATE_TABLE),
         table_type(table_type),
-        table_identifier(table_id)
+        table_name(table_name)
     {}
     virtual const std::string to_string();
 } create_table_t;

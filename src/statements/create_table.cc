@@ -14,7 +14,7 @@ namespace statements {
 const std::string create_table::to_string() {
     std::stringstream ss;
     ss << "<statement: CREATE TABLE" << std::endl
-       << "    table identifier: " << table_identifier;
+       << "    table name: " << table_name;
     if (table_type != TABLE_TYPE_NORMAL) {
         ss << std::endl << "    temporary: true (";
         if (table_type == TABLE_TYPE_TEMPORARY_GLOBAL) {
