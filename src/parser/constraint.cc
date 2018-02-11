@@ -30,7 +30,7 @@ bool parse_constraint(
         std::vector<std::unique_ptr<constraint_t>>& constraints) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<identifier_t> constraint_name_p;
+    lexeme_t constraint_name;
     std::unique_ptr<constraint_t> constraint_p;
 
     // BEGIN STATE MACHINE
@@ -44,7 +44,7 @@ expect_constraint_name:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    constraint_name_p = std::make_unique<identifier_t>(cur_tok.lexeme);
+    constraint_name = cur_tok.lexeme;
     cur_tok = lex.next();
     goto expect_constraint_type;
 err_expect_identifier:
@@ -68,7 +68,7 @@ expect_constraint_type:
         case SYMBOL_CHECK:
             // TODO
         default:
-            if (! constraint_name_p.get())
+            if (constraint_name)
                 goto err_expect_constraint_type;
             // Just return false, since callers could be looking for a column
             // definition (on the table)
@@ -103,7 +103,7 @@ process_column:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    constraint_p->columns.emplace_back(identifier_t(cur_tok.lexeme));
+    constraint_p->columns.emplace_back(cur_tok.lexeme);
     cur_tok = lex.next();
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_COMMA) {
@@ -126,8 +126,8 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        if (constraint_name_p.get())
-            constraint_p->name = std::move(constraint_name_p);
+        if (constraint_name)
+            constraint_p->name = constraint_name;
         constraints.emplace_back(std::move(constraint_p));
         return true;
     }
@@ -144,7 +144,7 @@ bool parse_foreign_key_constraint(
         std::unique_ptr<constraint_t>& constraint_p) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::vector<identifier_t> referencing_columns;
+    std::vector<lexeme_t> referencing_columns;
 
     // We get here after successfully processing a FOREIGN symbol, which must
     // now be followed by the KEY symbol, a list of referencing columns and a

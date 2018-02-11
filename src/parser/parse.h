@@ -90,11 +90,11 @@ bool parse_references_specification(
 
 // Returns true if one or more identifiers, delimited by commas, can be parsed
 // from the supplied token iterator. If the function returns true, identifiers
-// will have been populated with identifier_t structs.
+// will have been populated with lexeme_t structs.
 bool parse_identifier_list(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::vector<identifier_t>& identifiers);
+        std::vector<lexeme_t>& identifiers);
 
 // Returns true if a match type can be parsed from the
 // supplied token iterator. If the function returns true, the match_type

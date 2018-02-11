@@ -9,8 +9,8 @@
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const constraint_t& constraint) {
-    if (constraint.name.get())
-        out << "CONSTRAINT " << *constraint.name << " ";
+    if (constraint.name)
+        out << "CONSTRAINT " << constraint.name << " ";
     switch (constraint.type) {
         case CONSTRAINT_TYPE_UNIQUE:
         case CONSTRAINT_TYPE_PRIMARY_KEY:
@@ -38,10 +38,10 @@ std::ostream& operator<< (std::ostream& out, const constraint_t& constraint) {
 std::ostream& operator<< (std::ostream& out, const unique_constraint_t& constraint) {
     switch (constraint.type) {
         case CONSTRAINT_TYPE_UNIQUE:
-            out << "UNIQUE";
+            out << "UNIQUE ";
             break;
         case CONSTRAINT_TYPE_PRIMARY_KEY:
-            out << "PRIMARY KEY";
+            out << "PRIMARY KEY ";
             break;
         default:
             // Should never happen...
@@ -66,7 +66,7 @@ std::ostream& operator<< (std::ostream& out, const foreign_key_constraint_t& con
         size_t num_columns = constraint.columns.size();
         size_t x = 0;
         out << "FOREIGN KEY (";
-        for (const identifier_t& col_name : constraint.columns) {
+        for (const lexeme_t& col_name : constraint.columns) {
             out << col_name;
             if (x++ != (num_columns - 1))
                 out << ",";
@@ -76,7 +76,7 @@ std::ostream& operator<< (std::ostream& out, const foreign_key_constraint_t& con
         if (num_referenced_columns > 0) {
             out << "(";
             x = 0;
-            for (const identifier_t& col_name : constraint.referenced_columns) {
+            for (const lexeme_t& col_name : constraint.referenced_columns) {
                 out << col_name;
                 if (x++ != (num_referenced_columns - 1))
                     out << ",";

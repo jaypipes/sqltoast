@@ -12,7 +12,6 @@
 #include <ostream>
 
 #include "data_type.h"
-#include "identifier.h"
 
 namespace sqltoast {
 
@@ -25,8 +24,8 @@ typedef enum constraint_type {
 
 typedef struct constraint {
     constraint_type_t type;
-    std::unique_ptr<identifier_t> name;
-    std::vector<identifier_t> columns;
+    lexeme_t name;
+    std::vector<lexeme_t> columns;
     constraint(constraint_type_t type) :
         type(type)
     {}
@@ -56,13 +55,13 @@ typedef enum referential_action {
 } referential_action_t;
 
 typedef struct foreign_key_constraint : constraint_t {
-    identifier_t referenced_table;
+    lexeme_t referenced_table;
     match_type_t match_type;
     referential_action_t on_update;
     referential_action_t on_delete;
-    std::vector<identifier_t> referenced_columns;
+    std::vector<lexeme_t> referenced_columns;
     foreign_key_constraint(
-            identifier_t& ref_table,
+            lexeme_t& ref_table,
             match_type_t match_type,
             referential_action_t on_update,
             referential_action_t on_delete) :

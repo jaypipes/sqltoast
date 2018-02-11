@@ -44,13 +44,13 @@ typedef struct default_descriptor {
 std::ostream& operator<< (std::ostream& out, const default_descriptor_t& column_def);
 
 typedef struct column_definition {
-    identifier_t id;
+    lexeme_t name;
     bool is_nullable;
     std::unique_ptr<data_type_descriptor_t> data_type;
     std::unique_ptr<default_descriptor_t> default_descriptor;
     std::unique_ptr<identifier_t> collate;
-    column_definition(identifier_t& id) :
-        id(id),
+    column_definition(lexeme_t& name) :
+        name(name),
         is_nullable(true)
     {}
 } column_definition_t;

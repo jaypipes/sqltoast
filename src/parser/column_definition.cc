@@ -32,7 +32,7 @@ bool parse_column_definition(
         std::vector<std::unique_ptr<column_definition_t>>& column_defs,
         std::vector<std::unique_ptr<constraint_t>>& constraints) {
     lexer_t& lex = ctx.lexer;
-    lexeme_t ident;
+    lexeme_t column_name;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<column_definition_t> cdef_p;
 
@@ -41,7 +41,7 @@ bool parse_column_definition(
     // We start here. The first component of the column definition is the
     // identifier that indicates the column name.
     if (cur_sym == SYMBOL_IDENTIFIER) {
-        fill_lexeme(cur_tok, ident);
+        column_name = cur_tok.lexeme;
         cur_tok = ctx.lexer.next();
         goto create_column_def;
     }
@@ -51,8 +51,7 @@ bool parse_column_definition(
 
 create_column_def:
     {
-        identifier_t col_name(ident);
-        cdef_p = std::move(std::make_unique<column_definition_t>(col_name));
+        cdef_p = std::move(std::make_unique<column_definition_t>(column_name));
         if (! parse_data_type_descriptor(ctx, cur_tok, *cdef_p))
             return false;
         goto optional_default;
@@ -217,7 +216,7 @@ bool parse_column_constraint(
         std::vector<std::unique_ptr<constraint_t>>& constraints) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<identifier_t> name;
+    lexeme_t constraint_name;
     std::unique_ptr<constraint_t> constraint_p;
 
     // We get here after getting one of the symbols that precede a constraint
@@ -232,7 +231,7 @@ process_name:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    name = std::move(std::make_unique<identifier_t>(cur_tok.lexeme));
+    constraint_name = cur_tok.lexeme;
     cur_tok = lex.next();
     goto process_constraint_type;
 err_expect_identifier:
@@ -287,9 +286,9 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        constraint_p->columns.emplace_back(std::move(column_def.id));
-        if (name.get())
-            constraint_p->name = std::move(name);
+        constraint_p->columns.emplace_back(column_def.name);
+        if (constraint_name)
+            constraint_p->name = constraint_name;
         constraints.emplace_back(std::move(constraint_p));
         return true;
     }
@@ -322,7 +321,7 @@ bool parse_references_specification(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t ref_table;
-    std::vector<identifier_t> referenced_column_names;
+    std::vector<lexeme_t> referenced_column_names;
     bool found_on_update = false;
     bool found_on_delete = false;
     match_type_t match_type = MATCH_TYPE_NONE;
@@ -332,7 +331,7 @@ bool parse_references_specification(
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    fill_lexeme(cur_tok, ref_table);
+    ref_table = cur_tok.lexeme;
     cur_tok = lex.next();
     goto optional_column_names;
 err_expect_identifier:
@@ -414,9 +413,8 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        identifier_t ref_table_ident(ref_table);
         auto fk_constraint_p = std::make_unique<foreign_key_constraint_t>(
-                ref_table_ident, match_type, on_update, on_delete);
+                ref_table, match_type, on_update, on_delete);
         fk_constraint_p->referenced_columns = std::move(referenced_column_names);
         constraint_p = std::move(fk_constraint_p);
         return true;
@@ -427,7 +425,7 @@ push_constraint:
 bool parse_identifier_list(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::vector<identifier_t>& identifiers) {
+        std::vector<lexeme_t>& identifiers) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
 
@@ -440,7 +438,7 @@ process_column:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    identifiers.emplace_back(identifier_t(cur_tok.lexeme));
+    identifiers.emplace_back(cur_tok.lexeme);
     cur_tok = lex.next();
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_COMMA) {
