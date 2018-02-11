@@ -8,12 +8,8 @@
 #include <cctype>
 #include <sstream>
 
-#include "column_definition.h"
-#include "constraint.h"
 #include "parser/parse.h"
-#include "parser/statements/create_table.h"
 #include "parser/error.h"
-#include "parser/token.h"
 #include "statements/create_table.h"
 
 namespace sqltoast {

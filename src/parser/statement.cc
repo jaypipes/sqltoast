@@ -11,9 +11,6 @@
 #include "parser/error.h"
 #include "parser/parse.h"
 #include "parser/statement.h"
-#include "parser/statements/create_schema.h"
-#include "parser/statements/create_table.h"
-#include "parser/statements/drop_schema.h"
 #include "parser/symbol.h"
 #include "parser/token.h"
 
