@@ -26,11 +26,13 @@ const std::string char_string_t::to_string() {
         case DATA_TYPE_NVARCHAR:
             ss << "NVARCHAR";
             break;
+        default:
+            SQLTOAST_UNREACHABLE();
     }
     if (size > 0)
         ss << "(" << size << ")";
-    if (charset.get())
-        ss << " CHARACTER SET " << *charset;
+    if (charset)
+        ss << " CHARACTER SET " << charset;
     return ss.str();
 }
 
@@ -56,6 +58,8 @@ const std::string exact_numeric_t::to_string() {
         case DATA_TYPE_NUMERIC:
             ss << "NUMERIC";
             break;
+        default:
+            SQLTOAST_UNREACHABLE();
     }
     if (precision > 0) {
         ss << "(" << precision;
@@ -76,6 +80,8 @@ const std::string approximate_numeric_t::to_string() {
         case DATA_TYPE_DOUBLE:
             ss << "DOUBLE PRECISION";
             break;
+        default:
+            SQLTOAST_UNREACHABLE();
     }
     if (precision > 0)
         ss << "(" << precision << ")";
@@ -94,6 +100,8 @@ const std::string datetime_t::to_string() {
         case DATA_TYPE_TIMESTAMP:
             ss << "TIMESTAMP";
             break;
+        default:
+            SQLTOAST_UNREACHABLE();
     }
     if (precision > 0)
         ss << "(" << precision << ")";
@@ -127,6 +135,8 @@ const std::string interval_t::to_string() {
                 ss << "(" << precision << ")";
             ss << ")";
             break;
+        default:
+            SQLTOAST_UNREACHABLE();
     }
     return ss.str();
 }

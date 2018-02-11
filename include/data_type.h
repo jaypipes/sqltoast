@@ -10,7 +10,7 @@
 #include <memory>
 #include <string>
 
-#include "identifier.h"
+#include "sqltoast.h"
 
 namespace sqltoast {
 
@@ -50,7 +50,7 @@ typedef struct data_type_descriptor {
 
 typedef struct char_string : data_type_descriptor_t {
     size_t size;
-    std::unique_ptr<identifier_t> charset;
+    lexeme_t charset;
     char_string(data_type_t type, size_t size) :
         data_type_descriptor_t(type),
         size(size)

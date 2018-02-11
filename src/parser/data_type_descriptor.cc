@@ -98,8 +98,7 @@ process_character_set:
         // tack the character set onto the char_string_t data type descriptor
         lexer_t& lex = ctx.lexer;
         char_string_t* dtd = static_cast<char_string_t*>(column_def.data_type.get());
-        auto p_def_charset = std::make_unique<identifier_t>(lex.current_token.lexeme);
-        dtd->charset = std::move(p_def_charset);
+        dtd->charset = lex.current_token.lexeme;
         cur_tok = ctx.lexer.next();
 
         return true;
