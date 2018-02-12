@@ -568,7 +568,7 @@ push_descriptor:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        column_def.collate = std::move(std::make_unique<identifier_t>(collate_ident));
+        column_def.collate = collate_ident;
         return true;
     }
 }

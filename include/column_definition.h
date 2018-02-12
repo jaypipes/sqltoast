@@ -48,7 +48,7 @@ typedef struct column_definition {
     bool is_nullable;
     std::unique_ptr<data_type_descriptor_t> data_type;
     std::unique_ptr<default_descriptor_t> default_descriptor;
-    std::unique_ptr<identifier_t> collate;
+    lexeme_t collate;
     column_definition(lexeme_t& name) :
         name(name),
         is_nullable(true)

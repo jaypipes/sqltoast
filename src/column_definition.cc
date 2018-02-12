@@ -60,8 +60,8 @@ std::ostream& operator<< (std::ostream& out, const column_definition_t& column_d
     }
     if (! column_def.is_nullable)
         out << " NOT NULL";
-    if (column_def.collate.get()) {
-        out << " COLLATE " << *column_def.collate;
+    if (column_def.collate) {
+        out << " COLLATE " << column_def.collate;
     }
     return out;
 }
