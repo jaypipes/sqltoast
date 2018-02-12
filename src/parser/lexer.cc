@@ -18,11 +18,6 @@
 
 namespace sqltoast {
 
-void fill_lexeme(token_t& tok, lexeme_t& lexeme) {
-    lexeme.start = tok.lexeme.start;
-    lexeme.end = tok.lexeme.end;
-}
-
 parse_position_t skip_simple_comments(parse_position_t cursor) {
     parse_position_t start = cursor;
     if (*cursor != '-')
