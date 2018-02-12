@@ -13,7 +13,7 @@ SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -DSQLTOAST_DEBUG")
 PROJECT(libsqltoast)
 
 SET(PROJECT_VERSION 0.1)
-SET(PROJECT_DESCRIPTION "convert SQL to an abstract syntax tree")
+SET(PROJECT_DESCRIPTION "convert SQL to Abstract Syntax Tree")
 SET(SQLTOAST_VERSION_MAJOR 0)
 SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
@@ -33,6 +33,7 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/lexer.cc
     src/parser/literal.cc
     src/parser/parse.cc
+    src/parser/predicate.cc
     src/parser/punctuator.cc
     src/parser/sequence.cc
     src/parser/statement.cc
@@ -42,12 +43,14 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/statements/select.cc
     src/parser/symbol.cc
     src/parser/token.cc
+    src/parser/value.cc
     src/statements/create_schema.cc
     src/statements/create_table.cc
     src/statements/drop_schema.cc
     src/statements/select.cc
-    src/search_condition.cc
+    src/predicate.cc
     src/table_reference.cc
+    src/value.cc
 )
 
 # Header file for configuration templated variables

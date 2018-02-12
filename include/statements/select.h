@@ -12,9 +12,9 @@
 #include <vector>
 
 #include "derived_column.h"
-#include "search_condition.h"
-#include "table_reference.h"
+#include "predicate.h"
 #include "statement.h"
+#include "table_reference.h"
 
 namespace sqltoast {
 namespace statements {
