@@ -8,8 +8,8 @@
 #include <cctype>
 #include <sstream>
 
-#include "create_schema.h"
 #include "parser/error.h"
+#include "parser/parse.h"
 #include "parser/sequence.h"
 #include "parser/token.h"
 #include "statements/create_schema.h"
