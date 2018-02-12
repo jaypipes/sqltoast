@@ -14,7 +14,7 @@ namespace statements {
 const std::string drop_schema::to_string() {
     std::stringstream ss;
     ss << "<statement: DROP SCHEMA" << std::endl
-       << "   schema identifier: " << schema_identifier << std::endl;
+       << "   schema name: " << schema_name << std::endl;
     if (drop_behaviour == DROP_BEHAVIOUR_CASCADE) {
        ss << "   behaviour: CASCADE";
     } else {

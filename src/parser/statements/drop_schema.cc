@@ -34,7 +34,7 @@ namespace sqltoast {
 bool parse_drop_schema(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
-    lexeme_t ident;
+    lexeme_t schema_name;
     token_t& cur_tok = lex.current_token;
     symbol_t cur_sym;
     statements::drop_behaviour_t behaviour = statements::DROP_BEHAVIOUR_CASCADE;
@@ -60,7 +60,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         // now need to find the schema identifier
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
-            fill_lexeme(cur_tok, ident);
+            schema_name = cur_tok.lexeme;
             cur_tok = lex.next();
             goto drop_behaviour_or_statement_ending;
         }
@@ -95,8 +95,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         {
             if (ctx.opts.disable_statement_construction)
                 return true;
-            identifier_t schema_ident(ident);
-            auto stmt_p = std::make_unique<statements::drop_schema_t>(schema_ident, behaviour);
+            auto stmt_p = std::make_unique<statements::drop_schema_t>(schema_name, behaviour);
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
         }

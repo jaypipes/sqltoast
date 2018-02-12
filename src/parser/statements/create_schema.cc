@@ -69,11 +69,9 @@ bool parse_create_schema(parse_context_t& ctx) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
     token_t& cur_tok = lex.current_token;
-    lexeme_t ident;
-    bool found_authz = false;
+    lexeme_t schema_name;
     lexeme_t authz_ident;
-    bool found_default_charset = false;
-    lexeme_t default_charset_ident;
+    lexeme_t default_charset;
     symbol_t cur_sym;
 
     // BEGIN STATE MACHINE
@@ -98,7 +96,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
-            fill_lexeme(cur_tok, ident);
+            schema_name = cur_tok.lexeme;
             cur_tok = lex.next();
             goto authz_or_statement_ending;
         }
@@ -106,8 +104,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         SQLTOAST_UNREACHABLE();
     default_charset_clause:
         if (require_default_charset_clause(ctx)) {
-            found_default_charset = true;
-            fill_lexeme(cur_tok, default_charset_ident);
+            default_charset = cur_tok.lexeme;
             cur_tok = lex.next();
             goto statement_ending;
         }
@@ -118,8 +115,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         // AUTHORIZATION clause
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_IDENTIFIER) {
-            found_authz = true;
-            fill_lexeme(cur_tok, authz_ident);
+            authz_ident = cur_tok.lexeme;
             cur_tok = lex.next();
             goto default_charset_or_statement_ending;
         }
@@ -156,7 +152,7 @@ bool parse_create_schema(parse_context_t& ctx) {
             case SYMBOL_DEFAULT:
                 goto default_charset_clause;
             default:
-                expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
+                expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_AUTHORIZATION, SYMBOL_DEFAULT, SYMBOL_SEMICOLON});
                 return false;
         }
     statement_ending:
@@ -172,15 +168,12 @@ bool parse_create_schema(parse_context_t& ctx) {
         {
             if (ctx.opts.disable_statement_construction)
                 return true;
-            identifier_t schema_ident(ident);
-            auto stmt_p = std::make_unique<statements::create_schema_t>(schema_ident);
-            if (found_authz) {
-                auto p_authz = std::make_unique<identifier_t>(authz_ident);
-                (*stmt_p).authorization_identifier = std::move(p_authz);
+            auto stmt_p = std::make_unique<statements::create_schema_t>(schema_name);
+            if (authz_ident) {
+                stmt_p->authorization_identifier = authz_ident;
             }
-            if (found_default_charset) {
-                auto p_def_charset = std::make_unique<identifier_t>(default_charset_ident);
-                (*stmt_p).default_charset = std::move(p_def_charset);
+            if (default_charset) {
+                stmt_p->default_charset = default_charset;
             }
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;

@@ -9,20 +9,20 @@
 
 #include <string>
 
-#include "identifier.h"
+#include "sqltoast.h"
 #include "statement.h"
 
 namespace sqltoast {
 namespace statements {
 
 typedef struct create_schema : statement_t {
-    identifier_t schema_identifier;
+    lexeme_t schema_name;
     // Optional elements
-    std::unique_ptr<identifier_t> authorization_identifier;
-    std::unique_ptr<identifier_t> default_charset;
-    create_schema(identifier_t& schema_id) :
+    lexeme_t authorization_identifier;
+    lexeme_t default_charset;
+    create_schema(lexeme_t& schema_name) :
         statement_t(STATEMENT_TYPE_CREATE_SCHEMA),
-        schema_identifier(schema_id)
+        schema_name(schema_name)
     {}
     virtual const std::string to_string();
 } create_schema_t;

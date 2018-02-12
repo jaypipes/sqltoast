@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "identifier.h"
+#include "sqltoast.h"
 #include "statement.h"
 
 namespace sqltoast {
@@ -21,11 +21,11 @@ typedef enum drop_behaviour {
 } drop_behaviour_t;
 
 typedef struct drop_schema : statement_t {
-    identifier_t schema_identifier;
+    lexeme_t schema_name;
     drop_behaviour_t drop_behaviour;
-    drop_schema(identifier_t& schema_id, drop_behaviour_t drop_behaviour) :
+    drop_schema(lexeme_t& schema_name, drop_behaviour_t drop_behaviour) :
         statement_t(STATEMENT_TYPE_DROP_SCHEMA),
-        schema_identifier(schema_id),
+        schema_name(schema_name),
         drop_behaviour(drop_behaviour)
     {}
     virtual const std::string to_string();
