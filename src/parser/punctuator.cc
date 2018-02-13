@@ -8,7 +8,9 @@
 
 namespace sqltoast {
 
-tokenize_result_t token_punctuator(parse_position_t cursor) {
+tokenize_result_t token_punctuator(
+        parse_position_t cursor,
+        const parse_position_t end) {
     const char c = *cursor;
     for (unsigned int x = 0; x < NUM_PUNCTUATORS; x++) {
         if (c == punctuator_char_map[x]) {

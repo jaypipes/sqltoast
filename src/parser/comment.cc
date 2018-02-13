@@ -30,7 +30,9 @@ namespace sqltoast {
 // comments, because they are sometimes used to embed dialect-specific
 // triggers, are consumed as tokens.
 
-tokenize_result_t token_comment(parse_position_t cursor) {
+tokenize_result_t token_comment(
+        parse_position_t cursor,
+        const parse_position_t end) {
     parse_position_t start = cursor;
     if (*cursor != '/')
         return tokenize_result_t(TOKEN_NOT_FOUND);
@@ -43,7 +45,7 @@ tokenize_result_t token_comment(parse_position_t cursor) {
     // find the closing */ marker
     do {
         cursor++;
-        if (*cursor == '\0' || *(cursor + 1) == '\0') {
+        if (cursor == end || (cursor + 1) == end) {
             return tokenize_result_t(TOKEN_ERR_NO_CLOSING_DELIMITER, start, cursor);
         }
     } while (*cursor != '*' || *(cursor + 1) != '/');

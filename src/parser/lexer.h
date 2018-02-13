@@ -25,13 +25,13 @@ enum escape_mode {
 };
 
 typedef struct lexer {
-    parse_position_t start_pos;
-    parse_position_t end_pos;
+    parse_position_t start;
+    parse_position_t end;
     parse_position_t cursor;
     token_t current_token;
     lexer(parse_input_t& subject) :
-        start_pos(subject.cbegin()),
-        end_pos(subject.cend()),
+        start(subject.cbegin()),
+        end(subject.cend()),
         cursor(subject.cbegin()),
         current_token(SYMBOL_SOS, subject.cbegin(), subject.cbegin())
     {}
@@ -60,17 +60,25 @@ typedef struct tokenize_result {
     tokenize_result(tokenize_result_code_t code) :
         code(code), token()
     {}
-    tokenize_result(tokenize_result_code_t errcode, parse_position_t start, parse_position_t end) :
+    tokenize_result(
+            tokenize_result_code_t errcode,
+            parse_position_t start,
+            parse_position_t end) :
         code(errcode),
         token(SYMBOL_ERROR, start, end)
     {}
-    tokenize_result(symbol_t sym, parse_position_t start, parse_position_t end) :
+    tokenize_result(
+            symbol_t sym,
+            parse_position_t start,
+            parse_position_t end) :
         code(TOKEN_FOUND),
         token(sym, start, end)
     {}
 } tokenize_result_t;
 
-typedef tokenize_result_t (*tokenize_func_t) (parse_position_t cursor);
+typedef tokenize_result_t (*tokenize_func_t) (
+        parse_position_t cursor,
+        const parse_position_t end);
 
 // Advances the supplied cursor past any whitespace and simple SQL comments and
 // returns the location of the cursor after skipping
@@ -78,7 +86,6 @@ parse_position_t skip(parse_position_t cur);
 // Advances the supplied cursor past any simple SQL comments and returns the
 // location of the cursor after skipping
 parse_position_t skip_simple_comments(parse_position_t cursor);
-void fill_lexeme(token_t& tok, lexeme_t& lexeme);
 
 } // namespace sqltoast
 

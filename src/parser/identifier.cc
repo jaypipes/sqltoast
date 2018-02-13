@@ -24,7 +24,9 @@ namespace sqltoast {
 //
 // Note that whitespace will have been skipped already so that the character
 // pointed to by the parse context is guaranteed to be not whitespace.
-tokenize_result_t token_identifier(parse_position_t cursor) {
+tokenize_result_t token_identifier(
+        parse_position_t cursor,
+        const parse_position_t end) {
     parse_position_t start = cursor;
     escape_mode current_escape = ESCAPE_NONE;
 
@@ -50,26 +52,28 @@ tokenize_result_t token_identifier(parse_position_t cursor) {
     }
     if (current_escape != ESCAPE_NONE)
         // handle delimited identifiers...
-        return token_delimited_identifier(cursor, current_escape);
+        return token_delimited_identifier(cursor, end, current_escape);
 
     // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
-    while (! std::isspace(*cursor)
-            && *cursor != '\0'
+    while (cursor != end
+            && ! std::isspace(*cursor)
             && *cursor != ';'
             && *cursor != '('
             && *cursor != ')'
             && *cursor != ',')
         cursor++;
 
-    // if we went more than a single character, that's an
-    // identifier...
+    // if we went more than a single character, that's an identifier...
     if (start != cursor)
         return tokenize_result_t(SYMBOL_IDENTIFIER, start, cursor);
     return tokenize_result_t(TOKEN_NOT_FOUND);
 }
 
-tokenize_result_t token_delimited_identifier(parse_position_t cursor, escape_mode current_escape) {
+tokenize_result_t token_delimited_identifier(
+        parse_position_t cursor,
+        const parse_position_t end,
+        escape_mode current_escape) {
     parse_position_t start = cursor;
     char closer;
     switch (current_escape) {
@@ -87,7 +91,7 @@ tokenize_result_t token_delimited_identifier(parse_position_t cursor, escape_mod
             return tokenize_result_t(TOKEN_NOT_FOUND);
     }
     char c;
-    while (*cursor != '\0') {
+    while (cursor != end) {
         cursor++;
         c = *cursor;
         if (c == closer) {
