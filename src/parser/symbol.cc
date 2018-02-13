@@ -114,6 +114,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_LITERAL_CHARACTER_STRING] = std::string("<< string literal >>");
     m[SYMBOL_LITERAL_NATIONAL_CHARACTER_STRING] = std::string("<< utf8 string literal >>");
     m[SYMBOL_LITERAL_BIT_STRING] = std::string("<< bit string literal >>");
+    m[SYMBOL_LITERAL_HEX_STRING] = std::string("<< hex string literal >>");
 
     return m;
 }

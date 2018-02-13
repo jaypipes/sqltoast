@@ -32,6 +32,10 @@ tokenize_result_t token_bit_string_literal(
         parse_position_t cursor,
         const parse_position_t end);
 
+tokenize_result_t token_hex_string_literal(
+        parse_position_t cursor,
+        const parse_position_t end);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_LITERAL_H */
