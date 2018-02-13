@@ -33,10 +33,6 @@ tokenize_result_t token_identifier(
     // Let's first look to see if we have the potential start of a delimited
     // identifier of some sort...
     switch (*cursor) {
-        case '\'':
-            current_escape = ESCAPE_SINGLE_QUOTE;
-            cursor++;
-            break;
         case '"':
             current_escape = ESCAPE_DOUBLE_QUOTE;
             cursor++;
@@ -54,14 +50,13 @@ tokenize_result_t token_identifier(
         // handle delimited identifiers...
         return token_delimited_identifier(cursor, end, current_escape);
 
+    // The first character of a non-delimited identifier must be a latin1 alpha
+    if (! std::isalpha(*cursor++))
+        return tokenize_result_t(TOKEN_NOT_FOUND);
+
     // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
-    while (cursor != end
-            && ! std::isspace(*cursor)
-            && *cursor != ';'
-            && *cursor != '('
-            && *cursor != ')'
-            && *cursor != ',')
+    while (cursor != end && (std::isalnum(*cursor) || *cursor == '.'))
         cursor++;
 
     // if we went more than a single character, that's an identifier...
@@ -77,9 +72,6 @@ tokenize_result_t token_delimited_identifier(
     parse_position_t start = cursor;
     char closer;
     switch (current_escape) {
-        case ESCAPE_SINGLE_QUOTE:
-            closer = '\'';
-            break;
         case ESCAPE_DOUBLE_QUOTE:
         case ESCAPE_UNICODE_AMPERSAND:
             closer = '"';
@@ -87,7 +79,7 @@ tokenize_result_t token_delimited_identifier(
         case ESCAPE_TILDE:
             closer = '`';
             break;
-        case ESCAPE_NONE:
+        default:
             return tokenize_result_t(TOKEN_NOT_FOUND);
     }
     char c;
