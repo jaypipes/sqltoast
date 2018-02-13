@@ -38,7 +38,6 @@ try_numeric:
         bool found_decimal = false;
         bool found_e = false;
         for (;;) {
-            c = *cursor++;
             if (cursor == end) {
                 // Make sure if we got a single . that we followed it with at
                 // least one number...
@@ -52,15 +51,16 @@ try_numeric:
                 }
                 goto push_literal;
             }
-            if (std::isspace(c)) {
+            if (std::isspace(*cursor)) {
                 if (found_e) {
                     // Make sure the exponent has at least one number
-                    if (! std::isdigit(*(cursor - 2)))
+                    if (! std::isdigit(*(cursor - 1)))
                         goto not_found;
                     found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
                 }
                 goto push_literal;
             }
+            c = *cursor++;
             if (std::isdigit(c))
                 continue;
             switch (c) {
