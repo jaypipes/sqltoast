@@ -112,6 +112,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_LITERAL_SIGNED_DECIMAL] = std::string("<< signed decimal >>");
     m[SYMBOL_LITERAL_APPROXIMATE_NUMBER] = std::string("<< approximate number >>");
     m[SYMBOL_LITERAL_CHARACTER_STRING] = std::string("<< string literal >>");
+    m[SYMBOL_LITERAL_NATIONAL_CHARACTER_STRING] = std::string("<< utf8 string literal >>");
 
     return m;
 }

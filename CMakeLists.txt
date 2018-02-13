@@ -63,7 +63,7 @@ CONFIGURE_FILE(
 # interfaces
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
 
-ADD_LIBRARY(sqltoast SHARED ${LIBSQLTOAST_SOURCES})
+ADD_LIBRARY(sqltoast STATIC ${LIBSQLTOAST_SOURCES})
 TARGET_INCLUDE_DIRECTORIES(sqltoast PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Set up a pkg-config file for libsqltoast from the template in the root

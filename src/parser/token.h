@@ -28,7 +28,7 @@ typedef struct token {
         symbol(symbol), lexeme(start, end)
     {}
     inline bool is_literal() const {
-        return (symbol >= SYMBOL_LITERAL_UNSIGNED_INTEGER && symbol <= SYMBOL_LITERAL_CHARACTER_STRING);
+        return (symbol >= SYMBOL_LITERAL_UNSIGNED_INTEGER && symbol <= SYMBOL_LITERAL_NATIONAL_CHARACTER_STRING);
     }
     inline bool is_punctuator() const {
         return (symbol >= SYMBOL_SEMICOLON && symbol <= SYMBOL_EQUAL);

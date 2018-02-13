@@ -12,8 +12,6 @@ namespace sqltoast {
 tokenize_result_t token_literal(
         parse_position_t cursor,
         const parse_position_t end) {
-    parse_position_t start = cursor;
-    symbol_t found_sym;
     switch (*cursor) {
         case '+':
         case '-':
@@ -32,7 +30,14 @@ tokenize_result_t token_literal(
         case '9':
             return token_numeric_literal(cursor, end, false);
         case '\'':
-            return token_character_string_literal(cursor, end);
+            return token_character_string_literal(cursor, end,
+                    SYMBOL_LITERAL_CHARACTER_STRING);
+        case 'N':
+            if (((cursor + 1) == end) || *(cursor + 1) != '\'')
+                return tokenize_result_t(TOKEN_NOT_FOUND);
+            ++cursor;
+            return token_character_string_literal(cursor, end,
+                    SYMBOL_LITERAL_NATIONAL_CHARACTER_STRING);
         default:
             return tokenize_result_t(TOKEN_NOT_FOUND);
     }
@@ -142,24 +147,16 @@ not_found:
 // cursor is pointing at the \' char
 tokenize_result_t token_character_string_literal(
         parse_position_t cursor,
-        const parse_position_t end) {
+        const parse_position_t end,
+        symbol_t literal_sym) {
     parse_position_t start = cursor;
     char c = *cursor++;
     char last_c = c;
     while (cursor != end) {
         c = *cursor;
-        switch (c) {
-            case ' ':
-            case '\n':
-                if (last_c == '\'')
-                    goto push_literal;
+        if (c == ' ' || c == '\n')
+            if (last_c == '\'' && cursor != (start + 1))
                 break;
-            case '/':
-            case '-':
-                // TODO handle comments
-            default:
-                break;
-        }
         last_c = c;
         ++cursor;
     }
@@ -167,7 +164,7 @@ tokenize_result_t token_character_string_literal(
         goto push_literal;
     return tokenize_result_t(TOKEN_NOT_FOUND);
 push_literal:
-    return tokenize_result_t(SYMBOL_LITERAL_CHARACTER_STRING, start, cursor);
+    return tokenize_result_t(literal_sym, start, cursor);
 }
 
 } // namespace sqltoast
