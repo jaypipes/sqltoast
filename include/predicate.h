@@ -4,15 +4,13 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_SEARCH_CONDITION_H
-#define SQLTOAST_SEARCH_CONDITION_H
+#ifndef SQLTOAST_PREDICATE_H
+#define SQLTOAST_PREDICATE_H
 
-#include <memory>
-#include <vector>
 #include <ostream>
 
-#include "data_type.h"
-#include "identifier.h"
+#include "sqltoast.h"
+#include "value.h"
 
 namespace sqltoast {
 
@@ -41,9 +39,12 @@ typedef struct search_condition {
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);
 
 typedef struct comp_predicate : search_condition_t {
-    lexeme_t left;
-    lexeme_t right;
-    comp_predicate(comp_op_t op, lexeme_t& left, lexeme_t& right) :
+    row_value_constructor_t left;
+    row_value_constructor_t right;
+    comp_predicate(
+            comp_op_t op,
+            row_value_constructor_t& left,
+            row_value_constructor_t& right) :
         search_condition_t(op),
         left(left),
         right(right)
@@ -54,4 +55,4 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred);
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_SEARCH_CONDITION_H */
+#endif /* SQLTOAST_PREDICATE_H */

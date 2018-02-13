@@ -259,7 +259,7 @@ tokenize_result_t token_keyword(
 
     parse_position_t start = cursor;
     // Find the next delimiter character...
-    while (cursor != end && std::isalnum(*cursor) || *cursor == '_')
+    while (cursor != end && (std::isalnum(*cursor) || *cursor == '_'))
         cursor++;
 
     const std::string lexeme(start, cursor);

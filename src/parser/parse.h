@@ -7,14 +7,12 @@
 #ifndef SQLTOAST_PARSER_PARSE_H
 #define SQLTOAST_PARSER_PARSE_H
 
-#include <memory>
-#include <vector>
-
 #include "column_definition.h"
 #include "constraint.h"
-#include "context.h"
-#include "search_condition.h"
-#include "token.h"
+#include "parser/context.h"
+#include "parser/token.h"
+#include "predicate.h"
+#include "value.h"
 
 namespace sqltoast {
 
@@ -56,6 +54,20 @@ bool parse_comparison_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<search_condition_t>& cond_p);
+
+// Returns true if a row value constructor could be parsed. If true, the out
+// argument will be filled appropriately.
+bool parse_row_value_constructor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        row_value_constructor& out);
+
+// Returns true if a row value constructor element could be parsed. If true,
+// the out argument will be filled appropriately.
+bool parse_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        row_value_constructor& rvc);
 
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member
