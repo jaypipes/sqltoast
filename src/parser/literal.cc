@@ -31,6 +31,8 @@ tokenize_result_t token_literal(
         case '8':
         case '9':
             return token_numeric_literal(cursor, end, false);
+        case '\'':
+            return token_character_string_literal(cursor, end);
         default:
             return tokenize_result_t(TOKEN_NOT_FOUND);
     }
@@ -135,6 +137,37 @@ push_literal:
     return tokenize_result_t(found_sym, start, cursor);
 not_found:
     return tokenize_result_t(TOKEN_NOT_FOUND);
+}
+
+// cursor is pointing at the \' char
+tokenize_result_t token_character_string_literal(
+        parse_position_t cursor,
+        const parse_position_t end) {
+    parse_position_t start = cursor;
+    char c = *cursor++;
+    char last_c = c;
+    while (cursor != end) {
+        c = *cursor;
+        switch (c) {
+            case ' ':
+            case '\n':
+                if (last_c == '\'')
+                    goto push_literal;
+                break;
+            case '/':
+            case '-':
+                // TODO handle comments
+            default:
+                break;
+        }
+        last_c = c;
+        ++cursor;
+    }
+    if (last_c == '\'' && (cursor - start > 1))
+        goto push_literal;
+    return tokenize_result_t(TOKEN_NOT_FOUND);
+push_literal:
+    return tokenize_result_t(SYMBOL_LITERAL_CHARACTER_STRING, start, cursor);
 }
 
 } // namespace sqltoast

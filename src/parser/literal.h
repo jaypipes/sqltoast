@@ -23,6 +23,10 @@ tokenize_result_t token_numeric_literal(
         const parse_position_t end,
         bool found_sign);
 
+tokenize_result_t token_character_string_literal(
+        parse_position_t cursor,
+        const parse_position_t end);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PARSER_LITERAL_H */
