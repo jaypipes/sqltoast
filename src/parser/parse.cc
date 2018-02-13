@@ -31,7 +31,7 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
     lexer_t& lex = ctx.lexer;
     token_t& cur_tok = lex.current_token;
 
-    if (lex.cursor == lex.end_pos) {
+    if (lex.cursor == lex.end) {
         res.code = PARSE_INPUT_ERROR;
         res.error.assign("Nothing to parse.");
         return res;

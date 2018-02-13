@@ -160,7 +160,9 @@ kw_jump_table_t kw_jump_tables::w = _init_kw_jump_table('w');
 kw_jump_table_t kw_jump_tables::y = _init_kw_jump_table('y');
 kw_jump_table_t kw_jump_tables::z = _init_kw_jump_table('z');
 
-tokenize_result_t token_keyword(parse_position_t cursor) {
+tokenize_result_t token_keyword(
+        parse_position_t cursor,
+        const parse_position_t end) {
     kw_jump_table_t* jump_tbl;
     switch (*cursor) {
         case 'a':
@@ -257,7 +259,7 @@ tokenize_result_t token_keyword(parse_position_t cursor) {
 
     parse_position_t start = cursor;
     // Find the next delimiter character...
-    while (std::isalnum(*cursor) || *cursor == '_')
+    while (cursor != end && std::isalnum(*cursor) || *cursor == '_')
         cursor++;
 
     const std::string lexeme(start, cursor);

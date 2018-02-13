@@ -56,16 +56,16 @@ parse_position_t lexer_t::peek_from(parse_position_t cur, symbol_t* found) const
     // Advance the lexer's cursor over any whitespace or simple comments
     *found = SYMBOL_EOS;
     cur = skip(cur);
-    if (cur >= end_pos)
+    if (cur >= end)
         return cur;
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
-        auto tok_res = tokenizers[x](cur);
+        auto tok_res = tokenizers[x](cur, end);
         if (tok_res.code == TOKEN_NOT_FOUND)
             continue;
         if (tok_res.code == TOKEN_FOUND) {
             *found = tok_res.token.symbol;
-            cur = tok_res.token.lexeme.end + 1;
+            cur = tok_res.token.lexeme.end;
             break;
         }
         // There was an error in tokenizing... return some error marker?
@@ -77,11 +77,11 @@ parse_position_t lexer_t::peek_from(parse_position_t cur, symbol_t* found) const
 symbol_t lexer_t::peek() const {
     parse_position_t cur = cursor;
     cur = skip(cur);
-    if (cur >= end_pos)
+    if (cur >= end)
         return SYMBOL_EOS;
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
-        auto tok_res = tokenizers[x](cur);
+        auto tok_res = tokenizers[x](cur, end);
         if (tok_res.code == TOKEN_NOT_FOUND)
             continue;
         if (tok_res.code == TOKEN_FOUND)
@@ -96,16 +96,16 @@ symbol_t lexer_t::peek() const {
 token_t& lexer_t::next() {
     parse_position_t cur = cursor;
     cur = skip(cur);
-    if (cur >= end_pos) {
+    if (cur >= end) {
         current_token.symbol = SYMBOL_EOS;
-        current_token.lexeme.start = end_pos;
-        current_token.lexeme.end = end_pos;
+        current_token.lexeme.start = end;
+        current_token.lexeme.end = end;
         cursor = cur;
         return current_token;
     }
 
     for (size_t x = 0; x < NUM_TOKENIZERS; x++) {
-        auto tok_res = tokenizers[x](cur);
+        auto tok_res = tokenizers[x](cur, end);
         tokenize_result_code_t res_code = tok_res.code;
         if (res_code == TOKEN_NOT_FOUND)
             continue;

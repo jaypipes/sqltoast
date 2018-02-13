@@ -8,7 +8,9 @@
 
 namespace sqltoast {
 
-tokenize_result_t token_literal(parse_position_t cursor) {
+tokenize_result_t token_literal(
+        parse_position_t cursor,
+        const parse_position_t end) {
     parse_position_t start = cursor;
     symbol_t found_sym;
     bool found_sign = false; // set to true if + or - found
@@ -37,7 +39,7 @@ try_numeric:
         bool found_e = false;
         for (;;) {
             c = *cursor++;
-            if (*cursor == '\0') {
+            if (cursor == end) {
                 // Make sure if we got a single . that we followed it with at
                 // least one number...
                 if (*(cursor - 1) == '.')
@@ -112,7 +114,7 @@ try_numeric:
         }
     }
 push_literal:
-    return tokenize_result_t(found_sym, start, cursor - 1);
+    return tokenize_result_t(found_sym, start, cursor);
 not_found:
     return tokenize_result_t(TOKEN_NOT_FOUND);
 }
