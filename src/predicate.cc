@@ -29,7 +29,7 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
 }
 
 std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
-    out << pred.left;
+    out << *pred.left;
     switch (pred.op) {
         case COMP_OP_EQUAL:
             out << " = ";
@@ -53,7 +53,7 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
             // TODO
             break;
     }
-    out << pred.right;
+    out << *pred.right;
     return out;
 }
 
