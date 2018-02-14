@@ -72,6 +72,10 @@ typedef struct value_expression : row_value_constructor_t {
         row_value_constructor_t(),
         type(VALUE_EXPRESSION_TYPE_UNKNOWN)
     {}
+    value_expression(value_expression_type_t ve_type, lexeme_t lexeme) :
+        row_value_constructor_t(lexeme, RVC_TYPE_VALUE_EXPRESSION),
+        type(ve_type)
+    {}
 } value_expression_t;
 
 std::ostream& operator<< (std::ostream& out, const value_expression_t& ve);

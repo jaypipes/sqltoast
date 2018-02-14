@@ -60,14 +60,14 @@ bool parse_comparison_predicate(
 bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
-        row_value_constructor& out);
+        std::unique_ptr<row_value_constructor>& out);
 
 // Returns true if a row value constructor element could be parsed. If true,
 // the out argument will be filled appropriately.
 bool parse_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
-        row_value_constructor& rvc);
+        std::unique_ptr<row_value_constructor>& out);
 
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member

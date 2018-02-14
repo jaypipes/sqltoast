@@ -7,6 +7,7 @@
 #ifndef SQLTOAST_PREDICATE_H
 #define SQLTOAST_PREDICATE_H
 
+#include <memory>
 #include <ostream>
 
 #include "sqltoast.h"
@@ -39,15 +40,15 @@ typedef struct search_condition {
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);
 
 typedef struct comp_predicate : search_condition_t {
-    row_value_constructor_t left;
-    row_value_constructor_t right;
+    std::unique_ptr<row_value_constructor_t> left;
+    std::unique_ptr<row_value_constructor_t> right;
     comp_predicate(
             comp_op_t op,
-            row_value_constructor_t& left,
-            row_value_constructor_t& right) :
+            std::unique_ptr<row_value_constructor_t>& left,
+            std::unique_ptr<row_value_constructor_t>& right) :
         search_condition_t(op),
-        left(left),
-        right(right)
+        left(std::move(left)),
+        right(std::move(right))
     {}
 } comp_predicate_t;
 

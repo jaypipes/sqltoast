@@ -43,8 +43,8 @@ namespace sqltoast {
 bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
-        row_value_constructor& rvc) {
-    if (parse_value_expression(ctx, cur_tok, rvc))
+        std::unique_ptr<row_value_constructor_t>& out) {
+    if (parse_value_expression(ctx, cur_tok, out))
         return true;
     return false;
 }
@@ -78,8 +78,9 @@ bool parse_row_value_constructor(
 bool parse_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
-        row_value_constructor& rvc) {
+        std::unique_ptr<row_value_constructor_t>& out) {
     lexer_t& lex = ctx.lexer;
+    value_expression_type_t ve_type;
     if (cur_tok.is_literal())
         goto push_literal;
     if (cur_tok.is_identifier())
@@ -87,19 +88,16 @@ bool parse_value_expression(
     return false;
 push_literal:
     {
-        value_expression_t& ve = static_cast<value_expression_t&>(rvc);
-        ve.type = VALUE_EXPRESSION_TYPE_LITERAL;
+        ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
         goto push_ve;
     }
 push_identifier:
     {
-        value_expression_t& ve = static_cast<value_expression_t&>(rvc);
-        ve.type = VALUE_EXPRESSION_TYPE_COLUMN;
+        ve_type = VALUE_EXPRESSION_TYPE_COLUMN;
         goto push_ve;
     }
 push_ve:
-    rvc.rvc_type = RVC_TYPE_VALUE_EXPRESSION;
-    rvc.lexeme = cur_tok.lexeme;
+    out = std::make_unique<value_expression_t>(ve_type, cur_tok.lexeme);
     cur_tok = lex.next();
     return true;
 }

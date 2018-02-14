@@ -87,8 +87,8 @@ bool parse_comparison_predicate(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     comp_op_t op = COMP_OP_EQUAL;
-    row_value_constructor_t left;
-    row_value_constructor_t right;
+    std::unique_ptr<row_value_constructor_t> left;
+    std::unique_ptr<row_value_constructor_t> right;
 
     // We get here after getting an identifier or literal while trying to parse
     // a search condition. This identifier or literal can be followed by one of
