@@ -81,9 +81,11 @@ tokenize_result_t token_numeric_literal(
             }
             goto push_literal;
         }
-        c = *cursor++;
-        if (std::isdigit(c))
+        c = *cursor;
+        if (std::isdigit(c)) {
+            cursor++;
             continue;
+        }
         switch (c) {
             case ',':
             case ')':
@@ -91,11 +93,11 @@ tokenize_result_t token_numeric_literal(
             case ';':
                 // Make sure if we got a single . that we followed it with
                 // at least one number...
-                if (found_decimal && *(cursor - 2) == '.')
+                if (found_decimal && *(cursor - 1) == '.')
                     goto not_found;
                 if (found_e) {
                     // Make sure the exponent has at least one number
-                    if (! std::isdigit(*(cursor - 2)))
+                    if (! std::isdigit(*(cursor - 1)))
                         goto not_found;
                     found_sym = SYMBOL_LITERAL_APPROXIMATE_NUMBER;
                 }
@@ -108,6 +110,7 @@ tokenize_result_t token_numeric_literal(
                 found_sym = SYMBOL_LITERAL_UNSIGNED_DECIMAL;
                 if (found_sign)
                     found_sym = SYMBOL_LITERAL_SIGNED_DECIMAL;
+                cursor++;
                 continue;
             case 'E':
                 // Make sure we haven't already found an "E", which would
@@ -121,6 +124,7 @@ tokenize_result_t token_numeric_literal(
                 // Make sure we have found at least a digit before the 'E'
                 if (! std::isdigit(*(cursor - 2)))
                     goto not_found;
+                cursor++;
                 continue;
             case '+':
             case '-':
@@ -128,6 +132,7 @@ tokenize_result_t token_numeric_literal(
                 // (e.g. 3.667E-10).
                 if (! found_e)
                     goto not_found;
+                cursor++;
                 continue;
             default:
                 goto not_found;

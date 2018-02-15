@@ -118,6 +118,8 @@ expect_right:
         goto err_expect_right;
     goto push_condition;
 err_expect_right:
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
     {
         std::stringstream estr;
         estr << "Expected to find a << row value constructor >> for "
