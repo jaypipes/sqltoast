@@ -94,6 +94,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_UNIQUE] = std::string("UNIQUE");
     m[SYMBOL_UPDATE] = std::string("UPDATE");
     m[SYMBOL_USER] = std::string("USER");
+    m[SYMBOL_VALUE] = std::string("VALUE");
+    m[SYMBOL_VALUES] = std::string("VALUES");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
     m[SYMBOL_VARYING] = std::string("VARYING");
     m[SYMBOL_WHERE] = std::string("WHERE");

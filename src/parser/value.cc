@@ -90,12 +90,16 @@ bool parse_value_expression(
     lexer_t& lex = ctx.lexer;
     value_expression_type_t ve_type;
     symbol_t cur_sym = cur_tok.symbol;
-    if (cur_tok.is_literal())
-        goto push_literal;
+    if (cur_tok.is_literal()) {
+        ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
+        goto push_ve;
+    }
     if (cur_tok.is_punctuator() || cur_tok.is_keyword())
         goto check_punc_keywords;
-    if (cur_tok.is_identifier())
-        goto push_identifier;
+    if (cur_tok.is_identifier()) {
+        ve_type = VALUE_EXPRESSION_TYPE_COLUMN;
+        goto push_ve;
+    }
     return false;
 push_literal:
     ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
@@ -105,6 +109,13 @@ check_punc_keywords:
         case SYMBOL_LPAREN:
             cur_tok = lex.next();
             goto subquery_or_subexpression;
+        case SYMBOL_USER:
+        case SYMBOL_CURRENT_USER:
+        case SYMBOL_SESSION_USER:
+        case SYMBOL_SYSTEM_USER:
+        case SYMBOL_VALUE:
+            ve_type = VALUE_EXPRESSION_TYPE_GENERAL;
+            goto push_ve;
         default:
             return false;
     }
@@ -129,9 +140,6 @@ subquery_or_subexpression:
 err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
-push_identifier:
-    ve_type = VALUE_EXPRESSION_TYPE_COLUMN;
-    goto push_ve;
 push_scalar_subquery:
     ve_type = VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY;
     goto push_ve;

@@ -16,6 +16,9 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
         case VALUE_EXPRESSION_TYPE_COLUMN:
             out << "column-reference[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
             break;
+        case VALUE_EXPRESSION_TYPE_GENERAL:
+            out << "general-value[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
+            break;
         default:
             out << "value-expression[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
             break;
