@@ -125,23 +125,27 @@ subquery_or_subexpression:
     // expressions where the parens indicates that the value expression should
     // be evaluated before outer value expressions)
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_SELECT)
-        goto push_scalar_subquery;
-    else {
-        if (! parse_value_expression(ctx, cur_tok, out))
-            return false;
-        cur_tok = lex.current_token;
-        cur_sym = cur_tok.symbol;
-        if (cur_sym != SYMBOL_RPAREN)
-            goto err_expect_rparen;
+    if (cur_sym == SYMBOL_SELECT) {
         cur_tok = lex.next();
-        return true; // out is already set to the subexpression...
+        ve_type = VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY;
+        goto expect_rparen_then_push;
     }
+    if (! parse_value_expression(ctx, cur_tok, out))
+        return false;
+    cur_tok = lex.current_token;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    return true; // out is already set to the subexpression...
 err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
-push_scalar_subquery:
-    ve_type = VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY;
+expect_rparen_then_push:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
     goto push_ve;
 push_ve:
     out = std::make_unique<value_expression_t>(ve_type, cur_tok.lexeme);
