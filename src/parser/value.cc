@@ -119,6 +119,9 @@ check_punc_keywords:
         case SYMBOL_COLON:
             cur_tok = lex.next();
             goto expect_parameter;
+        case SYMBOL_QUESTION_MARK:
+            ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
+            goto push_ve;
         default:
             return false;
     }
@@ -157,6 +160,7 @@ expect_parameter:
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
     ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
+    // TODO(jaypipes): Maybe support the INDICATOR clause?
     goto push_ve;
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);

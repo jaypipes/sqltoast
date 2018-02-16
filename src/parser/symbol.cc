@@ -22,6 +22,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_GREATER_THAN] = std::string("'>'");
     m[SYMBOL_LESS_THAN] = std::string("'<'");
     m[SYMBOL_LPAREN] = std::string("'()'");
+    m[SYMBOL_QUESTION_MARK] = std::string("'?'");
     m[SYMBOL_RPAREN] = std::string("')'");
     m[SYMBOL_SEMICOLON] = std::string("';'");
 
