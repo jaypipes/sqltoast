@@ -19,6 +19,9 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
         case VALUE_EXPRESSION_TYPE_GENERAL:
             out << "general-value[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
             break;
+        case VALUE_EXPRESSION_TYPE_PARAMETER:
+            out << "parameter[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
+            break;
         case VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY:
             out << "scalar-subquery";
             break;

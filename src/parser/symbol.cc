@@ -15,14 +15,15 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_EOS] = std::string("EOS");
 
     // Punctuators
-    m[SYMBOL_SEMICOLON] = std::string("';'");
+    m[SYMBOL_ASTERISK] = std::string("'*'");
+    m[SYMBOL_COLON] = std::string("':'");
     m[SYMBOL_COMMA] = std::string("','");
+    m[SYMBOL_EQUAL] = std::string("'='");
+    m[SYMBOL_GREATER_THAN] = std::string("'>'");
+    m[SYMBOL_LESS_THAN] = std::string("'<'");
     m[SYMBOL_LPAREN] = std::string("'()'");
     m[SYMBOL_RPAREN] = std::string("')'");
-    m[SYMBOL_ASTERISK] = std::string("'*'");
-    m[SYMBOL_LESS_THAN] = std::string("'<'");
-    m[SYMBOL_GREATER_THAN] = std::string("'>'");
-    m[SYMBOL_EQUAL] = std::string("'='");
+    m[SYMBOL_SEMICOLON] = std::string("';'");
 
     // Reserved keywords
     m[SYMBOL_ACTION] = std::string("ACTION");
@@ -106,17 +107,18 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     // Non-Reserved keywordsr
 
     // Other symbols
-    m[SYMBOL_IDENTIFIER] = std::string("<< identifier >>");
     m[SYMBOL_COMMENT] = std::string("<< comment >>");
-    m[SYMBOL_LITERAL_UNSIGNED_INTEGER] = std::string("<< unsigned integer >>");
+    m[SYMBOL_IDENTIFIER] = std::string("<< identifier >>");
+
+    m[SYMBOL_LITERAL_APPROXIMATE_NUMBER] = std::string("<< approximate number >>");
+    m[SYMBOL_LITERAL_BIT_STRING] = std::string("<< bit string literal >>");
+    m[SYMBOL_LITERAL_CHARACTER_STRING] = std::string("<< string literal >>");
+    m[SYMBOL_LITERAL_HEX_STRING] = std::string("<< hex string literal >>");
+    m[SYMBOL_LITERAL_NATIONAL_CHARACTER_STRING] = std::string("<< utf8 string literal >>");
+    m[SYMBOL_LITERAL_SIGNED_DECIMAL] = std::string("<< signed decimal >>");
     m[SYMBOL_LITERAL_SIGNED_INTEGER] = std::string("<< signed integer >>");
     m[SYMBOL_LITERAL_UNSIGNED_DECIMAL] = std::string("<< unsigned decimal >>");
-    m[SYMBOL_LITERAL_SIGNED_DECIMAL] = std::string("<< signed decimal >>");
-    m[SYMBOL_LITERAL_APPROXIMATE_NUMBER] = std::string("<< approximate number >>");
-    m[SYMBOL_LITERAL_CHARACTER_STRING] = std::string("<< string literal >>");
-    m[SYMBOL_LITERAL_NATIONAL_CHARACTER_STRING] = std::string("<< utf8 string literal >>");
-    m[SYMBOL_LITERAL_BIT_STRING] = std::string("<< bit string literal >>");
-    m[SYMBOL_LITERAL_HEX_STRING] = std::string("<< hex string literal >>");
+    m[SYMBOL_LITERAL_UNSIGNED_INTEGER] = std::string("<< unsigned integer >>");
 
     return m;
 }

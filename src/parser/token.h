@@ -28,10 +28,10 @@ typedef struct token {
         symbol(symbol), lexeme(start, end)
     {}
     inline bool is_literal() const {
-        return (symbol >= SYMBOL_LITERAL_UNSIGNED_INTEGER && symbol <= SYMBOL_LITERAL_HEX_STRING);
+        return (symbol >= SYMBOL_LITERAL_APPROXIMATE_NUMBER && symbol <= SYMBOL_LITERAL_UNSIGNED_INTEGER);
     }
     inline bool is_punctuator() const {
-        return (symbol >= SYMBOL_SEMICOLON && symbol <= SYMBOL_EQUAL);
+        return (symbol >= SYMBOL_ASTERISK && symbol <= SYMBOL_SEMICOLON);
     }
     inline bool is_keyword() const {
         return (symbol >= SYMBOL_ALL && symbol <= SYMBOL_VARYING);

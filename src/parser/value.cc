@@ -116,6 +116,9 @@ check_punc_keywords:
         case SYMBOL_VALUE:
             ve_type = VALUE_EXPRESSION_TYPE_GENERAL;
             goto push_ve;
+        case SYMBOL_COLON:
+            cur_tok = lex.next();
+            goto expect_parameter;
         default:
             return false;
     }
@@ -147,6 +150,17 @@ expect_rparen_then_push:
         goto err_expect_rparen;
     cur_tok = lex.next();
     goto push_ve;
+expect_parameter:
+    // We get here after hitting a COLON. A parameter name is now expected,
+    // followed by an optional <indicator parameter> clause
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
+    goto push_ve;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
 push_ve:
     out = std::make_unique<value_expression_t>(ve_type, cur_tok.lexeme);
     cur_tok = lex.next();
