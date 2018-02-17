@@ -93,19 +93,25 @@ bool parse_predicate(
                 cur_tok = lex.next();
                 return false;//return parse_in_predicate(ctx, cur_tok, cond_p, left_most);
             case SYMBOL_IS:
+                if (reverse_op)
+                    goto err_expected_between_in_or_like;
                 cur_tok = lex.next();
-                return false; //return parse_null_predicate(ctx, cur_tok, cond_p, left_most);
+                if (! parse_null_predicate(ctx, cur_tok, cond_p, left_most))
+                    return false;
+                break;
             case SYMBOL_LIKE:
                 cur_tok = lex.next();
                 return false; //return parse_like_predicate(ctx, cur_tok, cond_p, left_most);
             default:
+                if (reverse_op)
+                    goto err_expected_between_in_or_like;
                 if (! parse_comparison_predicate(ctx, cur_tok, cond_p, left_most))
                     return false;
                 break;
         }
         // If we get here, we are guaranteed that cond_p will point to a valid
         // search_condition_t struct
-        cond_p->reverse_op = reverse_op;
+        cond_p->reverse_op ^= reverse_op;
         return true;
     }
     // If a row-value constructor wasn't able to be parsed, look for other
@@ -118,6 +124,9 @@ bool parse_predicate(
         default:
             return false;
     }
+err_expected_between_in_or_like:
+    expect_any_error(ctx, {SYMBOL_BETWEEN, SYMBOL_IN, SYMBOL_LIKE});
+    return false;
 }
 
 // <comparison predicate> ::=
@@ -267,6 +276,40 @@ push_condition:
         return true;
 
     cond_p = std::make_unique<between_predicate_t>(left, comp_left, comp_right);
+    return true;
+}
+
+// <null predicate> ::= <row value constructor> IS [ NOT ] NULL
+bool parse_null_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<row_value_constructor_t>& left) {
+    lexer_t& lex = ctx.lexer;
+    bool reverse_op = false;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    // We get here if we've processed the left row value constructor and the
+    // IS symbol. We now expect either an optional NOT symbol follwed by the
+    // NULL symbol
+    if (cur_sym == SYMBOL_NOT) {
+        reverse_op = true;
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+    }
+    if (cur_sym != SYMBOL_NULL)
+        goto err_expect_null;
+    cur_tok = lex.next();
+    goto push_condition;
+err_expect_null:
+    expect_error(ctx, SYMBOL_NULL);
+    return false;
+push_condition:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    cond_p = std::make_unique<null_predicate_t>(left);
+    cond_p->reverse_op = reverse_op;
     return true;
 }
 

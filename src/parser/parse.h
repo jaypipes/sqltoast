@@ -72,6 +72,14 @@ bool parse_between_predicate(
         std::unique_ptr<search_condition_t>& cond_p,
         std::unique_ptr<row_value_constructor_t>& left_p);
 
+// Returns true if a null_predicate_t could be parsed. If true, the cond_p
+// argument will be a new pointer to a null_predicate_t
+bool parse_null_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<row_value_constructor_t>& left_p);
+
 // Returns true if a row value constructor could be parsed. If true, the out
 // argument will be filled appropriately.
 bool parse_row_value_constructor(

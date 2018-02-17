@@ -29,6 +29,12 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
                 out << pred;
             }
             break;
+        case COMP_OP_NULL:
+            {
+                const null_predicate_t& pred = static_cast<const null_predicate_t&>(sc);
+                out << pred;
+            }
+            break;
         default:
             // TODO
             break;
@@ -58,7 +64,6 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
             out << " >= ";
             break;
         default:
-            // TODO
             break;
     }
     out << *pred.right;
@@ -67,6 +72,10 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
 
 std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred) {
     out << *pred.left << " BETWEEN " << *pred.comp_left << " AND " << *pred.comp_right;
+};
+
+std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred) {
+    out << *pred.left << " IS NULL";
 };
 
 } // namespace sqltoast
