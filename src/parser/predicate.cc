@@ -91,7 +91,9 @@ bool parse_predicate(
                 break;
             case SYMBOL_IN:
                 cur_tok = lex.next();
-                return false;//return parse_in_predicate(ctx, cur_tok, cond_p, left_most);
+                if (! parse_in_predicate(ctx, cur_tok, cond_p, left_most))
+                    return false;
+                break;
             case SYMBOL_IS:
                 if (reverse_op)
                     goto err_expected_between_in_or_like;
@@ -217,15 +219,6 @@ push_condition:
 // <between predicate> ::=
 //     <row value constructor>
 //     [ NOT ] BETWEEN <row value constructor> AND <row value constructor>
-//
-// <in predicate> :=
-//     <row value constructor> [ NOT ] IN <in predicate value>
-//
-// <in predicate value> ::=
-//     <table subquery> | <left paren> <in value list> <right paren>
-//
-// <in value list> ::=
-//     <value expression> { <comma> <value expression> } ...
 bool parse_between_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -310,6 +303,73 @@ push_condition:
 
     cond_p = std::make_unique<null_predicate_t>(left);
     cond_p->reverse_op = reverse_op;
+    return true;
+}
+
+// <in predicate> :=
+//     <row value constructor> [ NOT ] IN <in predicate value>
+//
+// <in predicate value> ::=
+//     <table subquery> | <left paren> <in value list> <right paren>
+//
+// <in value list> ::=
+//     <value expression> { <comma> <value expression> } ...
+bool parse_in_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<row_value_constructor_t>& left) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::vector<std::unique_ptr<row_value_constructor_t>> values;
+
+    // We get here if we've processed the left row value constructor and the
+    // [NOT] IN symbol(s). We now expect a LPAREN followed by either the SELECT
+    // symbol or a list of value expressions
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_SELECT)
+        goto process_subquery;
+    goto process_value_list_item;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+process_subquery:
+    cur_tok = lex.next();
+    goto expect_rparen;
+process_value_list_item:
+    {
+        std::unique_ptr<row_value_constructor> value;
+        if (! parse_value_expression(ctx, cur_tok, value))
+            return false;
+        values.emplace_back(std::move(value));
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_COMMA) {
+            cur_tok = lex.next();
+            goto process_value_list_item;
+        }
+        goto expect_rparen;
+    }
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_condition;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_condition:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    if (! values.empty())
+        cond_p = std::make_unique<in_values_predicate_t>(left, values);
+    else
+        cond_p = std::make_unique<in_subquery_predicate_t>(left);
     return true;
 }
 

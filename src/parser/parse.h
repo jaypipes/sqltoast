@@ -80,6 +80,15 @@ bool parse_null_predicate(
         std::unique_ptr<search_condition_t>& cond_p,
         std::unique_ptr<row_value_constructor_t>& left_p);
 
+// Returns true if an IN predicate (either a subquery or values predicate)
+// could be parsed. If true, the cond_p argument will be a new pointer to
+// either an in_values_predicate_t or an in_subquery_predicate_t
+bool parse_in_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<row_value_constructor_t>& left_p);
+
 // Returns true if a row value constructor could be parsed. If true, the out
 // argument will be filled appropriately.
 bool parse_row_value_constructor(

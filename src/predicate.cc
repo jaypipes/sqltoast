@@ -35,6 +35,18 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
                 out << pred;
             }
             break;
+        case COMP_OP_IN_VALUES:
+            {
+                const in_values_predicate_t& pred = static_cast<const in_values_predicate_t&>(sc);
+                out << pred;
+            }
+            break;
+        case COMP_OP_IN_SUBQUERY:
+            {
+                const in_subquery_predicate_t& pred = static_cast<const in_subquery_predicate_t&>(sc);
+                out << pred;
+            }
+            break;
         default:
             // TODO
             break;
@@ -77,5 +89,20 @@ std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred) {
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred) {
     out << *pred.left << " IS NULL";
 };
+
+std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) {
+    out << *pred.left << " IN (";
+    size_t x = 0;
+    for (auto& ve : pred.values) {
+        if (x++ > 0)
+            out << ", ";
+        out << *ve;
+    }
+    out << ")";
+};
+
+std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred) {
+    out << *pred.left << " IN <subquery>";
+}
 
 } // namespace sqltoast
