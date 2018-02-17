@@ -44,9 +44,12 @@ bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {
-    if (parse_value_expression(ctx, cur_tok, out))
-        return true;
-    return false;
+    lexer_t& lex = ctx.lexer;
+    token_t start_tok = lex.current_token;
+    if (! parse_value_expression(ctx, cur_tok, out))
+        return false;
+    cur_tok = lex.next();
+    return true;
 }
 
 // <value expression primary> ::=
@@ -175,7 +178,6 @@ push_ve:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<value_expression_t>(ve_type, cur_tok.lexeme);
-    cur_tok = lex.next();
     return true;
 }
 

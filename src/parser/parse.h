@@ -48,12 +48,29 @@ bool parse_search_condition(
         token_t& cur_tok,
         std::vector<std::unique_ptr<search_condition_t>>& conditions);
 
-// Returns true if a search condition could be parsed. If true, the cond_p
-// argument will be a new pointer to a search_condition_t
-bool parse_comparison_predicate(
+// Returns true if a oredicate could be parsed. If true, the conditions
+// argument will have a new pointer to a search_condition_t subclass that
+// represents a prdicate added to it.
+bool parse_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<search_condition_t>& cond_p);
+
+// Returns true if a comp_predicate_t could be parsed. If true, the cond_p
+// argument will be a new pointer to a comp_predicate_t
+bool parse_comparison_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<row_value_constructor_t>& left_p);
+
+// Returns true if a between_predicate_t could be parsed. If true, the cond_p
+// argument will be a new pointer to a between_predicate_t
+bool parse_between_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<row_value_constructor_t>& left_p);
 
 // Returns true if a row value constructor could be parsed. If true, the out
 // argument will be filled appropriately.
