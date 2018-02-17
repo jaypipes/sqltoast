@@ -18,6 +18,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_ASTERISK] = std::string("'*'");
     m[SYMBOL_COLON] = std::string("':'");
     m[SYMBOL_COMMA] = std::string("','");
+    m[SYMBOL_EXCLAMATION] = std::string("'!'");
     m[SYMBOL_EQUAL] = std::string("'='");
     m[SYMBOL_GREATER_THAN] = std::string("'>'");
     m[SYMBOL_LESS_THAN] = std::string("'<'");
@@ -29,9 +30,11 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     // Reserved keywords
     m[SYMBOL_ACTION] = std::string("ACTION");
     m[SYMBOL_ALL] = std::string("ALL");
+    m[SYMBOL_ALL] = std::string("AND");
     m[SYMBOL_AS] = std::string("AS");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_AVG] = std::string("AVG");
+    m[SYMBOL_BETWEEN] = std::string("BETWEEN");
     m[SYMBOL_BIT] = std::string("BIT");
     m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
@@ -55,6 +58,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DISTINCT] = std::string("DISTINCT");
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
+    m[SYMBOL_EXISTS] = std::string("EXISTS");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
     m[SYMBOL_FOREIGN] = std::string("FOREIGN");
     m[SYMBOL_FROM] = std::string("FROM");
@@ -63,10 +67,13 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_GROUP] = std::string("GROUP");
     m[SYMBOL_HAVING] = std::string("HAVING");
     m[SYMBOL_HOUR] = std::string("HOUR");
+    m[SYMBOL_IN] = std::string("IN");
     m[SYMBOL_INT] = std::string("INT");
     m[SYMBOL_INTEGER] = std::string("INTEGER");
     m[SYMBOL_INTERVAL] = std::string("INTERVAL");
+    m[SYMBOL_IS] = std::string("IS");
     m[SYMBOL_LOCAL] = std::string("LOCAL");
+    m[SYMBOL_LIKE] = std::string("LIKE");
     m[SYMBOL_KEY] = std::string("KEY");
     m[SYMBOL_MATCH] = std::string("MATCH");
     m[SYMBOL_MAX] = std::string("MAX");
