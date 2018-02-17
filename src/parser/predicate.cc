@@ -94,9 +94,37 @@ bool parse_comparison_predicate(
             op = COMP_OP_EQUAL;
             cur_tok = lex.next();
             goto expect_right;
+        case SYMBOL_EXCLAMATION:
+            op = COMP_OP_NOT_EQUAL;
+            cur_tok = lex.next();
+            goto optional_equal;
+        case SYMBOL_LESS_THAN:
+            op = COMP_OP_LESS;
+            cur_tok = lex.next();
+            goto optional_equal;
+        case SYMBOL_GREATER_THAN:
+            op = COMP_OP_GREATER;
+            cur_tok = lex.next();
+            goto optional_equal;
         default:
             return false;
     }
+optional_equal:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_EQUAL) {
+        switch (op) {
+            case COMP_OP_LESS:
+                op = COMP_OP_LESS_EQUAL;
+                break;
+            case COMP_OP_GREATER:
+                op = COMP_OP_GREATER_EQUAL;
+                break;
+            default:
+                break;
+        }
+        cur_tok = lex.next();
+    }
+    goto expect_right;
 expect_right:
     // We get here after successfully parsing the left side of the predicate
     // and the operator and now expect to find the right side of the predicate
