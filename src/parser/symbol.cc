@@ -31,6 +31,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_ALL] = std::string("ALL");
     m[SYMBOL_AS] = std::string("AS");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
+    m[SYMBOL_AVG] = std::string("AVG");
     m[SYMBOL_BIT] = std::string("BIT");
     m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
@@ -39,6 +40,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHECK] = std::string("CHECK");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
     m[SYMBOL_CONSTRAINT] = std::string("CONSTRAINT");
+    m[SYMBOL_COUNT] = std::string("COUNT");
     m[SYMBOL_CREATE] = std::string("CREATE");
     m[SYMBOL_CURRENT_DATE] = std::string("CURRENT_DATE");
     m[SYMBOL_CURRENT_TIME] = std::string("CURRENT_TIME");
@@ -67,6 +69,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_LOCAL] = std::string("LOCAL");
     m[SYMBOL_KEY] = std::string("KEY");
     m[SYMBOL_MATCH] = std::string("MATCH");
+    m[SYMBOL_MAX] = std::string("MAX");
+    m[SYMBOL_MIN] = std::string("MIN");
     m[SYMBOL_MINUTE] = std::string("MINUTE");
     m[SYMBOL_MONTH] = std::string("MONTH");
     m[SYMBOL_NATIONAL] = std::string("NATIONAL");
@@ -88,6 +92,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_SESSION_USER] = std::string("SESSION_USER");
     m[SYMBOL_SET] = std::string("SET");
     m[SYMBOL_SMALLINT] = std::string("SMALLINT");
+    m[SYMBOL_SUM] = std::string("SUM");
     m[SYMBOL_SYSTEM_USER] = std::string("SYSTEM_USER");
     m[SYMBOL_TABLE] = std::string("TABLE");
     m[SYMBOL_TEMPORARY] = std::string("TEMPORARY");

@@ -17,6 +17,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
     switch (lead_char) {
         case 'a':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AS, "AS"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_AVG, "AVG"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALL, "ALL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
@@ -26,6 +27,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BIT, "BIT"));
             return t;
         case 'c':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_COUNT, "COUNT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CREATE, "CREATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHAR, "CHAR"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHARACTER, "CHARACTER"));
@@ -75,6 +77,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOCAL, "LOCAL"));
             return t;
         case 'm':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_MAX, "MAX"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_MIN, "MIN"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_MATCH, "MATCH"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_MINUTE, "MINUTE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_MONTH, "MONTH"));
@@ -102,6 +106,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 's':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SELECT, "SELECT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SUM, "SUM"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SCHEMA, "SCHEMA"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SECOND, "SECOND"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SET, "SET"));

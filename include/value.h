@@ -31,6 +31,8 @@ typedef struct row_value_constructor {
     lexeme_t lexeme;
     row_value_constructor() : rvc_type(RVC_TYPE_UNKNOWN)
     {}
+    row_value_constructor(rvc_type_t rvc_type) : rvc_type(rvc_type)
+    {}
     row_value_constructor(lexeme_t lexeme) :
         rvc_type(RVC_TYPE_UNKNOWN),
         lexeme(lexeme)
@@ -72,6 +74,10 @@ typedef struct value_expression : row_value_constructor_t {
         row_value_constructor_t(),
         type(VALUE_EXPRESSION_TYPE_UNKNOWN)
     {}
+    value_expression(value_expression_type_t ve_type) :
+        row_value_constructor_t(RVC_TYPE_VALUE_EXPRESSION),
+        type(ve_type)
+    {}
     value_expression(value_expression_type_t ve_type, lexeme_t lexeme) :
         row_value_constructor_t(lexeme, RVC_TYPE_VALUE_EXPRESSION),
         type(ve_type)
@@ -79,6 +85,41 @@ typedef struct value_expression : row_value_constructor_t {
 } value_expression_t;
 
 std::ostream& operator<< (std::ostream& out, const value_expression_t& ve);
+
+typedef enum set_function_type {
+    SET_FUNCTION_TYPE_UNKNOWN,
+    SET_FUNCTION_TYPE_COUNT,
+    SET_FUNCTION_TYPE_COUNT_DISTINCT,
+    SET_FUNCTION_TYPE_COUNT_STAR,
+    SET_FUNCTION_TYPE_AVG,
+    SET_FUNCTION_TYPE_AVG_DISTINCT,
+    SET_FUNCTION_TYPE_MIN,
+    SET_FUNCTION_TYPE_MIN_DISTINCT,
+    SET_FUNCTION_TYPE_MAX,
+    SET_FUNCTION_TYPE_MAX_DISTINCT,
+    SET_FUNCTION_TYPE_SUM,
+    SET_FUNCTION_TYPE_SUM_DISTINCT
+} set_function_type_t;
+
+typedef struct set_function : value_expression_t {
+    set_function_type_t func_type;
+    // If set, will always be static_castable to a value_expression_t
+    std::unique_ptr<row_value_constructor_t> value;
+    set_function(set_function_type_t func_type) :
+        value_expression_t(VALUE_EXPRESSION_TYPE_SET_FUNCTION),
+        func_type(func_type)
+    {}
+    set_function(
+            set_function_type_t func_type,
+            std::unique_ptr<row_value_constructor_t>& value) :
+        value_expression_t(VALUE_EXPRESSION_TYPE_SET_FUNCTION, value->lexeme),
+        func_type(func_type),
+        value(std::move(value))
+    {}
+} set_function_t;
+
+std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_VALUE_H */

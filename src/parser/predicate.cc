@@ -51,22 +51,8 @@ bool parse_search_condition(
         cur_tok = lex.next();
         reverse_op = true;
     }
-    goto process_left;
-process_left:
-    if (cur_tok.is_literal()  || cur_tok.is_identifier()) {
-        // A number of different types of predicates start with an identifier
-        // or literal, including simple comparison predicates, between
-        // predicates, in predicates, etc.
-        //
-        // NOTE(jaypipes): We deliberately don't advance the cursor with a call
-        // to lex.next() here because the current token is pointing at an
-        // identifier, and the parse_xxx_predicate() functions will use this
-        // identifier as their "left" attributes for the constructed predicate
-        // structs.
-        if (! parse_comparison_predicate(ctx, cur_tok, cond_p))
-            return false;
+    if (parse_comparison_predicate(ctx, cur_tok, cond_p))
         goto push_condition;
-    }
     return false;
 push_condition:
     {
