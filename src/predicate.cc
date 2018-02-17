@@ -9,6 +9,8 @@
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
+    if (sc.reverse_op)
+        out << "NOT ";
     switch (sc.op) {
         case COMP_OP_EQUAL:
         case COMP_OP_NOT_EQUAL:
@@ -18,6 +20,12 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
         case COMP_OP_GREATER_EQUAL:
             {
                 const comp_predicate_t& pred = static_cast<const comp_predicate_t&>(sc);
+                out << pred;
+            }
+            break;
+        case COMP_OP_BETWEEN:
+            {
+                const between_predicate_t& pred = static_cast<const between_predicate_t&>(sc);
                 out << pred;
             }
             break;
@@ -56,5 +64,9 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
     out << *pred.right;
     return out;
 }
+
+std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred) {
+    out << *pred.left << " BETWEEN " << *pred.comp_left << " AND " << *pred.comp_right;
+};
 
 } // namespace sqltoast

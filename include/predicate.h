@@ -54,6 +54,23 @@ typedef struct comp_predicate : search_condition_t {
 
 std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred);
 
+typedef struct between_predicate : search_condition_t {
+    std::unique_ptr<row_value_constructor_t> left;
+    std::unique_ptr<row_value_constructor_t> comp_left;
+    std::unique_ptr<row_value_constructor_t> comp_right;
+    between_predicate(
+            std::unique_ptr<row_value_constructor_t>& left,
+            std::unique_ptr<row_value_constructor_t>& comp_left,
+            std::unique_ptr<row_value_constructor_t>& comp_right) :
+        search_condition_t(COMP_OP_BETWEEN),
+        left(std::move(left)),
+        comp_left(std::move(comp_left)),
+        comp_right(std::move(comp_right))
+    {}
+} between_predicate_t;
+
+std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PREDICATE_H */
