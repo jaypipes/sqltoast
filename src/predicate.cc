@@ -10,8 +10,12 @@ namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
     if (sc.term) {
-        size_t x = 0;
-        out << std::endl << "     " << x++ << ": " << *sc.term;
+        out << std::endl << "     " << *sc.term;
+        boolean_term_t* next_term = sc.term->term_and.get();
+        while (next_term != NULL) {
+            out << std::endl << "     AND " << *next_term;
+            next_term = next_term->term_and.get();
+        }
     }
     return out;
 }

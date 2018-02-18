@@ -34,11 +34,19 @@ typedef enum comp_op {
 typedef struct boolean_term {
     comp_op_t op;
     bool reverse_op;
+    std::unique_ptr<boolean_term> term_and;
     boolean_term(comp_op_t op) : op(op), reverse_op(false)
     {}
+    inline boolean_term* and_term(std::unique_ptr<boolean_term>&& and_term) {
+        boolean_term* next_term = this;
+        while (next_term->term_and)
+            next_term = next_term->term_and.get();
+        next_term->term_and = std::move(and_term);
+        return next_term;
+    }
 } boolean_term_t;
 
-std::ostream& operator<< (std::ostream& out, const boolean_term_t& sc);
+std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt);
 
 typedef struct comp_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;

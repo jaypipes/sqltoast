@@ -46,20 +46,23 @@ bool parse_boolean_term(
         std::unique_ptr<boolean_term_t>& term_p) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    bool reverse_op = false; // true when NOT precedes a predicate
 
-    if (cur_sym == SYMBOL_NOT) {
-        cur_tok = lex.next();
-        reverse_op = true;
-    }
-    if (parse_predicate(ctx, cur_tok, term_p))
-        goto push_condition;
+    if (parse_boolean_factor(ctx, cur_tok, term_p))
+        goto optional_and;
     return false;
-push_condition:
+optional_and:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_AND) {
+        cur_tok = lex.next();
+        if (! parse_boolean_factor(ctx, cur_tok, term_p))
+            return false;
+        goto optional_and;
+    }
+    goto push_term;
+push_term:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        term_p->reverse_op ^= reverse_op;
         return true;
     }
 }
@@ -252,7 +255,10 @@ push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
 
-    term_p = std::make_unique<comp_predicate_t>(op, left, right);
+    if (! term_p)
+        term_p = std::make_unique<comp_predicate_t>(op, left, right);
+    else
+        term_p->and_term(std::make_unique<comp_predicate_t>(op, left, right));
     return true;
 }
 
@@ -308,7 +314,10 @@ push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
 
-    term_p = std::make_unique<between_predicate_t>(left, comp_left, comp_right);
+    if (! term_p)
+        term_p = std::make_unique<between_predicate_t>(left, comp_left, comp_right);
+    else
+        term_p->and_term(std::make_unique<between_predicate_t>(left, comp_left, comp_right));
     return true;
 }
 
@@ -341,8 +350,13 @@ push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
 
-    term_p = std::make_unique<null_predicate_t>(left);
-    term_p->reverse_op = reverse_op;
+    if (! term_p) {
+        term_p = std::make_unique<null_predicate_t>(left);
+        term_p->reverse_op = reverse_op;
+    } else {
+        boolean_term_t* new_term = term_p->and_term(std::make_unique<null_predicate_t>(left));
+        new_term->reverse_op = reverse_op;
+    }
     return true;
 }
 
@@ -406,10 +420,18 @@ push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
 
-    if (! values.empty())
-        term_p = std::make_unique<in_values_predicate_t>(left, values);
-    else
-        term_p = std::make_unique<in_subquery_predicate_t>(left);
+    if (! values.empty()) {
+        if (! term_p)
+            term_p = std::make_unique<in_values_predicate_t>(left, values);
+        else
+            term_p->and_term(std::make_unique<in_values_predicate_t>(left, values));
+    }
+    else {
+        if (! term_p)
+            term_p = std::make_unique<in_subquery_predicate_t>(left);
+        else
+            term_p->and_term(std::make_unique<in_subquery_predicate_t>(left));
+    }
     return true;
 }
 
