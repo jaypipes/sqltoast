@@ -41,7 +41,7 @@ bool parse_select(parse_context_t& ctx) {
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
-    std::vector<std::unique_ptr<search_condition_t>> where_conditions;
+    std::unique_ptr<search_condition_t> where_condition;
     bool distinct = false;
 
     // BEGIN STATE MACHINE
@@ -163,7 +163,7 @@ comma_or_where_group_having:
     }
 expect_where_condition:
     cur_sym = cur_tok.symbol;
-    if (! parse_search_condition(ctx, cur_tok, where_conditions))
+    if (! parse_search_condition(ctx, cur_tok, where_condition))
         return false;
     goto statement_ending;
 statement_ending:
@@ -183,7 +183,7 @@ push_statement:
         stmt_p->distinct = distinct;
         stmt_p->selected_columns = std::move(selected_columns);
         stmt_p->referenced_tables = std::move(referenced_tables);
-        stmt_p->where_conditions = std::move(where_conditions);
+        stmt_p->where_condition = std::move(where_condition);
         ctx.result.statements.emplace_back(std::move(stmt_p));
         return true;
     }

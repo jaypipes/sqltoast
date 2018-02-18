@@ -9,9 +9,17 @@
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
-    if (sc.reverse_op)
+    if (sc.term) {
+        size_t x = 0;
+        out << std::endl << "     " << x++ << ": " << *sc.term;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt) {
+    if (bt.reverse_op)
         out << "NOT ";
-    switch (sc.op) {
+    switch (bt.op) {
         case COMP_OP_EQUAL:
         case COMP_OP_NOT_EQUAL:
         case COMP_OP_LESS:
@@ -19,31 +27,31 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
         case COMP_OP_LESS_EQUAL:
         case COMP_OP_GREATER_EQUAL:
             {
-                const comp_predicate_t& pred = static_cast<const comp_predicate_t&>(sc);
+                const comp_predicate_t& pred = static_cast<const comp_predicate_t&>(bt);
                 out << pred;
             }
             break;
         case COMP_OP_BETWEEN:
             {
-                const between_predicate_t& pred = static_cast<const between_predicate_t&>(sc);
+                const between_predicate_t& pred = static_cast<const between_predicate_t&>(bt);
                 out << pred;
             }
             break;
         case COMP_OP_NULL:
             {
-                const null_predicate_t& pred = static_cast<const null_predicate_t&>(sc);
+                const null_predicate_t& pred = static_cast<const null_predicate_t&>(bt);
                 out << pred;
             }
             break;
         case COMP_OP_IN_VALUES:
             {
-                const in_values_predicate_t& pred = static_cast<const in_values_predicate_t&>(sc);
+                const in_values_predicate_t& pred = static_cast<const in_values_predicate_t&>(bt);
                 out << pred;
             }
             break;
         case COMP_OP_IN_SUBQUERY:
             {
-                const in_subquery_predicate_t& pred = static_cast<const in_subquery_predicate_t&>(sc);
+                const in_subquery_predicate_t& pred = static_cast<const in_subquery_predicate_t&>(bt);
                 out << pred;
             }
             break;

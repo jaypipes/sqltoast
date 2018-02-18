@@ -31,23 +31,23 @@ typedef enum comp_op {
     COMP_OP_UNIQUE
 } comp_op_t;
 
-typedef struct search_condition {
+typedef struct boolean_term {
     comp_op_t op;
     bool reverse_op;
-    search_condition(comp_op_t op) : op(op), reverse_op(false)
+    boolean_term(comp_op_t op) : op(op), reverse_op(false)
     {}
-} search_condition_t;
+} boolean_term_t;
 
-std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);
+std::ostream& operator<< (std::ostream& out, const boolean_term_t& sc);
 
-typedef struct comp_predicate : search_condition_t {
+typedef struct comp_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
     std::unique_ptr<row_value_constructor_t> right;
     comp_predicate(
             comp_op_t op,
             std::unique_ptr<row_value_constructor_t>& left,
             std::unique_ptr<row_value_constructor_t>& right) :
-        search_condition_t(op),
+        boolean_term_t(op),
         left(std::move(left)),
         right(std::move(right))
     {}
@@ -55,7 +55,7 @@ typedef struct comp_predicate : search_condition_t {
 
 std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred);
 
-typedef struct between_predicate : search_condition_t {
+typedef struct between_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
     std::unique_ptr<row_value_constructor_t> comp_left;
     std::unique_ptr<row_value_constructor_t> comp_right;
@@ -63,7 +63,7 @@ typedef struct between_predicate : search_condition_t {
             std::unique_ptr<row_value_constructor_t>& left,
             std::unique_ptr<row_value_constructor_t>& comp_left,
             std::unique_ptr<row_value_constructor_t>& comp_right) :
-        search_condition_t(COMP_OP_BETWEEN),
+        boolean_term_t(COMP_OP_BETWEEN),
         left(std::move(left)),
         comp_left(std::move(comp_left)),
         comp_right(std::move(comp_right))
@@ -72,17 +72,17 @@ typedef struct between_predicate : search_condition_t {
 
 std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred);
 
-typedef struct null_predicate : search_condition_t {
+typedef struct null_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
     null_predicate(std::unique_ptr<row_value_constructor_t>& left) :
-        search_condition_t(COMP_OP_NULL),
+        boolean_term_t(COMP_OP_NULL),
         left(std::move(left))
     {}
 } null_predicate_t;
 
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred);
 
-typedef struct in_values_predicate : search_condition_t {
+typedef struct in_values_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
     // All elemnts in values are guaranteed to be static_castable to
     // value_expression_t
@@ -90,7 +90,7 @@ typedef struct in_values_predicate : search_condition_t {
     in_values_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             std::vector<std::unique_ptr<row_value_constructor_t>>& values) :
-        search_condition_t(COMP_OP_IN_VALUES),
+        boolean_term_t(COMP_OP_IN_VALUES),
         left(std::move(left)),
         values(std::move(values))
     {}
@@ -98,16 +98,26 @@ typedef struct in_values_predicate : search_condition_t {
 
 std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred);
 
-typedef struct in_subquery_predicate : search_condition_t {
+typedef struct in_subquery_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
     in_subquery_predicate(std::unique_ptr<row_value_constructor_t>& left) :
-        search_condition_t(COMP_OP_IN_SUBQUERY),
+        boolean_term_t(COMP_OP_IN_SUBQUERY),
         left(std::move(left))
     {}
 } in_subquery_predicate_t;
 
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred);
 
+// A container for processing boolean terms found in WHERE and HAVING clause
+// conditions
+typedef struct search_condition {
+    std::unique_ptr<boolean_term_t> term;
+    search_condition(std::unique_ptr<boolean_term_t>& term) :
+        term(std::move(term))
+    {}
+} search_condition_t;
+
+std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);
 } // namespace sqltoast
 
 #endif /* SQLTOAST_PREDICATE_H */
