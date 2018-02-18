@@ -17,24 +17,42 @@ namespace sqltoast {
 // <boolean term> ::=
 //     <boolean factor>
 //     | <boolean term> AND <boolean factor>
-//
-// <boolean factor> ::= [ NOT ] <boolean test>
-//
-// <boolean test> ::= <boolean primary> [ IS [ NOT ] <truth value> ]
-//
-// <boolean primary> ::= <predicate> | <left paren> <search condition> <right paren>
 bool parse_search_condition(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::vector<std::unique_ptr<search_condition_t>>& conditions) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    bool reverse_op = false; // true when NOT precedes a predicate
     std::unique_ptr<search_condition_t> cond_p;
 
     // We get here after getting one of the symbols that precede a search
     // condition's definition, which include the WHERE and HAVING symbols, as
     // well as the AND and OR symbols when constructing compound predicates
+
+    if (parse_boolean_factor(ctx, cur_tok, cond_p))
+        goto push_condition;
+    return false;
+push_condition:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        conditions.emplace_back(std::move(cond_p));
+        return true;
+    }
+}
+
+// <boolean factor> ::= [ NOT ] <boolean test>
+//
+// <boolean test> ::= <boolean primary> [ IS [ NOT ] <truth value> ]
+//
+// <boolean primary> ::= <predicate> | <left paren> <search condition> <right paren>
+bool parse_boolean_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    bool reverse_op = false; // true when NOT precedes a predicate
 
     if (cur_sym == SYMBOL_NOT) {
         cur_tok = lex.next();
@@ -48,7 +66,6 @@ push_condition:
         if (ctx.opts.disable_statement_construction)
             return true;
         cond_p->reverse_op ^= reverse_op;
-        conditions.emplace_back(std::move(cond_p));
         return true;
     }
 }

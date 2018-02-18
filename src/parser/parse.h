@@ -48,6 +48,11 @@ bool parse_search_condition(
         token_t& cur_tok,
         std::vector<std::unique_ptr<search_condition_t>>& conditions);
 
+bool parse_boolean_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<search_condition_t>& cond_p);
+
 // Returns true if a oredicate could be parsed. If true, the conditions
 // argument will have a new pointer to a search_condition_t subclass that
 // represents a prdicate added to it.
