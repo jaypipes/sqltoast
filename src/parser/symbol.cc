@@ -87,6 +87,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_NUMERIC] = std::string("NUMERIC");
     m[SYMBOL_NULL] = std::string("NULL");
     m[SYMBOL_ON] = std::string("ON");
+    m[SYMBOL_OR] = std::string("OR");
     m[SYMBOL_PARTIAL] = std::string("PARTIAL");
     m[SYMBOL_PRECISION] = std::string("PRECISION");
     m[SYMBOL_PRIMARY] = std::string("PRIMARY");

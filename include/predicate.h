@@ -120,9 +120,17 @@ std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred
 // conditions
 typedef struct search_condition {
     std::unique_ptr<boolean_term_t> term;
+    std::unique_ptr<search_condition> cond_or;
     search_condition(std::unique_ptr<boolean_term_t>& term) :
         term(std::move(term))
     {}
+    inline search_condition* or_cond(std::unique_ptr<search_condition>&& or_cond) {
+        search_condition* next_cond = this;
+        while (next_cond->cond_or)
+            next_cond = next_cond->cond_or.get();
+        next_cond->cond_or = std::move(or_cond);
+        return next_cond;
+    }
 } search_condition_t;
 
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);

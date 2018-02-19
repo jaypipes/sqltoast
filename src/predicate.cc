@@ -17,6 +17,13 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
             next_term = next_term->term_and.get();
         }
     }
+    if (sc.cond_or) {
+        search_condition_t* next_cond = sc.cond_or.get();
+        while (next_cond != NULL) {
+            out << std::endl << "     OR " << *next_cond;
+            next_cond = next_cond->cond_or.get();
+        }
+    }
     return out;
 }
 

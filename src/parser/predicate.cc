@@ -26,15 +26,36 @@ bool parse_search_condition(
     // well as the AND and OR symbols when constructing compound predicates
 
     if (parse_boolean_term(ctx, cur_tok, term_p))
-        goto push_condition;
+        goto optional_or;
     return false;
-push_condition:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        cond_p = std::make_unique<search_condition_t>(term_p);
-        return true;
+optional_or:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_OR) {
+        cur_tok = lex.next();
+        goto ensure_or;
     }
+    goto push_condition;
+ensure_or:
+    if (ctx.opts.disable_statement_construction)
+        goto process_or_term;
+    if (! cond_p)
+        cond_p = std::make_unique<search_condition_t>(term_p);
+    goto process_or_term;
+process_or_term:
+    if (! parse_boolean_term(ctx, cur_tok, term_p))
+        return false;
+    goto push_or;
+push_or:
+    if (ctx.opts.disable_statement_construction)
+        goto optional_or;
+    cond_p->or_cond(std::make_unique<search_condition_t>(term_p));
+    goto optional_or;
+push_condition:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    if (! cond_p)
+        cond_p = std::make_unique<search_condition_t>(term_p);
+    return true;
 }
 
 // <boolean term> ::=
