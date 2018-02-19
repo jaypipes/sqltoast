@@ -13,42 +13,106 @@ namespace sqltoast {
 // <search condition> ::=
 //     <boolean term>
 //     | <search condition> OR <boolean term>
-//
-// <boolean term> ::=
-//     <boolean factor>
-//     | <boolean term> AND <boolean factor>
-//
-// <boolean factor> ::= [ NOT ] <boolean test>
-//
-// <boolean test> ::= <boolean primary> [ IS [ NOT ] <truth value> ]
-//
-// <boolean primary> ::= <predicate> | <left paren> <search condition> <right paren>
 bool parse_search_condition(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::vector<std::unique_ptr<search_condition_t>>& conditions) {
+        std::unique_ptr<search_condition_t>& cond_p) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    bool reverse_op = false; // true when NOT precedes a predicate
-    std::unique_ptr<search_condition_t> cond_p;
+    std::unique_ptr<boolean_term_t> term_p;
 
     // We get here after getting one of the symbols that precede a search
     // condition's definition, which include the WHERE and HAVING symbols, as
     // well as the AND and OR symbols when constructing compound predicates
 
+    if (parse_boolean_term(ctx, cur_tok, term_p))
+        goto optional_or;
+    return false;
+optional_or:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_OR) {
+        cur_tok = lex.next();
+        goto ensure_or;
+    }
+    goto push_condition;
+ensure_or:
+    if (ctx.opts.disable_statement_construction)
+        goto process_or_term;
+    if (! cond_p)
+        cond_p = std::make_unique<search_condition_t>(term_p);
+    goto process_or_term;
+process_or_term:
+    if (! parse_boolean_term(ctx, cur_tok, term_p))
+        return false;
+    goto push_or;
+push_or:
+    if (ctx.opts.disable_statement_construction)
+        goto optional_or;
+    cond_p->or_cond(std::make_unique<search_condition_t>(term_p));
+    goto optional_or;
+push_condition:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    if (! cond_p)
+        cond_p = std::make_unique<search_condition_t>(term_p);
+    return true;
+}
+
+// <boolean term> ::=
+//     <boolean factor>
+//     | <boolean term> AND <boolean factor>
+bool parse_boolean_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_term_t>& term_p) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    if (parse_boolean_factor(ctx, cur_tok, term_p))
+        goto optional_and;
+    return false;
+optional_and:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_AND) {
+        cur_tok = lex.next();
+        if (! parse_boolean_factor(ctx, cur_tok, term_p))
+            return false;
+        goto optional_and;
+    }
+    goto push_term;
+push_term:
+    {
+        if (ctx.opts.disable_statement_construction)
+            return true;
+        return true;
+    }
+}
+
+// <boolean factor> ::= [ NOT ] <boolean test>
+//
+// <boolean test> ::= <boolean primary> [ IS [ NOT ] <truth value> ]
+//
+// <boolean primary> ::= <predicate> | <left paren> <search condition> <right paren>
+bool parse_boolean_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_term_t>& term_p) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    bool reverse_op = false; // true when NOT precedes a predicate
+
     if (cur_sym == SYMBOL_NOT) {
         cur_tok = lex.next();
         reverse_op = true;
     }
-    if (parse_predicate(ctx, cur_tok, cond_p))
+    if (parse_predicate(ctx, cur_tok, term_p))
         goto push_condition;
     return false;
 push_condition:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        cond_p->reverse_op ^= reverse_op;
-        conditions.emplace_back(std::move(cond_p));
+        term_p->reverse_op ^= reverse_op;
         return true;
     }
 }
@@ -66,7 +130,7 @@ push_condition:
 bool parse_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<search_condition_t>& cond_p) {
+        std::unique_ptr<boolean_term_t>& term_p) {
     lexer_t& lex = ctx.lexer;
     token_t start_tok = lex.current_token;
     symbol_t cur_sym = cur_tok.symbol;
@@ -86,26 +150,34 @@ bool parse_predicate(
         switch (cur_sym) {
             case SYMBOL_BETWEEN:
                 cur_tok = lex.next();
-                if (! parse_between_predicate(ctx, cur_tok, cond_p, left_most))
+                if (! parse_between_predicate(ctx, cur_tok, term_p, left_most))
                     return false;
                 break;
             case SYMBOL_IN:
                 cur_tok = lex.next();
-                return false;//return parse_in_predicate(ctx, cur_tok, cond_p, left_most);
+                if (! parse_in_predicate(ctx, cur_tok, term_p, left_most))
+                    return false;
+                break;
             case SYMBOL_IS:
+                if (reverse_op)
+                    goto err_expected_between_in_or_like;
                 cur_tok = lex.next();
-                return false; //return parse_null_predicate(ctx, cur_tok, cond_p, left_most);
+                if (! parse_null_predicate(ctx, cur_tok, term_p, left_most))
+                    return false;
+                break;
             case SYMBOL_LIKE:
                 cur_tok = lex.next();
-                return false; //return parse_like_predicate(ctx, cur_tok, cond_p, left_most);
+                return false; //return parse_like_predicate(ctx, cur_tok, term_p, left_most);
             default:
-                if (! parse_comparison_predicate(ctx, cur_tok, cond_p, left_most))
+                if (reverse_op)
+                    goto err_expected_between_in_or_like;
+                if (! parse_comparison_predicate(ctx, cur_tok, term_p, left_most))
                     return false;
                 break;
         }
-        // If we get here, we are guaranteed that cond_p will point to a valid
-        // search_condition_t struct
-        cond_p->reverse_op = reverse_op;
+        // If we get here, we are guaranteed that term_p will point to a valid
+        // boolean_term_t struct
+        term_p->reverse_op ^= reverse_op;
         return true;
     }
     // If a row-value constructor wasn't able to be parsed, look for other
@@ -114,10 +186,13 @@ bool parse_predicate(
     cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_EXISTS:
-            return false;  // return parse_exists_predicate(ctx, cur_tok, cond_p);
+            return false;  // return parse_exists_predicate(ctx, cur_tok, term_p);
         default:
             return false;
     }
+err_expected_between_in_or_like:
+    expect_any_error(ctx, {SYMBOL_BETWEEN, SYMBOL_IN, SYMBOL_LIKE});
+    return false;
 }
 
 // <comparison predicate> ::=
@@ -125,7 +200,7 @@ bool parse_predicate(
 bool parse_comparison_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<boolean_term_t>& term_p,
         std::unique_ptr<row_value_constructor_t>& left) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
@@ -201,26 +276,20 @@ push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
 
-    cond_p = std::make_unique<comp_predicate_t>(op, left, right);
+    if (! term_p)
+        term_p = std::make_unique<comp_predicate_t>(op, left, right);
+    else
+        term_p->and_term(std::make_unique<comp_predicate_t>(op, left, right));
     return true;
 }
 
 // <between predicate> ::=
 //     <row value constructor>
 //     [ NOT ] BETWEEN <row value constructor> AND <row value constructor>
-//
-// <in predicate> :=
-//     <row value constructor> [ NOT ] IN <in predicate value>
-//
-// <in predicate value> ::=
-//     <table subquery> | <left paren> <in value list> <right paren>
-//
-// <in value list> ::=
-//     <value expression> { <comma> <value expression> } ...
 bool parse_between_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<search_condition_t>& cond_p,
+        std::unique_ptr<boolean_term_t>& term_p,
         std::unique_ptr<row_value_constructor_t>& left) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
@@ -266,7 +335,124 @@ push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
 
-    cond_p = std::make_unique<between_predicate_t>(left, comp_left, comp_right);
+    if (! term_p)
+        term_p = std::make_unique<between_predicate_t>(left, comp_left, comp_right);
+    else
+        term_p->and_term(std::make_unique<between_predicate_t>(left, comp_left, comp_right));
+    return true;
+}
+
+// <null predicate> ::= <row value constructor> IS [ NOT ] NULL
+bool parse_null_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_term_t>& term_p,
+        std::unique_ptr<row_value_constructor_t>& left) {
+    lexer_t& lex = ctx.lexer;
+    bool reverse_op = false;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    // We get here if we've processed the left row value constructor and the
+    // IS symbol. We now expect either an optional NOT symbol follwed by the
+    // NULL symbol
+    if (cur_sym == SYMBOL_NOT) {
+        reverse_op = true;
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+    }
+    if (cur_sym != SYMBOL_NULL)
+        goto err_expect_null;
+    cur_tok = lex.next();
+    goto push_condition;
+err_expect_null:
+    expect_error(ctx, SYMBOL_NULL);
+    return false;
+push_condition:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    if (! term_p) {
+        term_p = std::make_unique<null_predicate_t>(left);
+        term_p->reverse_op = reverse_op;
+    } else {
+        boolean_term_t* new_term = term_p->and_term(std::make_unique<null_predicate_t>(left));
+        new_term->reverse_op = reverse_op;
+    }
+    return true;
+}
+
+// <in predicate> :=
+//     <row value constructor> [ NOT ] IN <in predicate value>
+//
+// <in predicate value> ::=
+//     <table subquery> | <left paren> <in value list> <right paren>
+//
+// <in value list> ::=
+//     <value expression> { <comma> <value expression> } ...
+bool parse_in_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_term_t>& term_p,
+        std::unique_ptr<row_value_constructor_t>& left) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::vector<std::unique_ptr<row_value_constructor_t>> values;
+
+    // We get here if we've processed the left row value constructor and the
+    // [NOT] IN symbol(s). We now expect a LPAREN followed by either the SELECT
+    // symbol or a list of value expressions
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_SELECT)
+        goto process_subquery;
+    goto process_value_list_item;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+process_subquery:
+    cur_tok = lex.next();
+    goto expect_rparen;
+process_value_list_item:
+    {
+        std::unique_ptr<row_value_constructor> value;
+        if (! parse_value_expression(ctx, cur_tok, value))
+            return false;
+        values.emplace_back(std::move(value));
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_COMMA) {
+            cur_tok = lex.next();
+            goto process_value_list_item;
+        }
+        goto expect_rparen;
+    }
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_condition;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_condition:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    if (! values.empty()) {
+        if (! term_p)
+            term_p = std::make_unique<in_values_predicate_t>(left, values);
+        else
+            term_p->and_term(std::make_unique<in_values_predicate_t>(left, values));
+    }
+    else {
+        if (! term_p)
+            term_p = std::make_unique<in_subquery_predicate_t>(left);
+        else
+            term_p->and_term(std::make_unique<in_subquery_predicate_t>(left));
+    }
     return true;
 }
 

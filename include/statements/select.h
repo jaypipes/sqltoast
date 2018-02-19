@@ -23,7 +23,7 @@ typedef struct select : statement_t {
     bool distinct;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
-    std::vector<std::unique_ptr<search_condition_t>> where_conditions;
+    std::unique_ptr<search_condition_t> where_condition;
     select() :
         statement_t(STATEMENT_TYPE_SELECT),
         distinct(false)

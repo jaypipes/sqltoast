@@ -100,6 +100,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NUMERIC, "NUMERIC"));
             return t;
         case 'o':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_OR, "OR"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ON, "ON"));
             return t;
         case 'p':

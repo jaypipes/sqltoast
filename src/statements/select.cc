@@ -26,12 +26,9 @@ const std::string select_t::to_string() {
     for (const table_reference_t& tr : referenced_tables) {
         ss << std::endl << "     " << x++ << ": " << tr;
     }
-    if (where_conditions.size() > 0) {
+    if (where_condition) {
         ss << std::endl << "   where conditions: ";
-        x = 0;
-        for (const std::unique_ptr<search_condition_t>& sc : where_conditions) {
-            ss << std::endl << "     " << x++ << ": " << *sc;
-        }
+        ss << *where_condition;
     }
     ss << ">" << std::endl;
 
