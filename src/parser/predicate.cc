@@ -38,8 +38,10 @@ optional_or:
 ensure_or:
     if (ctx.opts.disable_statement_construction)
         goto process_or_term;
-    if (! cond_p)
-        cond_p = std::make_unique<search_condition_t>(term_p);
+    if (! cond_p) {
+        cond_p = std::make_unique<search_condition_t>();
+        cond_p->terms.emplace_back(std::move(term_p));
+    }
     goto process_or_term;
 process_or_term:
     if (! parse_boolean_term(ctx, cur_tok, term_p))
@@ -48,13 +50,15 @@ process_or_term:
 push_or:
     if (ctx.opts.disable_statement_construction)
         goto optional_or;
-    cond_p->or_cond(std::make_unique<search_condition_t>(term_p));
+    cond_p->terms.emplace_back(std::move(term_p));
     goto optional_or;
 push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
-    if (! cond_p)
-        cond_p = std::make_unique<search_condition_t>(term_p);
+    if (! cond_p) {
+        cond_p = std::make_unique<search_condition_t>();
+        cond_p->terms.emplace_back(std::move(term_p));
+    }
     return true;
 }
 

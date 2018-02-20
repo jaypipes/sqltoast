@@ -9,19 +9,13 @@
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
-    if (sc.term) {
-        out << std::endl << "     " << *sc.term;
-        boolean_term_t* next_term = sc.term->term_and.get();
-        while (next_term != NULL) {
-            out << std::endl << "     AND " << *next_term;
-            next_term = next_term->term_and.get();
-        }
-    }
-    if (sc.cond_or) {
-        search_condition_t* next_cond = sc.cond_or.get();
-        while (next_cond != NULL) {
-            out << std::endl << "     OR " << *next_cond;
-            next_cond = next_cond->cond_or.get();
+    if (! sc.terms.empty()) {
+        size_t x = 0;
+        for (const std::unique_ptr<boolean_term_t>& or_term_p : sc.terms) {
+            if (x++ > 0)
+                out << std::endl << "     OR " << *or_term_p;
+            else
+                out << std::endl << "     " << *or_term_p;
         }
     }
     return out;
@@ -70,6 +64,8 @@ std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt) {
             // TODO
             break;
     }
+    if (bt.term_and)
+        out << " AND " << *bt.term_and;
     return out;
 }
 
