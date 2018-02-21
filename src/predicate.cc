@@ -4,7 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "predicate.h"
+#include "sqltoast.h"
 
 namespace sqltoast {
 

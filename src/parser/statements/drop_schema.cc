@@ -4,15 +4,14 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <iostream>
-#include <cctype>
 #include <sstream>
+
+#include "sqltoast.h"
 
 #include "parser/error.h"
 #include "parser/parse.h"
 #include "parser/sequence.h"
 #include "parser/token.h"
-#include "statements/drop_schema.h"
 
 namespace sqltoast {
 
@@ -37,7 +36,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
     lexeme_t schema_name;
     token_t& cur_tok = lex.current_token;
     symbol_t cur_sym;
-    statements::drop_behaviour_t behaviour = statements::DROP_BEHAVIOUR_CASCADE;
+    drop_behaviour_t behaviour = DROP_BEHAVIOUR_CASCADE;
 
     // BEGIN STATE MACHINE
 
@@ -76,7 +75,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_CASCADE || cur_sym == SYMBOL_RESTRICT) {
             if (cur_sym == SYMBOL_RESTRICT) {
-                behaviour = statements::DROP_BEHAVIOUR_RESTRICT;
+                behaviour = DROP_BEHAVIOUR_RESTRICT;
             }
             cur_tok = lex.next();
         }
@@ -95,7 +94,7 @@ bool parse_drop_schema(parse_context_t& ctx) {
         {
             if (ctx.opts.disable_statement_construction)
                 return true;
-            auto stmt_p = std::make_unique<statements::drop_schema_t>(schema_name, behaviour);
+            auto stmt_p = std::make_unique<drop_schema_t>(schema_name, behaviour);
             ctx.result.statements.emplace_back(std::move(stmt_p));
             return true;
         }

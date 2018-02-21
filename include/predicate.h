@@ -7,13 +7,6 @@
 #ifndef SQLTOAST_PREDICATE_H
 #define SQLTOAST_PREDICATE_H
 
-#include <memory>
-#include <ostream>
-#include <vector>
-
-#include "sqltoast.h"
-#include "value.h"
-
 namespace sqltoast {
 
 typedef enum comp_op {

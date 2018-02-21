@@ -7,11 +7,6 @@
 #ifndef SQLTOAST_IDENTIFIER_H
 #define SQLTOAST_IDENTIFIER_H
 
-#include <ostream>
-#include <string>
-
-#include "sqltoast.h"
-
 namespace sqltoast {
 
 typedef struct identifier {

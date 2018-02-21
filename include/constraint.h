@@ -7,12 +7,6 @@
 #ifndef SQLTOAST_CONSTRAINT_H
 #define SQLTOAST_CONSTRAINT_H
 
-#include <memory>
-#include <vector>
-#include <ostream>
-
-#include "data_type.h"
-
 namespace sqltoast {
 
 typedef enum constraint_type {

@@ -7,8 +7,6 @@
 #ifndef SQLTOAST_STATEMENT_H
 #define SQLTOAST_STATEMENT_H
 
-#include "sqltoast.h"
-
 namespace sqltoast {
 
 typedef enum statement_type {
@@ -36,6 +34,53 @@ typedef struct create_schema : statement_t {
     {}
     virtual const std::string to_string();
 } create_schema_t;
+
+typedef enum drop_behaviour {
+    DROP_BEHAVIOUR_CASCADE,
+    DROP_BEHAVIOUR_RESTRICT
+} drop_behaviour_t;
+
+typedef struct drop_schema : statement_t {
+    lexeme_t schema_name;
+    drop_behaviour_t drop_behaviour;
+    drop_schema(lexeme_t& schema_name, drop_behaviour_t drop_behaviour) :
+        statement_t(STATEMENT_TYPE_DROP_SCHEMA),
+        schema_name(schema_name),
+        drop_behaviour(drop_behaviour)
+    {}
+    virtual const std::string to_string();
+} drop_schema_t;
+
+typedef enum table_type {
+    TABLE_TYPE_NORMAL,
+    TABLE_TYPE_TEMPORARY_GLOBAL,
+    TABLE_TYPE_TEMPORARY_LOCAL
+} table_type_t;
+
+typedef struct create_table : statement_t {
+    table_type_t table_type;
+    lexeme_t table_name;
+    std::vector<std::unique_ptr<column_definition_t>> column_definitions;
+    std::vector<std::unique_ptr<constraint_t>> constraints;
+    create_table(table_type_t table_type, lexeme_t& table_name) :
+        statement_t(STATEMENT_TYPE_CREATE_TABLE),
+        table_type(table_type),
+        table_name(table_name)
+    {}
+    virtual const std::string to_string();
+} create_table_t;
+
+typedef struct select : statement_t {
+    bool distinct;
+    std::vector<derived_column_t> selected_columns;
+    std::vector<table_reference_t> referenced_tables;
+    std::unique_ptr<search_condition_t> where_condition;
+    select() :
+        statement_t(STATEMENT_TYPE_SELECT),
+        distinct(false)
+    {}
+    virtual const std::string to_string();
+} select_t;
 
 } // namespace sqltoast
 

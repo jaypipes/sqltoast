@@ -7,10 +7,6 @@
 #ifndef SQLTOAST_VALUE_H
 #define SQLTOAST_VALUE_H
 
-#include <ostream>
-
-#include "sqltoast.h"
-
 namespace sqltoast {
 
 typedef enum rvc_type {

@@ -5,9 +5,8 @@
  */
 
 #include <sstream>
-#include <string>
 
-#include "data_type.h"
+#include "sqltoast.h"
 
 namespace sqltoast {
 

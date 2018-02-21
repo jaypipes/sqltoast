@@ -4,7 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <vector>
+#include "sqltoast.h"
 
 #include "context.h"
 #include "error.h"

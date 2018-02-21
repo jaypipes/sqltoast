@@ -7,13 +7,6 @@
 #ifndef SQLTOAST_TABLE_REFERENCE_H
 #define SQLTOAST_TABLE_REFERENCE_H
 
-#include <memory>
-#include <vector>
-#include <ostream>
-
-#include "data_type.h"
-#include "identifier.h"
-
 namespace sqltoast {
 
 typedef struct table_reference {

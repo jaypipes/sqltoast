@@ -4,8 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_IDENTIFIER_H
-#define SQLTOAST_IDENTIFIER_H
+#ifndef SQLTOAST_PARSER_IDENTIFIER_H
+#define SQLTOAST_PARSER_IDENTIFIER_H
 
 #include "parser/lexer.h"
 
@@ -26,4 +26,4 @@ tokenize_result_t token_delimited_identifier(
 
 } // namespace sqltoast
 
-#endif /* SQLTOAST_IDENTIFIER_H */
+#endif /* SQLTOAST_PARSER_IDENTIFIER_H */

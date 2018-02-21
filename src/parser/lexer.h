@@ -7,10 +7,6 @@
 #ifndef SQLTOAST_PARSER_LEXER_H
 #define SQLTOAST_PARSER_LEXER_H
 
-#include <iostream>
-#include <cctype>
-
-#include "sqltoast.h"
 #include "parser/token.h"
 
 namespace sqltoast {

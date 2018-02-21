@@ -4,12 +4,10 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "derived_column.h"
+#include "sqltoast.h"
+
 #include "parser/error.h"
 #include "parser/parse.h"
-#include "predicate.h"
-#include "statements/select.h"
-#include "table_reference.h"
 
 namespace sqltoast {
 
@@ -179,7 +177,7 @@ push_statement:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        auto stmt_p = std::make_unique<statements::select_t>();
+        auto stmt_p = std::make_unique<select_t>();
         stmt_p->distinct = distinct;
         stmt_p->selected_columns = std::move(selected_columns);
         stmt_p->referenced_tables = std::move(referenced_tables);

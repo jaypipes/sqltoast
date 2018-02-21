@@ -18,6 +18,14 @@
 #include <vector>
 
 #include "lexeme.h"
+#include "identifier.h"
+#include "data_type.h"
+#include "constraint.h"
+#include "column_definition.h"
+#include "derived_column.h"
+#include "value.h"
+#include "predicate.h"
+#include "table_reference.h"
 #include "statement.h"
 
 namespace sqltoast {

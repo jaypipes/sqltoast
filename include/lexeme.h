@@ -7,8 +7,6 @@
 #ifndef SQLTOAST_LEXEME_H
 #define SQLTOAST_LEXEME_H
 
-#include <vector>
-
 namespace sqltoast {
 
 typedef std::vector<char> parse_input_t;

@@ -4,13 +4,12 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <iostream>
-#include <cctype>
 #include <sstream>
+
+#include "sqltoast.h"
 
 #include "parser/parse.h"
 #include "parser/error.h"
-#include "statements/create_table.h"
 
 namespace sqltoast {
 
@@ -32,7 +31,7 @@ bool parse_create_table(parse_context_t& ctx) {
     token_t& cur_tok = lex.current_token;
     lexeme_t table_name;
     symbol_t cur_sym;
-    statements::table_type_t table_type = statements::TABLE_TYPE_NORMAL;
+    table_type_t table_type = TABLE_TYPE_NORMAL;
     std::vector<std::unique_ptr<column_definition_t>> column_defs;
     std::vector<std::unique_ptr<constraint_t>> constraints;
 
@@ -59,15 +58,15 @@ table_kw_or_table_type:
     // We get here after successfully finding the CREATE symbol. We can
     // either match the table keyword or the table type clause
     if (cur_sym == SYMBOL_GLOBAL) {
-        table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
+        table_type = TABLE_TYPE_TEMPORARY_GLOBAL;
         cur_tok = lex.next();
         goto expect_temporary;
     } else if (cur_sym == SYMBOL_LOCAL) {
-        table_type = statements::TABLE_TYPE_TEMPORARY_LOCAL;
+        table_type = TABLE_TYPE_TEMPORARY_LOCAL;
         cur_tok = lex.next();
         goto expect_temporary;
     } else if (cur_sym == SYMBOL_TEMPORARY) {
-        table_type = statements::TABLE_TYPE_TEMPORARY_GLOBAL;
+        table_type = TABLE_TYPE_TEMPORARY_GLOBAL;
         cur_tok = lex.next();
         goto expect_table;
     }
@@ -173,7 +172,7 @@ push_statement:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        auto stmt_p = std::make_unique<statements::create_table_t>(table_type, table_name);
+        auto stmt_p = std::make_unique<create_table_t>(table_type, table_name);
         stmt_p->column_definitions = std::move(column_defs);
         stmt_p->constraints = std::move(constraints);
         ctx.result.statements.emplace_back(std::move(stmt_p));

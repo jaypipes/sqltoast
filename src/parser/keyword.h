@@ -7,10 +7,8 @@
 #ifndef SQLTOAST_PARSER_KEYWORD_H
 #define SQLTOAST_PARSER_KEYWORD_H
 
-#include <vector>
-#include <string>
-
 #include "parser/lexer.h"
+#include "parser/symbol.h"
 
 namespace sqltoast {
 

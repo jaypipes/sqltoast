@@ -4,7 +4,9 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "token.h"
+#include "sqltoast.h"
+
+#include "parser/token.h"
 
 namespace sqltoast {
 

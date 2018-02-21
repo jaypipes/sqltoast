@@ -4,7 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "derived_column.h"
+#include "sqltoast.h"
 
 namespace sqltoast {
 

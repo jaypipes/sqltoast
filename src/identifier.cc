@@ -4,9 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <ostream>
-
-#include "identifier.h"
+#include "sqltoast.h"
 
 namespace sqltoast {
 

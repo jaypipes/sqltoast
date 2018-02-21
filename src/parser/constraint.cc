@@ -8,6 +8,8 @@
 #include <cctype>
 #include <sstream>
 
+#include "sqltoast.h"
+
 #include "parser/parse.h"
 #include "parser/error.h"
 #include "parser/token.h"

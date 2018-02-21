@@ -10,7 +10,6 @@
 #include <ostream>
 
 #include "symbol.h"
-#include "sqltoast.h"
 
 namespace sqltoast {
 

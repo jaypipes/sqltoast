@@ -7,13 +7,6 @@
 #ifndef SQLTOAST_DERIVED_COLUMN_H
 #define SQLTOAST_DERIVED_COLUMN_H
 
-#include <memory>
-#include <vector>
-#include <ostream>
-
-#include "data_type.h"
-#include "identifier.h"
-
 namespace sqltoast {
 
 typedef struct derived_column {

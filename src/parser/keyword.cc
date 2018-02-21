@@ -4,8 +4,11 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include "sqltoast.h"
+
 #include "parser/compare.h"
 #include "parser/keyword.h"
+#include "parser/symbol.h"
 
 namespace sqltoast {
 

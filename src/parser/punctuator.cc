@@ -4,6 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include "sqltoast.h"
+
 #include "parser/punctuator.h"
 
 namespace sqltoast {
