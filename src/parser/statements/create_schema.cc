@@ -12,7 +12,7 @@
 #include "parser/parse.h"
 #include "parser/sequence.h"
 #include "parser/token.h"
-#include "statements/create_schema.h"
+#include "statement.h"
 
 namespace sqltoast {
 
@@ -168,7 +168,7 @@ bool parse_create_schema(parse_context_t& ctx) {
         {
             if (ctx.opts.disable_statement_construction)
                 return true;
-            auto stmt_p = std::make_unique<statements::create_schema_t>(schema_name);
+            auto stmt_p = std::make_unique<create_schema_t>(schema_name);
             if (authz_ident) {
                 stmt_p->authorization_identifier = authz_ident;
             }
