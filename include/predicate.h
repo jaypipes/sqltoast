@@ -36,7 +36,9 @@ typedef struct boolean_term {
     comp_op_t op;
     bool reverse_op;
     std::unique_ptr<boolean_term> term_and;
-    boolean_term(comp_op_t op) : op(op), reverse_op(false)
+    boolean_term(comp_op_t op, bool reverse_op) :
+        op(op),
+        reverse_op(reverse_op)
     {}
     inline boolean_term* and_term(std::unique_ptr<boolean_term>&& and_term) {
         boolean_term* next_term = this;
@@ -55,8 +57,9 @@ typedef struct comp_predicate : boolean_term_t {
     comp_predicate(
             comp_op_t op,
             std::unique_ptr<row_value_constructor_t>& left,
-            std::unique_ptr<row_value_constructor_t>& right) :
-        boolean_term_t(op),
+            std::unique_ptr<row_value_constructor_t>& right,
+            bool reverse_op) :
+        boolean_term_t(op, reverse_op),
         left(std::move(left)),
         right(std::move(right))
     {}
@@ -71,8 +74,9 @@ typedef struct between_predicate : boolean_term_t {
     between_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             std::unique_ptr<row_value_constructor_t>& comp_left,
-            std::unique_ptr<row_value_constructor_t>& comp_right) :
-        boolean_term_t(COMP_OP_BETWEEN),
+            std::unique_ptr<row_value_constructor_t>& comp_right,
+            bool reverse_op) :
+        boolean_term_t(COMP_OP_BETWEEN, reverse_op),
         left(std::move(left)),
         comp_left(std::move(comp_left)),
         comp_right(std::move(comp_right))
@@ -83,8 +87,10 @@ std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred);
 
 typedef struct null_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
-    null_predicate(std::unique_ptr<row_value_constructor_t>& left) :
-        boolean_term_t(COMP_OP_NULL),
+    null_predicate(
+            std::unique_ptr<row_value_constructor_t>& left,
+            bool reverse_op) :
+        boolean_term_t(COMP_OP_NULL, reverse_op),
         left(std::move(left))
     {}
 } null_predicate_t;
@@ -98,8 +104,9 @@ typedef struct in_values_predicate : boolean_term_t {
     std::vector<std::unique_ptr<row_value_constructor_t>> values;
     in_values_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
-            std::vector<std::unique_ptr<row_value_constructor_t>>& values) :
-        boolean_term_t(COMP_OP_IN_VALUES),
+            std::vector<std::unique_ptr<row_value_constructor_t>>& values,
+            bool reverse_op) :
+        boolean_term_t(COMP_OP_IN_VALUES, reverse_op),
         left(std::move(left)),
         values(std::move(values))
     {}
@@ -109,8 +116,10 @@ std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred);
 
 typedef struct in_subquery_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
-    in_subquery_predicate(std::unique_ptr<row_value_constructor_t>& left) :
-        boolean_term_t(COMP_OP_IN_SUBQUERY),
+    in_subquery_predicate(
+            std::unique_ptr<row_value_constructor_t>& left,
+            bool reverse_op) :
+        boolean_term_t(COMP_OP_IN_SUBQUERY, reverse_op),
         left(std::move(left))
     {}
 } in_subquery_predicate_t;
