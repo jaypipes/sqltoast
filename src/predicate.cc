@@ -99,10 +99,12 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
 
 std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred) {
     out << *pred.left << " BETWEEN " << *pred.comp_left << " AND " << *pred.comp_right;
+    return out;
 };
 
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred) {
     out << *pred.left << " IS NULL";
+    return out;
 };
 
 std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) {
@@ -114,10 +116,12 @@ std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) 
         out << *ve;
     }
     out << ")";
+    return out;
 };
 
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred) {
     out << *pred.left << " IN <subquery>";
+    return out;
 }
 
 } // namespace sqltoast

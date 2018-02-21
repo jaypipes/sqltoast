@@ -45,7 +45,6 @@ bool parse_row_value_constructor(
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {
     lexer_t& lex = ctx.lexer;
-    token_t start_tok = lex.current_token;
     if (! parse_value_expression(ctx, cur_tok, out))
         return false;
     cur_tok = lex.next();
@@ -104,9 +103,6 @@ bool parse_value_expression(
         goto push_ve;
     }
     return false;
-push_literal:
-    ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
-    goto push_ve;
 check_punc_keywords:
     switch (cur_sym) {
         case SYMBOL_LPAREN:

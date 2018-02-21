@@ -128,7 +128,6 @@ bool parse_predicate(
         std::unique_ptr<boolean_term_t>& term_p,
         bool reverse_op) {
     lexer_t& lex = ctx.lexer;
-    token_t start_tok = lex.current_token;
     symbol_t cur_sym = cur_tok.symbol;
     bool found_not = false;
     std::unique_ptr<row_value_constructor_t> left_most;
