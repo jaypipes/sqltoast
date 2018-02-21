@@ -20,8 +20,9 @@ typedef struct statement {
     statement_type_t type;
     statement(statement_type_t type) : type(type)
     {}
-    virtual const std::string to_string() = 0;
 } statement_t;
+
+std::ostream& operator<< (std::ostream& out, const statement_t& stmt);
 
 typedef struct create_schema : statement_t {
     lexeme_t schema_name;
@@ -32,8 +33,9 @@ typedef struct create_schema : statement_t {
         statement_t(STATEMENT_TYPE_CREATE_SCHEMA),
         schema_name(schema_name)
     {}
-    virtual const std::string to_string();
 } create_schema_t;
+
+std::ostream& operator<< (std::ostream& out, const create_schema_t& stmt);
 
 typedef enum drop_behaviour {
     DROP_BEHAVIOUR_CASCADE,
@@ -48,8 +50,9 @@ typedef struct drop_schema : statement_t {
         schema_name(schema_name),
         drop_behaviour(drop_behaviour)
     {}
-    virtual const std::string to_string();
 } drop_schema_t;
+
+std::ostream& operator<< (std::ostream& out, const drop_schema_t& stmt);
 
 typedef enum table_type {
     TABLE_TYPE_NORMAL,
@@ -67,8 +70,9 @@ typedef struct create_table : statement_t {
         table_type(table_type),
         table_name(table_name)
     {}
-    virtual const std::string to_string();
 } create_table_t;
+
+std::ostream& operator<< (std::ostream& out, const create_table_t& stmt);
 
 typedef struct select : statement_t {
     bool distinct;
@@ -79,8 +83,9 @@ typedef struct select : statement_t {
         statement_t(STATEMENT_TYPE_SELECT),
         distinct(false)
     {}
-    virtual const std::string to_string();
 } select_t;
+
+std::ostream& operator<< (std::ostream& out, const select_t& stmt);
 
 } // namespace sqltoast
 

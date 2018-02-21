@@ -4,96 +4,119 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <sstream>
-
 #include "sqltoast.h"
 
 namespace sqltoast {
 
-const std::string create_schema_t::to_string() {
-    std::stringstream ss;
-    ss << "<statement: CREATE SCHEMA" << std::endl
-       << "   schema name: " << schema_name;
-    if (authorization_identifier) {
-       ss << std::endl
-          << "   authorization identifier: " << authorization_identifier;
+std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
+    switch (stmt.type) {
+        case STATEMENT_TYPE_CREATE_SCHEMA:
+            {
+                const create_schema_t& sub = static_cast<const create_schema_t&>(stmt);
+                out << sub;
+            }
+            break;
+        case STATEMENT_TYPE_DROP_SCHEMA:
+            {
+                const drop_schema_t& sub = static_cast<const drop_schema_t&>(stmt);
+                out << sub;
+            }
+            break;
+        case STATEMENT_TYPE_CREATE_TABLE:
+            {
+                const create_table_t& sub = static_cast<const create_table_t&>(stmt);
+                out << sub;
+            }
+            break;
+        case STATEMENT_TYPE_SELECT:
+            {
+                const select_t& sub = static_cast<const select_t&>(stmt);
+                out << sub;
+            }
+            break;
+        default:
+            break;
     }
-    if (default_charset) {
-       ss << std::endl
-          << "   default charset: " << default_charset;
-    }
-    ss << ">" << std::endl;
-
-    return ss.str();
+    return out;
 }
 
-const std::string drop_schema::to_string() {
-    std::stringstream ss;
-    ss << "<statement: DROP SCHEMA" << std::endl
-       << "   schema name: " << schema_name << std::endl;
-    if (drop_behaviour == DROP_BEHAVIOUR_CASCADE) {
-       ss << "   behaviour: CASCADE";
+std::ostream& operator<< (std::ostream& out, const create_schema_t& stmt) {
+    out << "<statement: CREATE SCHEMA" << std::endl
+        << "   schema name: " << stmt.schema_name;
+    if (stmt.authorization_identifier) {
+       out << std::endl << "   authorization identifier: " << stmt.authorization_identifier;
+    }
+    if (stmt.default_charset) {
+       out << std::endl << "   default charset: " << stmt.default_charset;
+    }
+    out << ">" << std::endl;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const drop_schema_t& stmt) {
+    out << "<statement: DROP SCHEMA" << std::endl
+        << "   schema name: " << stmt.schema_name << std::endl;
+    if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE) {
+       out << "   behaviour: CASCADE";
     } else {
-       ss << "   behaviour: RESTRICT";
+       out << "   behaviour: RESTRICT";
     }
-    ss << ">" << std::endl;
+    out << ">" << std::endl;
 
-    return ss.str();
+    return out;
 }
 
-const std::string create_table::to_string() {
-    std::stringstream ss;
-    ss << "<statement: CREATE TABLE" << std::endl
-       << "    table name: " << table_name;
-    if (table_type != TABLE_TYPE_NORMAL) {
-        ss << std::endl << "    temporary: true (";
-        if (table_type == TABLE_TYPE_TEMPORARY_GLOBAL) {
-            ss << "global)";
+std::ostream& operator<< (std::ostream& out, const create_table_t& stmt) {
+    out << "<statement: CREATE TABLE" << std::endl
+        << "    table name: " << stmt.table_name;
+    if (stmt.table_type != TABLE_TYPE_NORMAL) {
+        out << std::endl << "    temporary: true (";
+        if (stmt.table_type == TABLE_TYPE_TEMPORARY_GLOBAL) {
+            out << "global)";
         } else {
-            ss << "local)";
+            out << "local)";
         }
     }
-    ss << std::endl << "    column definitions:";
-    for (auto cdef_it = column_definitions.begin();
-            cdef_it != column_definitions.end();
+    out << std::endl << "    column definitions:";
+    for (auto cdef_it = stmt.column_definitions.begin();
+            cdef_it != stmt.column_definitions.end();
             cdef_it++) {
-        ss << std::endl << "      " << *(*cdef_it);
+        out << std::endl << "      " << *(*cdef_it);
     }
-    if (constraints.size() > 0) {
-        ss << std::endl << "    constraints:";
-        for (auto constraint_it = constraints.begin();
-             constraint_it != constraints.end();
+    if (stmt.constraints.size() > 0) {
+        out << std::endl << "    constraints:";
+        for (auto constraint_it = stmt.constraints.begin();
+             constraint_it != stmt.constraints.end();
              constraint_it++) {
-            ss << std::endl << "      " << *(*constraint_it);
+            out << std::endl << "      " << *(*constraint_it);
         }
     }
-    ss << ">" << std::endl;
+    out << ">" << std::endl;
 
-    return ss.str();
+    return out;
 }
 
-const std::string select_t::to_string() {
-    std::stringstream ss;
-    ss << "<statement: SELECT";
-    if (distinct)
-       ss << std::endl << "   distinct: true";
-    ss << std::endl << "   selected columns: ";
+std::ostream& operator<< (std::ostream& out, const select_t& stmt) {
+    out << "<statement: SELECT";
+    if (stmt.distinct)
+       out << std::endl << "   distinct: true";
+    out << std::endl << "   selected columns: ";
     size_t x = 0;
-    for (const derived_column_t& dc : selected_columns) {
-        ss << std::endl << "     " << x++ << ": " << dc;
+    for (const derived_column_t& dc : stmt.selected_columns) {
+        out << std::endl << "     " << x++ << ": " << dc;
     }
-    ss << std::endl << "   referenced tables: ";
+    out << std::endl << "   referenced tables: ";
     x = 0;
-    for (const table_reference_t& tr : referenced_tables) {
-        ss << std::endl << "     " << x++ << ": " << tr;
+    for (const table_reference_t& tr : stmt.referenced_tables) {
+        out << std::endl << "     " << x++ << ": " << tr;
     }
-    if (where_condition) {
-        ss << std::endl << "   where conditions: ";
-        ss << *where_condition;
+    if (stmt.where_condition) {
+        out << std::endl << "   where conditions: ";
+        out << *stmt.where_condition;
     }
-    ss << ">" << std::endl;
+    out << ">" << std::endl;
 
-    return ss.str();
+    return out;
 }
 
 } // namespace sqltoast

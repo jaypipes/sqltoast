@@ -79,11 +79,11 @@ int main (int argc, char *argv[])
     if (p.res.code == sqltoast::PARSE_OK) {
         cout << "OK" << endl;
         unsigned int x = 0;
-        for (auto stmt_ptr_it = p.res.statements.begin();
-                stmt_ptr_it != p.res.statements.end();
+        for (auto stmt_ptr_it = p.res.statements.cbegin();
+                stmt_ptr_it != p.res.statements.cend();
                 stmt_ptr_it++) {
             cout << "statements[" << x++ << "]:" << endl;
-            cout << "  " << (*stmt_ptr_it)->to_string() << endl;
+            cout << "  " << *(*stmt_ptr_it) << endl;
         }
     } else if (p.res.code == sqltoast::PARSE_INPUT_ERROR) {
         cout << "Input error: " << p.res.error << endl;
