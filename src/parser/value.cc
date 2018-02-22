@@ -44,10 +44,9 @@ bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {
-    lexer_t& lex = ctx.lexer;
     if (! parse_value_expression(ctx, cur_tok, out))
-        return false;
-    cur_tok = lex.next();
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
     return true;
 }
 
@@ -90,16 +89,21 @@ bool parse_value_expression(
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {
     lexer_t& lex = ctx.lexer;
+    lexeme_t ve_lexeme;
     value_expression_type_t ve_type;
     symbol_t cur_sym = cur_tok.symbol;
     if (cur_tok.is_literal()) {
         ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
+        ve_lexeme = cur_tok.lexeme;
+        cur_tok = lex.next();
         goto push_ve;
     }
     if (cur_tok.is_punctuator() || cur_tok.is_keyword())
         goto check_punc_keywords;
     if (cur_tok.is_identifier()) {
         ve_type = VALUE_EXPRESSION_TYPE_COLUMN;
+        ve_lexeme = cur_tok.lexeme;
+        cur_tok = lex.next();
         goto push_ve;
     }
     return false;
@@ -114,12 +118,14 @@ check_punc_keywords:
         case SYMBOL_SYSTEM_USER:
         case SYMBOL_VALUE:
             ve_type = VALUE_EXPRESSION_TYPE_GENERAL;
+            ve_lexeme = cur_tok.lexeme;
             goto push_ve;
         case SYMBOL_COLON:
             cur_tok = lex.next();
             goto expect_parameter;
         case SYMBOL_QUESTION_MARK:
             ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
+            ve_lexeme = cur_tok.lexeme;
             goto push_ve;
         case SYMBOL_COUNT:
         case SYMBOL_AVG:
@@ -143,7 +149,7 @@ subquery_or_subexpression:
     }
     if (! parse_value_expression(ctx, cur_tok, out))
         return false;
-    cur_tok = lex.current_token;
+    ve_lexeme = out->lexeme;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
         goto err_expect_rparen;
@@ -165,6 +171,8 @@ expect_parameter:
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
     ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
+    ve_lexeme = cur_tok.lexeme;
+    cur_tok = lex.next();
     // TODO(jaypipes): Maybe support the INDICATOR clause?
     goto push_ve;
 err_expect_identifier:
@@ -173,7 +181,7 @@ err_expect_identifier:
 push_ve:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<value_expression_t>(ve_type, cur_tok.lexeme);
+    out = std::make_unique<value_expression_t>(ve_type, ve_lexeme);
     return true;
 }
 
