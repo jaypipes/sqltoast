@@ -39,7 +39,6 @@ namespace sqltoast {
 // <factor> ::= [ <sign> ] <numeric primary>
 //
 // <numeric primary> ::= <value expression primary> | <numeric value function>
-//
 bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -72,7 +71,6 @@ bool parse_row_value_constructor(
 //     | <case expression>
 //     | <left paren> <value expression> <right paren>
 //     | <cast specification>
-//
 bool parse_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -183,6 +181,9 @@ bool parse_unsigned_value_specification(
         goto push_spec;
     }
     switch (cur_sym) {
+        case SYMBOL_DATE:
+            cur_tok = lex.next();
+            goto expect_date_string;
         case SYMBOL_USER:
         case SYMBOL_CURRENT_USER:
         case SYMBOL_SESSION_USER:
@@ -201,6 +202,19 @@ bool parse_unsigned_value_specification(
         default:
             return false;
     }
+expect_date_string:
+    // We get here if we found the DATE symbol and now we expect a <date
+    // string>. A <date string> is a single-quote-enclosed character string
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LITERAL_CHARACTER_STRING)
+        goto err_expect_character_string;
+    ve_type = VALUE_EXPRESSION_TYPE_LITERAL_DATE;
+    ve_lexeme = cur_tok.lexeme;
+    cur_tok = lex.next();
+    goto push_spec;
+err_expect_character_string:
+    expect_error(ctx, SYMBOL_LITERAL_CHARACTER_STRING);
+    return false;
 expect_parameter:
     // We get here after hitting a COLON. A parameter name is now expected,
     // followed by an optional <indicator parameter> clause

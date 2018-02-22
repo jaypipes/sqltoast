@@ -54,6 +54,9 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
         case VALUE_EXPRESSION_TYPE_LITERAL:
             out << "literal[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
             break;
+        case VALUE_EXPRESSION_TYPE_LITERAL_DATE:
+            out << "date[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
+            break;
         case VALUE_EXPRESSION_TYPE_COLUMN:
             out << "column-reference[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
             break;
