@@ -73,31 +73,6 @@ bool parse_row_value_constructor(
 //     | <left paren> <value expression> <right paren>
 //     | <cast specification>
 //
-// <unsigned value specification> ::=
-//     <unsigned literal>
-//     | <general value specification>
-//
-// <unsigned literal> ::=
-//     <unsigned numeric literal>
-//     | <general literal>
-//
-// <general literal>    ::=
-//     <character string literal>
-//     | <national character string literal>
-//     | <bit string literal>
-//     | <hex string literal>
-//     | <datetime literal>
-//     | <interval literal>
-//
-// <general value specification> ::=
-//     <parameter specification>
-//     | <dynamic parameter specification>
-//     | <variable specification>
-//     | USER
-//     | CURRENT_USER
-//     | SESSION_USER
-//     | SYSTEM_USER
-//     | VALUE
 bool parse_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -106,12 +81,10 @@ bool parse_value_expression(
     lexeme_t ve_lexeme;
     value_expression_type_t ve_type;
     symbol_t cur_sym = cur_tok.symbol;
-    if (cur_tok.is_literal()) {
-        ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
-        ve_lexeme = cur_tok.lexeme;
-        cur_tok = lex.next();
-        goto push_ve;
-    }
+    if (parse_unsigned_value_specification(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
     if (cur_tok.is_punctuator() || cur_tok.is_keyword())
         goto check_punc_keywords;
     if (cur_tok.is_identifier()) {
@@ -126,21 +99,6 @@ check_punc_keywords:
         case SYMBOL_LPAREN:
             cur_tok = lex.next();
             goto subquery_or_subexpression;
-        case SYMBOL_USER:
-        case SYMBOL_CURRENT_USER:
-        case SYMBOL_SESSION_USER:
-        case SYMBOL_SYSTEM_USER:
-        case SYMBOL_VALUE:
-            ve_type = VALUE_EXPRESSION_TYPE_GENERAL;
-            ve_lexeme = cur_tok.lexeme;
-            goto push_ve;
-        case SYMBOL_COLON:
-            cur_tok = lex.next();
-            goto expect_parameter;
-        case SYMBOL_QUESTION_MARK:
-            ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
-            ve_lexeme = cur_tok.lexeme;
-            goto push_ve;
         case SYMBOL_COUNT:
         case SYMBOL_AVG:
         case SYMBOL_MAX:
@@ -178,6 +136,71 @@ expect_rparen_then_push:
         goto err_expect_rparen;
     cur_tok = lex.next();
     goto push_ve;
+push_ve:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<value_expression_t>(ve_type, ve_lexeme);
+    return true;
+}
+
+// <unsigned value specification> ::=
+//     <unsigned literal>
+//     | <general value specification>
+//
+// <unsigned literal> ::=
+//     <unsigned numeric literal>
+//     | <general literal>
+//
+// <general literal>    ::=
+//     <character string literal>
+//     | <national character string literal>
+//     | <bit string literal>
+//     | <hex string literal>
+//     | <datetime literal>
+//     | <interval literal>
+//
+// <general value specification> ::=
+//     <parameter specification>
+//     | <dynamic parameter specification>
+//     | <variable specification>
+//     | USER
+//     | CURRENT_USER
+//     | SESSION_USER
+//     | SYSTEM_USER
+//     | VALUE
+bool parse_unsigned_value_specification(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    lexeme_t ve_lexeme;
+    value_expression_type_t ve_type;
+    symbol_t cur_sym = cur_tok.symbol;
+    if (cur_tok.is_literal()) {
+        ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
+        ve_lexeme = cur_tok.lexeme;
+        cur_tok = lex.next();
+        goto push_spec;
+    }
+    switch (cur_sym) {
+        case SYMBOL_USER:
+        case SYMBOL_CURRENT_USER:
+        case SYMBOL_SESSION_USER:
+        case SYMBOL_SYSTEM_USER:
+        case SYMBOL_VALUE:
+            ve_type = VALUE_EXPRESSION_TYPE_GENERAL;
+            ve_lexeme = cur_tok.lexeme;
+            goto push_spec;
+        case SYMBOL_COLON:
+            cur_tok = lex.next();
+            goto expect_parameter;
+        case SYMBOL_QUESTION_MARK:
+            ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
+            ve_lexeme = cur_tok.lexeme;
+            goto push_spec;
+        default:
+            return false;
+    }
 expect_parameter:
     // We get here after hitting a COLON. A parameter name is now expected,
     // followed by an optional <indicator parameter> clause
@@ -188,11 +211,11 @@ expect_parameter:
     ve_lexeme = cur_tok.lexeme;
     cur_tok = lex.next();
     // TODO(jaypipes): Maybe support the INDICATOR clause?
-    goto push_ve;
+    goto push_spec;
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
     return false;
-push_ve:
+push_spec:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<value_expression_t>(ve_type, ve_lexeme);

@@ -118,6 +118,14 @@ bool parse_value_expression(
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor>& out);
 
+// Returns true if a value_expression_t of one of the unsigned value
+// specifications could be parsed. If true, the out argument will be filled
+// appropriately.
+bool parse_unsigned_value_specification(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor_t>& out);
+
 // Returns true if a set_function_t could be parsed. If true, the out argument
 // will be filled appropriately.
 bool parse_set_function(
