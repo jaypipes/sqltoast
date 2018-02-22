@@ -44,10 +44,24 @@ bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {
-    if (! parse_value_expression(ctx, cur_tok, out))
-        if (ctx.result.code == PARSE_SYNTAX_ERROR)
-            return false;
-    return true;
+    if (parse_value_expression(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    {
+        lexer_t& lex = ctx.lexer;
+        symbol_t cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_NULL) {
+            out = std::make_unique<null_value_t>(cur_tok.lexeme);
+            cur_tok = lex.next();
+            return true;
+        } else if (cur_sym == SYMBOL_DEFAULT) {
+            out = std::make_unique<default_value_t>(cur_tok.lexeme);
+            cur_tok = lex.next();
+            return true;
+        }
+        return false;
+    }
 }
 
 // <value expression primary> ::=

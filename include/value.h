@@ -116,6 +116,22 @@ typedef struct set_function : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
 
+typedef struct null_value : row_value_constructor_t {
+    null_value(lexeme_t lexeme) :
+        row_value_constructor_t(lexeme, RVC_TYPE_NULL)
+    {}
+} null_value_t;
+
+std::ostream& operator<< (std::ostream& out, const null_value_t& ve);
+
+typedef struct default_value : row_value_constructor_t {
+    default_value(lexeme_t lexeme) :
+        row_value_constructor_t(lexeme, RVC_TYPE_DEFAULT)
+    {}
+} default_value_t;
+
+std::ostream& operator<< (std::ostream& out, const default_value_t& ve);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_VALUE_H */
