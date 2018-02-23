@@ -182,8 +182,21 @@ bool parse_unsigned_value_specification(
     }
     switch (cur_sym) {
         case SYMBOL_DATE:
+            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_DATE;
             cur_tok = lex.next();
-            goto expect_date_string;
+            goto expect_char_string;
+        case SYMBOL_TIME:
+            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_TIME;
+            cur_tok = lex.next();
+            goto expect_char_string;
+        case SYMBOL_TIMESTAMP:
+            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_TIMESTAMP;
+            cur_tok = lex.next();
+            goto expect_char_string;
+        case SYMBOL_INTERVAL:
+            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_INTERVAL;
+            cur_tok = lex.next();
+            goto expect_char_string;
         case SYMBOL_USER:
         case SYMBOL_CURRENT_USER:
         case SYMBOL_SESSION_USER:
@@ -202,17 +215,16 @@ bool parse_unsigned_value_specification(
         default:
             return false;
     }
-expect_date_string:
+expect_char_string:
     // We get here if we found the DATE symbol and now we expect a <date
     // string>. A <date string> is a single-quote-enclosed character string
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_LITERAL_CHARACTER_STRING)
-        goto err_expect_character_string;
-    ve_type = VALUE_EXPRESSION_TYPE_LITERAL_DATE;
+        goto err_expect_char_string;
     ve_lexeme = cur_tok.lexeme;
     cur_tok = lex.next();
     goto push_spec;
-err_expect_character_string:
+err_expect_char_string:
     expect_error(ctx, SYMBOL_LITERAL_CHARACTER_STRING);
     return false;
 expect_parameter:
