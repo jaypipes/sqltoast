@@ -383,6 +383,7 @@ bool parse_in_predicate(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<std::unique_ptr<row_value_constructor_t>> values;
+    std::unique_ptr<statement_t> subq;
 
     // We get here if we've processed the left row value constructor and the
     // [NOT] IN symbol(s). We now expect a LPAREN followed by either the SELECT
@@ -398,7 +399,8 @@ err_expect_lparen:
     expect_error(ctx, SYMBOL_LPAREN);
     return false;
 process_subquery:
-    cur_tok = lex.next();
+    if (! parse_select(ctx, cur_tok, subq))
+        return false;
     goto expect_rparen;
 process_value_list_item:
     {
@@ -435,9 +437,9 @@ push_condition:
     }
     else {
         if (! term_p)
-            term_p = std::make_unique<in_subquery_predicate_t>(left, reverse_op);
+            term_p = std::make_unique<in_subquery_predicate_t>(left, subq, reverse_op);
         else
-            term_p->and_term(std::make_unique<in_subquery_predicate_t>(left, reverse_op));
+            term_p->and_term(std::make_unique<in_subquery_predicate_t>(left, subq, reverse_op));
     }
     return true;
 }
