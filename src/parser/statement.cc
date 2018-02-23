@@ -10,7 +10,6 @@
 
 #include "parser/error.h"
 #include "parser/parse.h"
-#include "parser/statement.h"
 #include "parser/symbol.h"
 #include "parser/token.h"
 
@@ -32,7 +31,10 @@ static const parse_func_t select_statement_parsers[1] = {
 
 void parse_statement(parse_context_t& ctx) {
     // Assumption: the current token will be a keyword
-    symbol_t cur_sym = ctx.lexer.current_token.symbol;
+    lexer_t& lex = ctx.lexer;
+    token_t& cur_tok = lex.current_token;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<statement_t> stmt_p;
 
     size_t num_parsers = 0;
     const parse_func_t* parsers;
@@ -61,8 +63,8 @@ void parse_statement(parse_context_t& ctx) {
 
     size_t x = 0;
     while (ctx.result.code == PARSE_OK && x < num_parsers) {
-        if (parsers[x++](ctx))
-            return;
+        if (parsers[x++](ctx, cur_tok, stmt_p))
+            goto push_statement;
     }
     if (ctx.result.code == PARSE_SYNTAX_ERROR) {
         // Already have a nicely-formatted error, so just return
@@ -72,6 +74,10 @@ void parse_statement(parse_context_t& ctx) {
         estr << "Failed to recognize any valid SQL statement." << std::endl;
         create_syntax_error_marker(ctx, estr);
     }
+push_statement:
+    if (ctx.opts.disable_statement_construction)
+        return;
+    ctx.result.statements.emplace_back(std::move(stmt_p));
 }
 
 } // namespace sqltoast

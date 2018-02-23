@@ -25,10 +25,12 @@ namespace sqltoast {
 //     [ON COMMIT {DELETE|PRESERVE} ROWS]
 //
 // TODO: Maybe support the ON COMMIT modifier (it's very rarely used)
-bool parse_create_table(parse_context_t& ctx) {
+bool parse_create_table(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
-    token_t& cur_tok = lex.current_token;
     lexeme_t table_name;
     symbol_t cur_sym;
     table_type_t table_type = TABLE_TYPE_NORMAL;
@@ -169,15 +171,10 @@ statement_ending:
     expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
     return false;
 push_statement:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        auto stmt_p = std::make_unique<create_table_t>(table_type, table_name);
-        stmt_p->column_definitions = std::move(column_defs);
-        stmt_p->constraints = std::move(constraints);
-        ctx.result.statements.emplace_back(std::move(stmt_p));
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<create_table_t>(table_type, table_name, column_defs, constraints);
+    return true;
 }
 
 } // namespace sqltoast

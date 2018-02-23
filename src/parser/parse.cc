@@ -10,7 +10,7 @@
 #include "parser/context.h"
 #include "parser/error.h"
 #include "parser/lexer.h"
-#include "parser/statement.h"
+#include "parser/parse.h"
 #include "parser/token.h"
 
 namespace sqltoast {

@@ -16,7 +16,10 @@
 
 namespace sqltoast {
 
-typedef bool (*parse_func_t) (parse_context_t& ctx);
+typedef bool (*parse_func_t) (
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
 
 // Returns true if the DEFAULT CHARACTER SET <charset identifier> clause was
 // successfully parsed. SYMBOL_DELETE symbol is assumed to have already been
@@ -25,21 +28,38 @@ typedef bool (*parse_func_t) (parse_context_t& ctx);
 // pointing to the token representing the charset identifier
 bool require_default_charset_clause(parse_context_t& ctx);
 
+// Top-level statement parser that is called from within the primary parse()
+// loop over found tokens.
+void parse_statement(parse_context_t& ctx);
+
 // Returns true if the CREATE SCHEMA statement was parsed successfully from
 // the parse context
-bool parse_create_schema(parse_context_t& ctx);
+bool parse_create_schema(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
 
 // Returns true if the CREATE TABLE statement was parsed successfully from
 // the parse context
-bool parse_create_table(parse_context_t& ctx);
+bool parse_create_table(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
 
 // Returns true if the DROP SCHEMA statement was parsed successfully from
 // the parse context
-bool parse_drop_schema(parse_context_t& ctx);
+bool parse_drop_schema(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
 
 // Returns true if a SELECT statement was parsed successfully from
-// the parse context
-bool parse_select(parse_context_t& ctx);
+// the parse context. If true, then the out parameter will be populated with an
+// allocated select_t statement struct
+bool parse_select(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
 
 // Returns true if a search condition could be parsed. If true, the conditions
 // argument will have a new pointer to a search_condition_t added to it.

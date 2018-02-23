@@ -29,9 +29,14 @@ typedef struct create_schema : statement_t {
     // Optional elements
     lexeme_t authorization_identifier;
     lexeme_t default_charset;
-    create_schema(lexeme_t& schema_name) :
+    create_schema(
+            lexeme_t& schema_name,
+            lexeme_t& auth_ident,
+            lexeme_t& def_charset) :
         statement_t(STATEMENT_TYPE_CREATE_SCHEMA),
-        schema_name(schema_name)
+        schema_name(schema_name),
+        authorization_identifier(auth_ident),
+        default_charset(def_charset)
     {}
 } create_schema_t;
 
@@ -65,10 +70,16 @@ typedef struct create_table : statement_t {
     lexeme_t table_name;
     std::vector<std::unique_ptr<column_definition_t>> column_definitions;
     std::vector<std::unique_ptr<constraint_t>> constraints;
-    create_table(table_type_t table_type, lexeme_t& table_name) :
+    create_table(
+            table_type_t table_type,
+            lexeme_t& table_name,
+            std::vector<std::unique_ptr<column_definition_t>>& column_defs,
+            std::vector<std::unique_ptr<constraint_t>>& constraints) :
         statement_t(STATEMENT_TYPE_CREATE_TABLE),
         table_type(table_type),
-        table_name(table_name)
+        table_name(table_name),
+        column_definitions(std::move(column_defs)),
+        constraints(std::move(constraints))
     {}
 } create_table_t;
 
@@ -79,9 +90,16 @@ typedef struct select : statement_t {
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
     std::unique_ptr<search_condition_t> where_condition;
-    select() :
+    select(
+            bool distinct,
+            std::vector<derived_column_t>& selected_cols,
+            std::vector<table_reference_t>& ref_tables,
+            std::unique_ptr<search_condition_t>& where_cond) :
         statement_t(STATEMENT_TYPE_SELECT),
-        distinct(false)
+        distinct(distinct),
+        selected_columns(std::move(selected_cols)),
+        referenced_tables(std::move(ref_tables)),
+        where_condition(std::move(where_cond))
     {}
 } select_t;
 
