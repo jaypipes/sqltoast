@@ -65,10 +65,12 @@ bool require_default_charset_clause(parse_context_t& ctx) {
     return expect_sequence(ctx, exp_sym_seq, 3);
 }
 
-bool parse_create_schema(parse_context_t& ctx) {
+bool parse_create_schema(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
-    token_t& cur_tok = lex.current_token;
     lexeme_t schema_name;
     lexeme_t authz_ident;
     lexeme_t default_charset;
@@ -165,19 +167,10 @@ bool parse_create_schema(parse_context_t& ctx) {
         expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
         return false;
     push_statement:
-        {
-            if (ctx.opts.disable_statement_construction)
-                return true;
-            auto stmt_p = std::make_unique<create_schema_t>(schema_name);
-            if (authz_ident) {
-                stmt_p->authorization_identifier = authz_ident;
-            }
-            if (default_charset) {
-                stmt_p->default_charset = default_charset;
-            }
-            ctx.result.statements.emplace_back(std::move(stmt_p));
+        if (ctx.opts.disable_statement_construction)
             return true;
-        }
+        out = std::make_unique<create_schema_t>(schema_name, authz_ident, default_charset);
+        return true;
 }
 
 } // namespace sqltoast

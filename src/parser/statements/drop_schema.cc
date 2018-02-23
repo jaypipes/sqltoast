@@ -28,13 +28,13 @@ namespace sqltoast {
 //   <schema name> [::= [ <catalog name> <period> ] <unqualified schema name>
 //
 //   <drop behaviour> ::= CASCADE | RESTRICT
-//
-
-bool parse_drop_schema(parse_context_t& ctx) {
+bool parse_drop_schema(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
     lexeme_t schema_name;
-    token_t& cur_tok = lex.current_token;
     symbol_t cur_sym;
     drop_behaviour_t behaviour = DROP_BEHAVIOUR_CASCADE;
 
@@ -91,13 +91,10 @@ bool parse_drop_schema(parse_context_t& ctx) {
         expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
         return false;
     push_statement:
-        {
-            if (ctx.opts.disable_statement_construction)
-                return true;
-            auto stmt_p = std::make_unique<drop_schema_t>(schema_name, behaviour);
-            ctx.result.statements.emplace_back(std::move(stmt_p));
+        if (ctx.opts.disable_statement_construction)
             return true;
-        }
+        out = std::make_unique<drop_schema_t>(schema_name, behaviour);
+        return true;
 }
 
 } // namespace sqltoast

@@ -33,9 +33,11 @@ namespace sqltoast {
 //     [ <where clause> ]
 //     [ <group by clause> ]
 //     [ <having clause> ]
-bool parse_select(parse_context_t& ctx) {
+bool parse_select(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out) {
     lexer_t& lex = ctx.lexer;
-    token_t& cur_tok = lex.current_token;
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
@@ -174,17 +176,10 @@ statement_ending:
     expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
     return false;
 push_statement:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        auto stmt_p = std::make_unique<select_t>();
-        stmt_p->distinct = distinct;
-        stmt_p->selected_columns = std::move(selected_columns);
-        stmt_p->referenced_tables = std::move(referenced_tables);
-        stmt_p->where_condition = std::move(where_condition);
-        ctx.result.statements.emplace_back(std::move(stmt_p));
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<select_t>(distinct, selected_columns, referenced_tables, where_condition);
+    return true;
 }
 
 } // namespace sqltoast
