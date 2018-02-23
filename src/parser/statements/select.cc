@@ -169,16 +169,22 @@ expect_where_condition:
 statement_ending:
     // We get here if we have already successfully processed the SELECT
     // statement and are expecting EOS or SEMICOLON as the next non-comment
-    // token
+    // token. Alternately, we can find an RPAREN, which would indicate we may
+    // be at the end of a valid subquery, which is also fine. We rely on the
+    // caller to check for the validity of an RPAREN in the current lexical
+    // context.
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS)
+    if (cur_sym == SYMBOL_SEMICOLON ||
+            cur_sym == SYMBOL_EOS ||
+            cur_sym == SYMBOL_RPAREN)
         goto push_statement;
-    expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
+    expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON, SYMBOL_RPAREN});
     return false;
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<select_t>(distinct, selected_columns, referenced_tables, where_condition);
+    out = std::make_unique<select_t>(
+            distinct, selected_columns, referenced_tables, where_condition);
     return true;
 }
 

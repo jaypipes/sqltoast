@@ -107,13 +107,18 @@ typedef struct in_values_predicate : boolean_term_t {
 
 std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred);
 
+typedef struct statement statement_t;
 typedef struct in_subquery_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
+    // Guaranteed to always be static_castable to a select_t
+    std::unique_ptr<statement_t> subquery;
     in_subquery_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
+            std::unique_ptr<statement_t>& subq,
             bool reverse_op) :
         boolean_term_t(COMP_OP_IN_SUBQUERY, reverse_op),
-        left(std::move(left))
+        left(std::move(left)),
+        subquery(std::move(subq))
     {}
 } in_subquery_predicate_t;
 

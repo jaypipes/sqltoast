@@ -36,33 +36,23 @@ parse_result_t parse(parse_input_t& subject, parse_options_t& opts) {
         res.error.assign("Nothing to parse.");
         return res;
     }
+    cur_tok = lex.next();
 
     while (res.code == PARSE_OK) {
-        cur_tok = lex.next();
         if (cur_tok.symbol == SYMBOL_EOS)
             break;
+        if (cur_tok.symbol == SYMBOL_SEMICOLON) {
+            cur_tok = lex.next();
+            continue;
+        }
         if (cur_tok.is_keyword()) {
             parse_statement(ctx);
             continue;
         }
-        if (cur_tok.is_punctuator()) {
+        {
             std::stringstream estr;
-            estr << "Parse subject must either begin with a keyword or a "
-                    "comment, but found punctuation." << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            continue;
-        }
-        if (cur_tok.is_literal()) {
-            std::stringstream estr;
-            estr << "Parse subject must either begin with a keyword or a "
-                    "comment, but found literal." << std::endl;
-            create_syntax_error_marker(ctx, estr);
-            continue;
-        }
-        if (cur_tok.is_identifier()) {
-            std::stringstream estr;
-            estr << "Parse subject must either begin with a keyword or a "
-                    "comment, but found identifier." << std::endl;
+            estr << "SQL statements begin with a keyword and end with a "
+                    "semicolon, but found " << cur_tok << "." << std::endl;
             create_syntax_error_marker(ctx, estr);
             continue;
         }

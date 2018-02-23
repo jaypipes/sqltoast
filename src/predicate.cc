@@ -120,7 +120,7 @@ std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) 
 };
 
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred) {
-    out << *pred.left << " IN <subquery>";
+    out << *pred.left << " IN " << *pred.subquery;
     return out;
 }
 
