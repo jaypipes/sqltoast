@@ -146,6 +146,9 @@ std::ostream& operator<< (std::ostream& out, const select_t& stmt) {
 std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
     out << "<statement: INSERT " << std::endl
         << "   table name: " << stmt.table_name;
+
+    if (stmt.use_default_values())
+        out << std::endl << "   default values: true";
     out << ">" << std::endl;
 
     return out;

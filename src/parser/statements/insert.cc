@@ -46,16 +46,34 @@ err_expect_into:
     expect_error(ctx, SYMBOL_INTO);
     return false;
 expect_identifier:
-    // We get here after successfully finding DROP followed by SCHEMA. We
-    // now need to find the schema identifier
+    // We get here after successfully finding INSERT followed by INTO. We
+    // now need to find the table identifier
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
     table_name = cur_tok.lexeme;
     cur_tok = lex.next();
-    goto statement_ending;
+    goto insert_col_list_or_default_values;
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+insert_col_list_or_default_values:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_DEFAULT) {
+        cur_tok = lex.next();
+        goto expect_values;
+    }
+    goto statement_ending;
+expect_values:
+    // We get here after successfully finding DEFAULT, which must be followed
+    // by the VALUES symbol
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_VALUES)
+        goto err_expect_values;
+    cur_tok = lex.next();
+    goto statement_ending;
+err_expect_values:
+    expect_error(ctx, SYMBOL_VALUES);
     return false;
 statement_ending:
     // We get here after successfully parsing the <table name> element,

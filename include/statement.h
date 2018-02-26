@@ -121,10 +121,14 @@ std::ostream& operator<< (std::ostream& out, const select_t& stmt);
 
 typedef struct insert : statement_t {
     lexeme_t table_name;
+    std::vector<lexeme_t> insert_columns;
     insert(lexeme_t& table_name) :
         statement_t(STATEMENT_TYPE_INSERT),
         table_name(table_name)
     {}
+    inline bool use_default_values() const {
+        return insert_columns.empty();
+    }
 } insert_t;
 
 std::ostream& operator<< (std::ostream& out, const insert_t& stmt);
