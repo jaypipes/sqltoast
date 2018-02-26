@@ -28,6 +28,12 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_DROP_TABLE:
+            {
+                const drop_table_t& sub = static_cast<const drop_table_t&>(stmt);
+                out << sub;
+            }
+            break;
         case STATEMENT_TYPE_SELECT:
             {
                 const select_t& sub = static_cast<const select_t&>(stmt);
@@ -91,6 +97,18 @@ std::ostream& operator<< (std::ostream& out, const create_table_t& stmt) {
             out << std::endl << "      " << *(*constraint_it);
         }
     }
+    out << ">" << std::endl;
+
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const drop_table_t& stmt) {
+    out << "<statement: DROP TABLE" << std::endl
+        << "   table name: " << stmt.table_name << std::endl;
+    if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
+       out << "   behaviour: CASCADE";
+    else
+       out << "   behaviour: RESTRICT";
     out << ">" << std::endl;
 
     return out;

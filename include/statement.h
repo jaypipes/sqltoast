@@ -13,6 +13,7 @@ typedef enum statement_type {
     STATEMENT_TYPE_CREATE_SCHEMA,
     STATEMENT_TYPE_CREATE_TABLE,
     STATEMENT_TYPE_DROP_SCHEMA,
+    STATEMENT_TYPE_DROP_TABLE,
     STATEMENT_TYPE_SELECT
 } statement_type_t;
 
@@ -84,6 +85,18 @@ typedef struct create_table : statement_t {
 } create_table_t;
 
 std::ostream& operator<< (std::ostream& out, const create_table_t& stmt);
+
+typedef struct drop_table : statement_t {
+    lexeme_t table_name;
+    drop_behaviour_t drop_behaviour;
+    drop_table(lexeme_t& table_name, drop_behaviour_t drop_behaviour) :
+        statement_t(STATEMENT_TYPE_DROP_TABLE),
+        table_name(table_name),
+        drop_behaviour(drop_behaviour)
+    {}
+} drop_table_t;
+
+std::ostream& operator<< (std::ostream& out, const drop_table_t& stmt);
 
 typedef struct select : statement_t {
     bool distinct;
