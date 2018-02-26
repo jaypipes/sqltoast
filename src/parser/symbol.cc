@@ -68,7 +68,9 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_HAVING] = std::string("HAVING");
     m[SYMBOL_HOUR] = std::string("HOUR");
     m[SYMBOL_IN] = std::string("IN");
+    m[SYMBOL_INSERT] = std::string("INSERT");
     m[SYMBOL_INT] = std::string("INT");
+    m[SYMBOL_INTO] = std::string("INTO");
     m[SYMBOL_INTEGER] = std::string("INTEGER");
     m[SYMBOL_INTERVAL] = std::string("INTERVAL");
     m[SYMBOL_IS] = std::string("IS");

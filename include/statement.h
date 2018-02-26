@@ -14,6 +14,7 @@ typedef enum statement_type {
     STATEMENT_TYPE_CREATE_TABLE,
     STATEMENT_TYPE_DROP_SCHEMA,
     STATEMENT_TYPE_DROP_TABLE,
+    STATEMENT_TYPE_INSERT,
     STATEMENT_TYPE_SELECT
 } statement_type_t;
 
@@ -117,6 +118,16 @@ typedef struct select : statement_t {
 } select_t;
 
 std::ostream& operator<< (std::ostream& out, const select_t& stmt);
+
+typedef struct insert : statement_t {
+    lexeme_t table_name;
+    insert(lexeme_t& table_name) :
+        statement_t(STATEMENT_TYPE_INSERT),
+        table_name(table_name)
+    {}
+} insert_t;
+
+std::ostream& operator<< (std::ostream& out, const insert_t& stmt);
 
 } // namespace sqltoast
 

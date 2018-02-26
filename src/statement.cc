@@ -40,6 +40,12 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_INSERT:
+            {
+                const insert_t& sub = static_cast<const insert_t&>(stmt);
+                out << sub;
+            }
+            break;
         default:
             break;
     }
@@ -132,6 +138,14 @@ std::ostream& operator<< (std::ostream& out, const select_t& stmt) {
         out << std::endl << "   where conditions: ";
         out << *stmt.where_condition;
     }
+    out << ">" << std::endl;
+
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
+    out << "<statement: INSERT " << std::endl
+        << "   table name: " << stmt.table_name;
     out << ">" << std::endl;
 
     return out;

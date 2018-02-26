@@ -68,6 +68,14 @@ bool parse_select(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
+// Returns true if an INSERT statement was parsed successfully from the parse
+// context. If true, then the out parameter will be populated with an allocated
+// insert_t or insert_select_t statement struct
+bool parse_insert(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
+
 // Returns true if a search condition could be parsed. If true, the conditions
 // argument will have a new pointer to a search_condition_t added to it.
 bool parse_search_condition(
