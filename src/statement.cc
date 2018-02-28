@@ -149,6 +149,13 @@ std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
 
     if (stmt.use_default_values())
         out << std::endl << "   default values: true";
+    else {
+        out << std::endl << "   columns:";
+        size_t x = 0;
+        for (const lexeme_t& col : stmt.insert_columns) {
+            out << std::endl << "     " << x++ << ": " << col;
+        }
+    }
     out << ">" << std::endl;
 
     return out;

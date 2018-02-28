@@ -126,6 +126,11 @@ typedef struct insert : statement_t {
         statement_t(STATEMENT_TYPE_INSERT),
         table_name(table_name)
     {}
+    insert(lexeme_t& table_name, std::vector<lexeme_t>& col_list) :
+        statement_t(STATEMENT_TYPE_INSERT),
+        table_name(table_name),
+        insert_columns(std::move(col_list))
+    {}
     inline bool use_default_values() const {
         return insert_columns.empty();
     }
