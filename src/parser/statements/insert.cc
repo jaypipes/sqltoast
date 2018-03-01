@@ -54,11 +54,11 @@ expect_identifier:
         goto err_expect_identifier;
     table_name = cur_tok.lexeme;
     cur_tok = lex.next();
-    goto insert_col_list_or_default_values;
+    goto opt_col_list_or_default_values;
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
     return false;
-insert_col_list_or_default_values:
+opt_col_list_or_default_values:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_DEFAULT) {
         cur_tok = lex.next();
@@ -66,10 +66,13 @@ insert_col_list_or_default_values:
     } else if (cur_sym == SYMBOL_LPAREN) {
         cur_tok = lex.next();
         goto process_column_list_item;
+    } else if (cur_sym == SYMBOL_VALUES) {
+        cur_tok = lex.next();
+        goto statement_ending;
     }
-    goto err_expect_lparen_or_default;
-err_expect_lparen_or_default:
-    expect_any_error(ctx, {SYMBOL_DEFAULT, SYMBOL_LPAREN});
+    goto err_expect_lparen_values_or_default;
+err_expect_lparen_values_or_default:
+    expect_any_error(ctx, {SYMBOL_DEFAULT, SYMBOL_VALUES, SYMBOL_LPAREN});
     return false;
 expect_default_values:
     // We get here after successfully finding DEFAULT, which must be followed
