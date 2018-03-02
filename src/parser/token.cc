@@ -38,7 +38,7 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
         out << "comment[length: " << token.lexeme.size() << "]";
         return out;
     } else {
-        out << symbol_map::to_string(token.symbol);
+        out << "punctuator[" << symbol_map::to_string(token.symbol) << "]";
         return out;
     }
     return out;

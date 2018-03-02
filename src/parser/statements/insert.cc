@@ -4,6 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <sstream>
+
 #include "sqltoast.h"
 
 #include "parser/error.h"
@@ -27,6 +29,7 @@ bool parse_insert(
     lexeme_t table_name;
     symbol_t cur_sym;
     std::vector<lexeme_t> col_list;
+    std::vector<lexeme_t> val_list;
 
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_INSERT) {
@@ -68,7 +71,7 @@ opt_col_list_or_default_values:
         goto process_column_list_item;
     } else if (cur_sym == SYMBOL_VALUES) {
         cur_tok = lex.next();
-        goto statement_ending;
+        goto process_value_list;
     }
     goto err_expect_lparen_values_or_default;
 err_expect_lparen_values_or_default:
@@ -97,11 +100,50 @@ process_column_list_item:
         goto process_column_list_item;
     } else if (cur_sym == SYMBOL_RPAREN) {
         cur_tok = lex.next();
-        goto statement_ending;
+        goto expect_values;
     }
     goto err_expect_comma_or_rparen;
 err_expect_comma_or_rparen:
     expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_RPAREN});
+    return false;
+expect_values:
+    // We get here when we expect to find the keyword VALUES preceding the
+    // value list (not the "DEFAULT VALUES" clause
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_VALUES)
+        goto err_expect_values;
+    cur_tok = lex.next();
+    goto process_value_list;
+process_value_list:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto process_value_list_item;
+process_value_list_item:
+    if (cur_tok.is_identifier() || cur_tok.is_literal())
+        val_list.emplace_back(cur_tok.lexeme);
+    else
+        goto err_expect_value_item;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_value_list_item;
+    } else if (cur_sym == SYMBOL_RPAREN) {
+        cur_tok = lex.next();
+        goto statement_ending;
+    }
+    goto err_expect_comma_or_rparen;
+err_expect_value_item:
+    {
+        std::stringstream estr;
+        estr << "Expected a value item, but got " << cur_tok << "." << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
     return false;
 statement_ending:
     // We get here after successfully parsing the <table name> element,
@@ -119,7 +161,7 @@ push_statement:
     if (col_list.empty())
         out = std::make_unique<insert_t>(table_name);
     else
-        out = std::make_unique<insert_t>(table_name, col_list);
+        out = std::make_unique<insert_t>(table_name, col_list, val_list);
     return true;
 }
 

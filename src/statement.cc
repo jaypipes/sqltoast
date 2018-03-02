@@ -155,6 +155,11 @@ std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
         for (const lexeme_t& col : stmt.insert_columns) {
             out << std::endl << "     " << x++ << ": " << col;
         }
+        x = 0;
+        out << std::endl << "   values:";
+        for (const lexeme_t& val : stmt.insert_values) {
+            out << std::endl << "     " << x++ << ": " << val;
+        }
     }
     out << ">" << std::endl;
 
