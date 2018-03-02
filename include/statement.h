@@ -15,6 +15,7 @@ typedef enum statement_type {
     STATEMENT_TYPE_DROP_SCHEMA,
     STATEMENT_TYPE_DROP_TABLE,
     STATEMENT_TYPE_INSERT,
+    STATEMENT_TYPE_INSERT_SELECT,
     STATEMENT_TYPE_SELECT
 } statement_type_t;
 
@@ -123,10 +124,6 @@ typedef struct insert : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
     std::vector<lexeme_t> insert_values;
-    insert(lexeme_t& table_name) :
-        statement_t(STATEMENT_TYPE_INSERT),
-        table_name(table_name)
-    {}
     insert(
             lexeme_t& table_name,
             std::vector<lexeme_t>& col_list,
@@ -136,12 +133,36 @@ typedef struct insert : statement_t {
         insert_columns(std::move(col_list)),
         insert_values(std::move(val_list))
     {}
-    inline bool use_default_values() const {
+    inline bool use_default_columns() const {
         return insert_columns.empty();
+    }
+    inline bool use_default_values() const {
+        return insert_values.empty();
     }
 } insert_t;
 
 std::ostream& operator<< (std::ostream& out, const insert_t& stmt);
+
+typedef struct insert_select : statement_t {
+    lexeme_t table_name;
+    std::vector<lexeme_t> insert_columns;
+    // Guaranteed to always be static_castable to a select_t
+    std::unique_ptr<statement_t> select;
+    insert_select(
+            lexeme_t& table_name,
+            std::vector<lexeme_t>& col_list,
+            std::unique_ptr<statement_t>& select) :
+        statement_t(STATEMENT_TYPE_INSERT_SELECT),
+        table_name(table_name),
+        insert_columns(std::move(col_list)),
+        select(std::move(select))
+    {}
+    inline bool use_default_columns() const {
+        return insert_columns.empty();
+    }
+} insert_select_t;
+
+std::ostream& operator<< (std::ostream& out, const insert_select_t& stmt);
 
 } // namespace sqltoast
 
