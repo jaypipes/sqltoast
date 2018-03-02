@@ -29,6 +29,10 @@ static const size_t NUM_SELECT_STATEMENT_PARSERS = 1;
 static const parse_func_t select_statement_parsers[1] = {
     &parse_select
 };
+static const size_t NUM_INSERT_STATEMENT_PARSERS = 1;
+static const parse_func_t insert_statement_parsers[1] = {
+    &parse_insert
+};
 
 void parse_statement(parse_context_t& ctx) {
     // Assumption: the current token will be a keyword
@@ -56,6 +60,12 @@ void parse_statement(parse_context_t& ctx) {
         {
             num_parsers = NUM_SELECT_STATEMENT_PARSERS;
             parsers = select_statement_parsers;
+            break;
+        }
+        case SYMBOL_INSERT:
+        {
+            num_parsers = NUM_INSERT_STATEMENT_PARSERS;
+            parsers = insert_statement_parsers;
             break;
         }
         default:

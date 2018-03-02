@@ -75,6 +75,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'i':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_IN, "IN"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_INSERT, "INSERT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_INTO, "INTO"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_IS, "IS"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_INTERVAL, "INTERVAL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_INT, "INT"));

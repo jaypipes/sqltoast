@@ -40,6 +40,12 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_INSERT:
+            {
+                const insert_t& sub = static_cast<const insert_t&>(stmt);
+                out << sub;
+            }
+            break;
         default:
             break;
     }
@@ -131,6 +137,29 @@ std::ostream& operator<< (std::ostream& out, const select_t& stmt) {
     if (stmt.where_condition) {
         out << std::endl << "   where conditions: ";
         out << *stmt.where_condition;
+    }
+    out << ">" << std::endl;
+
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
+    out << "<statement: INSERT " << std::endl
+        << "   table name: " << stmt.table_name;
+
+    if (stmt.use_default_values())
+        out << std::endl << "   default values: true";
+    else {
+        out << std::endl << "   columns:";
+        size_t x = 0;
+        for (const lexeme_t& col : stmt.insert_columns) {
+            out << std::endl << "     " << x++ << ": " << col;
+        }
+        x = 0;
+        out << std::endl << "   values:";
+        for (const lexeme_t& val : stmt.insert_values) {
+            out << std::endl << "     " << x++ << ": " << val;
+        }
     }
     out << ">" << std::endl;
 

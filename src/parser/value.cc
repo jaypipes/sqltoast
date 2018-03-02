@@ -88,7 +88,6 @@ bool parse_value_expression(
     if (cur_tok.is_identifier()) {
         ve_type = VALUE_EXPRESSION_TYPE_COLUMN;
         ve_lexeme = cur_tok.lexeme;
-        cur_tok = lex.next();
         goto push_ve;
     }
     return false;
