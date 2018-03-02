@@ -138,6 +138,7 @@ bool parse_predicate(
         // The following types of predicates have a row-value constructor as
         // the left-most element of the predicate: comparison predicate,
         // between predicate, in predicate, like predicate, null predicate
+        cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_NOT) {
             found_not = true;
@@ -410,6 +411,7 @@ process_value_list_item:
         values.emplace_back(std::move(value));
         cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
+        std::cout << "got next symbol: " << cur_tok << std::endl;
         if (cur_sym == SYMBOL_COMMA) {
             cur_tok = lex.next();
             goto process_value_list_item;
