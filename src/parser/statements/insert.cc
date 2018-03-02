@@ -30,6 +30,7 @@ bool parse_insert(
     symbol_t cur_sym;
     std::vector<lexeme_t> col_list;
     std::vector<lexeme_t> val_list;
+    std::unique_ptr<statement_t> sel;
 
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_INSERT) {
@@ -72,6 +73,8 @@ opt_col_list_or_default_values:
     } else if (cur_sym == SYMBOL_VALUES) {
         cur_tok = lex.next();
         goto process_value_list;
+    } else if (cur_sym == SYMBOL_SELECT) {
+        goto process_insert_select;
     }
     goto err_expect_lparen_values_or_default;
 err_expect_lparen_values_or_default:
@@ -100,16 +103,18 @@ process_column_list_item:
         goto process_column_list_item;
     } else if (cur_sym == SYMBOL_RPAREN) {
         cur_tok = lex.next();
-        goto expect_values;
+        goto expect_values_or_select;
     }
     goto err_expect_comma_or_rparen;
 err_expect_comma_or_rparen:
     expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_RPAREN});
     return false;
-expect_values:
+expect_values_or_select:
     // We get here when we expect to find the keyword VALUES preceding the
     // value list (not the "DEFAULT VALUES" clause
     cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_SELECT)
+        goto process_insert_select;
     if (cur_sym != SYMBOL_VALUES)
         goto err_expect_values;
     cur_tok = lex.next();
@@ -145,6 +150,10 @@ err_expect_value_item:
 err_expect_lparen:
     expect_error(ctx, SYMBOL_LPAREN);
     return false;
+process_insert_select:
+    if (! parse_select(ctx, cur_tok, sel))
+        return false;
+    goto statement_ending;
 statement_ending:
     // We get here after successfully parsing the <table name> element,
     // which must be followed by the <insert columns and source> element
@@ -158,8 +167,8 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    if (col_list.empty())
-        out = std::make_unique<insert_t>(table_name);
+    if (sel)
+        out = std::make_unique<insert_select_t>(table_name, col_list, sel);
     else
         out = std::make_unique<insert_t>(table_name, col_list, val_list);
     return true;
