@@ -172,7 +172,7 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<create_table_t>(
+    out = std::make_unique<create_table_statement_t>(
             table_type, table_name, column_defs, constraints);
     return true;
 }

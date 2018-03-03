@@ -44,7 +44,6 @@ namespace sqltoast {
 // So far, we only implement up to the <schema element> part of the grammar.
 //
 // TODO(jaypipes): Implement the <schema element> list
-
 bool parse_create_schema(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -152,7 +151,7 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<create_schema_t>(
+    out = std::make_unique<create_schema_statement_t>(
             schema_name, authz_ident, default_charset);
     return true;
 }

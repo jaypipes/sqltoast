@@ -167,9 +167,11 @@ push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
     if (sel)
-        out = std::make_unique<insert_select_t>(table_name, col_list, sel);
+        out = std::make_unique<insert_select_statement_t>(
+                table_name, col_list, sel);
     else
-        out = std::make_unique<insert_t>(table_name, col_list, val_list);
+        out = std::make_unique<insert_statement_t>(
+                table_name, col_list, val_list);
     return true;
 }
 

@@ -183,7 +183,7 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<select_t>(
+    out = std::make_unique<select_statement_t>(
             distinct, selected_columns, referenced_tables, where_condition);
     return true;
 }

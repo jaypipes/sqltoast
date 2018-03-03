@@ -12,43 +12,50 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
     switch (stmt.type) {
         case STATEMENT_TYPE_CREATE_SCHEMA:
             {
-                const create_schema_t& sub = static_cast<const create_schema_t&>(stmt);
+                const create_schema_statement_t& sub =
+                    static_cast<const create_schema_statement_t&>(stmt);
                 out << sub;
             }
             break;
         case STATEMENT_TYPE_DROP_SCHEMA:
             {
-                const drop_schema_t& sub = static_cast<const drop_schema_t&>(stmt);
+                const drop_schema_statement_t& sub =
+                    static_cast<const drop_schema_statement_t&>(stmt);
                 out << sub;
             }
             break;
         case STATEMENT_TYPE_CREATE_TABLE:
             {
-                const create_table_t& sub = static_cast<const create_table_t&>(stmt);
+                const create_table_statement_t& sub =
+                    static_cast<const create_table_statement_t&>(stmt);
                 out << sub;
             }
             break;
         case STATEMENT_TYPE_DROP_TABLE:
             {
-                const drop_table_t& sub = static_cast<const drop_table_t&>(stmt);
+                const drop_table_statement_t& sub =
+                    static_cast<const drop_table_statement_t&>(stmt);
                 out << sub;
             }
             break;
         case STATEMENT_TYPE_SELECT:
             {
-                const select_t& sub = static_cast<const select_t&>(stmt);
+                const select_statement_t& sub =
+                    static_cast<const select_statement_t&>(stmt);
                 out << sub;
             }
             break;
         case STATEMENT_TYPE_INSERT:
             {
-                const insert_t& sub = static_cast<const insert_t&>(stmt);
+                const insert_statement_t& sub =
+                    static_cast<const insert_statement_t&>(stmt);
                 out << sub;
             }
             break;
         case STATEMENT_TYPE_INSERT_SELECT:
             {
-                const insert_select_t& sub = static_cast<const insert_select_t&>(stmt);
+                const insert_select_statement_t& sub =
+                    static_cast<const insert_select_statement_t&>(stmt);
                 out << sub;
             }
             break;
@@ -64,42 +71,38 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const create_schema_t& stmt) {
+std::ostream& operator<< (std::ostream& out, const create_schema_statement_t& stmt) {
     out << "<statement: CREATE SCHEMA" << std::endl
         << "   schema name: " << stmt.schema_name;
-    if (stmt.authorization_identifier) {
+    if (stmt.authorization_identifier)
        out << std::endl << "   authorization identifier: " << stmt.authorization_identifier;
-    }
-    if (stmt.default_charset) {
+    if (stmt.default_charset)
        out << std::endl << "   default charset: " << stmt.default_charset;
-    }
     out << ">" << std::endl;
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const drop_schema_t& stmt) {
+std::ostream& operator<< (std::ostream& out, const drop_schema_statement_t& stmt) {
     out << "<statement: DROP SCHEMA" << std::endl
         << "   schema name: " << stmt.schema_name << std::endl;
-    if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE) {
+    if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
        out << "   behaviour: CASCADE";
-    } else {
+    else
        out << "   behaviour: RESTRICT";
-    }
     out << ">" << std::endl;
 
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const create_table_t& stmt) {
+std::ostream& operator<< (std::ostream& out, const create_table_statement_t& stmt) {
     out << "<statement: CREATE TABLE" << std::endl
         << "    table name: " << stmt.table_name;
     if (stmt.table_type != TABLE_TYPE_NORMAL) {
         out << std::endl << "    temporary: true (";
-        if (stmt.table_type == TABLE_TYPE_TEMPORARY_GLOBAL) {
+        if (stmt.table_type == TABLE_TYPE_TEMPORARY_GLOBAL)
             out << "global)";
-        } else {
+        else
             out << "local)";
-        }
     }
     out << std::endl << "    column definitions:";
     for (auto cdef_it = stmt.column_definitions.begin();
@@ -120,7 +123,7 @@ std::ostream& operator<< (std::ostream& out, const create_table_t& stmt) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const drop_table_t& stmt) {
+std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt) {
     out << "<statement: DROP TABLE" << std::endl
         << "   table name: " << stmt.table_name << std::endl;
     if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
@@ -132,7 +135,7 @@ std::ostream& operator<< (std::ostream& out, const drop_table_t& stmt) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const select_t& stmt) {
+std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
     out << "<statement: SELECT";
     if (stmt.distinct)
        out << std::endl << "   distinct: true";
@@ -155,7 +158,7 @@ std::ostream& operator<< (std::ostream& out, const select_t& stmt) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
+std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt) {
     out << "<statement: INSERT" << std::endl
         << "   table name: " << stmt.table_name;
 
@@ -182,7 +185,7 @@ std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const insert_select_t& stmt) {
+std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& stmt) {
     out << "<statement: INSERT" << std::endl
         << "   table name: " << stmt.table_name;
 

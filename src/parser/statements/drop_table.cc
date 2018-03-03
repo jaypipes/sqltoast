@@ -75,7 +75,7 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<drop_table_t>(table_name, behaviour);
+    out = std::make_unique<drop_table_statement_t>(table_name, behaviour);
     return true;
 }
 

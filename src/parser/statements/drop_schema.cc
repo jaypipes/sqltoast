@@ -79,7 +79,8 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<drop_schema_t>(schema_name, behaviour);
+    out = std::make_unique<drop_schema_statement_t>(
+            schema_name, behaviour);
     return true;
 }
 

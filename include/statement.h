@@ -28,12 +28,12 @@ typedef struct statement {
 
 std::ostream& operator<< (std::ostream& out, const statement_t& stmt);
 
-typedef struct create_schema : statement_t {
+typedef struct create_schema_statement : statement_t {
     lexeme_t schema_name;
     // Optional elements
     lexeme_t authorization_identifier;
     lexeme_t default_charset;
-    create_schema(
+    create_schema_statement(
             lexeme_t& schema_name,
             lexeme_t& auth_ident,
             lexeme_t& def_charset) :
@@ -42,26 +42,26 @@ typedef struct create_schema : statement_t {
         authorization_identifier(auth_ident),
         default_charset(def_charset)
     {}
-} create_schema_t;
+} create_schema_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const create_schema_t& stmt);
+std::ostream& operator<< (std::ostream& out, const create_schema_statement_t& stmt);
 
 typedef enum drop_behaviour {
     DROP_BEHAVIOUR_CASCADE,
     DROP_BEHAVIOUR_RESTRICT
 } drop_behaviour_t;
 
-typedef struct drop_schema : statement_t {
+typedef struct drop_schema_statement : statement_t {
     lexeme_t schema_name;
     drop_behaviour_t drop_behaviour;
-    drop_schema(lexeme_t& schema_name, drop_behaviour_t drop_behaviour) :
+    drop_schema_statement(lexeme_t& schema_name, drop_behaviour_t drop_behaviour) :
         statement_t(STATEMENT_TYPE_DROP_SCHEMA),
         schema_name(schema_name),
         drop_behaviour(drop_behaviour)
     {}
-} drop_schema_t;
+} drop_schema_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const drop_schema_t& stmt);
+std::ostream& operator<< (std::ostream& out, const drop_schema_statement_t& stmt);
 
 typedef enum table_type {
     TABLE_TYPE_NORMAL,
@@ -69,12 +69,12 @@ typedef enum table_type {
     TABLE_TYPE_TEMPORARY_LOCAL
 } table_type_t;
 
-typedef struct create_table : statement_t {
+typedef struct create_table_statement : statement_t {
     table_type_t table_type;
     lexeme_t table_name;
     std::vector<std::unique_ptr<column_definition_t>> column_definitions;
     std::vector<std::unique_ptr<constraint_t>> constraints;
-    create_table(
+    create_table_statement(
             table_type_t table_type,
             lexeme_t& table_name,
             std::vector<std::unique_ptr<column_definition_t>>& column_defs,
@@ -85,28 +85,28 @@ typedef struct create_table : statement_t {
         column_definitions(std::move(column_defs)),
         constraints(std::move(constraints))
     {}
-} create_table_t;
+} create_table_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const create_table_t& stmt);
+std::ostream& operator<< (std::ostream& out, const create_table_statement_t& stmt);
 
-typedef struct drop_table : statement_t {
+typedef struct drop_table_statement : statement_t {
     lexeme_t table_name;
     drop_behaviour_t drop_behaviour;
-    drop_table(lexeme_t& table_name, drop_behaviour_t drop_behaviour) :
+    drop_table_statement(lexeme_t& table_name, drop_behaviour_t drop_behaviour) :
         statement_t(STATEMENT_TYPE_DROP_TABLE),
         table_name(table_name),
         drop_behaviour(drop_behaviour)
     {}
-} drop_table_t;
+} drop_table_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const drop_table_t& stmt);
+std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt);
 
-typedef struct select : statement_t {
+typedef struct select_statement : statement_t {
     bool distinct;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
     std::unique_ptr<search_condition_t> where_condition;
-    select(
+    select_statement(
             bool distinct,
             std::vector<derived_column_t>& selected_cols,
             std::vector<table_reference_t>& ref_tables,
@@ -117,15 +117,15 @@ typedef struct select : statement_t {
         referenced_tables(std::move(ref_tables)),
         where_condition(std::move(where_cond))
     {}
-} select_t;
+} select_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const select_t& stmt);
+std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt);
 
-typedef struct insert : statement_t {
+typedef struct insert_statement : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
     std::vector<lexeme_t> insert_values;
-    insert(
+    insert_statement(
             lexeme_t& table_name,
             std::vector<lexeme_t>& col_list,
             std::vector<lexeme_t>& val_list) :
@@ -140,16 +140,16 @@ typedef struct insert : statement_t {
     inline bool use_default_values() const {
         return insert_values.empty();
     }
-} insert_t;
+} insert_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const insert_t& stmt);
+std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt);
 
-typedef struct insert_select : statement_t {
+typedef struct insert_select_statement : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
     // Guaranteed to always be static_castable to a select_t
     std::unique_ptr<statement_t> select;
-    insert_select(
+    insert_select_statement(
             lexeme_t& table_name,
             std::vector<lexeme_t>& col_list,
             std::unique_ptr<statement_t>& select) :
@@ -161,9 +161,9 @@ typedef struct insert_select : statement_t {
     inline bool use_default_columns() const {
         return insert_columns.empty();
     }
-} insert_select_t;
+} insert_select_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const insert_select_t& stmt);
+std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& stmt);
 
 typedef struct delete_statement : statement_t {
     lexeme_t table_name;
