@@ -21,13 +21,6 @@ typedef bool (*parse_func_t) (
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
-// Returns true if the DEFAULT CHARACTER SET <charset identifier> clause was
-// successfully parsed. SYMBOL_DELETE symbol is assumed to have already been
-// matched and the supplied token iterator is pointing at the token
-// representing the DEFAULT keyword. If true is returned, cur_tok will be
-// pointing to the token representing the charset identifier
-bool require_default_charset_clause(parse_context_t& ctx);
-
 // Top-level statement parser that is called from within the primary parse()
 // loop over found tokens.
 void parse_statement(parse_context_t& ctx);

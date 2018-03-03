@@ -37,8 +37,6 @@ bool parse_create_table(
     std::vector<std::unique_ptr<column_definition_t>> column_defs;
     std::vector<std::unique_ptr<constraint_t>> constraints;
 
-    // BEGIN STATE MACHINE
-
     cur_tok = lex.next();
     cur_sym = cur_tok.symbol;
     switch (cur_sym) {
@@ -135,10 +133,11 @@ expect_table_list_element:
     goto expect_table_list_close;
 err_expect_column_def_or_constraint:
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
-        return false; // There was a syntax error written already to the context...
+        return false;
     else {
         std::stringstream estr;
-        estr << "Expected either a column definition or a constraint but found " << cur_tok << std::endl;
+        estr << "Expected either a column definition or a "
+                "constraint but found " << cur_tok << std::endl;
         create_syntax_error_marker(ctx, estr);
         return false;
     }
@@ -162,9 +161,9 @@ err_expect_rparen_or_comma:
     expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_RPAREN});
     return false;
 statement_ending:
-    // We get here if we have already successfully processed the CREATE
-    // TABLE statement and are expecting EOS or SEMICOLON as the next
-    // non-comment token
+    // We get here after successfully parsing the statement and now expect
+    // either the end of parse content or a semicolon to indicate end of
+    // statement.
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS)
         goto push_statement;
@@ -173,7 +172,8 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<create_table_t>(table_type, table_name, column_defs, constraints);
+    out = std::make_unique<create_table_t>(
+            table_type, table_name, column_defs, constraints);
     return true;
 }
 

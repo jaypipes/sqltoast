@@ -155,13 +155,12 @@ process_insert_select:
         return false;
     goto statement_ending;
 statement_ending:
-    // We get here after successfully parsing the <table name> element,
-    // which must be followed by the <insert columns and source> element
-    // behaviour clause>
+    // We get here after successfully parsing the statement and now expect
+    // either the end of parse content or a semicolon to indicate end of
+    // statement.
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS) {
+    if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS)
         goto push_statement;
-    }
     expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON});
     return false;
 push_statement:

@@ -67,9 +67,9 @@ opt_search_condition:
         return false;
     goto statement_ending;
 statement_ending:
-    // We get here after successfully parsing the <table name> element,
-    // which must be followed by the <insert columns and source> element
-    // behaviour clause>
+    // We get here after successfully parsing the statement and now expect
+    // either the end of parse content or a semicolon to indicate end of
+    // statement.
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_SEMICOLON || cur_sym == SYMBOL_EOS)
         goto push_statement;
