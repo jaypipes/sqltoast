@@ -25,6 +25,10 @@ static const parse_func_t drop_statement_parsers[2] = {
     &parse_drop_table,
     &parse_drop_schema
 };
+static const size_t NUM_DELETE_STATEMENT_PARSERS = 1;
+static const parse_func_t delete_statement_parsers[1] = {
+    &parse_delete
+};
 static const size_t NUM_SELECT_STATEMENT_PARSERS = 1;
 static const parse_func_t select_statement_parsers[1] = {
     &parse_select
@@ -48,6 +52,12 @@ void parse_statement(parse_context_t& ctx) {
         {
             num_parsers = NUM_CREATE_STATEMENT_PARSERS;
             parsers = create_statement_parsers;
+            break;
+        }
+        case SYMBOL_DELETE:
+        {
+            num_parsers = NUM_DELETE_STATEMENT_PARSERS;
+            parsers = delete_statement_parsers;
             break;
         }
         case SYMBOL_DROP:

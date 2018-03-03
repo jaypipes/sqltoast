@@ -16,6 +16,7 @@ typedef enum statement_type {
     STATEMENT_TYPE_DROP_TABLE,
     STATEMENT_TYPE_INSERT,
     STATEMENT_TYPE_INSERT_SELECT,
+    STATEMENT_TYPE_DELETE,
     STATEMENT_TYPE_SELECT
 } statement_type_t;
 
@@ -164,6 +165,17 @@ typedef struct insert_select : statement_t {
 
 std::ostream& operator<< (std::ostream& out, const insert_select_t& stmt);
 
+typedef struct delete_statement : statement_t {
+    lexeme_t table_name;
+    std::unique_ptr<search_condition_t> where_condition;
+    delete_statement(lexeme_t& table_name, std::unique_ptr<search_condition_t>& where) :
+        statement_t(STATEMENT_TYPE_DELETE),
+        table_name(table_name),
+        where_condition(std::move(where))
+    {}
+} delete_statement_t;
+
+std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt);
 } // namespace sqltoast
 
 #endif /* SQLTOAST_STATEMENT_H */

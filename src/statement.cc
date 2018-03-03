@@ -52,6 +52,12 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_DELETE:
+            {
+                const delete_statement_t& sub = static_cast<const delete_statement_t&>(stmt);
+                out << sub;
+            }
+            break;
         default:
             break;
     }
@@ -150,7 +156,7 @@ std::ostream& operator<< (std::ostream& out, const select_t& stmt) {
 }
 
 std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
-    out << "<statement: INSERT " << std::endl
+    out << "<statement: INSERT" << std::endl
         << "   table name: " << stmt.table_name;
 
     if (stmt.use_default_columns())
@@ -177,7 +183,7 @@ std::ostream& operator<< (std::ostream& out, const insert_t& stmt) {
 }
 
 std::ostream& operator<< (std::ostream& out, const insert_select_t& stmt) {
-    out << "<statement: INSERT " << std::endl
+    out << "<statement: INSERT" << std::endl
         << "   table name: " << stmt.table_name;
 
     if (stmt.use_default_columns())
@@ -190,6 +196,17 @@ std::ostream& operator<< (std::ostream& out, const insert_select_t& stmt) {
         }
     }
     out << std::endl << "   select: " << *stmt.select;
+    out << ">" << std::endl;
+
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt) {
+    out << "<statement: DELETE" << std::endl
+        << "   table name: " << stmt.table_name;
+
+    if (stmt.where_condition)
+        out << std::endl << "   where: " << *stmt.where_condition;
     out << ">" << std::endl;
 
     return out;
