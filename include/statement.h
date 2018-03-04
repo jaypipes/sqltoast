@@ -106,16 +106,19 @@ typedef struct select_statement : statement_t {
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
     std::unique_ptr<search_condition_t> where_condition;
+    std::vector<grouping_column_reference_t> group_by_columns;
     select_statement(
             bool distinct,
             std::vector<derived_column_t>& selected_cols,
             std::vector<table_reference_t>& ref_tables,
-            std::unique_ptr<search_condition_t>& where_cond) :
+            std::unique_ptr<search_condition_t>& where_cond,
+            std::vector<grouping_column_reference_t>& group_by_cols) :
         statement_t(STATEMENT_TYPE_SELECT),
         distinct(distinct),
         selected_columns(std::move(selected_cols)),
         referenced_tables(std::move(ref_tables)),
-        where_condition(std::move(where_cond))
+        where_condition(std::move(where_cond)),
+        group_by_columns(std::move(group_by_cols))
     {}
 } select_statement_t;
 

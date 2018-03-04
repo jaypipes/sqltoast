@@ -153,6 +153,13 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
         out << std::endl << "   where conditions: ";
         out << *stmt.where_condition;
     }
+    if (! stmt.group_by_columns.empty()) {
+        out << std::endl << "   group by: ";
+        x = 0;
+        for (const grouping_column_reference_t& gcr : stmt.group_by_columns) {
+            out << std::endl << "     " << x++ << ": " << gcr;
+        }
+    }
     out << ">" << std::endl;
 
     return out;

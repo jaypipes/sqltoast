@@ -9,10 +9,16 @@
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const derived_column_t& dc) {
-    out << std::string(dc.value.start, dc.value.end);
-    if (dc.has_alias()) {
-        out << " AS " << std::string(dc.alias.start, dc.alias.end);
-    }
+    out << dc.value;
+    if (dc.has_alias())
+        out << " AS " << dc.alias;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const grouping_column_reference_t& gcr) {
+    out << gcr.column;
+    if (gcr.has_collation())
+        out << " COLLATE " << gcr.collation;
     return out;
 }
 

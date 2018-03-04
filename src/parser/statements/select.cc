@@ -41,6 +41,7 @@ bool parse_select(
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
+    std::vector<grouping_column_reference_t> group_by_columns;
     std::unique_ptr<search_condition_t> where_condition;
     bool distinct = false;
 
@@ -115,17 +116,11 @@ err_expect_comma_or_from:
     return false;
 expect_table_reference:
     cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_IDENTIFIER:
-            referenced_tables.emplace_back(table_reference_t(cur_tok.lexeme));
-            cur_tok = lex.next();
-            goto optional_table_alias;
-        default:
-            goto err_expect_table_reference;
-    }
-err_expect_table_reference:
-    expect_any_error(ctx, {SYMBOL_IDENTIFIER});
-    return false;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    referenced_tables.emplace_back(table_reference_t(cur_tok.lexeme));
+    cur_tok = lex.next();
+    goto optional_table_alias;
 optional_table_alias:
     // We get here after consuming an identifier, derived table specifier or
     // joined table specifier. An alias can be provided for this table
@@ -157,6 +152,9 @@ comma_or_where_group_having:
         case SYMBOL_WHERE:
             cur_tok = lex.next();
             goto expect_where_condition;
+        case SYMBOL_GROUP:
+            cur_tok = lex.next();
+            goto expect_by;
         default:
             // TODO
             goto statement_ending;
@@ -165,6 +163,47 @@ expect_where_condition:
     cur_sym = cur_tok.symbol;
     if (! parse_search_condition(ctx, cur_tok, where_condition))
         return false;
+    goto statement_ending;
+expect_by:
+    // We get here after finding the GROUP symbol, which must be followed by
+    // the BY symbol and then one or more grouping column references
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_BY)
+        goto err_expect_by;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    goto process_group_by_column;
+err_expect_by:
+    expect_error(ctx, SYMBOL_BY);
+    return false;
+process_group_by_column:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    group_by_columns.emplace_back(grouping_column_reference_t(cur_tok.lexeme));
+    cur_tok = lex.next();
+    goto optional_collation;
+optional_collation:
+    // We get here after consuming an identifier for a grouping column
+    // reference and now we can get an optional collation for that column
+    // reference
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COLLATE) {
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_IDENTIFIER)
+            goto err_expect_identifier;
+    }
+    if (cur_sym == SYMBOL_IDENTIFIER) {
+        grouping_column_reference_t& gcr = group_by_columns.back();
+        gcr.collation = cur_tok.lexeme;
+        cur_tok = lex.next();
+    }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_group_by_column;
+    }
     goto statement_ending;
 statement_ending:
     // We get here if we have already successfully processed the SELECT
@@ -184,7 +223,8 @@ push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<select_statement_t>(
-            distinct, selected_columns, referenced_tables, where_condition);
+            distinct, selected_columns, referenced_tables, where_condition,
+            group_by_columns);
     return true;
 }
 
