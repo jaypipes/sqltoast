@@ -4,8 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOAST_DERIVED_COLUMN_H
-#define SQLTOAST_DERIVED_COLUMN_H
+#ifndef SQLTOAST_COLUMN_REFERENCE_H
+#define SQLTOAST_COLUMN_REFERENCE_H
 
 namespace sqltoast {
 
@@ -22,6 +22,19 @@ typedef struct derived_column {
 
 std::ostream& operator<< (std::ostream& out, const derived_column_t& dc);
 
+typedef struct grouping_column_reference {
+    lexeme_t column;
+    lexeme_t collation;
+    grouping_column_reference(lexeme_t& column) :
+        column(column)
+    {}
+    inline bool has_collation() const {
+        return collation.start != parse_position_t(0);
+    }
+} grouping_column_reference_t;
+
+std::ostream& operator<< (std::ostream& out, const grouping_column_reference_t& dc);
+
 } // namespace sqltoast
 
-#endif /* SQLTOAST_DERIVED_COLUMN_H */
+#endif /* SQLTOAST_COLUMN_REFERENCE_H */
