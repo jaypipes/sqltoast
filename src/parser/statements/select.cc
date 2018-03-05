@@ -39,6 +39,7 @@ bool parse_select(
         std::unique_ptr<statement_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<row_value_constructor_t> rvc;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
     std::vector<grouping_column_reference_t> group_by_columns;
@@ -62,18 +63,17 @@ bool parse_select(
     }
 expect_derived_column:
     cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_IDENTIFIER:
-            selected_columns.emplace_back(derived_column_t(cur_tok.lexeme));
-            cur_tok = lex.next();
-            goto optional_column_alias;
-        case SYMBOL_ASTERISK:
-            selected_columns.emplace_back(derived_column_t(cur_tok.lexeme));
-            cur_tok = lex.next();
-            goto comma_or_from;
-        default:
-            goto err_expect_derived_column;
+    if (cur_sym == SYMBOL_ASTERISK) {
+        selected_columns.emplace_back(derived_column_t(cur_tok.lexeme));
+        cur_tok = lex.next();
+        goto comma_or_from;
     }
+    // If the <select list> element isn't an asterisk it needs to be a value
+    // expression...
+    if (! parse_value_expression(ctx, cur_tok, rvc))
+        goto err_expect_derived_column;
+    selected_columns.emplace_back(derived_column_t(rvc));
+    goto optional_column_alias;
 err_expect_derived_column:
     expect_any_error(ctx, {SYMBOL_ASTERISK, SYMBOL_IDENTIFIER});
     return false;
