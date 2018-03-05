@@ -9,7 +9,7 @@
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const derived_column_t& dc) {
-    out << dc.value;
+    out << *dc.value;
     if (dc.has_alias())
         out << " AS " << dc.alias;
     return out;
