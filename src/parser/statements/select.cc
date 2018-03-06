@@ -163,7 +163,26 @@ expect_where_condition:
     cur_sym = cur_tok.symbol;
     if (! parse_search_condition(ctx, cur_tok, where_condition))
         return false;
-    goto statement_ending;
+    goto group_by_having_or_statement_ending;
+group_by_having_or_statement_ending:
+    // We get here after consuming the FROM and optional WHERE clauses. We can
+    // now get either the end of statement, the GROUP BY or the HAVING clause
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_GROUP:
+            cur_tok = lex.next();
+            goto expect_by;
+        case SYMBOL_EOS:
+        case SYMBOL_SEMICOLON:
+            goto statement_ending;
+        default:
+            goto err_expect_group_having_or_statement_ending;
+    }
+err_expect_group_having_or_statement_ending:
+    expect_any_error(ctx,
+            {SYMBOL_GROUP, SYMBOL_HAVING,
+             SYMBOL_SEMICOLON, SYMBOL_EOS});
+    return false;
 expect_by:
     // We get here after finding the GROUP symbol, which must be followed by
     // the BY symbol and then one or more grouping column references
