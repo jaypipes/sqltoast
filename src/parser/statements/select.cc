@@ -44,6 +44,7 @@ bool parse_select(
     std::vector<table_reference_t> referenced_tables;
     std::vector<grouping_column_reference_t> group_by_columns;
     std::unique_ptr<search_condition_t> where_condition;
+    std::unique_ptr<search_condition_t> having_condition;
     bool distinct = false;
 
     // BEGIN STATE MACHINE
@@ -151,15 +152,18 @@ comma_or_where_group_having:
             goto expect_table_reference;
         case SYMBOL_WHERE:
             cur_tok = lex.next();
-            goto expect_where_condition;
+            goto process_where;
         case SYMBOL_GROUP:
             cur_tok = lex.next();
             goto expect_by;
+        case SYMBOL_HAVING:
+            cur_tok = lex.next();
+            goto process_having;
         default:
             // TODO
             goto statement_ending;
     }
-expect_where_condition:
+process_where:
     cur_sym = cur_tok.symbol;
     if (! parse_search_condition(ctx, cur_tok, where_condition))
         return false;
@@ -172,17 +176,12 @@ group_by_having_or_statement_ending:
         case SYMBOL_GROUP:
             cur_tok = lex.next();
             goto expect_by;
-        case SYMBOL_EOS:
-        case SYMBOL_SEMICOLON:
-            goto statement_ending;
+        case SYMBOL_HAVING:
+            cur_tok = lex.next();
+            goto process_having;
         default:
-            goto err_expect_group_having_or_statement_ending;
+            goto statement_ending;
     }
-err_expect_group_having_or_statement_ending:
-    expect_any_error(ctx,
-            {SYMBOL_GROUP, SYMBOL_HAVING,
-             SYMBOL_SEMICOLON, SYMBOL_EOS});
-    return false;
 expect_by:
     // We get here after finding the GROUP symbol, which must be followed by
     // the BY symbol and then one or more grouping column references
@@ -223,6 +222,18 @@ optional_collation:
         cur_tok = lex.next();
         goto process_group_by_column;
     }
+    goto having_or_statement_ending;
+process_having:
+    cur_sym = cur_tok.symbol;
+    if (! parse_search_condition(ctx, cur_tok, having_condition))
+        return false;
+    goto statement_ending;
+having_or_statement_ending:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_HAVING) {
+        cur_tok = lex.next();
+        goto process_having;
+    }
     goto statement_ending;
 statement_ending:
     // We get here if we have already successfully processed the SELECT
@@ -243,7 +254,7 @@ push_statement:
         return true;
     out = std::make_unique<select_statement_t>(
             distinct, selected_columns, referenced_tables, where_condition,
-            group_by_columns);
+            group_by_columns, having_condition);
     return true;
 }
 

@@ -150,7 +150,7 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
         out << std::endl << "     " << x++ << ": " << tr;
     }
     if (stmt.where_condition) {
-        out << std::endl << "   where conditions: ";
+        out << std::endl << "   where: ";
         out << *stmt.where_condition;
     }
     if (! stmt.group_by_columns.empty()) {
@@ -159,6 +159,10 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
         for (const grouping_column_reference_t& gcr : stmt.group_by_columns) {
             out << std::endl << "     " << x++ << ": " << gcr;
         }
+    }
+    if (stmt.having_condition) {
+        out << std::endl << "   having: ";
+        out << *stmt.having_condition;
     }
     out << ">" << std::endl;
 
