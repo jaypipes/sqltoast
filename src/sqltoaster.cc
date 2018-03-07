@@ -46,18 +46,18 @@ void usage(const char* prg_name) {
 int main (int argc, char *argv[])
 {
     std::string input;
-    bool disable_statement_construction = false;
+    bool disable_timer = false;
     switch (argc) {
         case 1:
             usage(argv[0]);
             return 1;
         case 3:
-            if (strcmp(argv[1], "--disable-statement-construction") != 0) {
+            if (strcmp(argv[1], "--disable-timer") != 0) {
                 cout << "Unknown argument: " << argv[1] << endl;
                 usage(argv[0]);
                 return 1;
             }
-            disable_statement_construction = true;
+            disable_timer = true;
             input.assign(argv[2]);
             break;
         case 2:
@@ -69,10 +69,7 @@ int main (int argc, char *argv[])
             return 1;
     }
 
-    sqltoast::parse_options_t opts = {
-        sqltoast::SQL_DIALECT_ANSI_1992,
-        disable_statement_construction
-    };
+    sqltoast::parse_options_t opts = {sqltoast::SQL_DIALECT_ANSI_1992, false};
     parser p(opts, input);
 
     auto dur = measure<std::chrono::nanoseconds>::execution(p);
@@ -91,6 +88,7 @@ int main (int argc, char *argv[])
         cout << "Syntax error." << endl;
         cout << p.res.error << endl;
     }
-    cout << "(took " << dur << " nanoseconds)" << endl;
+    if (! disable_timer)
+        cout << "(took " << dur << " nanoseconds)" << endl;
     return 0;
 }
