@@ -46,26 +46,27 @@ def run_test(test_name):
     output_block = []
     with open(test_path, 'rb') as tfile:
         line = tfile.readline().rstrip("\n")
-        while line:
+        while True:
             if not line:
                 break;
             if line.startswith("#"):
+                line = tfile.readline().rstrip("\n")
                 continue
             if line.startswith('>'):
                 # Clear out previous output block...
                 if output_block:
-                    output_blocks.append("\n".join(output_block))
+                    output_blocks.append(output_block)
                     output_block = []
                 input_block.append(line[1:])
             else:
                 # Clear out previous input block...
                 if input_block:
-                    input_blocks.append("\n".join(input_block))
+                    input_blocks.append(input_block)
                     input_block = []
                 output_block.append(line)
             line = tfile.readline().rstrip("\n")
     if output_block:
-        output_blocks.append("\n".join(output_block))
+        output_blocks.append(output_block)
 
     if len(input_blocks) != len(output_blocks):
         msg = ("Error in test file %s: expected same amount of input to "
@@ -74,7 +75,7 @@ def run_test(test_name):
         return RESULT_TEST_ERROR, msg
     for testno, iblock in enumerate(input_blocks):
         expected = output_blocks[testno]
-        cmd_args = [SQLTOASTER_BINARY, '--disable-timer', iblock]
+        cmd_args = [SQLTOASTER_BINARY, '--disable-timer', "\n".join(iblock)]
         try:
             actual = subprocess.check_output(cmd_args)
         except subprocess.CalledProcessError as err:
@@ -82,14 +83,13 @@ def run_test(test_name):
             msg = msg % (testno, test_name, err)
             return RESULT_TEST_ERROR, msg
 
-        actual = actual.rstrip("\n")
+        actual = actual.splitlines()[:-1]
 
         if actual != expected:
-            msg = "expected != actual\n"
-            diff = difflib.unified_diff(expected, actual,
-                                        fromfile="expected",
-                                        tofile="actual")
-            msg += "".join(list(diff))
+            msg = "\nexpected != actual\n"
+            diffs = difflib.ndiff(expected, actual)
+            diffs = [d.strip("\n") for d in diffs]
+            msg += "\n".join(diffs)
             return RESULT_TEST_FAILURE, msg
 
     return RESULT_OK, None
