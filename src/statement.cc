@@ -220,7 +220,7 @@ std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt) {
         << "   table name: " << stmt.table_name;
 
     if (stmt.where_condition)
-        out << std::endl << "   where: " << *stmt.where_condition;
+        out << std::endl << "   where:" << *stmt.where_condition;
     out << ">" << std::endl;
 
     return out;
