@@ -3,6 +3,7 @@
 import argparse
 import difflib
 import os
+import re
 import subprocess
 import sys
 
@@ -11,6 +12,23 @@ RESULT_OK = 0
 RESULT_TEST_ERROR = 1
 RESULT_TEST_FAILURE = 1
 SQLTOASTER_BINARY = os.path.join(TEST_DIR, '..', '..', '_build', 'sqltoaster')
+
+
+def parse_options():
+    """
+    Parse any command line options and environs defaults and return an options
+    object.
+    """
+    p = argparse.ArgumentParser(description="Run SQL grammar tests.")
+    p.add_argument("command", default="run", choices=['run', 'list'])
+    p.add_argument("--regex", "-r", default=None,
+                   help="(optional) regex pattern to filter tests to run")
+    p.add_argument("--dialect", choices=get_dialects(), default=None,
+                   help="(optional) Only run SQL grammar tests for the "
+                        "dialect specified. By default, all dialect tests "
+                        "are run")
+
+    return p.parse_args()
 
 
 def get_dialects():
@@ -29,11 +47,21 @@ def get_test_names(args):
         dialects = set(args.dialect)
     else:
         dialects = get_dialects()
+    name_regex = None
+    if args.regex:
+        try:
+            name_regex = re.compile(args.regex)
+        except Exception as err:
+            sys.stderr.write("ERROR with regex: %s\n" % err)
+            return []
     test_names = []
     for dialect in dialects:
         dpath = os.path.join(TEST_DIR, dialect)
         for fname in os.listdir(dpath):
             if fname.endswith(".test"):
+                if name_regex:
+                    if not name_regex.search(fname):
+                        continue
                 test_names.append("%s/%s" % (dialect, fname[:-5]))
     return sorted(test_names)
 
@@ -93,23 +121,6 @@ def run_test(test_name):
             return RESULT_TEST_FAILURE, msg
 
     return RESULT_OK, None
-
-
-def parse_options():
-    """
-    Parse any command line options and environs defaults and return an options
-    object.
-    """
-    p = argparse.ArgumentParser(description="Run SQL grammar tests.")
-    p.add_argument("command", default="run", choices=['run', 'list'])
-    p.add_argument("--test-regex", "-r", default=None,
-                   help="(optional) regex pattern to filter tests to run")
-    p.add_argument("--dialect", choices=get_dialects(), default=None,
-                   help="(optional) Only run SQL grammar tests for the "
-                        "dialect specified. By default, all dialect tests "
-                        "are run")
-
-    return p.parse_args()
 
 
 def command_list(args):
