@@ -103,7 +103,8 @@ def run_test(test_name):
         return RESULT_TEST_ERROR, msg
     for testno, iblock in enumerate(input_blocks):
         expected = output_blocks[testno]
-        cmd_args = [SQLTOASTER_BINARY, '--disable-timer', "\n".join(iblock)]
+        input_sql = "\n".join(iblock)
+        cmd_args = [SQLTOASTER_BINARY, '--disable-timer', input_sql]
         try:
             actual = subprocess.check_output(cmd_args)
         except subprocess.CalledProcessError as err:
@@ -114,8 +115,14 @@ def run_test(test_name):
         actual = actual.splitlines()[:-1]
 
         if actual != expected:
-            msg = "\nexpected != actual\n"
-            diffs = difflib.ndiff(expected, actual)
+            msg = "Test #%d\n"
+            msg += "---------------------------------------------\n"
+            msg += "Input SQL:\n"
+            msg += input_sql
+            msg += "\n---------------------------------------------\n"
+            msg += "expected != actual\n"
+            diffs = difflib.unified_diff(
+                expected, actual, fromfile="expected", tofile="actual")
             diffs = [d.strip("\n") for d in diffs]
             msg += "\n".join(diffs)
             return RESULT_TEST_FAILURE, msg
