@@ -115,14 +115,13 @@ def run_test(test_name):
         actual = actual.splitlines()[:-1]
 
         if actual != expected:
-            msg = "Test #%d\n"
+            msg = "Test #%d\n" % testno
             msg += "---------------------------------------------\n"
             msg += "Input SQL:\n"
             msg += input_sql
             msg += "\n---------------------------------------------\n"
             msg += "expected != actual\n"
-            diffs = difflib.unified_diff(
-                expected, actual, fromfile="expected", tofile="actual")
+            diffs = difflib.ndiff(expected, actual)
             diffs = [d.strip("\n") for d in diffs]
             msg += "\n".join(diffs)
             return RESULT_TEST_FAILURE, msg
