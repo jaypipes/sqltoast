@@ -170,11 +170,12 @@ tokenize_result_t token_character_string_literal(
     char c = *cursor++;
     char last_c = c;
     while (cursor != end) {
-        c = *cursor;
-        if (std::isspace(c))
+        c = *cursor++;
+        if (c == '\'' && last_c != '\\') {
+            last_c = c;
             break;
+        }
         last_c = c;
-        ++cursor;
     }
     if (last_c == '\'' && (cursor - start > 1))
         goto push_literal;
