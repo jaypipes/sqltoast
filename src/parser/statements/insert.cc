@@ -29,7 +29,8 @@ bool parse_insert(
     lexeme_t table_name;
     symbol_t cur_sym;
     std::vector<lexeme_t> col_list;
-    std::vector<lexeme_t> val_list;
+    std::vector<std::unique_ptr<row_value_constructor_t>> val_list;
+    std::unique_ptr<row_value_constructor_t> val_list_item;
     std::unique_ptr<statement_t> sel;
 
     cur_sym = cur_tok.symbol;
@@ -126,11 +127,9 @@ process_value_list:
     cur_tok = lex.next();
     goto process_value_list_item;
 process_value_list_item:
-    if (cur_tok.is_identifier() || cur_tok.is_literal())
-        val_list.emplace_back(cur_tok.lexeme);
-    else
+    if (! parse_value_expression(ctx, cur_tok, val_list_item))
         goto err_expect_value_item;
-    cur_tok = lex.next();
+    val_list.emplace_back(std::move(val_list_item));
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_COMMA) {
         cur_tok = lex.next();

@@ -19,26 +19,6 @@ namespace sqltoast {
 //     <value expression>
 //     | <null specification>
 //     | <default specification>
-//
-// <value expression> ::=
-//     <numeric value expression>
-//     | <string value expression>
-//     | <datetime value expression>
-//     | <interval value expression>
-//
-// <numeric value expression> ::=
-//     <term>
-//     | <numeric value expression> <plus sign> <term>
-//     | <numeric value expression> <minus sign> <term>
-//
-// <term> ::=
-//     <factor>
-//     | <term> <asterisk> <factor>
-//     | <term> <solidus> <factor>
-//
-// <factor> ::= [ <sign> ] <numeric primary>
-//
-// <numeric primary> ::= <value expression primary> | <numeric value function>
 bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -63,6 +43,42 @@ bool parse_row_value_constructor(
     }
 }
 
+// <value expression> ::=
+//     <numeric value expression>
+//     | <string value expression>
+//     | <datetime value expression>
+//     | <interval value expression>
+bool parse_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor_t>& out) {
+    if (parse_numeric_value_expression(ctx, cur_tok, out))
+        return true;
+    return false;
+}
+
+// <numeric value expression> ::=
+//     <term>
+//     | <numeric value expression> <plus sign> <term>
+//     | <numeric value expression> <minus sign> <term>
+//
+// <term> ::=
+//     <factor>
+//     | <term> <asterisk> <factor>
+//     | <term> <solidus> <factor>
+//
+// <factor> ::= [ <sign> ] <numeric primary>
+//
+// <numeric primary> ::= <value expression primary> | <numeric value function>
+bool parse_numeric_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor_t>& out) {
+    if (parse_value_expression_primary(ctx, cur_tok, out))
+        return true;
+    return false;
+}
+
 // <value expression primary> ::=
 //     <unsigned value specification>
 //     | <column reference>
@@ -71,7 +87,7 @@ bool parse_row_value_constructor(
 //     | <case expression>
 //     | <left paren> <value expression> <right paren>
 //     | <cast specification>
-bool parse_value_expression(
+bool parse_value_expression_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {

@@ -187,8 +187,8 @@ std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt) {
     else {
         size_t x = 0;
         out << std::endl << "   values:";
-        for (const lexeme_t& val : stmt.insert_values) {
-            out << std::endl << "     " << x++ << ": " << val;
+        for (const std::unique_ptr<row_value_constructor_t>& val : stmt.insert_values) {
+            out << std::endl << "     " << x++ << ": " << *val;
         }
     }
     out << ">" << std::endl;

@@ -157,6 +157,14 @@ bool parse_value_expression(
 // Returns true if a value_expression_t of one of the unsigned value
 // specifications could be parsed. If true, the out argument will be filled
 // appropriately.
+bool parse_numeric_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor>& out);
+bool parse_value_expression_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor>& out);
 bool parse_unsigned_value_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
