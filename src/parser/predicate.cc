@@ -383,7 +383,7 @@ bool parse_in_predicate(
         bool reverse_op) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::vector<std::unique_ptr<row_value_constructor_t>> values;
+    std::vector<std::unique_ptr<value_expression_t>> values;
     std::unique_ptr<statement_t> subq;
 
     // We get here if we've processed the left row value constructor and the
@@ -405,7 +405,7 @@ process_subquery:
     goto expect_rparen;
 process_value_list_item:
     {
-        std::unique_ptr<row_value_constructor> value;
+        std::unique_ptr<value_expression_t> value;
         if (! parse_value_expression(ctx, cur_tok, value))
             return false;
         values.emplace_back(std::move(value));

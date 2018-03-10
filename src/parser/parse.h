@@ -152,7 +152,7 @@ bool parse_row_value_constructor(
 bool parse_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor>& out);
+        std::unique_ptr<value_expression_t>& out);
 
 // Returns true if a value_expression_t of one of the unsigned value
 // specifications could be parsed. If true, the out argument will be filled
@@ -160,22 +160,22 @@ bool parse_value_expression(
 bool parse_numeric_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor>& out);
+        std::unique_ptr<value_expression_t>& out);
 bool parse_value_expression_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor>& out);
+        std::unique_ptr<value_expression_t>& out);
 bool parse_unsigned_value_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor_t>& out);
+        std::unique_ptr<value_expression_t>& out);
 
 // Returns true if a set_function_t could be parsed. If true, the out argument
 // will be filled appropriately.
 bool parse_set_function(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor_t>& out);
+        std::unique_ptr<value_expression_t>& out);
 
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member

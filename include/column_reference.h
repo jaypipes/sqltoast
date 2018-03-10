@@ -11,15 +11,14 @@ namespace sqltoast {
 
 typedef struct derived_column {
     lexeme_t alias;
-    // If set, row_value will always be static_castable to value_expression_t
-    std::unique_ptr<row_value_constructor_t> value;
+    std::unique_ptr<value_expression_t> value;
     // Specialized constructor for the "asterisk" projection
     derived_column(lexeme_t& asterisk) :
         value(std::move(std::make_unique<value_expression_t>(
                         VALUE_EXPRESSION_TYPE_LITERAL, asterisk)))
     {}
-    derived_column(std::unique_ptr<row_value_constructor_t>& rvc) :
-        value(std::move(rvc))
+    derived_column(std::unique_ptr<value_expression_t>& ve) :
+        value(std::move(ve))
     {}
     inline bool has_alias() const {
         return alias.start != parse_position_t(0);

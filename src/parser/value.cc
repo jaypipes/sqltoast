@@ -23,19 +23,22 @@ bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {
-    if (parse_value_expression(ctx, cur_tok, out))
+    std::unique_ptr<value_expression_t> value_exp;
+    if (parse_value_expression(ctx, cur_tok, value_exp)) {
+        out = std::make_unique<row_value_expression_t>(value_exp);
         return true;
+    }
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
     {
         lexer_t& lex = ctx.lexer;
         symbol_t cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_NULL) {
-            out = std::make_unique<null_value_t>(cur_tok.lexeme);
+            out = std::make_unique<row_value_constructor_t>(RVC_TYPE_NULL);
             cur_tok = lex.next();
             return true;
         } else if (cur_sym == SYMBOL_DEFAULT) {
-            out = std::make_unique<default_value_t>(cur_tok.lexeme);
+            out = std::make_unique<row_value_constructor_t>(RVC_TYPE_DEFAULT);
             cur_tok = lex.next();
             return true;
         }
@@ -51,7 +54,7 @@ bool parse_row_value_constructor(
 bool parse_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor_t>& out) {
+        std::unique_ptr<value_expression_t>& out) {
     if (parse_numeric_value_expression(ctx, cur_tok, out))
         return true;
     return false;
@@ -73,7 +76,7 @@ bool parse_value_expression(
 bool parse_numeric_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor_t>& out) {
+        std::unique_ptr<value_expression_t>& out) {
     if (parse_value_expression_primary(ctx, cur_tok, out))
         return true;
     return false;
@@ -90,7 +93,7 @@ bool parse_numeric_value_expression(
 bool parse_value_expression_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor_t>& out) {
+        std::unique_ptr<value_expression_t>& out) {
     lexer_t& lex = ctx.lexer;
     lexeme_t ve_lexeme;
     value_expression_type_t ve_type;
@@ -184,7 +187,7 @@ push_ve:
 bool parse_unsigned_value_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor_t>& out) {
+        std::unique_ptr<value_expression_t>& out) {
     lexer_t& lex = ctx.lexer;
     lexeme_t ve_lexeme;
     value_expression_type_t ve_type;
@@ -276,10 +279,10 @@ push_spec:
 bool parse_set_function(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<row_value_constructor_t>& out) {
+        std::unique_ptr<value_expression_t>& out) {
     lexer_t& lex = ctx.lexer;
     set_function_type_t func_type;
-    std::unique_ptr<row_value_constructor_t> operand;
+    std::unique_ptr<value_expression_t> operand;
     symbol_t cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_COUNT:

@@ -39,7 +39,7 @@ bool parse_select(
         std::unique_ptr<statement_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<row_value_constructor_t> rvc;
+    std::unique_ptr<value_expression_t> selected_col;
     std::vector<derived_column_t> selected_columns;
     std::vector<table_reference_t> referenced_tables;
     std::vector<grouping_column_reference_t> group_by_columns;
@@ -71,9 +71,9 @@ expect_derived_column:
     }
     // If the <select list> element isn't an asterisk it needs to be a value
     // expression...
-    if (! parse_value_expression(ctx, cur_tok, rvc))
+    if (! parse_value_expression(ctx, cur_tok, selected_col))
         goto err_expect_derived_column;
-    selected_columns.emplace_back(derived_column_t(rvc));
+    selected_columns.emplace_back(derived_column_t(selected_col));
     goto optional_column_alias;
 err_expect_derived_column:
     expect_any_error(ctx, {SYMBOL_ASTERISK, SYMBOL_IDENTIFIER});

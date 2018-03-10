@@ -9,38 +9,6 @@
 
 namespace sqltoast {
 
-typedef enum rvc_type {
-    RVC_TYPE_UNKNOWN,
-    RVC_TYPE_VALUE_EXPRESSION,
-    RVC_TYPE_NULL,
-    RVC_TYPE_DEFAULT,
-    RVC_TYPE_VALUE_LIST,
-    RVC_TYPE_ROW_SUBQUERY
-} rvc_type_t;
-
-// A row-value constructor is a struct that represents something that can be
-// deduced into a row value. Examples of where row-value constructors can be
-// found in the SQL grammar include either or both sides of a predicate
-// expression or the contents of the VALUES clause
-typedef struct row_value_constructor {
-    rvc_type_t rvc_type;
-    lexeme_t lexeme;
-    row_value_constructor() : rvc_type(RVC_TYPE_UNKNOWN)
-    {}
-    row_value_constructor(rvc_type_t rvc_type) : rvc_type(rvc_type)
-    {}
-    row_value_constructor(lexeme_t lexeme) :
-        rvc_type(RVC_TYPE_UNKNOWN),
-        lexeme(lexeme)
-    {}
-    row_value_constructor(lexeme_t lexeme, rvc_type_t type) :
-        rvc_type(type),
-        lexeme(lexeme)
-    {}
-} row_value_constructor_t;
-
-std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc);
-
 typedef enum value_expression_type {
     VALUE_EXPRESSION_TYPE_UNKNOWN,
     VALUE_EXPRESSION_TYPE_LITERAL,
@@ -68,19 +36,15 @@ typedef enum value_expression_type {
 // col_value", a datetime or interval expression like "date_col <= NOW() -
 // INTERVAL 1 DAY", a string expression like "CONCAT(some_col, '-',
 // some_other_col)" or even the results of a CASE expression or scalar subquery
-typedef struct value_expression : row_value_constructor_t {
+typedef struct value_expression {
     value_expression_type_t type;
-    value_expression() :
-        row_value_constructor_t(),
-        type(VALUE_EXPRESSION_TYPE_UNKNOWN)
-    {}
+    lexeme_t lexeme;
     value_expression(value_expression_type_t ve_type) :
-        row_value_constructor_t(RVC_TYPE_VALUE_EXPRESSION),
         type(ve_type)
     {}
     value_expression(value_expression_type_t ve_type, lexeme_t lexeme) :
-        row_value_constructor_t(lexeme, RVC_TYPE_VALUE_EXPRESSION),
-        type(ve_type)
+        type(ve_type),
+        lexeme(lexeme)
     {}
 } value_expression_t;
 
@@ -103,15 +67,14 @@ typedef enum set_function_type {
 
 typedef struct set_function : value_expression_t {
     set_function_type_t func_type;
-    // If set, will always be static_castable to a value_expression_t
-    std::unique_ptr<row_value_constructor_t> value;
+    std::unique_ptr<value_expression_t> value;
     set_function(set_function_type_t func_type) :
         value_expression_t(VALUE_EXPRESSION_TYPE_SET_FUNCTION),
         func_type(func_type)
     {}
     set_function(
             set_function_type_t func_type,
-            std::unique_ptr<row_value_constructor_t>& value) :
+            std::unique_ptr<value_expression_t>& value) :
         value_expression_t(VALUE_EXPRESSION_TYPE_SET_FUNCTION, value->lexeme),
         func_type(func_type),
         value(std::move(value))
@@ -120,21 +83,36 @@ typedef struct set_function : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
 
-typedef struct null_value : row_value_constructor_t {
-    null_value(lexeme_t lexeme) :
-        row_value_constructor_t(lexeme, RVC_TYPE_NULL)
+typedef enum rvc_type {
+    RVC_TYPE_UNKNOWN,
+    RVC_TYPE_VALUE_EXPRESSION,
+    RVC_TYPE_NULL,
+    RVC_TYPE_DEFAULT,
+    RVC_TYPE_VALUE_LIST,
+    RVC_TYPE_ROW_SUBQUERY
+} rvc_type_t;
+
+// A row-value constructor is a struct that represents something that can be
+// deduced into a row value. Examples of where row-value constructors can be
+// found in the SQL grammar include either or both sides of a predicate
+// expression or the contents of the VALUES clause
+typedef struct row_value_constructor {
+    rvc_type_t rvc_type;
+    row_value_constructor() : rvc_type(RVC_TYPE_UNKNOWN)
     {}
-} null_value_t;
-
-std::ostream& operator<< (std::ostream& out, const null_value_t& ve);
-
-typedef struct default_value : row_value_constructor_t {
-    default_value(lexeme_t lexeme) :
-        row_value_constructor_t(lexeme, RVC_TYPE_DEFAULT)
+    row_value_constructor(rvc_type_t rvc_type) : rvc_type(rvc_type)
     {}
-} default_value_t;
+} row_value_constructor_t;
 
-std::ostream& operator<< (std::ostream& out, const default_value_t& ve);
+std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc);
+
+typedef struct row_value_expression : row_value_constructor_t {
+    std::unique_ptr<value_expression_t> value;
+    row_value_expression(std::unique_ptr<value_expression_t>& ve) :
+        row_value_constructor_t(RVC_TYPE_VALUE_EXPRESSION),
+        value(std::move(ve))
+    {}
+} row_value_expression_t;
 
 } // namespace sqltoast
 

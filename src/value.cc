@@ -94,37 +94,26 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
 std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc) {
     switch (rvc.rvc_type) {
         case RVC_TYPE_DEFAULT:
-            {
-                const default_value_t& val = static_cast<const default_value_t&>(rvc);
-                out << val;
-            }
+            out <<"DEFAULT";
             break;
         case RVC_TYPE_NULL:
-            {
-                const null_value_t& val = static_cast<const null_value_t&>(rvc);
-                out << val;
-            }
+            out <<"NULL";
             break;
         case RVC_TYPE_VALUE_EXPRESSION:
             {
-                const value_expression_t& val = static_cast<const value_expression_t&>(rvc);
+                const row_value_expression_t& val = static_cast<const row_value_expression_t&>(rvc);
                 out << val;
             }
             break;
         default:
-            out << "row-value-constructor[" << std::string(rvc.lexeme.start, rvc.lexeme.end) << ']';
+            out << "row-value-constructor[UNKNOWN]";
             break;
     }
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const null_value_t& ve) {
-    out << "NULL";
-    return out;
-}
-
-std::ostream& operator<< (std::ostream& out, const default_value_t& ve) {
-    out << "DEFAULT";
+std::ostream& operator<< (std::ostream& out, const row_value_expression_t& rve) {
+    out << "row-value-expression[" << *rve.value << "]";
     return out;
 }
 

@@ -127,7 +127,7 @@ process_value_list:
     cur_tok = lex.next();
     goto process_value_list_item;
 process_value_list_item:
-    if (! parse_value_expression(ctx, cur_tok, val_list_item))
+    if (! parse_row_value_constructor(ctx, cur_tok, val_list_item))
         goto err_expect_value_item;
     val_list.emplace_back(std::move(val_list_item));
     cur_sym = cur_tok.symbol;

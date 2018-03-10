@@ -92,12 +92,10 @@ std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred);
 
 typedef struct in_values_predicate : boolean_term_t {
     std::unique_ptr<row_value_constructor_t> left;
-    // All elemnts in values are guaranteed to be static_castable to
-    // value_expression_t
-    std::vector<std::unique_ptr<row_value_constructor_t>> values;
+    std::vector<std::unique_ptr<value_expression_t>> values;
     in_values_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
-            std::vector<std::unique_ptr<row_value_constructor_t>>& values,
+            std::vector<std::unique_ptr<value_expression_t>>& values,
             bool reverse_op) :
         boolean_term_t(COMP_OP_IN_VALUES, reverse_op),
         left(std::move(left)),
