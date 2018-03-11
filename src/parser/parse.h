@@ -77,66 +77,66 @@ bool parse_delete(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
-// Returns true if a search condition could be parsed. If true, the conditions
+// Returns true if a search condition could be parsed. If true, the out
 // argument will have a new pointer to a search_condition_t added to it.
 bool parse_search_condition(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<search_condition_t>& cond_p);
+        std::unique_ptr<search_condition_t>& out);
 
 bool parse_boolean_term(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_term_t>& term_p);
+        std::unique_ptr<boolean_term_t>& out);
 
 bool parse_boolean_factor(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_term_t>& term_p);
+        std::unique_ptr<boolean_factor_t>& out);
 
-// Returns true if a oredicate could be parsed. If true, the conditions
+// Returns true if a oredicate could be parsed. If true, the out
 // argument will have a new pointer to a boolean_term_t subclass that
 // represents a prdicate added to it.
 bool parse_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_term_t>& term_p,
+        std::unique_ptr<boolean_factor_t>& out,
         bool reverse_op);
 
-// Returns true if a comp_predicate_t could be parsed. If true, the term_p
+// Returns true if a comp_predicate_t could be parsed. If true, the out
 // argument will be a new pointer to a comp_predicate_t
 bool parse_comparison_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_term_t>& term_p,
+        std::unique_ptr<boolean_factor_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 
-// Returns true if a between_predicate_t could be parsed. If true, the term_p
+// Returns true if a between_predicate_t could be parsed. If true, the out
 // argument will be a new pointer to a between_predicate_t
 bool parse_between_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_term_t>& term_p,
+        std::unique_ptr<boolean_factor_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 
-// Returns true if a null_predicate_t could be parsed. If true, the term_p
+// Returns true if a null_predicate_t could be parsed. If true, the out
 // argument will be a new pointer to a null_predicate_t
 bool parse_null_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_term_t>& term_p,
+        std::unique_ptr<boolean_factor_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 
 // Returns true if an IN predicate (either a subquery or values predicate)
-// could be parsed. If true, the term_p argument will be a new pointer to
+// could be parsed. If true, the out argument will be a new pointer to
 // either an in_values_predicate_t or an in_subquery_predicate_t
 bool parse_in_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_term_t>& term_p,
+        std::unique_ptr<boolean_factor_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 

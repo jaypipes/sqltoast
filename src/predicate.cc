@@ -21,10 +21,10 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt) {
-    if (bt.reverse_op)
+std::ostream& operator<< (std::ostream& out, const boolean_factor_t& bf) {
+    if (bf.reverse_op)
         out << "NOT ";
-    switch (bt.op) {
+    switch (bf.op) {
         case COMP_OP_EQUAL:
         case COMP_OP_NOT_EQUAL:
         case COMP_OP_LESS:
@@ -32,31 +32,31 @@ std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt) {
         case COMP_OP_LESS_EQUAL:
         case COMP_OP_GREATER_EQUAL:
             {
-                const comp_predicate_t& pred = static_cast<const comp_predicate_t&>(bt);
+                const comp_predicate_t& pred = static_cast<const comp_predicate_t&>(bf);
                 out << pred;
             }
             break;
         case COMP_OP_BETWEEN:
             {
-                const between_predicate_t& pred = static_cast<const between_predicate_t&>(bt);
+                const between_predicate_t& pred = static_cast<const between_predicate_t&>(bf);
                 out << pred;
             }
             break;
         case COMP_OP_NULL:
             {
-                const null_predicate_t& pred = static_cast<const null_predicate_t&>(bt);
+                const null_predicate_t& pred = static_cast<const null_predicate_t&>(bf);
                 out << pred;
             }
             break;
         case COMP_OP_IN_VALUES:
             {
-                const in_values_predicate_t& pred = static_cast<const in_values_predicate_t&>(bt);
+                const in_values_predicate_t& pred = static_cast<const in_values_predicate_t&>(bf);
                 out << pred;
             }
             break;
         case COMP_OP_IN_SUBQUERY:
             {
-                const in_subquery_predicate_t& pred = static_cast<const in_subquery_predicate_t&>(bt);
+                const in_subquery_predicate_t& pred = static_cast<const in_subquery_predicate_t&>(bf);
                 out << pred;
             }
             break;
@@ -64,8 +64,13 @@ std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt) {
             // TODO
             break;
     }
-    if (bt.term_and)
-        out << " AND " << *bt.term_and;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt) {
+    out << *bt.factor;
+    if (bt.and_operand)
+        out << " AND " << *bt.and_operand;
     return out;
 }
 
