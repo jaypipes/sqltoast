@@ -57,16 +57,20 @@ bool parse_value_expression(
     lexer_t& lex = ctx.lexer;
     parse_position_t start = lex.cursor;
     token_t start_tok = cur_tok;
-    symbol_t cur_sym = cur_tok.symbol;
     if (parse_numeric_value_expression(ctx, cur_tok, out)) {
         // Check the current symbol. If it's not a terminator like a semicolon,
         // rparen or comma, then reset the cursor and attempt to parse a string
         // value expression...
-        cur_sym = cur_tok.symbol;
+        symbol_t cur_sym = cur_tok.symbol;
         switch (cur_sym) {
             case SYMBOL_SEMICOLON:
             case SYMBOL_COMMA:
             case SYMBOL_RPAREN:
+            case SYMBOL_EOS:
+            case SYMBOL_EQUAL:
+            case SYMBOL_EXCLAMATION:
+            case SYMBOL_LESS_THAN:
+            case SYMBOL_GREATER_THAN:
                 return true;
             default:
                 lex.cursor = start;
@@ -125,6 +129,7 @@ bool parse_value_expression_primary(
     if (cur_tok.is_identifier()) {
         ve_type = VALUE_EXPRESSION_TYPE_COLUMN;
         ve_lexeme = cur_tok.lexeme;
+        cur_tok = lex.next();
         goto push_ve;
     }
     return false;

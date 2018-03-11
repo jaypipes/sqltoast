@@ -7,8 +7,8 @@ statements[0]:
      0: a
      1: b
    values:
-     0: 1
-     1: 2>
+     0: literal[1]
+     1: literal[2]>
 # INSERT INTO with a default columns list
 >INSERT INTO t1 VALUES (1, 2)
 OK
@@ -17,5 +17,14 @@ statements[0]:
    table name: t1
    default columns: true
    values:
-     0: 1
-     1: 2>
+     0: literal[1]
+     1: literal[2]>
+# INSERT INTO using a character values expression
+>INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
+OK
+statements[0]:
+  <statement: INSERT
+   table name: t1
+   default columns: true
+   values:
+     0: character-value-expression[literal['a'] COLLATE utf8bin]>

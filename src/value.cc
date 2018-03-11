@@ -128,7 +128,7 @@ std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc)
 }
 
 std::ostream& operator<< (std::ostream& out, const row_value_expression_t& rve) {
-    out << "row-value-expression[" << *rve.value << "]";
+    out << *rve.value;
     return out;
 }
 

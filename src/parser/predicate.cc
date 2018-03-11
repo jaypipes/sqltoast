@@ -138,7 +138,6 @@ bool parse_predicate(
         // The following types of predicates have a row-value constructor as
         // the left-most element of the predicate: comparison predicate,
         // between predicate, in predicate, like predicate, null predicate
-        cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_NOT) {
             found_not = true;
