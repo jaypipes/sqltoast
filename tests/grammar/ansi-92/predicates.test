@@ -1,0 +1,22 @@
+# Simple equality comparison predicate
+>SELECT * FROM t1 WHERE a = 10
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] = literal[10]>
+# Order of value expressions should not matter in equality comparison
+>SELECT * FROM t1 WHERE 10 = a
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     literal[10] = column-reference[a]>
