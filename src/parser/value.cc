@@ -6,7 +6,6 @@
 
 #include "parser/error.h"
 #include "parser/parse.h"
-#include "value.h"
 
 namespace sqltoast {
 
@@ -55,7 +54,26 @@ bool parse_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out) {
-    if (parse_numeric_value_expression(ctx, cur_tok, out))
+    lexer_t& lex = ctx.lexer;
+    parse_position_t start = lex.cursor;
+    token_t start_tok = cur_tok;
+    symbol_t cur_sym = cur_tok.symbol;
+    if (parse_numeric_value_expression(ctx, cur_tok, out)) {
+        // Check the current symbol. If it's not a terminator like a semicolon,
+        // rparen or comma, then reset the cursor and attempt to parse a string
+        // value expression...
+        cur_sym = cur_tok.symbol;
+        switch (cur_sym) {
+            case SYMBOL_SEMICOLON:
+            case SYMBOL_COMMA:
+            case SYMBOL_RPAREN:
+                return true;
+            default:
+                lex.cursor = start;
+                cur_tok = start_tok;
+        }
+    }
+    if (parse_string_value_expression(ctx, cur_tok, out))
         return true;
     return false;
 }
@@ -392,6 +410,65 @@ push_set_function:
         out = std::make_unique<set_function_t>(func_type, operand);
     else
         out = std::make_unique<set_function_t>(func_type);
+    return true;
+}
+
+// <string value expression> :=
+//     <character value expression>
+//     | <bit value expression>
+bool parse_string_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_t>& out) {
+    if (parse_character_value_expression(ctx, cur_tok, out))
+        return true;
+    //if (parse_bit_value_expression(ctx, cur_tok, out))
+    //    return true;
+    return false;
+}
+
+// <character value expression> ::=
+//     <concatenation> | <character factor>
+//
+// <concatenation> ::=
+//     <character value expression> <concatenation operator> <character factor>
+//
+// <character factor> ::=
+//     <character primary> [ <collate clause> ]
+//
+// <character primary> ::=
+//     <value expression primary>
+//     | <string value function>
+bool parse_character_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    lexeme_t collation;
+    symbol_t cur_sym;
+    std::unique_ptr<value_expression_t> value_primary;
+    if (! parse_value_expression_primary(ctx, cur_tok, value_primary))
+        return false;
+    goto optional_collation;
+optional_collation:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COLLATE) {
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_IDENTIFIER)
+           goto err_expect_identifier;
+        collation = cur_tok.lexeme;
+        cur_tok = lex.next();
+    }
+    goto push_ve;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+push_ve:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<character_value_expression_t>(
+            value_primary, collation);
     return true;
 }
 

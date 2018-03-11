@@ -130,8 +130,6 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt);
 typedef struct insert_statement : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
-    // All elements of insert_values are guaranteed to be static_castable to a
-    // value_expression_t
     std::vector<std::unique_ptr<row_value_constructor_t>> insert_values;
     insert_statement(
             lexeme_t& table_name,

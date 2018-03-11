@@ -81,6 +81,13 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
                 out << sf;
             }
             break;
+        case VALUE_EXPRESSION_TYPE_STRING_EXPRESSION:
+            {
+                const character_value_expression_t& cve =
+                    static_cast<const character_value_expression_t&>(ve);
+                out << cve;
+            }
+            break;
         case VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY:
             out << "scalar-subquery";
             break;
@@ -88,6 +95,14 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
             out << "value-expression[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
             break;
     }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const character_value_expression_t& cve) {
+    out << "character-value-expression["<< *cve.value;
+    if (cve.collation)
+        out << " COLLATE " << cve.collation;
+    out << "]";
     return out;
 }
 

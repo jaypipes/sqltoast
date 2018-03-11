@@ -169,6 +169,14 @@ bool parse_unsigned_value_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out);
+bool parse_string_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_t>& out);
+bool parse_character_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_t>& out);
 
 // Returns true if a set_function_t could be parsed. If true, the out argument
 // will be filled appropriately.

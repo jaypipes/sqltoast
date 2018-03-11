@@ -83,6 +83,20 @@ typedef struct set_function : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
 
+typedef struct character_value_expression : value_expression_t {
+    std::unique_ptr<value_expression_t> value;
+    lexeme_t collation;
+    character_value_expression(
+            std::unique_ptr<value_expression_t>& value,
+            lexeme_t collation) :
+        value_expression_t(VALUE_EXPRESSION_TYPE_STRING_EXPRESSION, value->lexeme),
+        value(std::move(value)),
+        collation(collation)
+    {}
+} character_value_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const character_value_expression_t& ve);
+
 typedef enum rvc_type {
     RVC_TYPE_UNKNOWN,
     RVC_TYPE_VALUE_EXPRESSION,
@@ -98,8 +112,6 @@ typedef enum rvc_type {
 // expression or the contents of the VALUES clause
 typedef struct row_value_constructor {
     rvc_type_t rvc_type;
-    row_value_constructor() : rvc_type(RVC_TYPE_UNKNOWN)
-    {}
     row_value_constructor(rvc_type_t rvc_type) : rvc_type(rvc_type)
     {}
 } row_value_constructor_t;
@@ -113,6 +125,8 @@ typedef struct row_value_expression : row_value_constructor_t {
         value(std::move(ve))
     {}
 } row_value_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const row_value_expression_t& rve);
 
 } // namespace sqltoast
 
