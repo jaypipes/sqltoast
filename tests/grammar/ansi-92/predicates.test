@@ -20,3 +20,51 @@ statements[0]:
      0: t1
    where:
      literal[10] = column-reference[a]>
+# Compound predicate with AND of two equality comparison predicates
+>SELECT * FROM t1 WHERE a = 1 AND b = 2
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] = literal[1] AND column-reference[b] = literal[2]>
+# Compound predicate with OR of two equality comparison predicates
+>SELECT * FROM t1 WHERE a = 1 OR b = 2
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] = literal[1]
+     OR column-reference[b] = literal[2]>
+# Compound predicate with both AND and OR operators
+>SELECT * FROM t1 WHERE a = 1 AND b = 2 OR c = 3
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] = literal[1] AND column-reference[b] = literal[2]
+     OR column-reference[c] = literal[3]>
+# Compound predicate with both OR and AND operators. The AND should take
+# precedence
+>SELECT * FROM t1 WHERE a = 1 OR b = 2 AND c = 3
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] = literal[1]
+     OR column-reference[b] = literal[2] AND column-reference[c] = literal[3]>

@@ -139,29 +139,29 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
     out << "<statement: SELECT";
     if (stmt.distinct)
        out << std::endl << "   distinct: true";
-    out << std::endl << "   selected columns: ";
+    out << std::endl << "   selected columns:";
     size_t x = 0;
     for (const derived_column_t& dc : stmt.selected_columns) {
         out << std::endl << "     " << x++ << ": " << dc;
     }
-    out << std::endl << "   referenced tables: ";
+    out << std::endl << "   referenced tables:";
     x = 0;
     for (const table_reference_t& tr : stmt.referenced_tables) {
         out << std::endl << "     " << x++ << ": " << tr;
     }
     if (stmt.where_condition) {
-        out << std::endl << "   where: ";
+        out << std::endl << "   where:";
         out << *stmt.where_condition;
     }
     if (! stmt.group_by_columns.empty()) {
-        out << std::endl << "   group by: ";
+        out << std::endl << "   group by:";
         x = 0;
         for (const grouping_column_reference_t& gcr : stmt.group_by_columns) {
             out << std::endl << "     " << x++ << ": " << gcr;
         }
     }
     if (stmt.having_condition) {
-        out << std::endl << "   having: ";
+        out << std::endl << "   having:";
         out << *stmt.having_condition;
     }
     out << ">" << std::endl;

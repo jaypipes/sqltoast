@@ -66,11 +66,14 @@ bool parse_value_expression(
             case SYMBOL_SEMICOLON:
             case SYMBOL_COMMA:
             case SYMBOL_RPAREN:
+            case SYMBOL_LPAREN:
             case SYMBOL_EOS:
             case SYMBOL_EQUAL:
             case SYMBOL_EXCLAMATION:
             case SYMBOL_LESS_THAN:
             case SYMBOL_GREATER_THAN:
+            case SYMBOL_AND:
+            case SYMBOL_OR:
                 return true;
             default:
                 lex.cursor = start;
