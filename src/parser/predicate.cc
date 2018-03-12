@@ -412,7 +412,6 @@ process_value_list_item:
         values.emplace_back(std::move(value));
         cur_tok = lex.next();
         cur_sym = cur_tok.symbol;
-        std::cout << "got next symbol: " << cur_tok << std::endl;
         if (cur_sym == SYMBOL_COMMA) {
             cur_tok = lex.next();
             goto process_value_list_item;
