@@ -71,8 +71,16 @@ bool parse_insert(
 
 // Returns true if a DELETE statement was parsed successfully from the parse
 // context. If true, then the out parameter will be populated with an allocated
-// delete_t or delete_statement_t struct
+// delete_statement_t struct
 bool parse_delete(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
+
+// Returns true if an UPDATE statement was parsed successfully from the parse
+// context. If true, then the out parameter will be populated with an allocated
+// update_statement_t struct
+bool parse_update(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);

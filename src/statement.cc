@@ -65,6 +65,12 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_UPDATE:
+            {
+                const update_statement_t& sub = static_cast<const update_statement_t&>(stmt);
+                out << sub;
+            }
+            break;
         default:
             break;
     }
@@ -218,6 +224,28 @@ std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& st
 std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt) {
     out << "<statement: DELETE" << std::endl
         << "   table name: " << stmt.table_name;
+
+    if (stmt.where_condition)
+        out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;
+    out << ">" << std::endl;
+
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const update_statement_t& stmt) {
+    out << "<statement: UPDATE" << std::endl
+        << "   table name: " << stmt.table_name;
+
+    out << std::endl << "   set columns:";
+    for (const set_column_t& set_col : stmt.set_columns) {
+        out << std::endl << "     " << set_col.column_name << " = ";
+        if (set_col.type == SET_COLUMN_TYPE_NULL)
+            out << "NULL";
+        else if (set_col.type == SET_COLUMN_TYPE_DEFAULT)
+            out << "DEFAULT";
+        else
+            out << *set_col.value;
+    }
 
     if (stmt.where_condition)
         out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;

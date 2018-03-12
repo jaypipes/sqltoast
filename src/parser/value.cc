@@ -74,6 +74,9 @@ bool parse_value_expression(
             case SYMBOL_GREATER_THAN:
             case SYMBOL_AND:
             case SYMBOL_OR:
+            case SYMBOL_WHERE:
+            case SYMBOL_HAVING:
+            case SYMBOL_GROUP:
                 return true;
             default:
                 lex.cursor = start;

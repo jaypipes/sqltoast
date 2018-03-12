@@ -17,6 +17,7 @@ typedef enum statement_type {
     STATEMENT_TYPE_INSERT,
     STATEMENT_TYPE_INSERT_SELECT,
     STATEMENT_TYPE_DELETE,
+    STATEMENT_TYPE_UPDATE,
     STATEMENT_TYPE_SELECT
 } statement_type_t;
 
@@ -182,6 +183,56 @@ typedef struct delete_statement : statement_t {
 } delete_statement_t;
 
 std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt);
+
+typedef enum set_column_type {
+    SET_COLUMN_TYPE_NULL,
+    SET_COLUMN_TYPE_DEFAULT,
+    SET_COLUMN_TYPE_VALUE_EXPRESSION
+} set_column_type_t;
+
+// A set_column_t is a struct representing the column to update in an UPDATE
+// statement along with the value to set the column to
+typedef struct set_column {
+    set_column_type_t type;
+    lexeme_t column_name;
+    std::unique_ptr<value_expression_t> value;
+    set_column(set_column_type_t type, lexeme_t column_name) :
+        type(type),
+        column_name(column_name)
+    {}
+    set_column(
+            lexeme_t column_name,
+            std::unique_ptr<value_expression_t>& value) :
+        type(SET_COLUMN_TYPE_VALUE_EXPRESSION),
+        column_name(column_name),
+        value(std::move(value))
+    {}
+} set_column_t;
+
+typedef struct update_statement : statement_t {
+    lexeme_t table_name;
+    std::vector<set_column_t> set_columns;
+    std::unique_ptr<search_condition_t> where_condition;
+    update_statement(
+            lexeme_t& table_name,
+            std::vector<set_column_t>& set_columns) :
+        statement_t(STATEMENT_TYPE_UPDATE),
+        table_name(table_name),
+        set_columns(std::move(set_columns))
+    {}
+    update_statement(
+            lexeme_t& table_name,
+            std::vector<set_column_t>& set_columns,
+            std::unique_ptr<search_condition_t>& where_cond) :
+        statement_t(STATEMENT_TYPE_UPDATE),
+        table_name(table_name),
+        set_columns(std::move(set_columns)),
+        where_condition(std::move(where_cond))
+    {}
+} update_statement_t;
+
+std::ostream& operator<< (std::ostream& out, const update_statement_t& stmt);
+
 } // namespace sqltoast
 
 #endif /* SQLTOAST_STATEMENT_H */

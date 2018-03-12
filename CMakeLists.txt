@@ -44,6 +44,7 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/statements/drop_table.cc
     src/parser/statements/insert.cc
     src/parser/statements/select.cc
+    src/parser/statements/update.cc
     src/parser/symbol.cc
     src/parser/token.cc
     src/parser/value.cc
