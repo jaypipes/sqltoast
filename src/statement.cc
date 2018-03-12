@@ -150,7 +150,7 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
         out << std::endl << "     " << x++ << ": " << tr;
     }
     if (stmt.where_condition) {
-        out << std::endl << "   where:";
+        out << std::endl << "   where:" << std::endl << "     ";
         out << *stmt.where_condition;
     }
     if (! stmt.group_by_columns.empty()) {
@@ -161,7 +161,7 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
         }
     }
     if (stmt.having_condition) {
-        out << std::endl << "   having:";
+        out << std::endl << "   having:" << std::endl << "     ";
         out << *stmt.having_condition;
     }
     out << ">" << std::endl;
@@ -209,7 +209,7 @@ std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& st
             out << std::endl << "     " << x++ << ": " << col;
         }
     }
-    out << std::endl << "   select: " << *stmt.select;
+    out << std::endl << "   select:" << std::endl << "     " << *stmt.select;
     out << ">" << std::endl;
 
     return out;
@@ -220,7 +220,7 @@ std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt) {
         << "   table name: " << stmt.table_name;
 
     if (stmt.where_condition)
-        out << std::endl << "   where:" << *stmt.where_condition;
+        out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;
     out << ">" << std::endl;
 
     return out;

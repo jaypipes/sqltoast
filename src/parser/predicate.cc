@@ -100,7 +100,29 @@ bool parse_boolean_factor(
         cur_tok = lex.next();
         reverse_op = true;
     }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        if (! parse_search_condition(ctx, cur_tok, search_cond))
+            return false;
+        goto expect_rparen;
+    }
     return parse_predicate(ctx, cur_tok, out, reverse_op);
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_search_condition_factor;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_search_condition_factor:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    out = std::make_unique<search_condition_factor_t>(search_cond, reverse_op);
+    return true;
 }
 
 // <predicate> ::=

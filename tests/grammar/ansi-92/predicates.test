@@ -41,8 +41,7 @@ statements[0]:
    referenced tables:
      0: t1
    where:
-     column-reference[a] = literal[1]
-     OR column-reference[b] = literal[2]>
+     column-reference[a] = literal[1] OR column-reference[b] = literal[2]>
 # Compound predicate with both AND and OR operators
 >SELECT * FROM t1 WHERE a = 1 AND b = 2 OR c = 3
 OK
@@ -53,8 +52,7 @@ statements[0]:
    referenced tables:
      0: t1
    where:
-     column-reference[a] = literal[1] AND column-reference[b] = literal[2]
-     OR column-reference[c] = literal[3]>
+     column-reference[a] = literal[1] AND column-reference[b] = literal[2] OR column-reference[c] = literal[3]>
 # Compound predicate with both OR and AND operators. The AND should take
 # precedence
 >SELECT * FROM t1 WHERE a = 1 OR b = 2 AND c = 3
@@ -66,5 +64,27 @@ statements[0]:
    referenced tables:
      0: t1
    where:
-     column-reference[a] = literal[1]
-     OR column-reference[b] = literal[2] AND column-reference[c] = literal[3]>
+     column-reference[a] = literal[1] OR column-reference[b] = literal[2] AND column-reference[c] = literal[3]>
+# Compound predicate with both AND and OR operators using parens for precedence
+# override
+>SELECT * FROM t1 WHERE a = 1 AND (b = 2 OR c = 3)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] = literal[1] AND (column-reference[b] = literal[2] OR column-reference[c] = literal[3])>
+# Multiple nested search conditions using parens for precedence
+>SELECT * FROM t1 WHERE a = 1 AND (b = 2 OR c = 3 AND (d = 4 OR e = 5))
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[*]
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] = literal[1] AND (column-reference[b] = literal[2] OR column-reference[c] = literal[3] AND (column-reference[d] = literal[4] OR column-reference[e] = literal[5]))>
