@@ -81,6 +81,13 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
                 out << sf;
             }
             break;
+        case VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION:
+            {
+                const numeric_expression_t& ne =
+                    static_cast<const numeric_expression_t&>(ve);
+                out << ne;
+            }
+            break;
         case VALUE_EXPRESSION_TYPE_STRING_EXPRESSION:
             {
                 const character_value_expression_t& cve =
@@ -94,6 +101,41 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
         default:
             out << "value-expression[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
             break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const numeric_term_t& nt) {
+    if (! nt.right) {
+        out << *nt.left->value;
+    } else {
+        out << *nt.left->value;
+        if (nt.op == NUMERIC_OP_MULTIPLY)
+            out << " * ";
+        else
+            out << " / ";
+        out << *nt.right->value;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne) {
+    // numeric expressions are the container for things that may be evaluated
+    // to a number. However, numeric expressions that have only a single
+    // element can be reduced to just that one element
+    if (! ne.right) {
+        if (! ne.left->right)
+            out << *ne.left;
+        else
+            out << "numeric-expression[" << *ne.left << "]";
+    } else {
+        out << "numeric-expression[";
+        out << *ne.left;
+        if (ne.op == NUMERIC_OP_ADD)
+            out << " + ";
+        else
+            out << " - ";
+        out << *ne.right << "]";
     }
     return out;
 }

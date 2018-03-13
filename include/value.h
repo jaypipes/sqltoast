@@ -33,9 +33,9 @@ typedef enum value_expression_type {
 // A value expression is anything that can be deduced into a scalar value.  It
 // is the most common type of row value constructor element.  A value
 // expression may be a column reference, a numeric expression like "2 * 5 +
-// col_value", a datetime or interval expression like "date_col <= NOW() -
-// INTERVAL 1 DAY", a string expression like "CONCAT(some_col, '-',
-// some_other_col)" or even the results of a CASE expression or scalar subquery
+// col_value", a datetime or interval expression like "date_col - INTERVAL 1
+// DAY", a string expression like "CONCAT(some_col, '-', some_other_col)" or
+// even the results of a CASE expression or scalar subquery
 typedef struct value_expression {
     value_expression_type_t type;
     lexeme_t lexeme;
@@ -49,6 +49,78 @@ typedef struct value_expression {
 } value_expression_t;
 
 std::ostream& operator<< (std::ostream& out, const value_expression_t& ve);
+
+// A numeric value expression is a series of value expressions and literals
+// that evaluate to a numeric value. A numeric factor is one of the parts of a
+// numeric value expression. A numeric operator applies an operation to two
+// factors.
+typedef enum numeric_op {
+    NUMERIC_OP_NONE,
+    NUMERIC_OP_ADD,
+    NUMERIC_OP_SUBTRACT,
+    NUMERIC_OP_MULTIPLY,
+    NUMERIC_OP_DIVIDE
+} numeric_op_t;
+
+typedef enum numeric_factor_type {
+    NUMERIC_FACTOR_TYPE_VALUE,
+    NUMERIC_FACTOR_TYPE_FUNCTION
+} numeric_factor_type_t;
+
+typedef struct numeric_factor {
+    int sign;
+    numeric_factor_type_t type;
+    std::unique_ptr<value_expression_t> value;
+    numeric_factor(
+            std::unique_ptr<value_expression_t>& value,
+            int sign) :
+        sign(sign),
+        type(NUMERIC_FACTOR_TYPE_VALUE),
+        value(std::move(value))
+    {}
+} numeric_factor_t;
+
+typedef struct numeric_term {
+    std::unique_ptr<numeric_factor_t> left;
+    numeric_op_t op;
+    std::unique_ptr<numeric_factor_t> right;
+    numeric_term(std::unique_ptr<numeric_factor_t>& left) :
+        left(std::move(left)),
+        op(NUMERIC_OP_NONE)
+    {}
+    inline void multiply(std::unique_ptr<numeric_factor_t>& operand) {
+        op = NUMERIC_OP_MULTIPLY;
+        right = std::move(operand);
+    }
+    inline void divide(std::unique_ptr<numeric_factor_t>& operand) {
+        op = NUMERIC_OP_DIVIDE;
+        right = std::move(operand);
+    }
+} numeric_term_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_term_t& nt);
+
+typedef struct numeric_expression : value_expression_t {
+    std::unique_ptr<numeric_term_t> left;
+    numeric_op_t op;
+    std::unique_ptr<numeric_term_t> right;
+    numeric_expression(
+            std::unique_ptr<numeric_term_t>& left) :
+        value_expression_t(VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION),
+        left(std::move(left)),
+        op(NUMERIC_OP_NONE)
+    {}
+    inline void add(std::unique_ptr<numeric_term_t>& operand) {
+        op = NUMERIC_OP_ADD;
+        right = std::move(operand);
+    }
+    inline void subtract(std::unique_ptr<numeric_term_t>& operand) {
+        op = NUMERIC_OP_SUBTRACT;
+        right = std::move(operand);
+    }
+} numeric_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne);
 
 typedef enum set_function_type {
     SET_FUNCTION_TYPE_UNKNOWN,

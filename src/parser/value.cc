@@ -92,22 +92,119 @@ bool parse_value_expression(
 //     <term>
 //     | <numeric value expression> <plus sign> <term>
 //     | <numeric value expression> <minus sign> <term>
-//
-// <term> ::=
-//     <factor>
-//     | <term> <asterisk> <factor>
-//     | <term> <solidus> <factor>
-//
-// <factor> ::= [ <sign> ] <numeric primary>
-//
-// <numeric primary> ::= <value expression primary> | <numeric value function>
 bool parse_numeric_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out) {
-    if (parse_value_expression_primary(ctx, cur_tok, out))
+    lexer& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<numeric_term_t> term;
+    std::unique_ptr<numeric_term_t> operand;
+    if (! parse_numeric_term(ctx, cur_tok, term))
+        return false;
+    goto ensure_expression;
+optional_operator:
+    // Check to see if we've currently got a + or - arithmetic operator as
+    // our current symbol. If so, that indicates we should expect to parse
+    // another numeric term as an operand to the arithmetic equation.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_PLUS) {
+        cur_tok = lex.next();
+        if (! parse_numeric_term(ctx, cur_tok, operand))
+            return false;
+        if (out) {
+            numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
+            ne->add(operand);
+        }
+    } else if (cur_sym == SYMBOL_MINUS) {
+        cur_tok = lex.next();
+        if (! parse_numeric_term(ctx, cur_tok, operand))
+            return false;
+        if (out) {
+            numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
+            ne->subtract(operand);
+        }
+    }
+    return true;
+ensure_expression:
+    if (ctx.opts.disable_statement_construction)
         return true;
-    return false;
+    out = std::make_unique<numeric_expression_t>(term);
+    goto optional_operator;
+}
+
+// <term> ::=
+//     <factor>
+//     | <term> <asterisk> <factor>
+//     | <term> <solidus> <factor>
+bool parse_numeric_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<numeric_term_t>& out) {
+    lexer& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<numeric_factor_t> factor;
+    std::unique_ptr<numeric_factor_t> operand;
+    if (! parse_numeric_factor(ctx, cur_tok, factor))
+        return false;
+    goto ensure_term;
+optional_operator:
+    // Check to see if we've currently got a * or a / arithmetic operator as
+    // our current symbol. If so, that indicates we should expect to parse
+    // another numeric factor as an operand to the arithmetic equation.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ASTERISK) {
+        cur_tok = lex.next();
+        if (! parse_numeric_factor(ctx, cur_tok, operand))
+            return false;
+        if (out)
+            out->multiply(operand);
+    } else if (cur_sym == SYMBOL_SOLIDUS) {
+        cur_tok = lex.next();
+        if (! parse_numeric_factor(ctx, cur_tok, operand))
+            return false;
+        if (out)
+            out->divide(operand);
+    }
+    return true;
+ensure_term:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<numeric_term_t>(factor);
+    goto optional_operator;
+}
+
+// <factor> ::= [ <sign> ] <numeric primary>
+//
+// <numeric primary> ::= <value expression primary> | <numeric value function>
+bool parse_numeric_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<numeric_factor_t>& out) {
+    int sign;
+    lexer& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_t> value_primary;
+    goto optional_sign;
+optional_sign:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_PLUS || cur_sym == SYMBOL_MINUS) {
+        if (cur_sym == SYMBOL_PLUS)
+            sign = 1;
+        else
+            sign = -1;
+        cur_tok = lex.next();
+    }
+    goto process_value_primary;
+process_value_primary:
+    if (! parse_value_expression_primary(ctx, cur_tok, value_primary))
+        return false;
+    goto push_ve;
+push_ve:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<numeric_factor_t>(value_primary, sign);
+    return true;
 }
 
 // <value expression primary> ::=

@@ -43,9 +43,12 @@ typedef enum symbol {
     SYMBOL_GREATER_THAN,
     SYMBOL_LESS_THAN,
     SYMBOL_LPAREN,
+    SYMBOL_MINUS,
+    SYMBOL_PLUS,
     SYMBOL_QUESTION_MARK,
     SYMBOL_RPAREN,
     SYMBOL_SEMICOLON,
+    SYMBOL_SOLIDUS,
 
     // Reserved keywords
     SYMBOL_ACTION,

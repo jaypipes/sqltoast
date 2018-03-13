@@ -169,6 +169,14 @@ bool parse_numeric_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out);
+bool parse_numeric_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<numeric_term_t>& out);
+bool parse_numeric_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<numeric_factor_t>& out);
 bool parse_value_expression_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
