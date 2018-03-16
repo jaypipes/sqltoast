@@ -107,3 +107,12 @@ statements[0]:
      1: MAX(column-reference[a])
    referenced tables:
      0: t1>
+# Nested set function specifications
+>SELECT MAX(COUNT(a)) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: MAX(COUNT(column-reference[a]))
+   referenced tables:
+     0: t1>
