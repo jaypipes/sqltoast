@@ -48,58 +48,63 @@ std::ostream& operator<< (std::ostream& out, const set_function_t& sf) {
     }
     return out;
 }
-
-std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
-    switch (ve.type) {
-        case VALUE_EXPRESSION_TYPE_LITERAL:
-            out << "literal[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_LITERAL_DATE:
-            out << "date[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_LITERAL_TIME:
-            out << "time[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_LITERAL_TIMESTAMP:
-            out << "timestamp[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_LITERAL_INTERVAL:
-            out << "interval[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_COLUMN:
-            out << "column-reference[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_GENERAL:
-            out << "general-value[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_PARAMETER:
-            out << "parameter[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
-            break;
-        case VALUE_EXPRESSION_TYPE_SET_FUNCTION:
+std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep) {
+    switch (vep.vep_type) {
+        case VEP_TYPE_UNSIGNED_VALUE_SPECIFICATION:
             {
-                const set_function_t& sf = static_cast<const set_function_t&>(ve);
+                const unsigned_value_specification_t& uvs = static_cast<const unsigned_value_specification_t&>(vep);
+                out << uvs;
+            }
+            break;
+        case VEP_TYPE_COLUMN_REFERENCE:
+            out << "column-reference[" << std::string(vep.lexeme.start, vep.lexeme.end) << ']';
+            break;
+        case VEP_TYPE_SET_FUNCTION_SPECIFICATION:
+            {
+                const set_function_t& sf = static_cast<const set_function_t&>(vep);
                 out << sf;
             }
             break;
-        case VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION:
+        case VEP_TYPE_VALUE_EXPRESSION:
             {
-                const numeric_expression_t& ne =
-                    static_cast<const numeric_expression_t&>(ve);
-                out << ne;
+                const value_subexpression_t& ve = static_cast<const value_subexpression_t&>(vep);
+                out << "(" << *ve.value << ")";
             }
-            break;
-        case VALUE_EXPRESSION_TYPE_STRING_EXPRESSION:
-            {
-                const character_value_expression_t& cve =
-                    static_cast<const character_value_expression_t&>(ve);
-                out << cve;
-            }
-            break;
-        case VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY:
-            out << "scalar-subquery";
             break;
         default:
-            out << "value-expression[" << std::string(ve.lexeme.start, ve.lexeme.end) << ']';
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_t& uvs) {
+    switch (uvs.uvs_type) {
+        case UVS_TYPE_UNSIGNED_NUMERIC:
+        case UVS_TYPE_CHARACTER_STRING:
+        case UVS_TYPE_NATIONAL_CHARACTER_STRING:
+        case UVS_TYPE_BIT_STRING:
+        case UVS_TYPE_HEX_STRING:
+        case UVS_TYPE_DATETIME:
+        case UVS_TYPE_INTERVAL:
+            out << "literal[" << std::string(uvs.lexeme.start, uvs.lexeme.end) << ']';
+            break;
+        case UVS_TYPE_USER:
+            out << "USER";
+            break;
+        case UVS_TYPE_CURRENT_USER:
+            out << "CURRENT_USER";
+            break;
+        case UVS_TYPE_SESSION_USER:
+            out << "SESSION_USER";
+            break;
+        case UVS_TYPE_SYSTEM_USER:
+            out << "SYSTEM_USER";
+            break;
+        case UVS_TYPE_PARAMETER:
+            out << "parameter[" << std::string(uvs.lexeme.start, uvs.lexeme.end) << ']';
+            break;
+        default:
+            out << "unknown-unsigned-value-expression";
             break;
     }
     return out;
@@ -115,6 +120,29 @@ std::ostream& operator<< (std::ostream& out, const numeric_term_t& nt) {
         else
             out << " / ";
         out << *nt.right->value;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
+    switch (ve.type) {
+        case VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION:
+            {
+                const numeric_expression_t& ne =
+                    static_cast<const numeric_expression_t&>(ve);
+                out << ne;
+            }
+            break;
+        case VALUE_EXPRESSION_TYPE_STRING_EXPRESSION:
+            {
+                const character_value_expression_t& cve =
+                    static_cast<const character_value_expression_t&>(ve);
+                out << cve;
+            }
+            break;
+        default:
+            out << "unknown-value-expression";
+            break;
     }
     return out;
 }

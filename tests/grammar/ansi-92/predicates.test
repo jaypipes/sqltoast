@@ -4,7 +4,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:
@@ -15,7 +15,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:
@@ -26,7 +26,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:
@@ -37,7 +37,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:
@@ -48,7 +48,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:
@@ -60,7 +60,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:
@@ -72,7 +72,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:
@@ -83,7 +83,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: literal[*]
+     0: *
    referenced tables:
      0: t1
    where:

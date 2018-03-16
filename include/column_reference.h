@@ -13,9 +13,7 @@ typedef struct derived_column {
     lexeme_t alias;
     std::unique_ptr<value_expression_t> value;
     // Specialized constructor for the "asterisk" projection
-    derived_column(lexeme_t& asterisk) :
-        value(std::move(std::make_unique<value_expression_t>(
-                        VALUE_EXPRESSION_TYPE_LITERAL, asterisk)))
+    derived_column()
     {}
     derived_column(std::unique_ptr<value_expression_t>& ve) :
         value(std::move(ve))

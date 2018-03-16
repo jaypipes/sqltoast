@@ -180,11 +180,11 @@ bool parse_numeric_factor(
 bool parse_value_expression_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<value_expression_t>& out);
+        std::unique_ptr<value_expression_primary_t>& out);
 bool parse_unsigned_value_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<value_expression_t>& out);
+        std::unique_ptr<value_expression_primary_t>& out);
 bool parse_string_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -199,7 +199,7 @@ bool parse_character_value_expression(
 bool parse_set_function(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<value_expression_t>& out);
+        std::unique_ptr<value_expression_primary_t>& out);
 
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member

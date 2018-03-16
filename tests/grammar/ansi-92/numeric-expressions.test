@@ -7,7 +7,7 @@ statements[0]:
    set columns:
      x = literal[1]
    where:
-     column-reference[a] = numeric-expression[literal[2] + column-reference[b]]>
+     column-reference[a] = (numeric-expression[literal[2] + column-reference[b]])>
 # Simple subtraction of literal number from column reference
 >UPDATE t1 SET x = 1 WHERE a = (b - 2)
 OK
@@ -17,7 +17,7 @@ statements[0]:
    set columns:
      x = literal[1]
    where:
-     column-reference[a] = numeric-expression[column-reference[b] - literal[2]]>
+     column-reference[a] = (numeric-expression[column-reference[b] - literal[2]])>
 # Simple multiplication of two literals
 >UPDATE t1 SET x = 1 WHERE a = (2 * 1)
 OK
@@ -27,7 +27,7 @@ statements[0]:
    set columns:
      x = literal[1]
    where:
-     column-reference[a] = numeric-expression[literal[2] * literal[1]]>
+     column-reference[a] = (numeric-expression[literal[2] * literal[1]])>
 # Simple division of two literals
 >UPDATE t1 SET x = 1 WHERE a = (1 / 2)
 OK
@@ -37,7 +37,7 @@ statements[0]:
    set columns:
      x = literal[1]
    where:
-     column-reference[a] = numeric-expression[literal[1] / literal[2]]>
+     column-reference[a] = (numeric-expression[literal[1] / literal[2]])>
 # Addition of numeric expression to a literal
 >UPDATE t1 SET x = 1 WHERE a = (1 + (2 * 1))
 OK
@@ -47,4 +47,4 @@ statements[0]:
    set columns:
      x = literal[1]
    where:
-     column-reference[a] = numeric-expression[literal[1] + numeric-expression[literal[2] * literal[1]]]>
+     column-reference[a] = (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])>

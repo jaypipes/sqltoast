@@ -184,7 +184,7 @@ bool parse_numeric_factor(
     int sign;
     lexer& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<value_expression_t> value_primary;
+    std::unique_ptr<value_expression_primary_t> value_primary;
     goto optional_sign;
 optional_sign:
     cur_sym = cur_tok.symbol;
@@ -218,10 +218,10 @@ push_ve:
 bool parse_value_expression_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<value_expression_t>& out) {
+        std::unique_ptr<value_expression_primary_t>& out) {
     lexer_t& lex = ctx.lexer;
-    lexeme_t ve_lexeme;
-    value_expression_type_t ve_type;
+    lexeme_t vep_lexeme;
+    vep_type_t vep_type;
     symbol_t cur_sym = cur_tok.symbol;
     if (parse_unsigned_value_specification(ctx, cur_tok, out))
         return true;
@@ -230,8 +230,8 @@ bool parse_value_expression_primary(
     if (cur_tok.is_punctuator() || cur_tok.is_keyword())
         goto check_punc_keywords;
     if (cur_tok.is_identifier()) {
-        ve_type = VALUE_EXPRESSION_TYPE_COLUMN;
-        ve_lexeme = cur_tok.lexeme;
+        vep_type = VEP_TYPE_COLUMN_REFERENCE;
+        vep_lexeme = cur_tok.lexeme;
         cur_tok = lex.next();
         goto push_ve;
     }
@@ -256,32 +256,52 @@ subquery_or_subexpression:
     // expressions where the parens indicates that the value expression should
     // be evaluated before outer value expressions)
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_SELECT) {
-        cur_tok = lex.next();
-        ve_type = VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY;
-        goto expect_rparen_then_push;
-    }
-    if (! parse_value_expression(ctx, cur_tok, out))
+    if (cur_sym == SYMBOL_SELECT)
+        goto process_subquery;
+    goto process_subexpression;
+process_subquery:
+{
+    parse_position_t subq_start = cur_tok.lexeme.start;
+    std::unique_ptr<statement_t> subq;
+    if (! parse_select(ctx, cur_tok, subq))
         return false;
-    ve_lexeme = out->lexeme;
+    parse_position_t subq_end = cur_tok.lexeme.start - 1;
+    vep_lexeme.start = subq_start;
+    vep_lexeme.end = subq_end;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
         goto err_expect_rparen;
     cur_tok = lex.next();
-    return true; // out is already set to the subexpression...
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<scalar_subquery_t>(subq, vep_lexeme);
+    return true;
+}
+process_subexpression:
+{
+    parse_position_t inner_val_start = cur_tok.lexeme.start;
+    std::unique_ptr<value_expression_t> inner_value;
+    if (! parse_value_expression(ctx, cur_tok, inner_value))
+        return false;
+    parse_position_t inner_val_end = cur_tok.lexeme.start - 1;
+    vep_lexeme.start = inner_val_start;
+    vep_lexeme.end = inner_val_end;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<value_subexpression_t>(inner_value, vep_lexeme);
+    return true;
+}
 err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
-expect_rparen_then_push:
-    cur_sym = cur_tok.symbol;
-    if (cur_sym != SYMBOL_RPAREN)
-        goto err_expect_rparen;
-    cur_tok = lex.next();
-    goto push_ve;
 push_ve:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<value_expression_t>(ve_type, ve_lexeme);
+    out = std::make_unique<value_expression_primary_t>(vep_type, vep_lexeme);
     return true;
 }
 
@@ -313,48 +333,60 @@ push_ve:
 bool parse_unsigned_value_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<value_expression_t>& out) {
+        std::unique_ptr<value_expression_primary_t>& out) {
     lexer_t& lex = ctx.lexer;
-    lexeme_t ve_lexeme;
-    value_expression_type_t ve_type;
+    lexeme_t uvs_lexeme;
+    uvs_type_t uvs_type;
     symbol_t cur_sym = cur_tok.symbol;
     if (cur_tok.is_literal()) {
-        ve_type = VALUE_EXPRESSION_TYPE_LITERAL;
-        ve_lexeme = cur_tok.lexeme;
+        uvs_type = UVS_TYPE_UNSIGNED_NUMERIC;
+        uvs_lexeme = cur_tok.lexeme;
         cur_tok = lex.next();
         goto push_spec;
     }
     switch (cur_sym) {
         case SYMBOL_DATE:
-            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_DATE;
+            uvs_type = UVS_TYPE_DATETIME;
             cur_tok = lex.next();
             goto expect_char_string;
         case SYMBOL_TIME:
-            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_TIME;
+            uvs_type = UVS_TYPE_DATETIME;
             cur_tok = lex.next();
             goto expect_char_string;
         case SYMBOL_TIMESTAMP:
-            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_TIMESTAMP;
+            uvs_type = UVS_TYPE_DATETIME;
             cur_tok = lex.next();
             goto expect_char_string;
         case SYMBOL_INTERVAL:
-            ve_type = VALUE_EXPRESSION_TYPE_LITERAL_INTERVAL;
+            uvs_type = UVS_TYPE_INTERVAL;
             cur_tok = lex.next();
             goto expect_char_string;
         case SYMBOL_USER:
+            uvs_type = UVS_TYPE_USER;
+            uvs_lexeme = cur_tok.lexeme;
+            goto push_spec;
         case SYMBOL_CURRENT_USER:
+            uvs_type = UVS_TYPE_CURRENT_USER;
+            uvs_lexeme = cur_tok.lexeme;
+            goto push_spec;
         case SYMBOL_SESSION_USER:
+            uvs_type = UVS_TYPE_SESSION_USER;
+            uvs_lexeme = cur_tok.lexeme;
+            goto push_spec;
         case SYMBOL_SYSTEM_USER:
+            uvs_type = UVS_TYPE_SYSTEM_USER;
+            uvs_lexeme = cur_tok.lexeme;
+            goto push_spec;
         case SYMBOL_VALUE:
-            ve_type = VALUE_EXPRESSION_TYPE_GENERAL;
-            ve_lexeme = cur_tok.lexeme;
+            uvs_type = UVS_TYPE_VALUE;
+            uvs_lexeme = cur_tok.lexeme;
             goto push_spec;
         case SYMBOL_COLON:
             cur_tok = lex.next();
             goto expect_parameter;
         case SYMBOL_QUESTION_MARK:
-            ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
-            ve_lexeme = cur_tok.lexeme;
+            uvs_type = UVS_TYPE_PARAMETER;
+            uvs_lexeme = cur_tok.lexeme;
             goto push_spec;
         default:
             return false;
@@ -365,7 +397,7 @@ expect_char_string:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_LITERAL_CHARACTER_STRING)
         goto err_expect_char_string;
-    ve_lexeme = cur_tok.lexeme;
+    uvs_lexeme = cur_tok.lexeme;
     cur_tok = lex.next();
     goto push_spec;
 err_expect_char_string:
@@ -377,8 +409,8 @@ expect_parameter:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    ve_type = VALUE_EXPRESSION_TYPE_PARAMETER;
-    ve_lexeme = cur_tok.lexeme;
+    uvs_type = UVS_TYPE_PARAMETER;
+    uvs_lexeme = cur_tok.lexeme;
     cur_tok = lex.next();
     // TODO(jaypipes): Maybe support the INDICATOR clause?
     goto push_spec;
@@ -388,7 +420,7 @@ err_expect_identifier:
 push_spec:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<value_expression_t>(ve_type, ve_lexeme);
+    out = std::make_unique<unsigned_value_specification_t>(uvs_type, uvs_lexeme);
     return true;
 }
 
@@ -405,8 +437,10 @@ push_spec:
 bool parse_set_function(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<value_expression_t>& out) {
+        std::unique_ptr<value_expression_primary_t>& out) {
     lexer_t& lex = ctx.lexer;
+    parse_position_t sf_start = lex.cursor;
+    parse_position_t sf_end;
     set_function_type_t func_type;
     std::unique_ptr<value_expression_t> operand;
     symbol_t cur_sym = cur_tok.symbol;
@@ -506,6 +540,7 @@ process_operand:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
         goto err_expect_rparen;
+    sf_end = lex.cursor;
     cur_tok = lex.next();
     goto push_set_function;
 err_expect_rparen:
@@ -515,9 +550,9 @@ push_set_function:
     if (ctx.opts.disable_statement_construction)
         return true;
     if (operand)
-        out = std::make_unique<set_function_t>(func_type, operand);
+        out = std::make_unique<set_function_t>(func_type, lexeme_t(sf_start, sf_end), operand);
     else
-        out = std::make_unique<set_function_t>(func_type);
+        out = std::make_unique<set_function_t>(func_type, lexeme_t(sf_start, sf_end));
     return true;
 }
 
@@ -554,7 +589,7 @@ bool parse_character_value_expression(
     lexer_t& lex = ctx.lexer;
     lexeme_t collation;
     symbol_t cur_sym;
-    std::unique_ptr<value_expression_t> value_primary;
+    std::unique_ptr<value_expression_primary_t> value_primary;
     if (! parse_value_expression_primary(ctx, cur_tok, value_primary))
         return false;
     goto optional_collation;

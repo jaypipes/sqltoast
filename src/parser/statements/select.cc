@@ -65,7 +65,7 @@ bool parse_select(
 expect_derived_column:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_ASTERISK) {
-        selected_columns.emplace_back(derived_column_t(cur_tok.lexeme));
+        selected_columns.emplace_back(derived_column_t());
         cur_tok = lex.next();
         goto comma_or_from;
     }

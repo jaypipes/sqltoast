@@ -9,26 +9,127 @@
 
 namespace sqltoast {
 
-typedef enum value_expression_type {
-    VALUE_EXPRESSION_TYPE_UNKNOWN,
-    VALUE_EXPRESSION_TYPE_LITERAL,
-    VALUE_EXPRESSION_TYPE_LITERAL_DATE,
-    VALUE_EXPRESSION_TYPE_LITERAL_TIME,
-    VALUE_EXPRESSION_TYPE_LITERAL_TIMESTAMP,
-    VALUE_EXPRESSION_TYPE_LITERAL_INTERVAL,
-    VALUE_EXPRESSION_TYPE_PARAMETER,
-    VALUE_EXPRESSION_TYPE_VARIABLE,
-    VALUE_EXPRESSION_TYPE_GENERAL,
-    VALUE_EXPRESSION_TYPE_COLUMN,
-    VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION,
-    VALUE_EXPRESSION_TYPE_STRING_EXPRESSION,
-    VALUE_EXPRESSION_TYPE_DATETIME_EXPRESSION,
-    VALUE_EXPRESSION_TYPE_INTERVAL_EXPRESSION,
-    VALUE_EXPRESSION_TYPE_SET_FUNCTION,
-    VALUE_EXPRESSION_TYPE_SCALAR_SUBQUERY,
-    VALUE_EXPRESSION_TYPE_CASE,
-    VALUE_EXPRESSION_TYPE_CAST
-} value_expression_type_t;
+// A value expression primary is a variant that can contain one of several
+// types of terms that evaluate into a scalar value
+typedef enum vep_type {
+    VEP_TYPE_UNSIGNED_VALUE_SPECIFICATION,
+    VEP_TYPE_COLUMN_REFERENCE,
+    VEP_TYPE_SET_FUNCTION_SPECIFICATION,
+    VEP_TYPE_SCALAR_SUBQUERY,
+    VEP_TYPE_CASE_EXPRESSION,
+    VEP_TYPE_VALUE_EXPRESSION,
+    VEP_TYPE_CAST_SPECIFICATION
+} vep_type_t;
+
+typedef struct value_expression_primary {
+    vep_type_t vep_type;
+    lexeme_t lexeme;
+    value_expression_primary(
+            vep_type_t vep_type,
+            lexeme_t lexeme) :
+        vep_type(vep_type),
+        lexeme(lexeme)
+    {}
+} value_expression_primary_t;
+
+std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep);
+
+// unsigned value specifications are unsigned numeric literals, string and
+// date/time literals, parameters, variables and some common general
+// value-producing keywords like CURRENT_USER
+typedef enum uvs_type {
+    UVS_TYPE_UNSIGNED_NUMERIC,
+    UVS_TYPE_CHARACTER_STRING,
+    UVS_TYPE_NATIONAL_CHARACTER_STRING,
+    UVS_TYPE_BIT_STRING,
+    UVS_TYPE_HEX_STRING,
+    UVS_TYPE_DATETIME,
+    UVS_TYPE_INTERVAL,
+    UVS_TYPE_PARAMETER,
+    UVS_TYPE_VARIABLE,
+    UVS_TYPE_USER,
+    UVS_TYPE_CURRENT_USER,
+    UVS_TYPE_SESSION_USER,
+    UVS_TYPE_SYSTEM_USER,
+    UVS_TYPE_VALUE  // The keyword "VALUE"
+} uvs_type_t;
+
+typedef struct unsigned_value_specification : value_expression_primary_t {
+    uvs_type_t uvs_type;
+    unsigned_value_specification(
+            uvs_type_t uvs_type,
+            lexeme_t lexeme) :
+        value_expression_primary_t(VEP_TYPE_UNSIGNED_VALUE_SPECIFICATION, lexeme),
+        uvs_type(uvs_type)
+    {}
+} unsigned_value_specification_t;
+
+std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_t& uvs);
+
+typedef enum set_function_type {
+    SET_FUNCTION_TYPE_COUNT,
+    SET_FUNCTION_TYPE_COUNT_DISTINCT,
+    SET_FUNCTION_TYPE_COUNT_STAR,
+    SET_FUNCTION_TYPE_AVG,
+    SET_FUNCTION_TYPE_AVG_DISTINCT,
+    SET_FUNCTION_TYPE_MIN,
+    SET_FUNCTION_TYPE_MIN_DISTINCT,
+    SET_FUNCTION_TYPE_MAX,
+    SET_FUNCTION_TYPE_MAX_DISTINCT,
+    SET_FUNCTION_TYPE_SUM,
+    SET_FUNCTION_TYPE_SUM_DISTINCT
+} set_function_type_t;
+
+struct value_expression;
+typedef struct set_function : value_expression_primary_t {
+    set_function_type_t func_type;
+    std::unique_ptr<struct value_expression> value;
+    set_function(
+            set_function_type_t func_type,
+            lexeme_t lexeme) :
+        value_expression_primary_t(VEP_TYPE_SET_FUNCTION_SPECIFICATION, lexeme),
+        func_type(func_type)
+    {}
+    set_function(
+            set_function_type_t func_type,
+            lexeme_t lexeme,
+            std::unique_ptr<struct value_expression>& value) :
+        value_expression_primary_t(VEP_TYPE_SET_FUNCTION_SPECIFICATION, lexeme),
+        func_type(func_type),
+        value(std::move(value))
+    {}
+} set_function_t;
+
+std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
+
+// This is a "subexpression" inside a value expression primary
+typedef struct value_subexpression : value_expression_primary_t {
+    std::unique_ptr<struct value_expression> value;
+    value_subexpression(
+            std::unique_ptr<struct value_expression>& value,
+            lexeme_t lexeme) :
+        value_expression_primary_t(VEP_TYPE_VALUE_EXPRESSION, lexeme),
+        value(std::move(value))
+    {}
+} value_subexpression_t;
+
+std::ostream& operator<< (std::ostream& out, const value_subexpression_t& uvs);
+
+// A value expression primary that contains a subquery that evaluates to a
+// scalar value
+struct statement;
+typedef struct scalar_subquery : value_expression_primary_t {
+    // Always static_castable to a select_statement_t
+    std::unique_ptr<struct statement> subquery;
+    scalar_subquery(
+            std::unique_ptr<struct statement>& subquery,
+            lexeme_t lexeme) :
+        value_expression_primary_t(VEP_TYPE_SCALAR_SUBQUERY, lexeme),
+        subquery(std::move(subquery))
+    {}
+} scalar_subquery_t;
+
+std::ostream& operator<< (std::ostream& out, const scalar_subquery_t& uvs);
 
 // A value expression is anything that can be deduced into a scalar value.  It
 // is the most common type of row value constructor element.  A value
@@ -36,15 +137,17 @@ typedef enum value_expression_type {
 // col_value", a datetime or interval expression like "date_col - INTERVAL 1
 // DAY", a string expression like "CONCAT(some_col, '-', some_other_col)" or
 // even the results of a CASE expression or scalar subquery
+typedef enum value_expression_type {
+    VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION,
+    VALUE_EXPRESSION_TYPE_STRING_EXPRESSION,
+    VALUE_EXPRESSION_TYPE_DATETIME_EXPRESSION,
+    VALUE_EXPRESSION_TYPE_INTERVAL_EXPRESSION,
+} value_expression_type_t;
+
 typedef struct value_expression {
     value_expression_type_t type;
-    lexeme_t lexeme;
     value_expression(value_expression_type_t ve_type) :
         type(ve_type)
-    {}
-    value_expression(value_expression_type_t ve_type, lexeme_t lexeme) :
-        type(ve_type),
-        lexeme(lexeme)
     {}
 } value_expression_t;
 
@@ -70,9 +173,9 @@ typedef enum numeric_factor_type {
 typedef struct numeric_factor {
     int sign;
     numeric_factor_type_t type;
-    std::unique_ptr<value_expression_t> value;
+    std::unique_ptr<value_expression_primary_t> value;
     numeric_factor(
-            std::unique_ptr<value_expression_t>& value,
+            std::unique_ptr<value_expression_primary_t>& value,
             int sign) :
         sign(sign),
         type(NUMERIC_FACTOR_TYPE_VALUE),
@@ -122,46 +225,13 @@ typedef struct numeric_expression : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne);
 
-typedef enum set_function_type {
-    SET_FUNCTION_TYPE_UNKNOWN,
-    SET_FUNCTION_TYPE_COUNT,
-    SET_FUNCTION_TYPE_COUNT_DISTINCT,
-    SET_FUNCTION_TYPE_COUNT_STAR,
-    SET_FUNCTION_TYPE_AVG,
-    SET_FUNCTION_TYPE_AVG_DISTINCT,
-    SET_FUNCTION_TYPE_MIN,
-    SET_FUNCTION_TYPE_MIN_DISTINCT,
-    SET_FUNCTION_TYPE_MAX,
-    SET_FUNCTION_TYPE_MAX_DISTINCT,
-    SET_FUNCTION_TYPE_SUM,
-    SET_FUNCTION_TYPE_SUM_DISTINCT
-} set_function_type_t;
-
-typedef struct set_function : value_expression_t {
-    set_function_type_t func_type;
-    std::unique_ptr<value_expression_t> value;
-    set_function(set_function_type_t func_type) :
-        value_expression_t(VALUE_EXPRESSION_TYPE_SET_FUNCTION),
-        func_type(func_type)
-    {}
-    set_function(
-            set_function_type_t func_type,
-            std::unique_ptr<value_expression_t>& value) :
-        value_expression_t(VALUE_EXPRESSION_TYPE_SET_FUNCTION, value->lexeme),
-        func_type(func_type),
-        value(std::move(value))
-    {}
-} set_function_t;
-
-std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
-
 typedef struct character_value_expression : value_expression_t {
-    std::unique_ptr<value_expression_t> value;
+    std::unique_ptr<value_expression_primary_t> value;
     lexeme_t collation;
     character_value_expression(
-            std::unique_ptr<value_expression_t>& value,
+            std::unique_ptr<value_expression_primary_t>& value,
             lexeme_t collation) :
-        value_expression_t(VALUE_EXPRESSION_TYPE_STRING_EXPRESSION, value->lexeme),
+        value_expression_t(VALUE_EXPRESSION_TYPE_STRING_EXPRESSION),
         value(std::move(value)),
         collation(collation)
     {}
