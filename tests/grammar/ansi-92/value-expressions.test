@@ -56,3 +56,54 @@ statements[0]:
      4: VALUE
    referenced tables:
      0: t1>
+# COUNT set function specifications
+>SELECT COUNT(*), COUNT(DISTINCT a), COUNT(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: COUNT(*)
+     1: COUNT(DISTINCT column-reference[a])
+     2: COUNT(column-reference[a])
+   referenced tables:
+     0: t1>
+# SUM set function specifications
+>SELECT SUM(DISTINCT a), SUM(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: SUM(DISTINCT column-reference[a])
+     1: SUM(column-reference[a])
+   referenced tables:
+     0: t1>
+# AVG set function specifications
+>SELECT AVG(DISTINCT a), AVG(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: AVG(DISTINCT column-reference[a])
+     1: AVG(column-reference[a])
+   referenced tables:
+     0: t1>
+# MIN set function specifications
+>SELECT MIN(DISTINCT a), MIN(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: MIN(DISTINCT column-reference[a])
+     1: MIN(column-reference[a])
+   referenced tables:
+     0: t1>
+# MAX set function specifications
+>SELECT MAX(DISTINCT a), MAX(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: MAX(DISTINCT column-reference[a])
+     1: MAX(column-reference[a])
+   referenced tables:
+     0: t1>
