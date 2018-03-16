@@ -116,3 +116,19 @@ statements[0]:
      0: MAX(COUNT(column-reference[a]))
    referenced tables:
      0: t1>
+# A simple scalar subquery
+>SELECT (SELECT b FROM t2) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: scalar-subquery[
+<statement: SELECT
+   selected columns:
+     0: column-reference[b]
+   referenced tables:
+     0: t2>
+]
+   referenced tables:
+     0: t1>
+
