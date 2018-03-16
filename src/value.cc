@@ -100,6 +100,9 @@ std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_
         case UVS_TYPE_SYSTEM_USER:
             out << "SYSTEM_USER";
             break;
+        case UVS_TYPE_VALUE:
+            out << "VALUE";
+            break;
         case UVS_TYPE_PARAMETER:
             out << "parameter[" << std::string(uvs.lexeme.start, uvs.lexeme.end) << ']';
             break;

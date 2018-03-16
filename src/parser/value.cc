@@ -74,6 +74,7 @@ bool parse_value_expression(
             case SYMBOL_GREATER_THAN:
             case SYMBOL_AND:
             case SYMBOL_OR:
+            case SYMBOL_FROM:
             case SYMBOL_WHERE:
             case SYMBOL_HAVING:
             case SYMBOL_GROUP:
@@ -364,22 +365,27 @@ bool parse_unsigned_value_specification(
         case SYMBOL_USER:
             uvs_type = UVS_TYPE_USER;
             uvs_lexeme = cur_tok.lexeme;
+            cur_tok = lex.next();
             goto push_spec;
         case SYMBOL_CURRENT_USER:
             uvs_type = UVS_TYPE_CURRENT_USER;
             uvs_lexeme = cur_tok.lexeme;
+            cur_tok = lex.next();
             goto push_spec;
         case SYMBOL_SESSION_USER:
             uvs_type = UVS_TYPE_SESSION_USER;
             uvs_lexeme = cur_tok.lexeme;
+            cur_tok = lex.next();
             goto push_spec;
         case SYMBOL_SYSTEM_USER:
             uvs_type = UVS_TYPE_SYSTEM_USER;
             uvs_lexeme = cur_tok.lexeme;
+            cur_tok = lex.next();
             goto push_spec;
         case SYMBOL_VALUE:
             uvs_type = UVS_TYPE_VALUE;
             uvs_lexeme = cur_tok.lexeme;
+            cur_tok = lex.next();
             goto push_spec;
         case SYMBOL_COLON:
             cur_tok = lex.next();
@@ -387,6 +393,7 @@ bool parse_unsigned_value_specification(
         case SYMBOL_QUESTION_MARK:
             uvs_type = UVS_TYPE_PARAMETER;
             uvs_lexeme = cur_tok.lexeme;
+            cur_tok = lex.next();
             goto push_spec;
         default:
             return false;

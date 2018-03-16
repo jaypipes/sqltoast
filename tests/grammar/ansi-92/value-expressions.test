@@ -1,0 +1,58 @@
+# unsigned literal number value expression primary
+>SELECT 1 FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[1]
+   referenced tables:
+     0: t1>
+# character string literal value expression primary
+>SELECT 'a' FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal['a']
+   referenced tables:
+     0: t1>
+# national character string literal value expression primary
+>SELECT N'motorček' FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal['motorček']
+   referenced tables:
+     0: t1>
+# bit string literal value expression primary
+>SELECT B'01000101101' FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal['01000101101']
+   referenced tables:
+     0: t1>
+# hex string literal value expression primary
+>SELECT X'FE1CD34A' FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal['FE1CD34A']
+   referenced tables:
+     0: t1>
+# General value expression primaries
+>SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: USER
+     1: CURRENT_USER
+     2: SESSION_USER
+     3: SYSTEM_USER
+     4: VALUE
+   referenced tables:
+     0: t1>
