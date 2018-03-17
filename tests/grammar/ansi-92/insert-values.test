@@ -27,4 +27,4 @@ statements[0]:
    table name: t1
    default columns: true
    values:
-     0: character-value-expression[literal['a'] COLLATE utf8bin]>
+     0: literal['a'] COLLATE utf8bin>

@@ -148,7 +148,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: character-value-expression[literal['ß'] COLLATE utf8mb4_general_ci]
+     0: literal['ß'] COLLATE utf8mb4_general_ci
    referenced tables:
      0: t1>
 # character value expression using concatenation
@@ -157,7 +157,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: character-value-expression[column-reference[a], column-reference[b]]
+     0: concatenate[column-reference[a], column-reference[b]]
    referenced tables:
      0: t1>
 # character value expression using concatenation with some factors having a collation
@@ -166,6 +166,24 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: character-value-expression[column-reference[a], column-reference[b] COLLATE utf8_bin]
+     0: concatenate[column-reference[a], column-reference[b] COLLATE utf8_bin]
+   referenced tables:
+     0: t1>
+# SUBSTRING string function with no for length modifier
+>SELECT SUBSTRING(a FROM 1) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: substring-function[column-reference[a] FROM literal[1]]
+   referenced tables:
+     0: t1>
+# SUBSTRING string function with a for length modifier
+>SELECT SUBSTRING(a FROM 1 FOR 2) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: substring-function[column-reference[a] FROM literal[1] FOR literal[2]]
    referenced tables:
      0: t1>

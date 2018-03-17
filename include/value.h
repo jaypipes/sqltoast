@@ -225,13 +225,73 @@ typedef struct numeric_expression : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne);
 
-// A character factor is a value expression primary that produces a character
-// value. Each character factor may have a collation.
-typedef struct character_factor {
+typedef enum string_function_type {
+    STRING_FUNCTION_TYPE_SUBSTRING,
+    STRING_FUNCTION_TYPE_UPPER,
+    STRING_FUNCTION_TYPE_LOWER,
+    STRING_FUNCTION_TYPE_CONVERT,
+    STRING_FUNCTION_TYPE_TRANSLATE,
+    STRING_FUNCTION_TYPE_TRIM
+} string_function_type_t;
+
+typedef struct string_function {
+    string_function_type_t type;
+    string_function(string_function_type_t type) : type(type)
+    {}
+} string_function_t;
+
+std::ostream& operator<< (std::ostream& out, const string_function_t& sf);
+
+struct value_expression;
+typedef struct substring_function : string_function_t {
+    // Guaranteed to be static_castable to a character_value_expression_t
+    std::unique_ptr<struct value_expression> operand;
+    // Guaranteed to be static_castable to a numeric_value_expression_t
+    std::unique_ptr<struct value_expression> start_position_value;
+    // Guaranteed to be static_castable to a numeric_value_expression_t
+    std::unique_ptr<struct value_expression> for_length_value;
+    substring_function(
+            std::unique_ptr<struct value_expression>& operand,
+            std::unique_ptr<struct value_expression>& start_position_value) :
+        string_function_t(STRING_FUNCTION_TYPE_SUBSTRING),
+        operand(std::move(operand)),
+        start_position_value(std::move(start_position_value))
+    {}
+    substring_function(
+            std::unique_ptr<struct value_expression>& operand,
+            std::unique_ptr<struct value_expression>& start_position_value,
+            std::unique_ptr<struct value_expression>& for_length_value) :
+        string_function_t(STRING_FUNCTION_TYPE_SUBSTRING),
+        operand(std::move(operand)),
+        start_position_value(std::move(start_position_value)),
+        for_length_value(std::move(for_length_value))
+    {}
+} substring_function_t;
+
+std::ostream& operator<< (std::ostream& out, const substring_function_t& sf);
+
+// A character primary is a value expression primary or a string value function
+typedef struct character_primary {
     std::unique_ptr<value_expression_primary_t> value;
+    std::unique_ptr<string_function_t> string_function;
+    character_primary(
+            std::unique_ptr<value_expression_primary_t>& value) :
+        value(std::move(value))
+    {}
+    character_primary(
+            std::unique_ptr<string_function_t>& string_function) :
+        string_function(std::move(string_function))
+    {}
+} character_primary_t;
+
+std::ostream& operator<< (std::ostream& out, const character_primary_t& cp);
+
+// A character factor is a character primary with an optional collation.
+typedef struct character_factor {
+    std::unique_ptr<character_primary_t> value;
     lexeme_t collation;
     character_factor(
-            std::unique_ptr<value_expression_primary_t>& value,
+            std::unique_ptr<character_primary_t>& value,
             lexeme_t collation) :
         value(std::move(value)),
         collation(collation)

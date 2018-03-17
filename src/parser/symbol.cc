@@ -65,6 +65,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_EXISTS] = std::string("EXISTS");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
+    m[SYMBOL_FOR] = std::string("FOR");
     m[SYMBOL_FOREIGN] = std::string("FOREIGN");
     m[SYMBOL_FROM] = std::string("FROM");
     m[SYMBOL_FULL] = std::string("FULL");
@@ -107,6 +108,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_SESSION_USER] = std::string("SESSION_USER");
     m[SYMBOL_SET] = std::string("SET");
     m[SYMBOL_SMALLINT] = std::string("SMALLINT");
+    m[SYMBOL_SUBSTRING] = std::string("SUBSTRING");
     m[SYMBOL_SUM] = std::string("SUM");
     m[SYMBOL_SYSTEM_USER] = std::string("SYSTEM_USER");
     m[SYMBOL_TABLE] = std::string("TABLE");

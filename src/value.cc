@@ -178,14 +178,48 @@ std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne) {
 }
 
 std::ostream& operator<< (std::ostream& out, const character_value_expression_t& cve) {
-    out << "character-value-expression[";
-    size_t x = 0;
-    for (const std::unique_ptr<character_factor_t>& val : cve.values) {
-        if (x++ > 0)
-            out << ", ";
-        out << *val;
+    if (cve.values.size() > 1) {
+        out << "concatenate[";
+        size_t x = 0;
+        for (const std::unique_ptr<character_factor_t>& val : cve.values) {
+            if (x++ > 0)
+                out << ", ";
+            out << *val;
+        }
+        out << "]";
+    } else
+        out << *cve.values[0];
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const string_function_t& sf) {
+    switch (sf.type) {
+        case STRING_FUNCTION_TYPE_SUBSTRING:
+            {
+                const substring_function_t& subs = static_cast<const substring_function_t&>(sf);
+                out << subs;
+            }
+            break;
+        default:
+            out << "string-function[UNKNOWN]";
+            break;
     }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const substring_function_t& sf) {
+    out << "substring-function[" << *sf.operand << " FROM " << *sf.start_position_value;
+    if (sf.for_length_value)
+        out << " FOR " << *sf.for_length_value;
     out << "]";
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const character_primary_t& cp) {
+    if (cp.value)
+        out << *cp.value;
+    else
+        out << *cp.string_function;
     return out;
 }
 

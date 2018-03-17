@@ -587,7 +587,6 @@ bool parse_character_value_expression(
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out) {
     lexer_t& lex = ctx.lexer;
-    lexeme_t collation;
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<std::unique_ptr<character_factor>> values;
     std::unique_ptr<character_factor_t> factor;
@@ -616,19 +615,15 @@ push_ve:
 
 // <character factor> ::=
 //     <character primary> [ <collate clause> ]
-//
-// <character primary> ::=
-//     <value expression primary>
-//     | <string value function>
 bool parse_character_factor(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<character_factor>& out) {
+        std::unique_ptr<character_factor_t>& out) {
     lexer_t& lex = ctx.lexer;
     lexeme_t collation;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<value_expression_primary_t> value_primary;
-    if (! parse_value_expression_primary(ctx, cur_tok, value_primary))
+    std::unique_ptr<character_primary_t> primary;
+    if (! parse_character_primary(ctx, cur_tok, primary))
         return false;
     goto optional_collation;
 optional_collation:
@@ -648,7 +643,182 @@ err_expect_identifier:
 push_factor:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<character_factor_t>(value_primary, collation);
+    out = std::make_unique<character_factor_t>(primary, collation);
+    return true;
+}
+
+// <character primary> ::=
+//     <value expression primary>
+//     | <string value function>
+bool parse_character_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<character_primary_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_primary_t> value_primary;
+    std::unique_ptr<string_function_t> string_function;
+    if (parse_value_expression_primary(ctx, cur_tok, value_primary))
+        goto push_primary;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (! parse_string_function(ctx, cur_tok, string_function))
+        return false;
+    goto push_primary;
+push_primary:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    if (value_primary)
+        out = std::make_unique<character_primary_t>(value_primary);
+    else
+        out = std::make_unique<character_primary_t>(string_function);
+    return true;
+}
+
+// <string value function> ::= <character value function> | <bit value function>
+//
+// <character value function> ::=
+//     <character substring function>
+//     | <fold>
+//     | <form-of-use conversion>
+//     | <character translation>
+//     | <trim function>
+//
+// <fold> ::=
+//     { UPPER | LOWER }
+//     <left paren> <character value expression> <right paren>
+//
+// <form-of-use conversion> ::=
+//     CONVERT <left paren> <character value expression>
+//     USING <form-of-use conversion name> <right paren>
+//
+// <form-of-use conversion name> ::= <qualified name>
+//
+// <character translation> ::=
+//     TRANSLATE <left paren> <character value expression>
+//     USING <translation name> <right paren>
+//
+// <translation name> ::= <qualified name>
+//
+// <trim function> ::=
+//     TRIM <left paren> <trim operands> <right paren>
+//
+// <trim operands> ::=
+//     [ [ <trim specification> ] [ <trim character> ]
+//     FROM ] <trim source>
+//
+// <trim specification> ::=
+//     LEADING
+//     | TRAILING
+//     | BOTH
+//
+// <trim character> ::= <character value expression>
+//
+// <trim source> ::= <character value expression>
+bool parse_string_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<string_function_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_SUBSTRING:
+            cur_tok = lex.next();
+            return parse_substring_function(ctx, cur_tok, out);
+        default:
+            return false;
+    }
+}
+
+// <character substring function> ::=
+//     SUBSTRING <left paren> <character value expression>
+//     FROM <start position>
+//     [ FOR <string length> ] <right paren>
+//
+// <start position> ::= <numeric value expression>
+//
+// <string length> ::= <numeric value expression>
+bool parse_substring_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<string_function_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_t> operand;
+    std::unique_ptr<value_expression_t> start_position_val;
+    std::unique_ptr<value_expression_t> for_length_val;
+
+    // The SUBSTRING symbol has already been consumed so we now need the left
+    // parens
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto process_operand;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+process_operand:
+    if (! parse_character_value_expression(ctx, cur_tok, operand))
+       return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_FROM)
+       goto err_expect_from;
+    cur_tok = lex.next();
+    if (! parse_numeric_value_expression(ctx, cur_tok, start_position_val)) {
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
+        goto err_expect_start_position;
+    }
+    goto optional_for_length;
+err_expect_from:
+    expect_error(ctx, SYMBOL_FROM);
+    return false;
+err_expect_start_position:
+    {
+        std::stringstream estr;
+        estr << "Expected <numeric value expression> after FROM but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+optional_for_length:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_FOR) {
+        cur_tok = lex.next();
+        if (! parse_numeric_value_expression(ctx, cur_tok, for_length_val)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_numeric_for_length;
+        }
+    }
+    goto expect_rparen;
+err_expect_numeric_for_length:
+    {
+        std::stringstream estr;
+        estr << "Expected <numeric value expression> after FOR but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_function;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_function:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    if (for_length_val)
+        out = std::make_unique<substring_function_t>(
+                operand, start_position_val, for_length_val);
+    else
+        out = std::make_unique<substring_function_t>(
+                operand, start_position_val);
     return true;
 }
 
