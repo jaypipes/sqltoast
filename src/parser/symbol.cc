@@ -117,6 +117,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
     m[SYMBOL_UNIQUE] = std::string("UNIQUE");
     m[SYMBOL_UPDATE] = std::string("UPDATE");
+    m[SYMBOL_UPPER] = std::string("UPPER");
     m[SYMBOL_USER] = std::string("USER");
     m[SYMBOL_VALUE] = std::string("VALUE");
     m[SYMBOL_VALUES] = std::string("VALUES");

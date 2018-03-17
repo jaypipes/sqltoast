@@ -720,14 +720,62 @@ bool parse_string_function(
         token_t& cur_tok,
         std::unique_ptr<string_function_t>& out) {
     lexer_t& lex = ctx.lexer;
+    string_function_type_t func_type;
     symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_t> operand;
     switch (cur_sym) {
         case SYMBOL_SUBSTRING:
             cur_tok = lex.next();
             return parse_substring_function(ctx, cur_tok, out);
+        case SYMBOL_UPPER:
+            func_type = STRING_FUNCTION_TYPE_UPPER;
+            cur_tok = lex.next();
+            goto expect_lparen;
+        case SYMBOL_LOWER:
+            func_type = STRING_FUNCTION_TYPE_LOWER;
+            cur_tok = lex.next();
+            goto expect_lparen;
         default:
             return false;
     }
+expect_lparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto process_operand;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+process_operand:
+    if (! parse_character_value_expression(ctx, cur_tok, operand)) {
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
+        goto err_expect_operand;
+    }
+    goto expect_rparen;
+err_expect_operand:
+    {
+        std::stringstream estr;
+        estr << "Expected <character value expression> as operand but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_function;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_function:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<string_function_t>(func_type, operand);
+    return true;
 }
 
 // <character substring function> ::=

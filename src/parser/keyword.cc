@@ -88,6 +88,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'l':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LIKE, "LIKE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOWER, "LOWER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOCAL, "LOCAL"));
             return t;
         case 'm':
@@ -137,6 +138,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'u':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UPDATE, "UPDATE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_UPPER, "UPPER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_USER, "USER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UNIQUE, "UNIQUE"));
             return t;

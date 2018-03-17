@@ -187,3 +187,13 @@ statements[0]:
      0: substring-function[column-reference[a] FROM literal[1] FOR literal[2]]
    referenced tables:
      0: t1>
+# UPPER and LOWER string functions
+>SELECT UPPER(a), LOWER(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: upper[column-reference[a]]
+     1: lower[column-reference[a]]
+   referenced tables:
+     0: t1>

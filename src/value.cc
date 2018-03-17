@@ -200,6 +200,12 @@ std::ostream& operator<< (std::ostream& out, const string_function_t& sf) {
                 out << subs;
             }
             break;
+        case STRING_FUNCTION_TYPE_UPPER:
+            out << "upper[" << *sf.operand << "]";
+            break;
+        case STRING_FUNCTION_TYPE_LOWER:
+            out << "lower[" << *sf.operand << "]";
+            break;
         default:
             out << "string-function[UNKNOWN]";
             break;

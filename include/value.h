@@ -234,18 +234,22 @@ typedef enum string_function_type {
     STRING_FUNCTION_TYPE_TRIM
 } string_function_type_t;
 
+struct value_expression;
 typedef struct string_function {
     string_function_type_t type;
-    string_function(string_function_type_t type) : type(type)
+    // Guaranteed to be static_castable to a character_value_expression_t
+    std::unique_ptr<struct value_expression> operand;
+    string_function(
+            string_function_type_t type,
+            std::unique_ptr<struct value_expression>& operand) :
+        type(type),
+        operand(std::move(operand))
     {}
 } string_function_t;
 
 std::ostream& operator<< (std::ostream& out, const string_function_t& sf);
 
-struct value_expression;
 typedef struct substring_function : string_function_t {
-    // Guaranteed to be static_castable to a character_value_expression_t
-    std::unique_ptr<struct value_expression> operand;
     // Guaranteed to be static_castable to a numeric_value_expression_t
     std::unique_ptr<struct value_expression> start_position_value;
     // Guaranteed to be static_castable to a numeric_value_expression_t
@@ -253,16 +257,14 @@ typedef struct substring_function : string_function_t {
     substring_function(
             std::unique_ptr<struct value_expression>& operand,
             std::unique_ptr<struct value_expression>& start_position_value) :
-        string_function_t(STRING_FUNCTION_TYPE_SUBSTRING),
-        operand(std::move(operand)),
+        string_function_t(STRING_FUNCTION_TYPE_SUBSTRING, operand),
         start_position_value(std::move(start_position_value))
     {}
     substring_function(
             std::unique_ptr<struct value_expression>& operand,
             std::unique_ptr<struct value_expression>& start_position_value,
             std::unique_ptr<struct value_expression>& for_length_value) :
-        string_function_t(STRING_FUNCTION_TYPE_SUBSTRING),
-        operand(std::move(operand)),
+        string_function_t(STRING_FUNCTION_TYPE_SUBSTRING, operand),
         start_position_value(std::move(start_position_value)),
         for_length_value(std::move(for_length_value))
     {}
