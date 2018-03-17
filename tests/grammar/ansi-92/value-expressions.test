@@ -197,6 +197,15 @@ statements[0]:
      1: lower[column-reference[a]]
    referenced tables:
      0: t1>
+# TRANSLATE string function
+>SELECT TRANSLATE(a USING utf8_bin) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: translate[column-reference[a] USING utf8_bin]
+   referenced tables:
+     0: t1>
 # CONVERT string function
 >SELECT CONVERT(a USING utf8_bin) FROM t1
 OK

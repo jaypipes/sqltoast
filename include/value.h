@@ -284,6 +284,18 @@ typedef struct convert_function : string_function_t {
 
 std::ostream& operator<< (std::ostream& out, const convert_function_t& cf);
 
+typedef struct translate_function : string_function_t {
+    lexeme_t translation_name;
+    translate_function(
+            std::unique_ptr<struct value_expression>& operand,
+            lexeme_t translation_name) :
+        string_function_t(STRING_FUNCTION_TYPE_TRANSLATE, operand),
+        translation_name(translation_name)
+    {}
+} translate_function_t;
+
+std::ostream& operator<< (std::ostream& out, const translate_function_t& cf);
+
 // A character primary is a value expression primary or a string value function
 typedef struct character_primary {
     std::unique_ptr<value_expression_primary_t> value;

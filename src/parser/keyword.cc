@@ -136,6 +136,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIME, "TIME"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIMESTAMP, "TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TEMPORARY, "TEMPORARY"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRANSLATE, "TRANSLATE"));
             return t;
         case 'u':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UPDATE, "UPDATE"));

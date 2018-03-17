@@ -212,6 +212,12 @@ std::ostream& operator<< (std::ostream& out, const string_function_t& sf) {
                 out << cf;
             }
             break;
+        case STRING_FUNCTION_TYPE_TRANSLATE:
+            {
+                const translate_function_t& cf = static_cast<const translate_function_t&>(sf);
+                out << cf;
+            }
+            break;
         default:
             out << "string-function[UNKNOWN]";
             break;
@@ -229,6 +235,11 @@ std::ostream& operator<< (std::ostream& out, const substring_function_t& sf) {
 
 std::ostream& operator<< (std::ostream& out, const convert_function_t& cf) {
     out << "convert[" << *cf.operand << " USING " << cf.conversion_name << "]";
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const translate_function_t& cf) {
+    out << "translate[" << *cf.operand << " USING " << cf.translation_name << "]";
     return out;
 }
 

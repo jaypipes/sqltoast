@@ -688,12 +688,6 @@ push_primary:
 //     { UPPER | LOWER }
 //     <left paren> <character value expression> <right paren>
 //
-// <character translation> ::=
-//     TRANSLATE <left paren> <character value expression>
-//     USING <translation name> <right paren>
-//
-// <translation name> ::= <qualified name>
-//
 // <trim function> ::=
 //     TRIM <left paren> <trim operands> <right paren>
 //
@@ -732,6 +726,9 @@ bool parse_string_function(
         case SYMBOL_CONVERT:
             cur_tok = lex.next();
             return parse_convert_function(ctx, cur_tok, out);
+        case SYMBOL_TRANSLATE:
+            cur_tok = lex.next();
+            return parse_translate_function(ctx, cur_tok, out);
         default:
             return false;
     }
@@ -923,6 +920,65 @@ push_function:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<convert_function_t>(operand, conversion_name);
+    return true;
+}
+
+// <character translation> ::=
+//     TRANSLATE <left paren> <character value expression>
+//     USING <translation name> <right paren>
+//
+// <translation name> ::= <qualified name>
+bool parse_translate_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<string_function_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_t> operand;
+    lexeme_t translation_name;
+
+    // The TRANSLATE symbol has already been consumed so we now need the left
+    // parens
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto process_operand;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+process_operand:
+    if (! parse_character_value_expression(ctx, cur_tok, operand))
+       return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_USING)
+       goto err_expect_using;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    translation_name = cur_tok.lexeme;
+    cur_tok = lex.next();
+    goto expect_rparen;
+err_expect_using:
+    expect_error(ctx, SYMBOL_USING);
+    return false;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_function;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_function:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<translate_function_t>(operand, translation_name);
     return true;
 }
 
