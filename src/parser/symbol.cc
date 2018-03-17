@@ -48,6 +48,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHECK] = std::string("CHECK");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
     m[SYMBOL_CONSTRAINT] = std::string("CONSTRAINT");
+    m[SYMBOL_CONVERT] = std::string("CONVERT");
     m[SYMBOL_COUNT] = std::string("COUNT");
     m[SYMBOL_CREATE] = std::string("CREATE");
     m[SYMBOL_CURRENT_DATE] = std::string("CURRENT_DATE");
@@ -119,6 +120,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_UPDATE] = std::string("UPDATE");
     m[SYMBOL_UPPER] = std::string("UPPER");
     m[SYMBOL_USER] = std::string("USER");
+    m[SYMBOL_USING] = std::string("USING");
     m[SYMBOL_VALUE] = std::string("VALUE");
     m[SYMBOL_VALUES] = std::string("VALUES");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");

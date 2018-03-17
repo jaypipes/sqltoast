@@ -175,7 +175,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: substring-function[column-reference[a] FROM literal[1]]
+     0: substring[column-reference[a] FROM literal[1]]
    referenced tables:
      0: t1>
 # SUBSTRING string function with a for length modifier
@@ -184,7 +184,7 @@ OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: substring-function[column-reference[a] FROM literal[1] FOR literal[2]]
+     0: substring[column-reference[a] FROM literal[1] FOR literal[2]]
    referenced tables:
      0: t1>
 # UPPER and LOWER string functions
@@ -195,5 +195,14 @@ statements[0]:
    selected columns:
      0: upper[column-reference[a]]
      1: lower[column-reference[a]]
+   referenced tables:
+     0: t1>
+# CONVERT string function
+>SELECT CONVERT(a USING utf8_bin) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: convert[column-reference[a] USING utf8_bin]
    referenced tables:
      0: t1>

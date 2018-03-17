@@ -209,6 +209,10 @@ bool parse_substring_function(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<string_function_t>& out);
+bool parse_convert_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<string_function_t>& out);
 
 // Returns true if a set_function_t could be parsed. If true, the out argument
 // will be filled appropriately.

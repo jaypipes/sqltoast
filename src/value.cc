@@ -206,6 +206,12 @@ std::ostream& operator<< (std::ostream& out, const string_function_t& sf) {
         case STRING_FUNCTION_TYPE_LOWER:
             out << "lower[" << *sf.operand << "]";
             break;
+        case STRING_FUNCTION_TYPE_CONVERT:
+            {
+                const convert_function_t& cf = static_cast<const convert_function_t&>(sf);
+                out << cf;
+            }
+            break;
         default:
             out << "string-function[UNKNOWN]";
             break;
@@ -214,10 +220,15 @@ std::ostream& operator<< (std::ostream& out, const string_function_t& sf) {
 }
 
 std::ostream& operator<< (std::ostream& out, const substring_function_t& sf) {
-    out << "substring-function[" << *sf.operand << " FROM " << *sf.start_position_value;
+    out << "substring[" << *sf.operand << " FROM " << *sf.start_position_value;
     if (sf.for_length_value)
         out << " FOR " << *sf.for_length_value;
     out << "]";
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const convert_function_t& cf) {
+    out << "convert[" << *cf.operand << " USING " << cf.conversion_name << "]";
     return out;
 }
 

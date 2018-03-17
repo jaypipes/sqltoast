@@ -34,13 +34,14 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'c':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_COUNT, "COUNT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CREATE, "CREATE"));
-            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHAR, "CHAR"));
-            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHARACTER, "CHARACTER"));
-            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CASCADE, "CASCADE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_DATE, "CURRENT_DATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIME, "CURRENT_TIME"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIMESTAMP, "CURRENT_TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_USER, "CURRENT_USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CONVERT, "CONVERT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHAR, "CHAR"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHARACTER, "CHARACTER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CASCADE, "CASCADE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHECK, "CHECK"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_COLLATE, "COLLATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CONSTRAINT, "CONSTRAINT"));
@@ -139,6 +140,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'u':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UPDATE, "UPDATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UPPER, "UPPER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_USING, "USING"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_USER, "USER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UNIQUE, "UNIQUE"));
             return t;
