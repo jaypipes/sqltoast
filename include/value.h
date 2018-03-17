@@ -225,15 +225,29 @@ typedef struct numeric_expression : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne);
 
-typedef struct character_value_expression : value_expression_t {
+// A character factor is a value expression primary that produces a character
+// value. Each character factor may have a collation.
+typedef struct character_factor {
     std::unique_ptr<value_expression_primary_t> value;
     lexeme_t collation;
-    character_value_expression(
+    character_factor(
             std::unique_ptr<value_expression_primary_t>& value,
             lexeme_t collation) :
-        value_expression_t(VALUE_EXPRESSION_TYPE_STRING_EXPRESSION),
         value(std::move(value)),
         collation(collation)
+    {}
+} character_factor_t;
+
+std::ostream& operator<< (std::ostream& out, const character_factor_t& cf);
+
+// A character value expression is composed of one or more character factors
+// concatenated together using either the concatenation operator (||) or the
+// CONCAT string function
+typedef struct character_value_expression : value_expression_t {
+    std::vector<std::unique_ptr<character_factor_t>> values;
+    character_value_expression(std::vector<std::unique_ptr<character_factor_t>>& values) :
+        value_expression_t(VALUE_EXPRESSION_TYPE_STRING_EXPRESSION),
+        values(std::move(values))
     {}
 } character_value_expression_t;
 

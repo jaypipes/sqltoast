@@ -582,20 +582,51 @@ bool parse_string_value_expression(
 //
 // <concatenation> ::=
 //     <character value expression> <concatenation operator> <character factor>
-//
-// <character factor> ::=
-//     <character primary> [ <collate clause> ]
-//
-// <character primary> ::=
-//     <value expression primary>
-//     | <string value function>
 bool parse_character_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out) {
     lexer_t& lex = ctx.lexer;
     lexeme_t collation;
-    symbol_t cur_sym;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::vector<std::unique_ptr<character_factor>> values;
+    std::unique_ptr<character_factor_t> factor;
+    if (! parse_character_factor(ctx, cur_tok, factor))
+        return false;
+    values.emplace_back(std::move(factor));
+    goto optional_concat;
+optional_concat:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_CONCATENATION) {
+        cur_tok = lex.next();
+        if (! parse_character_factor(ctx, cur_tok, factor))
+            return false;
+        if (ctx.opts.disable_statement_construction)
+            goto optional_concat;
+        values.emplace_back(std::move(factor));
+        goto optional_concat;
+    }
+    goto push_ve;
+push_ve:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<character_value_expression_t>(values);
+    return true;
+}
+
+// <character factor> ::=
+//     <character primary> [ <collate clause> ]
+//
+// <character primary> ::=
+//     <value expression primary>
+//     | <string value function>
+bool parse_character_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<character_factor>& out) {
+    lexer_t& lex = ctx.lexer;
+    lexeme_t collation;
+    symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<value_expression_primary_t> value_primary;
     if (! parse_value_expression_primary(ctx, cur_tok, value_primary))
         return false;
@@ -610,15 +641,14 @@ optional_collation:
         collation = cur_tok.lexeme;
         cur_tok = lex.next();
     }
-    goto push_ve;
+    goto push_factor;
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
     return false;
-push_ve:
+push_factor:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<character_value_expression_t>(
-            value_primary, collation);
+    out = std::make_unique<character_factor_t>(value_primary, collation);
     return true;
 }
 

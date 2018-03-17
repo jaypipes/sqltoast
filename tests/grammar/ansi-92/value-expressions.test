@@ -151,3 +151,21 @@ statements[0]:
      0: character-value-expression[literal['ß'] COLLATE utf8mb4_general_ci]
    referenced tables:
      0: t1>
+# character value expression using concatenation
+>SELECT a || b FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: character-value-expression[column-reference[a], column-reference[b]]
+   referenced tables:
+     0: t1>
+# character value expression using concatenation with some factors having a collation
+>SELECT a || b COLLATE utf8_bin FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: character-value-expression[column-reference[a], column-reference[b] COLLATE utf8_bin]
+   referenced tables:
+     0: t1>

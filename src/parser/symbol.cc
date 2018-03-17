@@ -17,6 +17,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     // Punctuators
     m[SYMBOL_ASTERISK] = std::string("'*'");
     m[SYMBOL_COLON] = std::string("':'");
+    m[SYMBOL_CONCATENATION] = std::string("'||'");
     m[SYMBOL_COMMA] = std::string("','");
     m[SYMBOL_EXCLAMATION] = std::string("'!'");
     m[SYMBOL_EQUAL] = std::string("'='");
@@ -29,6 +30,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_RPAREN] = std::string("')'");
     m[SYMBOL_SEMICOLON] = std::string("';'");
     m[SYMBOL_SOLIDUS] = std::string("'/'");
+    m[SYMBOL_VERTICAL_BAR] = std::string("'|'");
 
     // Reserved keywords
     m[SYMBOL_ACTION] = std::string("ACTION");

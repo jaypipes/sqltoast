@@ -178,10 +178,21 @@ std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne) {
 }
 
 std::ostream& operator<< (std::ostream& out, const character_value_expression_t& cve) {
-    out << "character-value-expression["<< *cve.value;
-    if (cve.collation)
-        out << " COLLATE " << cve.collation;
+    out << "character-value-expression[";
+    size_t x = 0;
+    for (const std::unique_ptr<character_factor_t>& val : cve.values) {
+        if (x++ > 0)
+            out << ", ";
+        out << *val;
+    }
     out << "]";
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const character_factor_t& cf) {
+    out << *cf.value;
+    if (cf.collation)
+        out << " COLLATE " << cf.collation;
     return out;
 }
 

@@ -37,6 +37,7 @@ typedef enum symbol {
     // Punctuators
     SYMBOL_ASTERISK,
     SYMBOL_COLON,
+    SYMBOL_CONCATENATION, // This is the || double-char symbol
     SYMBOL_COMMA,
     SYMBOL_EQUAL,
     SYMBOL_EXCLAMATION,
@@ -49,6 +50,7 @@ typedef enum symbol {
     SYMBOL_RPAREN,
     SYMBOL_SEMICOLON,
     SYMBOL_SOLIDUS,
+    SYMBOL_VERTICAL_BAR,
 
     // Reserved keywords
     SYMBOL_ACTION,

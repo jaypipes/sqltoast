@@ -30,7 +30,7 @@ typedef struct token {
         return (symbol >= SYMBOL_LITERAL_APPROXIMATE_NUMBER && symbol <= SYMBOL_LITERAL_UNSIGNED_INTEGER);
     }
     inline bool is_punctuator() const {
-        return (symbol >= SYMBOL_ASTERISK && symbol <= SYMBOL_SEMICOLON);
+        return (symbol >= SYMBOL_ASTERISK && symbol <= SYMBOL_VERTICAL_BAR);
     }
     inline bool is_keyword() const {
         return (symbol >= SYMBOL_ALL && symbol <= SYMBOL_VARYING);

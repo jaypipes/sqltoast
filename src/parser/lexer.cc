@@ -13,7 +13,7 @@
 #include "parser/lexer.h"
 #include "parser/literal.h"
 #include "parser/keyword.h"
-#include "parser/punctuator.h"
+#include "parser/special.h"
 #include "parser/token.h"
 
 namespace sqltoast {
@@ -46,7 +46,7 @@ parse_position_t skip(parse_position_t cur) {
 static size_t NUM_TOKENIZERS = 5;
 static tokenize_func_t tokenizers[5] = {
     &token_comment,
-    &token_punctuator,
+    &token_special,
     &token_keyword,
     &token_literal,
     &token_identifier
