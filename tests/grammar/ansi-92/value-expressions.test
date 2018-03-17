@@ -142,3 +142,12 @@ statements[0]:
      2: parameter[?]
    referenced tables:
      0: t1>
+# character value expression using collation
+>SELECT 'ß' COLLATE utf8mb4_general_ci FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: character-value-expression[literal['ß'] COLLATE utf8mb4_general_ci]
+   referenced tables:
+     0: t1>
