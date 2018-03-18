@@ -97,7 +97,7 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
             out << " = ";
             break;
         case COMP_OP_NOT_EQUAL:
-            out << " != ";
+            out << " <> ";
             break;
         case COMP_OP_LESS:
             out << " < ";

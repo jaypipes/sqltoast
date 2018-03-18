@@ -1,4 +1,4 @@
-# Simple equality comparison predicate
+# simple equality comparison predicate
 >SELECT * FROM t1 WHERE a = 10
 OK
 statements[0]:
@@ -9,6 +9,17 @@ statements[0]:
      0: t1
    where:
      column-reference[a] = literal[10]>
+# anti-equality comparison predicate
+>SELECT * FROM t1 WHERE a <> 10
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] <> literal[10]>
 # Order of value expressions should not matter in equality comparison
 >SELECT * FROM t1 WHERE 10 = a
 OK

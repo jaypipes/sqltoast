@@ -33,6 +33,8 @@ inline tokenize_result_t token_special(
         case '*':
             return tokenize_result_t(SYMBOL_ASTERISK, cursor, cursor + 1);
         case '<':
+            if ((cursor + 1) != end && *(cursor + 1) == '>')
+                return tokenize_result_t(SYMBOL_NOT_EQUAL, cursor, cursor + 2);
             return tokenize_result_t(SYMBOL_LESS_THAN, cursor, cursor + 1);
         case '>':
             return tokenize_result_t(SYMBOL_GREATER_THAN, cursor, cursor + 1);
@@ -45,9 +47,8 @@ inline tokenize_result_t token_special(
         case '/':
             return tokenize_result_t(SYMBOL_SOLIDUS, cursor, cursor + 1);
         case '|':
-            if ((cursor + 1) != end && *(cursor + 1) == '|') {
+            if ((cursor + 1) != end && *(cursor + 1) == '|')
                 return tokenize_result_t(SYMBOL_CONCATENATION, cursor, cursor + 2);
-            }
             return tokenize_result_t(SYMBOL_VERTICAL_BAR, cursor, cursor + 1);
         case ';':
             return tokenize_result_t(SYMBOL_SEMICOLON, cursor, cursor + 1);

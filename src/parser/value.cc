@@ -105,7 +105,7 @@ optional_operator:
         case SYMBOL_LPAREN:
         case SYMBOL_EOS:
         case SYMBOL_EQUAL:
-        case SYMBOL_EXCLAMATION:
+        case SYMBOL_NOT_EQUAL:
         case SYMBOL_LESS_THAN:
         case SYMBOL_GREATER_THAN:
         case SYMBOL_AND:
@@ -185,7 +185,7 @@ optional_operator:
         case SYMBOL_LPAREN:
         case SYMBOL_EOS:
         case SYMBOL_EQUAL:
-        case SYMBOL_EXCLAMATION:
+        case SYMBOL_NOT_EQUAL:
         case SYMBOL_LESS_THAN:
         case SYMBOL_GREATER_THAN:
         case SYMBOL_AND:
@@ -667,7 +667,7 @@ optional_concat:
         case SYMBOL_LPAREN:
         case SYMBOL_EOS:
         case SYMBOL_EQUAL:
-        case SYMBOL_EXCLAMATION:
+        case SYMBOL_NOT_EQUAL:
         case SYMBOL_LESS_THAN:
         case SYMBOL_GREATER_THAN:
         case SYMBOL_AND:

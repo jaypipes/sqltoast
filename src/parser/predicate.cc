@@ -213,12 +213,8 @@ bool parse_comparison_predicate(
             op = COMP_OP_EQUAL;
             cur_tok = lex.next();
             goto expect_right;
-        case SYMBOL_EXCLAMATION:
+        case SYMBOL_NOT_EQUAL:
             op = COMP_OP_NOT_EQUAL;
-            cur_tok = lex.next();
-            cur_sym = cur_tok.symbol;
-            if (cur_sym != SYMBOL_EQUAL)
-                goto err_expect_equal;
             cur_tok = lex.next();
             goto expect_right;
         case SYMBOL_LESS_THAN:

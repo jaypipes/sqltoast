@@ -45,6 +45,7 @@ typedef enum symbol {
     SYMBOL_LESS_THAN,
     SYMBOL_LPAREN,
     SYMBOL_MINUS,
+    SYMBOL_NOT_EQUAL, // This is the <> double-char symbol
     SYMBOL_PLUS,
     SYMBOL_QUESTION_MARK,
     SYMBOL_RPAREN,
