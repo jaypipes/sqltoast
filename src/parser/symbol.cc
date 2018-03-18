@@ -41,6 +41,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_AVG] = std::string("AVG");
     m[SYMBOL_BETWEEN] = std::string("BETWEEN");
     m[SYMBOL_BIT] = std::string("BIT");
+    m[SYMBOL_BOTH] = std::string("BOTH");
     m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHAR] = std::string("CHAR");
@@ -81,6 +82,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_INTEGER] = std::string("INTEGER");
     m[SYMBOL_INTERVAL] = std::string("INTERVAL");
     m[SYMBOL_IS] = std::string("IS");
+    m[SYMBOL_LEADING] = std::string("LEADING");
     m[SYMBOL_LOCAL] = std::string("LOCAL");
     m[SYMBOL_LIKE] = std::string("LIKE");
     m[SYMBOL_KEY] = std::string("KEY");
@@ -116,7 +118,9 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TEMPORARY] = std::string("TEMPORARY");
     m[SYMBOL_TIME] = std::string("TIME");
     m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
+    m[SYMBOL_TRAILING] = std::string("TRAILING");
     m[SYMBOL_TRANSLATE] = std::string("TRANSLATE");
+    m[SYMBOL_TRANSLATE] = std::string("TRIM");
     m[SYMBOL_UNIQUE] = std::string("UNIQUE");
     m[SYMBOL_UPDATE] = std::string("UPDATE");
     m[SYMBOL_UPPER] = std::string("UPPER");

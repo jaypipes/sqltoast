@@ -30,6 +30,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BETWEEN, "BETWEEN"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BY, "BY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BIT, "BIT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_BOTH, "BOTH"));
             return t;
         case 'c':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_COUNT, "COUNT"));
@@ -91,6 +92,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LIKE, "LIKE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOWER, "LOWER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOCAL, "LOCAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_LEADING, "LEADING"));
             return t;
         case 'm':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_MAX, "MAX"));
@@ -136,6 +138,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIME, "TIME"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIMESTAMP, "TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TEMPORARY, "TEMPORARY"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRIM, "TRIM"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRAILING, "TRAILING"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRANSLATE, "TRANSLATE"));
             return t;
         case 'u':

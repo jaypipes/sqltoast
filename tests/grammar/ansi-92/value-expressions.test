@@ -215,3 +215,21 @@ statements[0]:
      0: convert[column-reference[a] USING utf8_bin]
    referenced tables:
      0: t1>
+# TRIM string function with no trim specification or character
+>SELECT TRIM(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: trim[column-reference[a]]
+   referenced tables:
+     0: t1>
+# TRIM string function with trim specifications
+>SELECT TRIM(LEADING ' ' FROM a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: trim[LEADING literal[' '] FROM column-reference[a]]
+   referenced tables:
+     0: t1>

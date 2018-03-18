@@ -598,14 +598,25 @@ optional_concat:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_CONCATENATION) {
         cur_tok = lex.next();
-        if (! parse_character_factor(ctx, cur_tok, factor))
-            return false;
+        if (! parse_character_factor(ctx, cur_tok, factor)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_char_factor;
+        }
         if (ctx.opts.disable_statement_construction)
             goto optional_concat;
         values.emplace_back(std::move(factor));
         goto optional_concat;
     }
     goto push_ve;
+err_expect_char_factor:
+    {
+        std::stringstream estr;
+        estr << "Expected <character factor> after concatenation "
+                "operator but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 push_ve:
     if (ctx.opts.disable_statement_construction)
         return true;
@@ -687,22 +698,6 @@ push_primary:
 // <fold> ::=
 //     { UPPER | LOWER }
 //     <left paren> <character value expression> <right paren>
-//
-// <trim function> ::=
-//     TRIM <left paren> <trim operands> <right paren>
-//
-// <trim operands> ::=
-//     [ [ <trim specification> ] [ <trim character> ]
-//     FROM ] <trim source>
-//
-// <trim specification> ::=
-//     LEADING
-//     | TRAILING
-//     | BOTH
-//
-// <trim character> ::= <character value expression>
-//
-// <trim source> ::= <character value expression>
 bool parse_string_function(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -712,9 +707,6 @@ bool parse_string_function(
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<value_expression_t> operand;
     switch (cur_sym) {
-        case SYMBOL_SUBSTRING:
-            cur_tok = lex.next();
-            return parse_substring_function(ctx, cur_tok, out);
         case SYMBOL_UPPER:
             func_type = STRING_FUNCTION_TYPE_UPPER;
             cur_tok = lex.next();
@@ -723,12 +715,18 @@ bool parse_string_function(
             func_type = STRING_FUNCTION_TYPE_LOWER;
             cur_tok = lex.next();
             goto expect_lparen;
+        case SYMBOL_SUBSTRING:
+            cur_tok = lex.next();
+            return parse_substring_function(ctx, cur_tok, out);
         case SYMBOL_CONVERT:
             cur_tok = lex.next();
             return parse_convert_function(ctx, cur_tok, out);
         case SYMBOL_TRANSLATE:
             cur_tok = lex.next();
             return parse_translate_function(ctx, cur_tok, out);
+        case SYMBOL_TRIM:
+            cur_tok = lex.next();
+            return parse_trim_function(ctx, cur_tok, out);
         default:
             return false;
     }
@@ -979,6 +977,114 @@ push_function:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<translate_function_t>(operand, translation_name);
+    return true;
+}
+
+// <trim function> ::=
+//     TRIM <left paren> <trim operands> <right paren>
+//
+// <trim operands> ::=
+//     [ [ <trim specification> ] [ <trim character> ]
+//     FROM ] <trim source>
+//
+// <trim specification> ::=
+//     LEADING
+//     | TRAILING
+//     | BOTH
+//
+// <trim character> ::= <character value expression>
+//
+// <trim source> ::= <character value expression>
+bool parse_trim_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<string_function_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_t> operand;
+    std::unique_ptr<value_expression_t> trim_char;
+    trim_specification_t trim_spec = TRIM_SPECIFICATION_LEADING;
+
+    // The TRIM symbol has already been consumed so we now need the left
+    // parens
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto optional_specification;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+optional_specification:
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_TRAILING:
+            trim_spec = TRIM_SPECIFICATION_TRAILING;
+            cur_tok = lex.next();
+            goto expect_trim_character;
+        case SYMBOL_LEADING:
+            trim_spec = TRIM_SPECIFICATION_LEADING;
+            cur_tok = lex.next();
+            goto expect_trim_character;
+        case SYMBOL_BOTH:
+            trim_spec = TRIM_SPECIFICATION_BOTH;
+            cur_tok = lex.next();
+            goto expect_trim_character;
+        default:
+            goto process_operand;
+    }
+expect_trim_character:
+    if (! parse_character_value_expression(ctx, cur_tok, trim_char)) {
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
+        goto err_expect_trim_character;
+    }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_FROM)
+        goto err_expect_from;
+    cur_tok = lex.next();
+    goto process_operand;
+err_expect_trim_character:
+    {
+        std::stringstream estr;
+        estr << "Expected <character value expression> after "
+                "<trim specification> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+err_expect_from:
+    expect_error(ctx, SYMBOL_FROM);
+    return false;
+process_operand:
+    if (! parse_character_value_expression(ctx, cur_tok, operand)) {
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
+        goto err_expect_operand;
+    }
+    goto expect_rparen;
+err_expect_operand:
+    {
+        std::stringstream estr;
+        estr << "Expected <character value expression> as operand for TRIM "
+                "function but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_function;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_function:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<trim_function_t>(operand, trim_spec, trim_char);
     return true;
 }
 

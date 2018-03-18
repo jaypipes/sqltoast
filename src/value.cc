@@ -214,8 +214,14 @@ std::ostream& operator<< (std::ostream& out, const string_function_t& sf) {
             break;
         case STRING_FUNCTION_TYPE_TRANSLATE:
             {
-                const translate_function_t& cf = static_cast<const translate_function_t&>(sf);
-                out << cf;
+                const translate_function_t& tf = static_cast<const translate_function_t&>(sf);
+                out << tf;
+            }
+            break;
+        case STRING_FUNCTION_TYPE_TRIM:
+            {
+                const trim_function_t& tf = static_cast<const trim_function_t&>(sf);
+                out << tf;
             }
             break;
         default:
@@ -238,8 +244,28 @@ std::ostream& operator<< (std::ostream& out, const convert_function_t& cf) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const translate_function_t& cf) {
-    out << "translate[" << *cf.operand << " USING " << cf.translation_name << "]";
+std::ostream& operator<< (std::ostream& out, const translate_function_t& tf) {
+    out << "translate[" << *tf.operand << " USING " << tf.translation_name << "]";
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const trim_function_t& tf) {
+    out << "trim[";
+    if (tf.trim_character) {
+        switch (tf.specification) {
+            case TRIM_SPECIFICATION_LEADING:
+                out << "LEADING ";
+                break;
+            case TRIM_SPECIFICATION_TRAILING:
+                out << "TRAILING ";
+                break;
+            case TRIM_SPECIFICATION_BOTH:
+                out << "BOTH ";
+                break;
+        }
+        out << *tf.trim_character << " FROM ";
+    }
+    out << *tf.operand << "]";
     return out;
 }
 

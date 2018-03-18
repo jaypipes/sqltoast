@@ -294,7 +294,29 @@ typedef struct translate_function : string_function_t {
     {}
 } translate_function_t;
 
-std::ostream& operator<< (std::ostream& out, const translate_function_t& cf);
+std::ostream& operator<< (std::ostream& out, const translate_function_t& tf);
+
+typedef enum trim_specification {
+    TRIM_SPECIFICATION_LEADING,
+    TRIM_SPECIFICATION_TRAILING,
+    TRIM_SPECIFICATION_BOTH
+} trim_specification_t;
+
+typedef struct trim_function : string_function_t {
+    trim_specification_t specification;
+    // Guaranteed to be static_castable to a character_value_expression_t
+    std::unique_ptr<struct value_expression> trim_character;
+    trim_function(
+            std::unique_ptr<struct value_expression>& operand,
+            trim_specification_t specification,
+            std::unique_ptr<struct value_expression>& trim_character) :
+        string_function_t(STRING_FUNCTION_TYPE_TRIM, operand),
+        specification(specification),
+        trim_character(std::move(trim_character))
+    {}
+} trim_function_t;
+
+std::ostream& operator<< (std::ostream& out, const trim_function_t& tf);
 
 // A character primary is a value expression primary or a string value function
 typedef struct character_primary {
