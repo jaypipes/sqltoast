@@ -57,6 +57,7 @@ typedef enum symbol {
     SYMBOL_ALL,
     SYMBOL_AND,
     SYMBOL_AS,
+    SYMBOL_AT,
     SYMBOL_AUTHORIZATION,
     SYMBOL_AVG,
     SYMBOL_BETWEEN,

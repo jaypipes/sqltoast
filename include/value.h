@@ -361,6 +361,92 @@ typedef struct character_value_expression : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const character_value_expression_t& ve);
 
+typedef enum datetime_function_type {
+    DATETIME_FUNCTION_TYPE_CURRENT_DATE,
+    DATETIME_FUNCTION_TYPE_CURRENT_TIME,
+    DATETIME_FUNCTION_TYPE_CURRENT_TIMESTAMP
+} datetime_function_type_t;
+
+typedef struct datetime_function {
+    datetime_function_type_t type;
+    size_t time_precision;
+    datetime_function(
+            datetime_function_type_t type,
+            size_t time_precision) :
+        type(type),
+        time_precision(time_precision)
+    {}
+} datetime_function_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_function_t& df);
+
+// The datetime factor may be either a value expression primary or a datetime
+// function
+typedef struct datetime_primary {
+    std::unique_ptr<value_expression_primary_t> value;
+    std::unique_ptr<datetime_function_t> datetime_function;
+    datetime_primary(std::unique_ptr<value_expression_primary_t>& value) :
+        value(std::move(value))
+    {}
+    datetime_primary(std::unique_ptr<datetime_function_t>& datetime_function) :
+        datetime_function(std::move(datetime_function))
+    {}
+} datetime_primary_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp);
+
+typedef struct time_zone_specifier {
+    bool local_tz;
+    time_zone_specifier(bool local_tz) : local_tz(local_tz)
+    {}
+} time_zone_specifier_t;
+
+std::ostream& operator<< (std::ostream& out, const time_zone_specifier_t& tzs);
+
+// A datetime factor evaluates to a datetime value. It contains a datetime
+// primary and has an optional timezone component.
+typedef struct datetime_factor {
+    std::unique_ptr<datetime_primary_t> value;
+    std::unique_ptr<time_zone_specifier_t> time_zone_specifier;
+    datetime_factor(
+            std::unique_ptr<datetime_primary_t>& value,
+            std::unique_ptr<time_zone_specifier_t>& tz_spec) :
+        value(std::move(value)),
+        time_zone_specifier(std::move(tz_spec))
+    {}
+} datetime_factor_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_factor_t& factor);
+
+typedef struct datetime_term {
+    std::unique_ptr<datetime_factor_t> value;
+    datetime_term(std::unique_ptr<datetime_factor_t>& value) :
+        value(std::move(value))
+    {}
+} datetime_term_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_term_t& term);
+
+// A datetime value expression is composed of one or more datetime factors
+// that, similar to how a numeric expression produces a numeric value, produce
+// a datetime value. datetime factors may only be added to or subtracted from
+// each other, which is different from interval factors, which in addition to
+// add/subtract, may also be multiplied and divided into each other and with
+// datetime factors
+//
+// A datetime value expression evaluates to a single datetime scalar value. It
+// contains a datetime term called "left" that may be added to or subtracted
+// from an interval term or interval value expression.
+typedef struct datetime_value_expression : value_expression_t {
+    std::unique_ptr<datetime_term_t> left;
+    datetime_value_expression(std::unique_ptr<datetime_term_t>& left) :
+        value_expression_t(VALUE_EXPRESSION_TYPE_DATETIME_EXPRESSION),
+        left(std::move(left))
+    {}
+} datetime_value_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& ve);
+
 typedef enum rvc_type {
     RVC_TYPE_UNKNOWN,
     RVC_TYPE_VALUE_EXPRESSION,

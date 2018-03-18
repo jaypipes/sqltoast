@@ -37,6 +37,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_ALL] = std::string("ALL");
     m[SYMBOL_ALL] = std::string("AND");
     m[SYMBOL_AS] = std::string("AS");
+    m[SYMBOL_AT] = std::string("AT");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
     m[SYMBOL_AVG] = std::string("AVG");
     m[SYMBOL_BETWEEN] = std::string("BETWEEN");
@@ -120,7 +121,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
     m[SYMBOL_TRAILING] = std::string("TRAILING");
     m[SYMBOL_TRANSLATE] = std::string("TRANSLATE");
-    m[SYMBOL_TRANSLATE] = std::string("TRIM");
+    m[SYMBOL_TRIM] = std::string("TRIM");
     m[SYMBOL_UNIQUE] = std::string("UNIQUE");
     m[SYMBOL_UPDATE] = std::string("UPDATE");
     m[SYMBOL_UPPER] = std::string("UPPER");

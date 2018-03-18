@@ -177,6 +177,7 @@ bool parse_numeric_factor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<numeric_factor_t>& out);
+
 bool parse_value_expression_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -185,6 +186,11 @@ bool parse_unsigned_value_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_primary_t>& out);
+bool parse_set_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_primary_t>& out);
+
 bool parse_string_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -222,12 +228,26 @@ bool parse_trim_function(
         token_t& cur_tok,
         std::unique_ptr<string_function_t>& out);
 
-// Returns true if a set_function_t could be parsed. If true, the out argument
-// will be filled appropriately.
-bool parse_set_function(
+bool parse_datetime_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<value_expression_primary_t>& out);
+        std::unique_ptr<value_expression_t>& out);
+bool parse_datetime_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_term_t>& out);
+bool parse_datetime_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_factor_t>& out);
+bool parse_datetime_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_primary_t>& out);
+bool parse_datetime_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_function_t>& out);
 
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member

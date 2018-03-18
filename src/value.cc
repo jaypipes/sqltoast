@@ -149,6 +149,13 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
                 out << cve;
             }
             break;
+        case VALUE_EXPRESSION_TYPE_DATETIME_EXPRESSION:
+            {
+                const datetime_value_expression_t& dtve =
+                    static_cast<const datetime_value_expression_t&>(ve);
+                out << dtve;
+            }
+            break;
         default:
             out << "unknown-value-expression";
             break;
@@ -281,6 +288,38 @@ std::ostream& operator<< (std::ostream& out, const character_factor_t& cf) {
     out << *cf.value;
     if (cf.collation)
         out << " COLLATE " << cf.collation;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const time_zone_specifier_t& tzs) {
+    if (! tzs.local_tz)
+        out << " AT TIME ZONE ";// << *tzs.interval_value;
+    else
+        out << " AT LOCAL";
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp) {
+    out << *dp.value;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const datetime_factor_t& factor) {
+    out << *factor.value;
+    if (factor.time_zone_specifier)
+        out << *factor.time_zone_specifier;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const datetime_term_t& term) {
+    out << *term.value;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& de) {
+    // datetime expressions are the container for things evaluate to a datetime
+    // value
+    out << "datetime-expression[" << *de.left << "]";
     return out;
 }
 

@@ -57,35 +57,24 @@ bool parse_value_expression(
     lexer_t& lex = ctx.lexer;
     parse_position_t start = lex.cursor;
     token_t start_tok = cur_tok;
-    if (parse_numeric_value_expression(ctx, cur_tok, out)) {
-        // Check the current symbol. If it's not a terminator like a semicolon,
-        // rparen or comma, then reset the cursor and attempt to parse a string
-        // value expression...
-        symbol_t cur_sym = cur_tok.symbol;
-        switch (cur_sym) {
-            case SYMBOL_SEMICOLON:
-            case SYMBOL_COMMA:
-            case SYMBOL_RPAREN:
-            case SYMBOL_LPAREN:
-            case SYMBOL_EOS:
-            case SYMBOL_EQUAL:
-            case SYMBOL_EXCLAMATION:
-            case SYMBOL_LESS_THAN:
-            case SYMBOL_GREATER_THAN:
-            case SYMBOL_AND:
-            case SYMBOL_OR:
-            case SYMBOL_FROM:
-            case SYMBOL_WHERE:
-            case SYMBOL_HAVING:
-            case SYMBOL_GROUP:
-                return true;
-            default:
-                lex.cursor = start;
-                cur_tok = start_tok;
-        }
-    }
+    if (parse_numeric_value_expression(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    // Reset our cursor
+    lex.cursor = start;
+    cur_tok = start_tok;
     if (parse_string_value_expression(ctx, cur_tok, out))
         return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    // Reset our cursor
+    lex.cursor = start;
+    cur_tok = start_tok;
+    if (parse_datetime_value_expression(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
     return false;
 }
 
@@ -109,24 +98,59 @@ optional_operator:
     // our current symbol. If so, that indicates we should expect to parse
     // another numeric term as an operand to the arithmetic equation.
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_PLUS) {
-        cur_tok = lex.next();
-        if (! parse_numeric_term(ctx, cur_tok, operand))
+    switch (cur_sym) {
+        case SYMBOL_SEMICOLON:
+        case SYMBOL_COMMA:
+        case SYMBOL_RPAREN:
+        case SYMBOL_LPAREN:
+        case SYMBOL_EOS:
+        case SYMBOL_EQUAL:
+        case SYMBOL_EXCLAMATION:
+        case SYMBOL_LESS_THAN:
+        case SYMBOL_GREATER_THAN:
+        case SYMBOL_AND:
+        case SYMBOL_OR:
+        case SYMBOL_FOR:
+        case SYMBOL_FROM:
+        case SYMBOL_WHERE:
+        case SYMBOL_HAVING:
+        case SYMBOL_GROUP:
+            return true;
+        case SYMBOL_PLUS:
+            cur_tok = lex.next();
+            if (! parse_numeric_term(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_numeric_term;
+            }
+            if (out) {
+                numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
+                ne->add(operand);
+            }
+            goto optional_operator;
+        case SYMBOL_MINUS:
+            cur_tok = lex.next();
+            if (! parse_numeric_term(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_numeric_term;
+            }
+            if (out) {
+                numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
+                ne->subtract(operand);
+            }
+            goto optional_operator;
+        default:
             return false;
-        if (out) {
-            numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
-            ne->add(operand);
-        }
-    } else if (cur_sym == SYMBOL_MINUS) {
-        cur_tok = lex.next();
-        if (! parse_numeric_term(ctx, cur_tok, operand))
-            return false;
-        if (out) {
-            numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
-            ne->subtract(operand);
-        }
     }
-    return true;
+err_expect_numeric_term:
+    {
+        std::stringstream estr;
+        estr << "Expected <numeric term> after finding numeric operator "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 ensure_expression:
     if (ctx.opts.disable_statement_construction)
         return true;
@@ -154,20 +178,57 @@ optional_operator:
     // our current symbol. If so, that indicates we should expect to parse
     // another numeric factor as an operand to the arithmetic equation.
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_ASTERISK) {
-        cur_tok = lex.next();
-        if (! parse_numeric_factor(ctx, cur_tok, operand))
+    switch (cur_sym) {
+        case SYMBOL_SEMICOLON:
+        case SYMBOL_COMMA:
+        case SYMBOL_RPAREN:
+        case SYMBOL_LPAREN:
+        case SYMBOL_EOS:
+        case SYMBOL_EQUAL:
+        case SYMBOL_EXCLAMATION:
+        case SYMBOL_LESS_THAN:
+        case SYMBOL_GREATER_THAN:
+        case SYMBOL_AND:
+        case SYMBOL_OR:
+        case SYMBOL_FOR:
+        case SYMBOL_FROM:
+        case SYMBOL_WHERE:
+        case SYMBOL_HAVING:
+        case SYMBOL_GROUP:
+        case SYMBOL_PLUS:
+        case SYMBOL_MINUS:
+            return true;
+        case SYMBOL_ASTERISK:
+            cur_tok = lex.next();
+            if (! parse_numeric_factor(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_numeric_factor;
+            }
+            if (out)
+                out->multiply(operand);
+            return true;
+        case SYMBOL_SOLIDUS:
+            cur_tok = lex.next();
+            if (! parse_numeric_factor(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_numeric_factor;
+            }
+            if (out)
+                out->divide(operand);
+            return true;
+        default:
             return false;
-        if (out)
-            out->multiply(operand);
-    } else if (cur_sym == SYMBOL_SOLIDUS) {
-        cur_tok = lex.next();
-        if (! parse_numeric_factor(ctx, cur_tok, operand))
-            return false;
-        if (out)
-            out->divide(operand);
     }
-    return true;
+err_expect_numeric_factor:
+    {
+        std::stringstream estr;
+        estr << "Expected <numeric factor> after finding numeric operator "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 ensure_term:
     if (ctx.opts.disable_statement_construction)
         return true;
@@ -595,20 +656,42 @@ bool parse_character_value_expression(
     values.emplace_back(std::move(factor));
     goto optional_concat;
 optional_concat:
+    // Look for terminating symbols or the concatenation operator which
+    // indicates to add further character factors to the list of factors in
+    // this character value expression
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_CONCATENATION) {
-        cur_tok = lex.next();
-        if (! parse_character_factor(ctx, cur_tok, factor)) {
-            if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                return false;
-            goto err_expect_char_factor;
-        }
-        if (ctx.opts.disable_statement_construction)
+    switch (cur_sym) {
+        case SYMBOL_SEMICOLON:
+        case SYMBOL_COMMA:
+        case SYMBOL_RPAREN:
+        case SYMBOL_LPAREN:
+        case SYMBOL_EOS:
+        case SYMBOL_EQUAL:
+        case SYMBOL_EXCLAMATION:
+        case SYMBOL_LESS_THAN:
+        case SYMBOL_GREATER_THAN:
+        case SYMBOL_AND:
+        case SYMBOL_OR:
+        case SYMBOL_FROM:
+        case SYMBOL_WHERE:
+        case SYMBOL_HAVING:
+        case SYMBOL_GROUP:
+        case SYMBOL_USING:
+            goto push_ve;
+        case SYMBOL_CONCATENATION:
+            cur_tok = lex.next();
+            if (! parse_character_factor(ctx, cur_tok, factor)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_char_factor;
+            }
+            if (ctx.opts.disable_statement_construction)
+                goto optional_concat;
+            values.emplace_back(std::move(factor));
             goto optional_concat;
-        values.emplace_back(std::move(factor));
-        goto optional_concat;
+        default:
+            return false;
     }
-    goto push_ve;
 err_expect_char_factor:
     {
         std::stringstream estr;
@@ -1086,6 +1169,143 @@ push_function:
         return true;
     out = std::make_unique<trim_function_t>(operand, trim_spec, trim_char);
     return true;
+}
+
+// <datetime value expression> ::=
+//     <datetime term>
+//     | <interval value expression> <plus sign> <datetime term>
+//     | <datetime value expression> <plus sign> <interval term>
+//     | <datetime value expression> <minus sign> <interval term>
+bool parse_datetime_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_t>& out) {
+    std::unique_ptr<datetime_term_t> left;
+    if (! parse_datetime_term(ctx, cur_tok, left))
+        return false;
+    goto push_ve;
+push_ve:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<datetime_value_expression_t>(left);
+    return true;
+}
+
+// <datetime term> ::= <datetime factor>
+//
+// <datetime primary> ::=
+//     <value expression primary>
+//     | <datetime value function>
+bool parse_datetime_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_term_t>& out) {
+    std::unique_ptr<datetime_factor_t> factor;
+    if (! parse_datetime_factor(ctx, cur_tok, factor))
+        return false;
+    goto push_term;
+push_term:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<datetime_term_t>(factor);
+    return true;
+}
+
+// <datetime factor> ::= <datetime primary> [ <time zone> ]
+bool parse_datetime_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_factor_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    bool local_tz = false;
+    std::unique_ptr<time_zone_specifier_t> tz_spec;
+    std::unique_ptr<datetime_primary_t> primary;
+    if (! parse_datetime_primary(ctx, cur_tok, primary))
+        return false;
+    goto optional_timezone;
+optional_timezone:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_AT) {
+        cur_tok = lex.next();
+        goto expect_timezone_specifier;
+    }
+    goto push_factor;
+expect_timezone_specifier:
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_LOCAL:
+            cur_tok = lex.next();
+            local_tz = true;
+            break;
+        case SYMBOL_TIME:
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym != SYMBOL_ZONE)
+                goto err_expect_zone;
+            cur_tok = lex.next();
+            break;
+        default:
+            goto err_expect_local_or_time;
+    }
+    goto push_factor;
+err_expect_zone:
+    expect_error(ctx, SYMBOL_ZONE);
+    return false;
+err_expect_local_or_time:
+    expect_any_error(ctx, {SYMBOL_LOCAL, SYMBOL_TIME});
+    return false;
+push_factor:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    tz_spec = std::make_unique<time_zone_specifier_t>(local_tz);
+    out = std::make_unique<datetime_factor_t>(primary, tz_spec);
+    return true;
+}
+
+// <datetime primary> ::=
+//     <value expression primary>
+//     | <datetime value function>
+bool parse_datetime_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_primary_t>& out) {
+    std::unique_ptr<value_expression_primary_t> primary;
+    std::unique_ptr<datetime_function_t> datetime_func;
+    if (parse_value_expression_primary(ctx, cur_tok, primary))
+        goto push_primary;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (! parse_datetime_function(ctx, cur_tok, datetime_func))
+        return false;
+    goto push_primary;
+push_primary:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    if (primary)
+        out = std::make_unique<datetime_primary_t>(primary);
+    else
+        out = std::make_unique<datetime_primary_t>(datetime_func);
+    return true;
+}
+
+// <datetime value function> ::=
+//     <current date value function>
+//     |     <current time value function>
+//     |     <current timestamp value function>
+//
+// <current date value function> ::= CURRENT_DATE
+//
+// <current time value function> ::=
+//     CURRENT_TIME [ <left paren> <time precision> <right paren> ]
+//
+// <current timestamp value function> ::=
+//     CURRENT_TIMESTAMP [ <left paren> <timestamp precision> <right paren> ]
+bool parse_datetime_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<datetime_function_t>& out) {
+    return false;
 }
 
 } // namespace sqltoast

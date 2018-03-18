@@ -24,6 +24,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AVG, "AVG"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALL, "ALL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_AT, "AT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
         case 'b':
