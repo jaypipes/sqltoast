@@ -140,4 +140,27 @@ const std::string interval_t::to_string() {
     return ss.str();
 }
 
+std::ostream& operator<< (std::ostream& out, const interval_unit_t& unit) {
+    switch (unit) {
+        case INTERVAL_UNIT_YEAR:
+            out << "YEAR";
+            break;
+        case INTERVAL_UNIT_MONTH:
+            out << "MONTH";
+            break;
+        case INTERVAL_UNIT_DAY:
+            out << "DAY";
+            break;
+        case INTERVAL_UNIT_HOUR:
+            out << "HOUR";
+            break;
+        case INTERVAL_UNIT_MINUTE:
+            out << "MINUTE";
+            break;
+        case INTERVAL_UNIT_SECOND:
+            out << "SECOND";
+    }
+    return out;
+}
+
 } // namespace sqltoast

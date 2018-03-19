@@ -36,6 +36,8 @@ typedef enum interval_unit {
     INTERVAL_UNIT_SECOND
 } interval_unit_t;
 
+std::ostream& operator<< (std::ostream& out, const interval_unit_t& unit);
+
 typedef struct data_type_descriptor {
     data_type_t type;
     data_type_descriptor(data_type_t type) : type(type)
