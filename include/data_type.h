@@ -27,6 +27,71 @@ typedef enum data_type {
     DATA_TYPE_INTERVAL
 } data_type_t;
 
+typedef struct data_type_descriptor {
+    data_type_t type;
+    data_type_descriptor(data_type_t type) : type(type)
+    {}
+} data_type_descriptor_t;
+
+std::ostream& operator<< (std::ostream& out, const data_type_descriptor_t& dt);
+
+typedef struct char_string : data_type_descriptor_t {
+    size_t size;
+    lexeme_t charset;
+    char_string(data_type_t type, size_t size) :
+        data_type_descriptor_t(type),
+        size(size)
+    {}
+} char_string_t;
+
+std::ostream& operator<< (std::ostream& out, const char_string_t& cs);
+
+typedef struct bit_string : data_type_descriptor_t {
+    size_t size;
+    bit_string(data_type_t type, size_t size) :
+        data_type_descriptor_t(type),
+        size(size)
+    {}
+} bit_string_t;
+
+std::ostream& operator<< (std::ostream& out, const bit_string_t& bs);
+
+typedef struct exact_numeric : data_type_descriptor_t {
+    size_t precision;
+    size_t scale;
+    exact_numeric(data_type_t type, size_t prec, size_t scale) :
+        data_type_descriptor_t(type),
+        precision(prec),
+        scale(scale)
+    {}
+} exact_numeric_t;
+
+std::ostream& operator<< (std::ostream& out, const exact_numeric_t& num);
+
+typedef struct approximate_numeric : data_type_descriptor_t {
+    size_t precision;
+    approximate_numeric(data_type_t type, size_t prec) :
+        data_type_descriptor_t(type),
+        precision(prec)
+    {}
+} approximate_numeric_t;
+
+std::ostream& operator<< (std::ostream& out, const approximate_numeric_t& num);
+
+typedef struct datetime : data_type_descriptor_t {
+    size_t precision;
+    bool with_tz;
+    datetime(data_type_t type, size_t prec, bool with_tz) :
+        data_type_descriptor_t(type),
+        precision(prec),
+        with_tz(with_tz)
+    {}
+} datetime_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_t& dt);
+
+// TOOD(jaypipes): Move datetime and interval stuff to a separate temporal.h
+// file
 typedef enum interval_unit {
     INTERVAL_UNIT_YEAR,
     INTERVAL_UNIT_MONTH,
@@ -38,63 +103,6 @@ typedef enum interval_unit {
 
 std::ostream& operator<< (std::ostream& out, const interval_unit_t& unit);
 
-typedef struct data_type_descriptor {
-    data_type_t type;
-    data_type_descriptor(data_type_t type) : type(type)
-    {}
-    virtual const std::string to_string() = 0;
-} data_type_descriptor_t;
-
-typedef struct char_string : data_type_descriptor_t {
-    size_t size;
-    lexeme_t charset;
-    char_string(data_type_t type, size_t size) :
-        data_type_descriptor_t(type),
-        size(size)
-    {}
-    virtual const std::string to_string();
-} char_string_t;
-
-typedef struct bit_string : data_type_descriptor_t {
-    size_t size;
-    bit_string(data_type_t type, size_t size) :
-        data_type_descriptor_t(type),
-        size(size)
-    {}
-    virtual const std::string to_string();
-} bit_string_t;
-
-typedef struct exact_numeric : data_type_descriptor_t {
-    size_t precision;
-    size_t scale;
-    exact_numeric(data_type_t type, size_t prec, size_t scale) :
-        data_type_descriptor_t(type),
-        precision(prec),
-        scale(scale)
-    {}
-    virtual const std::string to_string();
-} exact_numeric_t;
-
-typedef struct approximate_numeric : data_type_descriptor_t {
-    size_t precision;
-    approximate_numeric(data_type_t type, size_t prec) :
-        data_type_descriptor_t(type),
-        precision(prec)
-    {}
-    virtual const std::string to_string();
-} approximate_numeric_t;
-
-typedef struct datetime : data_type_descriptor_t {
-    size_t precision;
-    bool with_tz;
-    datetime(data_type_t type, size_t prec, bool with_tz) :
-        data_type_descriptor_t(type),
-        precision(prec),
-        with_tz(with_tz)
-    {}
-    virtual const std::string to_string();
-} datetime_t;
-
 typedef struct interval : data_type_descriptor_t {
     interval_unit_t unit;
     size_t precision;
@@ -103,8 +111,9 @@ typedef struct interval : data_type_descriptor_t {
         unit(unit),
         precision(prec)
     {}
-    virtual const std::string to_string();
 } interval_t;
+
+std::ostream& operator<< (std::ostream& out, const interval_t& interval);
 
 } // namespace sqltoast
 
