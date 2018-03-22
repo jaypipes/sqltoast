@@ -447,6 +447,55 @@ typedef struct datetime_value_expression : value_expression_t {
 
 std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& ve);
 
+typedef struct datetime_field {
+    interval_unit_t interval;
+    size_t precision;
+    datetime_field(interval_unit_t interval, size_t precision) :
+        interval(interval),
+        precision(precision)
+    {}
+} datetime_field_t;
+
+typedef struct interval_qualifier {
+    datetime_field_t start;
+    std::unique_ptr<datetime_field_t> end;
+} interval_qualifier_t;
+
+std::ostream& operator<< (std::ostream& out, const interval_qualifier_t& iq);
+
+typedef struct interval_primary {
+    std::unique_ptr<value_expression_primary_t> value;
+    std::unique_ptr<interval_qualifier_t> qualifier;
+} interval_primary_t;
+
+std::ostream& operator<< (std::ostream& out, const interval_primary_t& primary);
+
+typedef struct interval_factor {
+    int8_t sign;
+    std::unique_ptr<interval_primary_t> value;
+} interval_factor_t;
+
+std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor);
+
+typedef struct interval_term {
+    std::unique_ptr<interval_factor_t> left;
+} interval_term_t;
+
+std::ostream& operator<< (std::ostream& out, const interval_term_t& tern);
+
+// An interval value expression is evalutes to an interval value. It may be
+// added and subtracted with an interval term and a datetime value expression
+// may subtract an interval value expression
+typedef struct interval_value_expression : value_expression_t {
+    std::unique_ptr<interval_term_t> left;
+    interval_value_expression(std::unique_ptr<interval_term_t>& left) :
+        value_expression_t(VALUE_EXPRESSION_TYPE_INTERVAL_EXPRESSION),
+        left(std::move(left))
+    {}
+} interval_value_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& ve);
+
 typedef enum rvc_type {
     RVC_TYPE_UNKNOWN,
     RVC_TYPE_VALUE_EXPRESSION,

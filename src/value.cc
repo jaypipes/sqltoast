@@ -323,6 +323,39 @@ std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& 
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const datetime_field_t& df) {
+    out << df.interval;
+    if (df.precision > 0)
+        out << '(' << df.precision << ')';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const interval_qualifier_t& iq) {
+    out << iq.start;
+    if (iq.end)
+        out << " TO " << *iq.end;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const interval_primary_t& primary) {
+    out << *primary.value;
+    if (primary.qualifier)
+        out << *primary.qualifier;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor) {
+    if (factor.sign != 0)
+        out << factor.sign << ' ';
+    out << *factor.value;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const interval_term_t& term) {
+    out << *term.left;
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc) {
     switch (rvc.rvc_type) {
         case RVC_TYPE_DEFAULT:
