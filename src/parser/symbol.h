@@ -176,13 +176,11 @@ typedef enum symbol {
     SYMBOL_LITERAL_UNSIGNED_INTEGER
 } symbol_t;
 
+std::ostream& operator<< (std::ostream& out, const symbol_t& sym);
+
 struct symbol_map {
     typedef std::map<symbol_t, std::string> symbol_map_t;
     static symbol_map_t m;
-    // Given a token_type, returns the string representation of the token_type
-    static const std::string& to_string(symbol_t sym) {
-        return symbol_map::m[sym];
-    }
 };
 
 symbol_map::symbol_map_t _init_symbol_map();

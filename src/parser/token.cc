@@ -12,7 +12,7 @@ namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const token_t& token) {
     if (token.is_keyword()) {
-        out << "keyword[" << symbol_map::to_string(token.symbol) << "]";
+        out << "keyword[" << token.symbol << "]";
         return out;
     }
     if (token.is_literal()){
@@ -38,7 +38,7 @@ std::ostream& operator<< (std::ostream& out, const token_t& token) {
         out << "comment[length: " << token.lexeme.size() << "]";
         return out;
     } else {
-        out << "symbol[" << symbol_map::to_string(token.symbol) << "]";
+        out << "symbol[" << token.symbol << "]";
         return out;
     }
     return out;

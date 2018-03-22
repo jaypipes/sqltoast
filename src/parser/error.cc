@@ -37,7 +37,7 @@ void create_syntax_error_marker(parse_context_t& ctx, std::stringstream& es) {
 
 void expect_error(parse_context_t& ctx, symbol_t expected) {
     std::stringstream es;
-    es << "Expected to find " << symbol_map::to_string(expected)
+    es << "Expected to find " << expected
         << " but found " << ctx.lexer.current_token << std::endl;
     create_syntax_error_marker(ctx, es);
 }
@@ -48,7 +48,7 @@ void expect_any_error(parse_context_t& ctx, std::initializer_list<symbol_t> expe
     size_t num_expected = expected.size();
     size_t x = 0;
     for (auto exp_sym : expected) {
-        es << symbol_map::to_string(exp_sym);
+        es << exp_sym;
         if ((x + 1) < num_expected)
             es << "|";
         x++;

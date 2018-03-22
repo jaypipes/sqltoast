@@ -45,8 +45,7 @@ inline bool expect_sequence(parse_context_t& ctx, const symbol_t expected_sequen
 err_unexpected:
     {
         std::stringstream estr;
-        estr << "Expected " << symbol_map::to_string(exp_sym) << " but found "
-             << symbol_map::to_string(cur_sym);
+        estr << "Expected " << exp_sym << " but found " << cur_sym;
         estr << std::endl;
         create_syntax_error_marker(ctx, estr);
         return false;
