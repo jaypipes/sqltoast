@@ -140,6 +140,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIMESTAMP, "TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TEMPORARY, "TEMPORARY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRIM, "TRIM"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TO, "TO"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRAILING, "TRAILING"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRANSLATE, "TRANSLATE"));
             return t;

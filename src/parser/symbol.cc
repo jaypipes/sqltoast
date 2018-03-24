@@ -120,6 +120,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TEMPORARY] = std::string("TEMPORARY");
     m[SYMBOL_TIME] = std::string("TIME");
     m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
+    m[SYMBOL_TO] = std::string("TO");
     m[SYMBOL_TRAILING] = std::string("TRAILING");
     m[SYMBOL_TRANSLATE] = std::string("TRANSLATE");
     m[SYMBOL_TRIM] = std::string("TRIM");

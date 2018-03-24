@@ -249,6 +249,27 @@ bool parse_datetime_function(
         token_t& cur_tok,
         std::unique_ptr<datetime_function_t>& out);
 
+bool parse_interval_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_t>& out);
+bool parse_interval_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_term_t>& out);
+bool parse_interval_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_factor_t>& out);
+bool parse_interval_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_primary_t>& out);
+bool parse_interval_qualifier(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_qualifier_t>& out);
+
 // Returns true if a table constraint can be parsed from the supplied token
 // iterator. If the function returns true, constraints will have a new member
 // (if ctx.options.disable_statement_construction is false

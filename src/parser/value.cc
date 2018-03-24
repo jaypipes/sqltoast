@@ -75,7 +75,10 @@ bool parse_value_expression(
         return true;
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
-    return false;
+    // Reset our cursor
+    lex.cursor = start;
+    cur_tok = start_tok;
+    return parse_interval_value_expression(ctx, cur_tok, out);
 }
 
 // <numeric value expression> ::=
@@ -1306,6 +1309,261 @@ bool parse_datetime_function(
         token_t& cur_tok,
         std::unique_ptr<datetime_function_t>& out) {
     return false;
+}
+
+// <interval value expression> ::=
+//     <interval term>
+//     | <interval value expression 1> <plus sign> <interval term 1>
+//     | <interval value expression 1> <minus sign> <interval term 1>
+//     | <left paren> <datetime value expression> <minus sign>
+//       <datetime term> <right paren> <interval qualifier>
+bool parse_interval_value_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_t>& out) {
+    std::unique_ptr<interval_term_t> left;
+    if (! parse_interval_term(ctx, cur_tok, left))
+        return false;
+    goto push_ve;
+push_ve:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<interval_value_expression_t>(left);
+    return true;
+}
+
+// <interval term> ::=
+//     <interval factor>
+//     | <interval term 2> <asterisk> <factor>
+//     | <interval term 2> <solidus> <factor>
+//     | <term> <asterisk> <interval factor>
+bool parse_interval_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_term_t>& out) {
+    std::unique_ptr<interval_factor_t> factor;
+    if (! parse_interval_factor(ctx, cur_tok, factor))
+        return false;
+    goto push_term;
+push_term:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<interval_term_t>(factor);
+    return true;
+}
+
+// <interval factor> ::= [ <sign> ] <interval primary>
+bool parse_interval_factor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_factor_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    int8_t sign;
+    std::unique_ptr<interval_primary_t> primary;
+
+    if (cur_sym == SYMBOL_PLUS) {
+        cur_tok = lex.next();
+        sign = 1;
+    } else if (cur_sym == SYMBOL_MINUS) {
+        cur_tok = lex.next();
+        sign = -1;
+    }
+    if (! parse_interval_primary(ctx, cur_tok, primary))
+        return false;
+    goto push_factor;
+push_factor:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<interval_factor_t>(sign, primary);
+    return true;
+}
+
+// <interval primary> ::=
+//     <value expression primary> [ <interval qualifier> ]
+bool parse_interval_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_primary_t>& out) {
+    std::unique_ptr<value_expression_primary_t> primary;
+    std::unique_ptr<interval_qualifier_t> qualifier;
+    if (! parse_value_expression_primary(ctx, cur_tok, primary))
+        return false;
+    parse_interval_qualifier(ctx, cur_tok, qualifier);
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    goto push_primary;
+push_primary:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<interval_primary_t>(primary, qualifier);
+    return true;
+}
+
+// <interval qualifier> ::=
+//     <start field> TO <end field>
+//     | <single datetime field>
+//
+// <start field> ::=
+//     <non-second datetime field>
+//     [ <left paren> <interval leading field precision> <right paren> ]
+//
+// <non-second datetime field> ::= YEAR | MONTH | DAY | HOUR | MINUTE
+//
+// <interval leading field precision> ::= <unsigned integer>
+//
+// <end field>    ::=
+//     <non-second datetime field>
+//     | SECOND
+//     [ <left paren> <interval fractional seconds precision> <right paren> ]
+//
+// <interval fractional seconds precision>    ::=   <unsigned integer>
+//
+// <single datetime field>    ::=
+//     <non-second datetime field>
+//     [ <left paren> <interval leading field precision> <right paren> ]
+//     | SECOND [ <left paren> <interval leading field precision>
+//     [ <comma> <left paren> <interval fractional seconds precision> ]
+//     <right paren> ]
+bool parse_interval_qualifier(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<interval_qualifier_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    interval_unit_t start_interval;
+    size_t start_precision;
+    size_t start_fractional_precision;
+    interval_unit_t end_interval;
+    size_t end_fractional_precision;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    switch (cur_sym) {
+        case SYMBOL_YEAR:
+            start_interval = INTERVAL_UNIT_YEAR;
+            cur_tok = lex.next();
+            goto optional_start_leading_precision;
+        case SYMBOL_MONTH:
+            start_interval = INTERVAL_UNIT_MONTH;
+            cur_tok = lex.next();
+            goto optional_start_leading_precision;
+        case SYMBOL_DAY:
+            start_interval = INTERVAL_UNIT_DAY;
+            cur_tok = lex.next();
+            goto optional_start_leading_precision;
+        case SYMBOL_HOUR:
+            start_interval = INTERVAL_UNIT_HOUR;
+            cur_tok = lex.next();
+            goto optional_start_leading_precision;
+        case SYMBOL_MINUTE:
+            start_interval = INTERVAL_UNIT_MINUTE;
+            cur_tok = lex.next();
+            goto optional_start_leading_precision;
+        case SYMBOL_SECOND:
+            start_interval = INTERVAL_UNIT_SECOND;
+            cur_tok = lex.next();
+            goto optional_start_second_precision;
+        default:
+            return false;
+    }
+optional_start_leading_precision:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        if (! parse_length_specifier(ctx, cur_tok, &start_precision))
+            return false;
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_RPAREN)
+            goto err_expect_rparen;
+        cur_tok = lex.next();
+    }
+    goto optional_to;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+optional_start_second_precision:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        if (! parse_length_specifier(ctx, cur_tok, &start_precision))
+            return false;
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_RPAREN) {
+            cur_tok = lex.next();
+            goto optional_to;
+        } else if (cur_sym == SYMBOL_COMMA) {
+            cur_tok = lex.next();
+            if (! parse_length_specifier(
+                    ctx, cur_tok, &start_fractional_precision))
+                return false;
+            cur_sym = cur_tok.symbol;
+            if (cur_sym != SYMBOL_RPAREN)
+                goto err_expect_rparen;
+            cur_tok = lex.next();
+        }
+    }
+    goto optional_to;
+optional_to:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_TO) {
+        cur_tok = lex.next();
+        goto process_end_field;
+    }
+    goto push_qualifier;
+process_end_field:
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_YEAR:
+            end_interval = INTERVAL_UNIT_YEAR;
+            cur_tok = lex.next();
+            goto push_qualifier_with_end;
+        case SYMBOL_MONTH:
+            end_interval = INTERVAL_UNIT_MONTH;
+            cur_tok = lex.next();
+            goto push_qualifier_with_end;
+        case SYMBOL_DAY:
+            end_interval = INTERVAL_UNIT_DAY;
+            cur_tok = lex.next();
+            goto push_qualifier_with_end;
+        case SYMBOL_HOUR:
+            end_interval = INTERVAL_UNIT_HOUR;
+            cur_tok = lex.next();
+            goto push_qualifier_with_end;
+        case SYMBOL_MINUTE:
+            end_interval = INTERVAL_UNIT_MINUTE;
+            cur_tok = lex.next();
+            goto push_qualifier_with_end;
+        case SYMBOL_SECOND:
+            end_interval = INTERVAL_UNIT_SECOND;
+            cur_tok = lex.next();
+            goto optional_end_second_precision;
+        default:
+            return false;
+    }
+optional_end_second_precision:
+    // The <end_field> element, if there is a SECOND interval unit, can have a
+    // single precision qualifier that indicates the **fractional precision**.
+    // The leading precision of a SECONDs <end field> is always 0.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        if (! parse_length_specifier(ctx, cur_tok, &end_fractional_precision))
+            return false;
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_RPAREN)
+            goto err_expect_rparen;
+        cur_tok = lex.next();
+    }
+    goto push_qualifier_with_end;
+push_qualifier:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<interval_qualifier_t>(
+                start_interval, start_precision, start_fractional_precision);
+    return true;
+push_qualifier_with_end:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<interval_qualifier_t>(
+                start_interval, start_precision, start_fractional_precision,
+                end_interval, end_fractional_precision);
+    return true;
 }
 
 } // namespace sqltoast

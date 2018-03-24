@@ -325,8 +325,20 @@ std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& 
 
 std::ostream& operator<< (std::ostream& out, const datetime_field_t& df) {
     out << df.interval;
-    if (df.precision > 0)
-        out << '(' << df.precision << ')';
+    if (df.interval != INTERVAL_UNIT_SECOND) {
+        if (df.precision > 0)
+            out << '(' << df.precision;
+    } else {
+        // We can have 0 leading precision and non-zero fractional precision
+        // for second intervals...
+        if (df.precision > 0 ||
+                (df.precision == 0 && df.fractional_precision > 0)) {
+            out << df.precision;
+            if (df.fractional_precision > 0)
+                out << ", " << df.fractional_precision;
+            out << ')';
+        }
+    }
     return out;
 }
 

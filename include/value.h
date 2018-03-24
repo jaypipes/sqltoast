@@ -450,15 +450,36 @@ std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& 
 typedef struct datetime_field {
     interval_unit_t interval;
     size_t precision;
-    datetime_field(interval_unit_t interval, size_t precision) :
+    size_t fractional_precision;
+    datetime_field(
+            interval_unit_t interval,
+            size_t precision,
+            size_t fractional_precision) :
         interval(interval),
-        precision(precision)
+        precision(precision),
+        fractional_precision(fractional_precision)
     {}
 } datetime_field_t;
 
 typedef struct interval_qualifier {
     datetime_field_t start;
     std::unique_ptr<datetime_field_t> end;
+    interval_qualifier(
+            interval_unit_t start_interval,
+            size_t start_precision,
+            size_t start_fractional_precision) :
+        start(start_interval, start_precision, start_fractional_precision)
+    {}
+    interval_qualifier(
+            interval_unit_t start_interval,
+            size_t start_precision,
+            size_t start_fractional_precision,
+            interval_unit_t end_interval,
+            size_t end_fractional_precision) :
+        start(start_interval, start_precision, start_fractional_precision),
+        end(std::make_unique<datetime_field_t>(
+                    end_interval, 0, end_fractional_precision))
+    {}
 } interval_qualifier_t;
 
 std::ostream& operator<< (std::ostream& out, const interval_qualifier_t& iq);
@@ -466,6 +487,12 @@ std::ostream& operator<< (std::ostream& out, const interval_qualifier_t& iq);
 typedef struct interval_primary {
     std::unique_ptr<value_expression_primary_t> value;
     std::unique_ptr<interval_qualifier_t> qualifier;
+    interval_primary(
+            std::unique_ptr<value_expression_primary_t>& value,
+            std::unique_ptr<interval_qualifier_t>& qualifier) :
+        value(std::move(value)),
+        qualifier(std::move(qualifier))
+    {}
 } interval_primary_t;
 
 std::ostream& operator<< (std::ostream& out, const interval_primary_t& primary);
@@ -473,12 +500,19 @@ std::ostream& operator<< (std::ostream& out, const interval_primary_t& primary);
 typedef struct interval_factor {
     int8_t sign;
     std::unique_ptr<interval_primary_t> value;
+    interval_factor(int8_t sign, std::unique_ptr<interval_primary_t>& value) :
+        sign(sign),
+        value(std::move(value))
+    {}
 } interval_factor_t;
 
 std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor);
 
 typedef struct interval_term {
     std::unique_ptr<interval_factor_t> left;
+    interval_term(std::unique_ptr<interval_factor_t>& left) :
+        left(std::move(left))
+    {}
 } interval_term_t;
 
 std::ostream& operator<< (std::ostream& out, const interval_term_t& tern);
