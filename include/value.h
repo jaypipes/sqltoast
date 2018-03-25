@@ -461,6 +461,8 @@ typedef struct datetime_field {
     {}
 } datetime_field_t;
 
+std::ostream& operator<< (std::ostream& out, const datetime_field_t& df);
+
 typedef struct interval_qualifier {
     datetime_field_t start;
     std::unique_ptr<datetime_field_t> end;
@@ -517,7 +519,7 @@ typedef struct interval_term {
 
 std::ostream& operator<< (std::ostream& out, const interval_term_t& tern);
 
-// An interval value expression is evalutes to an interval value. It may be
+// An interval value expression evalutes to an interval value. It may be
 // added and subtracted with an interval term and a datetime value expression
 // may subtract an interval value expression
 typedef struct interval_value_expression : value_expression_t {
@@ -528,7 +530,7 @@ typedef struct interval_value_expression : value_expression_t {
     {}
 } interval_value_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& ve);
+std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& ve);
 
 typedef enum rvc_type {
     RVC_TYPE_UNKNOWN,

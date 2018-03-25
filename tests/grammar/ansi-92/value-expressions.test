@@ -251,3 +251,12 @@ statements[0]:
      0: datetime-expression[column-reference[a] AT TIME ZONE ]
    referenced tables:
      0: t1>
+# Simple interval value expression with non-second interval qualifier
+>SELECT a YEAR FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] YEAR]
+   referenced tables:
+     0: t1>

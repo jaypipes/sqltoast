@@ -161,6 +161,7 @@ symbol_map::symbol_map_t symbol_map::m = _init_symbol_map();
 
 std::ostream& operator<< (std::ostream& out, const symbol_t& sym) {
     out << symbol_map::m[sym];
+    return out;
 }
 
 } // namespace sqltoast

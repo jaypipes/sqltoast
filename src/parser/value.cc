@@ -751,8 +751,6 @@ bool parse_character_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<character_primary_t>& out) {
-    lexer_t& lex = ctx.lexer;
-    symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<value_expression_primary_t> value_primary;
     std::unique_ptr<string_function_t> string_function;
     if (parse_value_expression_primary(ctx, cur_tok, value_primary))
@@ -1183,9 +1181,32 @@ bool parse_datetime_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out) {
+    symbol_t cur_sym;
     std::unique_ptr<datetime_term_t> left;
     if (! parse_datetime_term(ctx, cur_tok, left))
         return false;
+    // Look for terminating symbols
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_SEMICOLON:
+        case SYMBOL_COMMA:
+        case SYMBOL_RPAREN:
+        case SYMBOL_LPAREN:
+        case SYMBOL_EOS:
+        case SYMBOL_EQUAL:
+        case SYMBOL_NOT_EQUAL:
+        case SYMBOL_LESS_THAN:
+        case SYMBOL_GREATER_THAN:
+        case SYMBOL_AND:
+        case SYMBOL_OR:
+        case SYMBOL_FROM:
+        case SYMBOL_WHERE:
+        case SYMBOL_HAVING:
+        case SYMBOL_GROUP:
+            goto push_ve;
+        default:
+            return false;
+    }
     goto push_ve;
 push_ve:
     if (ctx.opts.disable_statement_construction)
@@ -1359,7 +1380,7 @@ bool parse_interval_factor(
         std::unique_ptr<interval_factor_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    int8_t sign;
+    int8_t sign = 0;
     std::unique_ptr<interval_primary_t> primary;
 
     if (cur_sym == SYMBOL_PLUS) {
@@ -1431,10 +1452,10 @@ bool parse_interval_qualifier(
         std::unique_ptr<interval_qualifier_t>& out) {
     lexer_t& lex = ctx.lexer;
     interval_unit_t start_interval;
-    size_t start_precision;
-    size_t start_fractional_precision;
+    size_t start_precision = 0;
+    size_t start_fractional_precision = 0;
     interval_unit_t end_interval;
-    size_t end_fractional_precision;
+    size_t end_fractional_precision = 0;
     symbol_t cur_sym = cur_tok.symbol;
 
     switch (cur_sym) {

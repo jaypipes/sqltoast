@@ -156,6 +156,13 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
                 out << dtve;
             }
             break;
+        case VALUE_EXPRESSION_TYPE_INTERVAL_EXPRESSION:
+            {
+                const interval_value_expression_t& ive =
+                    static_cast<const interval_value_expression_t&>(ve);
+                out << ive;
+            }
+            break;
         default:
             out << "unknown-value-expression";
             break;
@@ -327,13 +334,13 @@ std::ostream& operator<< (std::ostream& out, const datetime_field_t& df) {
     out << df.interval;
     if (df.interval != INTERVAL_UNIT_SECOND) {
         if (df.precision > 0)
-            out << '(' << df.precision;
+            out << '(' << df.precision << ')';
     } else {
         // We can have 0 leading precision and non-zero fractional precision
         // for second intervals...
         if (df.precision > 0 ||
                 (df.precision == 0 && df.fractional_precision > 0)) {
-            out << df.precision;
+            out << '(' << df.precision;
             if (df.fractional_precision > 0)
                 out << ", " << df.fractional_precision;
             out << ')';
@@ -352,7 +359,7 @@ std::ostream& operator<< (std::ostream& out, const interval_qualifier_t& iq) {
 std::ostream& operator<< (std::ostream& out, const interval_primary_t& primary) {
     out << *primary.value;
     if (primary.qualifier)
-        out << *primary.qualifier;
+        out << ' ' << *primary.qualifier;
     return out;
 }
 
@@ -365,6 +372,13 @@ std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor) {
 
 std::ostream& operator<< (std::ostream& out, const interval_term_t& term) {
     out << *term.left;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& ie) {
+    // interval expressions are the container for things that evaluate to
+    // an interval value
+    out << "interval-expression[" << *ie.left << "]";
     return out;
 }
 
