@@ -260,3 +260,13 @@ statements[0]:
      0: interval-expression[column-reference[a] YEAR]
    referenced tables:
      0: t1>
+# Simple interval value expression with non-second interval qualifier with a
+# leading precision
+>SELECT a DAY(2) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] DAY(2)]
+   referenced tables:
+     0: t1>

@@ -239,17 +239,9 @@ bool parse_length_specifier(
         token_t& cur_tok,
         size_t* out) {
     lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym;
     *out = 0;
 
-    // BEGIN STATE MACHINE
-
-    symbol_t cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_LPAREN) {
-        cur_tok = lex.next();
-        goto process_length;
-    }
-    return true;
-process_length:
     // We get here if we've processed the opening parentheses of the
     // optional length modifier and now expect to find an unsigned integer
     // followed by a closing parentheses
@@ -261,24 +253,11 @@ process_length:
         const std::string len_str(cur_tok.lexeme.start, cur_tok.lexeme.end);
         *out = atoi(len_str.data());
         cur_tok = lex.next();
-        goto length_close;
+        return true;
     }
     goto err_expect_size_literal;
 err_expect_size_literal:
     expect_error(ctx, SYMBOL_LITERAL_UNSIGNED_INTEGER);
-    return false;
-length_close:
-    // We get here if we've processed the opening parentheses of the length
-    // modifier and the unsigned integer size and now expect a closing
-    // parentheses for the length modifier
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_RPAREN) {
-        cur_tok = lex.next();
-        return true;
-    }
-    goto err_expect_length_rparen;
-err_expect_length_rparen:
-    expect_error(ctx, SYMBOL_RPAREN);
     return false;
 }
 
@@ -454,9 +433,22 @@ optional_precision:
     // We get here after getting a FLOAT symbol. This can be followed by an
     // optional LPAREN <precision> RPAREN. Since the length specifier is an
     // identical structure, we use that...
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        goto process_length;
+    }
+    goto push_descriptor;
+process_length:
     if (! parse_length_specifier(ctx, cur_tok, &prec))
         return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
     goto push_descriptor;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 expect_precision_sym:
     // We get here if we got the DOUBLE symbol, which according to ANSI-92 SQL
     // must be followed by the keyword "PRECISION"
@@ -524,9 +516,23 @@ optional_precision:
     // We get here after getting a FLOAT symbol. This can be followed by an
     // optional LPAREN <precision> RPAREN. Since the length specifier is an
     // identical structure, we use that...
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        goto process_length;
+    }
+    goto optional_with_tz;
+process_length:
     if (! parse_length_specifier(ctx, cur_tok, &prec))
         return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
     goto optional_with_tz;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 optional_with_tz:
     cur_tok = lex.current_token;
     cur_sym = cur_tok.symbol;
@@ -621,9 +627,22 @@ optional_precision:
     // unit that can have a precision to it. This can be followed by an
     // optional LPAREN <precision> RPAREN. Since the length specifier is an
     // identical structure, we use that...
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        goto process_length;
+    }
+    goto push_descriptor;
+process_length:
     if (! parse_length_specifier(ctx, cur_tok, &prec))
         return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
     goto push_descriptor;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 push_descriptor:
     {
         if (ctx.opts.disable_statement_construction)

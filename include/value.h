@@ -519,7 +519,7 @@ typedef struct interval_term {
 
 std::ostream& operator<< (std::ostream& out, const interval_term_t& tern);
 
-// An interval value expression evalutes to an interval value. It may be
+// An interval value expression evaluates to an interval value. It may be
 // added and subtracted with an interval term and a datetime value expression
 // may subtract an interval value expression
 typedef struct interval_value_expression : value_expression_t {

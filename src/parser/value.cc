@@ -1489,6 +1489,7 @@ bool parse_interval_qualifier(
 optional_start_leading_precision:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
         if (! parse_length_specifier(ctx, cur_tok, &start_precision))
             return false;
         cur_sym = cur_tok.symbol;

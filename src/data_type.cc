@@ -57,6 +57,8 @@ std::ostream& operator<< (std::ostream& out, const data_type_descriptor_t& dt) {
                 out << sub;
             }
             break;
+        default:
+            return out;
     }
     return out;
 }
@@ -75,6 +77,8 @@ std::ostream& operator<< (std::ostream& out, const char_string_t& cs) {
         case DATA_TYPE_NVARCHAR:
             out << "NVARCHAR";
             break;
+        default:
+            return out;
     }
     if (cs.size > 0)
         out << "(" << cs.size << ")";
@@ -103,6 +107,8 @@ std::ostream& operator<< (std::ostream& out, const exact_numeric_t& num) {
         case DATA_TYPE_NUMERIC:
             out << "NUMERIC";
             break;
+        default:
+            return out;
     }
     if (num.precision > 0) {
         out << "(" << num.precision;
@@ -122,6 +128,8 @@ std::ostream& operator<< (std::ostream& out, const approximate_numeric_t& num) {
         case DATA_TYPE_DOUBLE:
             out << "DOUBLE PRECISION";
             break;
+        default:
+            return out;
     }
     if (num.precision > 0)
         out << "(" << num.precision << ")";
@@ -139,6 +147,8 @@ std::ostream& operator<< (std::ostream& out, const datetime_t& dt) {
         case DATA_TYPE_TIMESTAMP:
             out << "TIMESTAMP";
             break;
+        default:
+            return out;
     }
     if (dt.precision > 0)
         out << "(" << dt.precision << ")";
