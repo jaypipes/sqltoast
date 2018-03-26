@@ -1504,6 +1504,7 @@ err_expect_rparen:
 optional_start_second_precision:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
         if (! parse_length_specifier(ctx, cur_tok, &start_precision))
             return false;
         cur_sym = cur_tok.symbol;
@@ -1565,6 +1566,7 @@ optional_end_second_precision:
     // The leading precision of a SECONDs <end field> is always 0.
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
         if (! parse_length_specifier(ctx, cur_tok, &end_fractional_precision))
             return false;
         cur_sym = cur_tok.symbol;
