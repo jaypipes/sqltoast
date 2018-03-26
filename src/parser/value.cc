@@ -246,7 +246,7 @@ bool parse_numeric_factor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<numeric_factor_t>& out) {
-    int sign;
+    int8_t sign = 0;
     lexer& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<value_expression_primary_t> value_primary;
@@ -268,7 +268,7 @@ process_value_primary:
 push_ve:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<numeric_factor_t>(value_primary, sign);
+    out = std::make_unique<numeric_value_t>(value_primary, sign);
     return true;
 }
 

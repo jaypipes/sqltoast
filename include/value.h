@@ -171,17 +171,27 @@ typedef enum numeric_factor_type {
 } numeric_factor_type_t;
 
 typedef struct numeric_factor {
-    int sign;
+    int8_t sign;
     numeric_factor_type_t type;
-    std::unique_ptr<value_expression_primary_t> value;
-    numeric_factor(
-            std::unique_ptr<value_expression_primary_t>& value,
-            int sign) :
+    numeric_factor(numeric_factor_type_t type, int8_t sign) :
         sign(sign),
-        type(NUMERIC_FACTOR_TYPE_VALUE),
-        value(std::move(value))
+        type(NUMERIC_FACTOR_TYPE_VALUE)
     {}
 } numeric_factor_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf);
+
+typedef struct numeric_value : numeric_factor_t {
+    std::unique_ptr<value_expression_primary_t> value;
+    numeric_value(
+            std::unique_ptr<value_expression_primary_t>& value,
+            int8_t sign) :
+        numeric_factor_t(NUMERIC_FACTOR_TYPE_VALUE, sign),
+        value(std::move(value))
+    {}
+} numeric_value_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_value_t& nv);
 
 typedef struct numeric_term {
     std::unique_ptr<numeric_factor_t> left;

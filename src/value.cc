@@ -119,16 +119,39 @@ std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const numeric_value_t& nv) {
+    out << *nv.value;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf) {
+    if (nf.sign != 0)
+        out << nf.sign << ' ';
+    switch (nf.type) {
+        case NUMERIC_FACTOR_TYPE_VALUE:
+            {
+                const numeric_value_t& nv =
+                    static_cast<const numeric_value_t&>(nf);
+                out << nv;
+            }
+            break;
+        case NUMERIC_FACTOR_TYPE_FUNCTION:
+            // TODO(jaypipes)
+            break;
+    }
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const numeric_term_t& nt) {
     if (! nt.right) {
-        out << *nt.left->value;
+        out << *nt.left;
     } else {
-        out << *nt.left->value;
+        out << *nt.left;
         if (nt.op == NUMERIC_OP_MULTIPLY)
             out << " * ";
         else
             out << " / ";
-        out << *nt.right->value;
+        out << *nt.right;
     }
     return out;
 }
