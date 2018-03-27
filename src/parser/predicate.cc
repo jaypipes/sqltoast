@@ -231,9 +231,6 @@ bool parse_comparison_predicate(
 err_expect_operator:
     expect_any_error(ctx, {SYMBOL_EQUAL, SYMBOL_EXCLAMATION, SYMBOL_LESS_THAN, SYMBOL_GREATER_THAN});
     return false;
-err_expect_equal:
-    expect_error(ctx, SYMBOL_EQUAL);
-    return false;
 optional_equal:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_EQUAL) {
