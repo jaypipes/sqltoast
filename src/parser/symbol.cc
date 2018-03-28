@@ -48,6 +48,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CASCADE] = std::string("CASCADE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
+    m[SYMBOL_CHAR_LENGTH] = std::string("CHAR_LENGTH");
+    m[SYMBOL_CHARACTER_LENGTH] = std::string("CHARACTER_LENGTH");
     m[SYMBOL_CHECK] = std::string("CHECK");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
     m[SYMBOL_CONSTRAINT] = std::string("CONSTRAINT");

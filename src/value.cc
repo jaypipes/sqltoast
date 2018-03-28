@@ -124,21 +124,67 @@ std::ostream& operator<< (std::ostream& out, const numeric_value_t& nv) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf) {
-    if (nf.sign != 0)
-        out << nf.sign << ' ';
-    switch (nf.type) {
-        case NUMERIC_FACTOR_TYPE_VALUE:
-            {
-                const numeric_value_t& nv =
-                    static_cast<const numeric_value_t&>(nf);
-                out << nv;
-            }
+std::ostream& operator<< (std::ostream& out, const length_expression_t& le) {
+    switch (le.type) {
+        case NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
+            out << "char-length[";
             break;
-        case NUMERIC_FACTOR_TYPE_FUNCTION:
+        case NUMERIC_FUNCTION_TYPE_BIT_LENGTH:
+            out << "bit-length[";
+            break;
+        case NUMERIC_FUNCTION_TYPE_OCTET_LENGTH:
+            out << "octet-length[";
+            break;
+        default:
             // TODO(jaypipes)
             break;
     }
+    out << *le.operand << ']';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf) {
+    switch (nf.type) {
+        case NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
+        case NUMERIC_FUNCTION_TYPE_BIT_LENGTH:
+        case NUMERIC_FUNCTION_TYPE_OCTET_LENGTH:
+            {
+                const length_expression_t& le =
+                    static_cast<const length_expression_t&>(nf);
+                out << le;
+            }
+            break;
+        default:
+            // TODO(jaypipes)
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const numeric_primary_t& np) {
+    switch (np.type) {
+        case NUMERIC_PRIMARY_TYPE_VALUE:
+            {
+                const numeric_value_t& nv =
+                    static_cast<const numeric_value_t&>(np);
+                out << nv;
+            }
+            break;
+        case NUMERIC_PRIMARY_TYPE_FUNCTION:
+            {
+                const numeric_function_t& nf =
+                    static_cast<const numeric_function_t&>(np);
+                out << nf;
+            }
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf) {
+    if (nf.sign != 0)
+        out << nf.sign << ' ';
+    out << *nf.value;
     return out;
 }
 

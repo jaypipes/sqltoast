@@ -41,6 +41,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIMESTAMP, "CURRENT_TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_USER, "CURRENT_USER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CONVERT, "CONVERT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHAR_LENGTH, "CHAR_LENGTH"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHARACTER_LENGTH, "CHARACTER_LENGTH"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHAR, "CHAR"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHARACTER, "CHARACTER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CASCADE, "CASCADE"));

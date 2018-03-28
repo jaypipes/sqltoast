@@ -157,6 +157,73 @@ std::ostream& operator<< (std::ostream& out, const value_expression_t& ve);
 // that evaluate to a numeric value. A numeric factor is one of the parts of a
 // numeric value expression. A numeric operator applies an operation to two
 // factors.
+typedef enum numeric_primary_type {
+    NUMERIC_PRIMARY_TYPE_VALUE,
+    NUMERIC_PRIMARY_TYPE_FUNCTION
+} numeric_primary_type_t;
+
+typedef struct numeric_primary {
+    numeric_primary_type_t type;
+    numeric_primary(numeric_primary_type_t type) :
+        type(type)
+    {}
+} numeric_primary_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_primary_t& np);
+
+typedef struct numeric_value : numeric_primary_t {
+    std::unique_ptr<value_expression_primary_t> value;
+    numeric_value(std::unique_ptr<value_expression_primary_t>& value) :
+        numeric_primary_t(NUMERIC_PRIMARY_TYPE_VALUE),
+        value(std::move(value))
+    {}
+} numeric_value_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_value_t& nv);
+
+typedef enum numeric_function_type {
+    NUMERIC_FUNCTION_TYPE_UNKNOWN,
+    NUMERIC_FUNCTION_TYPE_POSITION,
+    NUMERIC_FUNCTION_TYPE_EXTRACT,
+    NUMERIC_FUNCTION_TYPE_CHAR_LENGTH,
+    NUMERIC_FUNCTION_TYPE_OCTET_LENGTH,
+    NUMERIC_FUNCTION_TYPE_BIT_LENGTH
+} numeric_function_type_t;
+
+typedef struct numeric_function : numeric_primary_t {
+    numeric_function_type_t type;
+    numeric_function(numeric_function_type_t type) :
+        numeric_primary_t(NUMERIC_PRIMARY_TYPE_FUNCTION),
+        type(type)
+    {}
+} numeric_function_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf);
+
+typedef struct length_expression : numeric_function_t {
+    // Will always be static_castable to string_value_expression_t
+    std::unique_ptr<value_expression_t> operand;
+    length_expression(
+            numeric_function_type_t type,
+            std::unique_ptr<value_expression_t>& operand) :
+        numeric_function_t(type),
+        operand(std::move(operand))
+    {}
+} length_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const length_expression_t& le);
+
+typedef struct numeric_factor {
+    int8_t sign;
+    std::unique_ptr<numeric_primary_t> value;
+    numeric_factor(std::unique_ptr<numeric_primary_t>& value, int8_t sign) :
+        sign(0),
+        value(std::move(value))
+    {}
+} numeric_factor_t;
+
+std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf);
+
 typedef enum numeric_op {
     NUMERIC_OP_NONE,
     NUMERIC_OP_ADD,
@@ -164,34 +231,6 @@ typedef enum numeric_op {
     NUMERIC_OP_MULTIPLY,
     NUMERIC_OP_DIVIDE
 } numeric_op_t;
-
-typedef enum numeric_factor_type {
-    NUMERIC_FACTOR_TYPE_VALUE,
-    NUMERIC_FACTOR_TYPE_FUNCTION
-} numeric_factor_type_t;
-
-typedef struct numeric_factor {
-    int8_t sign;
-    numeric_factor_type_t type;
-    numeric_factor(numeric_factor_type_t type, int8_t sign) :
-        sign(sign),
-        type(NUMERIC_FACTOR_TYPE_VALUE)
-    {}
-} numeric_factor_t;
-
-std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf);
-
-typedef struct numeric_value : numeric_factor_t {
-    std::unique_ptr<value_expression_primary_t> value;
-    numeric_value(
-            std::unique_ptr<value_expression_primary_t>& value,
-            int8_t sign) :
-        numeric_factor_t(NUMERIC_FACTOR_TYPE_VALUE, sign),
-        value(std::move(value))
-    {}
-} numeric_value_t;
-
-std::ostream& operator<< (std::ostream& out, const numeric_value_t& nv);
 
 typedef struct numeric_term {
     std::unique_ptr<numeric_factor_t> left;

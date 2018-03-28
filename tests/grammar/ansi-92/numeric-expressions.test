@@ -48,3 +48,13 @@ statements[0]:
      x = literal[1]
    where:
      column-reference[a] = (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])>
+# Use of CHAR_LENGTH and CHARACTER_LENGTH numeric functions
+>SELECT CHAR_LENGTH(a), CHARACTER_LENGTH(a) + 1 FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: char-length[column-reference[a]]
+     1: numeric-expression[char-length[column-reference[a]] + literal[1]]
+   referenced tables:
+     0: t1>

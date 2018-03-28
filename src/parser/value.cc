@@ -241,7 +241,9 @@ ensure_term:
 
 // <factor> ::= [ <sign> ] <numeric primary>
 //
-// <numeric primary> ::= <value expression primary> | <numeric value function>
+// <numeric primary> ::=
+//     <value expression primary>
+//     | <numeric value function>
 bool parse_numeric_factor(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -249,10 +251,10 @@ bool parse_numeric_factor(
     int8_t sign = 0;
     lexer& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<value_expression_primary_t> value_primary;
-    goto optional_sign;
-optional_sign:
-    cur_sym = cur_tok.symbol;
+    std::unique_ptr<numeric_primary_t> primary;
+    std::unique_ptr<value_expression_primary_t> value;
+
+    // Parse the optional sign...
     if (cur_sym == SYMBOL_PLUS || cur_sym == SYMBOL_MINUS) {
         if (cur_sym == SYMBOL_PLUS)
             sign = 1;
@@ -260,15 +262,24 @@ optional_sign:
             sign = -1;
         cur_tok = lex.next();
     }
-    goto process_value_primary;
-process_value_primary:
-    if (! parse_value_expression_primary(ctx, cur_tok, value_primary))
+    // try parsing a value expression primary. If not, try parsing a numeric
+    // function
+    if (parse_value_expression_primary(ctx, cur_tok, value))
+        goto push_vep;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
-    goto push_ve;
-push_ve:
+    if (! parse_numeric_function(ctx, cur_tok, primary))
+        return false;
+    goto push_func;
+push_vep:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<numeric_value_t>(value_primary, sign);
+    primary = std::make_unique<numeric_value_t>(value);
+    goto push_func;
+push_func:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<numeric_factor_t>(primary, sign);
     return true;
 }
 
@@ -624,6 +635,102 @@ push_set_function:
         out = std::make_unique<set_function_t>(func_type, lexeme_t(sf_start, sf_end), operand);
     else
         out = std::make_unique<set_function_t>(func_type, lexeme_t(sf_start, sf_end));
+    return true;
+}
+
+// <numeric value function> ::=
+//     <position expression>
+//     | <extract expression>
+//     | <length expression>
+//
+// <position expression> ::=
+//     POSITION <left paren> <character value expression>
+//     IN <character value expression> <right paren>
+//
+// <extract expression> ::=
+//     EXTRACT <left paren> <extract field>
+//     FROM <extract source> <right paren>
+//
+// <extract field> ::=
+//     <datetime field>
+//     | <time zone field>
+//
+// <datetime field> ::=
+//     <non-second datetime field>
+//     | SECOND
+//
+// <time zone field> ::=
+//     TIMEZONE_HOUR
+//     | TIMEZONE_MINUTE
+//
+// <extract source> ::=
+//     <datetime value expression>
+//     | <interval value expression>
+//
+// <length expression> ::=
+//     <char length expression>
+//     | <octet length expression>
+//     | <bit length expression>
+//
+// <char length expression> ::=
+//     { CHAR_LENGTH | CHARACTER_LENGTH }
+//     <left paren> <string value expression> <right paren>
+//
+// <octet length expression> ::=
+//     OCTET_LENGTH <left paren> <string value expression> <right paren>
+//
+// <bit length expression> ::=
+//     BIT_LENGTH <left paren> <string value expression> <right paren>
+bool parse_numeric_function(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<numeric_primary_t>& out) {
+    lexer& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    numeric_function_type_t func_type = NUMERIC_FUNCTION_TYPE_UNKNOWN;
+    std::unique_ptr<value_expression_t> value;
+    switch (cur_sym) {
+        case SYMBOL_CHAR_LENGTH:
+        case SYMBOL_CHARACTER_LENGTH:
+            cur_tok = lex.next();
+            func_type = NUMERIC_FUNCTION_TYPE_CHAR_LENGTH;
+            goto process_length_expression;
+        default:
+            return false;
+    }
+process_length_expression:
+    // We get here after getting a one of the CHAR_LENGTH, BIT_LENGTH or
+    // OCTET_LENGTH symbols. We now need to process the required string
+    // expression enclosed by parens
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    if (! parse_string_value_expression(ctx, cur_tok, value))
+        goto err_expect_string_value_expression;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_length_expression;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+err_expect_string_value_expression:
+{
+    std::stringstream estr;
+    estr << "Expected <string value expression> but found " << cur_tok
+         << std::endl;
+    create_syntax_error_marker(ctx, estr);
+    return false;
+}
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_length_expression:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<length_expression_t>(func_type, value);
     return true;
 }
 
