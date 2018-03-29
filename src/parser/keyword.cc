@@ -31,6 +31,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BETWEEN, "BETWEEN"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BY, "BY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BIT, "BIT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_BIT_LENGTH, "BIT_LENGTH"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_BOTH, "BOTH"));
             return t;
         case 'c':
@@ -115,6 +116,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'o':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_OR, "OR"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ON, "ON"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_OCTET_LENGTH, "OCTET_LENGTH"));
             return t;
         case 'p':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRECISION, "PRECISION"));

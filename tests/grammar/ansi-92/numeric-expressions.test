@@ -58,3 +58,13 @@ statements[0]:
      1: numeric-expression[char-length[column-reference[a]] + literal[1]]
    referenced tables:
      0: t1>
+# Use of BIT_LENGTH and OCTET_LENGTH numeric functions
+>SELECT BIT_LENGTH(a), OCTET_LENGTH(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: bit-length[column-reference[a]]
+     1: octet-length[column-reference[a]]
+   referenced tables:
+     0: t1>

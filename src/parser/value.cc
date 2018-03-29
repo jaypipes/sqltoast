@@ -695,6 +695,14 @@ bool parse_numeric_function(
             cur_tok = lex.next();
             func_type = NUMERIC_FUNCTION_TYPE_CHAR_LENGTH;
             goto process_length_expression;
+        case SYMBOL_BIT_LENGTH:
+            cur_tok = lex.next();
+            func_type = NUMERIC_FUNCTION_TYPE_BIT_LENGTH;
+            goto process_length_expression;
+        case SYMBOL_OCTET_LENGTH:
+            cur_tok = lex.next();
+            func_type = NUMERIC_FUNCTION_TYPE_OCTET_LENGTH;
+            goto process_length_expression;
         default:
             return false;
     }

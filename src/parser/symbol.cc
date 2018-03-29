@@ -43,6 +43,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_AVG] = std::string("AVG");
     m[SYMBOL_BETWEEN] = std::string("BETWEEN");
     m[SYMBOL_BIT] = std::string("BIT");
+    m[SYMBOL_BIT_LENGTH] = std::string("BIT_LENGTH");
     m[SYMBOL_BOTH] = std::string("BOTH");
     m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
@@ -101,6 +102,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_NOT] = std::string("NOT");
     m[SYMBOL_NUMERIC] = std::string("NUMERIC");
     m[SYMBOL_NULL] = std::string("NULL");
+    m[SYMBOL_OCTET_LENGTH] = std::string("OCTET_LENGTH");
     m[SYMBOL_ON] = std::string("ON");
     m[SYMBOL_OR] = std::string("OR");
     m[SYMBOL_PARTIAL] = std::string("PARTIAL");
