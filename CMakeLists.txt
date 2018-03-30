@@ -51,6 +51,7 @@ SET(LIBSQLTOAST_SOURCES
     src/predicate.cc
     src/table_reference.cc
     src/value.cc
+    src/value_expression.cc
 )
 
 # Header file for configuration templated variables

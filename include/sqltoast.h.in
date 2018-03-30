@@ -23,6 +23,7 @@
 #include "constraint.h"
 #include "column_definition.h"
 #include "value.h"
+#include "value_expression.h"
 #include "column_reference.h"
 #include "predicate.h"
 #include "table_reference.h"
