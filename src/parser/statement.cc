@@ -89,7 +89,7 @@ void parse_statement(parse_context_t& ctx) {
             break;
         }
         default:
-            break;
+            return;
     }
 
     size_t x = 0;
