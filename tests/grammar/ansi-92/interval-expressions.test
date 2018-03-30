@@ -67,3 +67,13 @@ statements[0]:
      0: interval-expression[column-reference[a] DAY TO SECOND(0, 5)]
    referenced tables:
      0: t1>
+# interval value expression that operates on an interval term with a numeric
+# factor
+>SELECT a YEAR * 12 FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] YEAR * literal[12]]
+   referenced tables:
+     0: t1>

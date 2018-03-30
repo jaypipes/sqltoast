@@ -1302,15 +1302,49 @@ bool parse_interval_term(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<interval_term_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<interval_factor_t> factor;
+    std::unique_ptr<numeric_factor_t> operand;
     if (! parse_interval_factor(ctx, cur_tok, factor))
         return false;
-    goto push_term;
-push_term:
+    goto ensure_term;
+optional_operator:
+    // We have already successfully parsed an interval factor and ensured that
+    // the out parameter is already an instance of an interval_term_t. At this
+    // point, before we return true, we need to check to see if either the
+    // asterisk or solidus symbols are the next symbol. If they are, then we
+    // must parse a *numeric factor* and apply that parsed numeric factor to
+    // the interval term sitting in the out param
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ASTERISK || cur_sym == SYMBOL_SOLIDUS) {
+        cur_tok = lex.next();
+        if (! parse_numeric_factor(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_numeric_factor;
+        }
+        if (out) {
+            if (cur_sym == SYMBOL_ASTERISK)
+                out->multiply(operand);
+            else
+                out->divide(operand);
+        }
+    }
+    return true;
+err_expect_numeric_factor:
+    {
+        std::stringstream estr;
+        estr << "Expected <numeric factor> after finding numeric operator "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+ensure_term:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<interval_term_t>(factor);
-    return true;
+    goto optional_operator;
 }
 
 // <interval factor> ::= [ <sign> ] <interval primary>

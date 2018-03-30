@@ -512,9 +512,22 @@ std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor);
 
 typedef struct interval_term {
     std::unique_ptr<interval_factor_t> left;
+    // Operating on an interval term with a numeric factor results in an
+    // interval term
+    numeric_op_t op;
+    std::unique_ptr<numeric_factor_t> right;
     interval_term(std::unique_ptr<interval_factor_t>& left) :
-        left(std::move(left))
+        left(std::move(left)),
+        op(NUMERIC_OP_NONE)
     {}
+    inline void multiply(std::unique_ptr<numeric_factor_t>& operand) {
+        op = NUMERIC_OP_MULTIPLY;
+        right = std::move(operand);
+    }
+    inline void divide(std::unique_ptr<numeric_factor_t>& operand) {
+        op = NUMERIC_OP_DIVIDE;
+        right = std::move(operand);
+    }
 } interval_term_t;
 
 std::ostream& operator<< (std::ostream& out, const interval_term_t& tern);

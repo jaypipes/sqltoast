@@ -386,7 +386,16 @@ std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor) {
 }
 
 std::ostream& operator<< (std::ostream& out, const interval_term_t& term) {
-    out << *term.left;
+    if (! term.right) {
+        out << *term.left;
+    } else {
+        out << *term.left;
+        if (term.op == NUMERIC_OP_MULTIPLY)
+            out << " * ";
+        else
+            out << " / ";
+        out << *term.right;
+    }
     return out;
 }
 
