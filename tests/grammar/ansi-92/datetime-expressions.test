@@ -1,0 +1,18 @@
+# Simple datetime expression with local timezone
+>SELECT a AT LOCAL FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[column-reference[a] AT LOCAL]
+   referenced tables:
+     0: t1>
+# Simple datetime expression with specifier timezone
+>SELECT a AT TIME ZONE FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[column-reference[a] AT TIME ZONE ]
+   referenced tables:
+     0: t1>

@@ -1,0 +1,69 @@
+# Simple interval value expression with non-second interval qualifier
+>SELECT a YEAR FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] YEAR]
+   referenced tables:
+     0: t1>
+# Simple interval value expression with non-second interval qualifier with a
+# leading precision
+>SELECT a DAY(2) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] DAY(2)]
+   referenced tables:
+     0: t1>
+# Simple interval value expression with second interval qualifier with a
+# leading precision and no fractional precision
+>SELECT a SECOND(2) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] SECOND(2)]
+   referenced tables:
+     0: t1>
+# Simple interval value expression with second interval qualifier with a
+# leading precision and no fractional precision
+>SELECT a SECOND(2, 5) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] SECOND(2, 5)]
+   referenced tables:
+     0: t1>
+# interval value expression with start and end non-second interval qualifier
+# with no precision specifiers
+>SELECT a YEAR TO MONTH FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] YEAR TO MONTH]
+   referenced tables:
+     0: t1>
+# interval value expression with start non-second and end second interval
+# qualifier with no precision specifiers
+>SELECT a DAY TO SECOND FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] DAY TO SECOND]
+   referenced tables:
+     0: t1>
+# interval value expression with start non-second and end second interval
+# qualifier with a second fractional precision specifier
+>SELECT a DAY TO SECOND(5) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] DAY TO SECOND(0, 5)]
+   referenced tables:
+     0: t1>

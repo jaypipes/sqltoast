@@ -1,3 +1,12 @@
+# unsigned literal number value expression primary
+>SELECT 1 FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: literal[1]
+   referenced tables:
+     0: t1>
 # Simple addition of literal number to column reference
 >UPDATE t1 SET x = 1 WHERE a = (2 + b)
 OK
@@ -48,6 +57,79 @@ statements[0]:
      x = literal[1]
    where:
      column-reference[a] = (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])>
+# General value expression primaries
+>SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: USER
+     1: CURRENT_USER
+     2: SESSION_USER
+     3: SYSTEM_USER
+     4: VALUE
+   referenced tables:
+     0: t1>
+# COUNT set function specifications
+>SELECT COUNT(*), COUNT(DISTINCT a), COUNT(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: COUNT(*)
+     1: COUNT(DISTINCT column-reference[a])
+     2: COUNT(column-reference[a])
+   referenced tables:
+     0: t1>
+# SUM set function specifications
+>SELECT SUM(DISTINCT a), SUM(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: SUM(DISTINCT column-reference[a])
+     1: SUM(column-reference[a])
+   referenced tables:
+     0: t1>
+# AVG set function specifications
+>SELECT AVG(DISTINCT a), AVG(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: AVG(DISTINCT column-reference[a])
+     1: AVG(column-reference[a])
+   referenced tables:
+     0: t1>
+# MIN set function specifications
+>SELECT MIN(DISTINCT a), MIN(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: MIN(DISTINCT column-reference[a])
+     1: MIN(column-reference[a])
+   referenced tables:
+     0: t1>
+# MAX set function specifications
+>SELECT MAX(DISTINCT a), MAX(a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: MAX(DISTINCT column-reference[a])
+     1: MAX(column-reference[a])
+   referenced tables:
+     0: t1>
+# Nested set function specifications
+>SELECT MAX(COUNT(a)) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: MAX(COUNT(column-reference[a]))
+   referenced tables:
+     0: t1>
 # Use of CHAR_LENGTH and CHARACTER_LENGTH numeric functions
 >SELECT CHAR_LENGTH(a), CHARACTER_LENGTH(a) + 1 FROM t1
 OK
