@@ -143,6 +143,12 @@ std::ostream& operator<< (std::ostream& out, const length_expression_t& le) {
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const extract_expression_t& ee) {
+    out << "extract[" << ee.extract_field
+        << " FROM " << *ee.extract_source << ']';
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf) {
     switch (nf.type) {
         case NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
@@ -152,6 +158,13 @@ std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf) {
                 const length_expression_t& le =
                     static_cast<const length_expression_t&>(nf);
                 out << le;
+            }
+            break;
+        case NUMERIC_FUNCTION_TYPE_EXTRACT:
+            {
+                const extract_expression_t& ee =
+                    static_cast<const extract_expression_t&>(nf);
+                out << ee;
             }
             break;
         default:

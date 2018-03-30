@@ -71,6 +71,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_EXISTS] = std::string("EXISTS");
+    m[SYMBOL_EXTRACT] = std::string("EXTRACT");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
     m[SYMBOL_FOR] = std::string("FOR");
     m[SYMBOL_FOREIGN] = std::string("FOREIGN");

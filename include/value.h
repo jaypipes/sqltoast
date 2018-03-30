@@ -213,6 +213,22 @@ typedef struct length_expression : numeric_function_t {
 
 std::ostream& operator<< (std::ostream& out, const length_expression_t& le);
 
+typedef struct extract_expression : numeric_function_t {
+    interval_unit_t extract_field;
+    // Will always be static_castable to either a datetime_value_expression_t
+    // or an interval_value_expression_t
+    std::unique_ptr<value_expression_t> extract_source;
+    extract_expression(
+            interval_unit_t extract_field,
+            std::unique_ptr<value_expression_t>& extract_source) :
+        numeric_function_t(NUMERIC_FUNCTION_TYPE_EXTRACT),
+        extract_field(extract_field),
+        extract_source(std::move(extract_source))
+    {}
+} extract_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const extract_expression_t& ee);
+
 typedef struct numeric_factor {
     int8_t sign;
     std::unique_ptr<numeric_primary_t> value;

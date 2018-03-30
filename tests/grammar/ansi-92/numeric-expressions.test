@@ -68,3 +68,12 @@ statements[0]:
      1: octet-length[column-reference[a]]
    referenced tables:
      0: t1>
+# Use of EXTRACT numeric function
+>SELECT EXTRACT(YEAR FROM a) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: extract[YEAR FROM datetime-expression[column-reference[a] AT TIME ZONE ]]
+   referenced tables:
+     0: t1>

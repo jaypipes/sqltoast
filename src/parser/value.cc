@@ -688,8 +688,12 @@ bool parse_numeric_function(
     lexer& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     numeric_function_type_t func_type = NUMERIC_FUNCTION_TYPE_UNKNOWN;
+    interval_unit_t extract_field = INTERVAL_UNIT_UNKNOWN;
     std::unique_ptr<value_expression_t> value;
     switch (cur_sym) {
+        case SYMBOL_EXTRACT:
+            cur_tok = lex.next();
+            goto process_extract_expression;
         case SYMBOL_CHAR_LENGTH:
         case SYMBOL_CHARACTER_LENGTH:
             cur_tok = lex.next();
@@ -706,6 +710,80 @@ bool parse_numeric_function(
         default:
             return false;
     }
+process_extract_expression:
+    // We get here after getting the EXTRACT symbol. We now expect a
+    // parens-enclosed <extract field> FROM <extract source>
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_YEAR:
+            extract_field = INTERVAL_UNIT_YEAR;
+            break;
+        case SYMBOL_MONTH:
+            extract_field = INTERVAL_UNIT_MONTH;
+            break;
+        case SYMBOL_DAY:
+            extract_field = INTERVAL_UNIT_DAY;
+            break;
+        case SYMBOL_HOUR:
+            extract_field = INTERVAL_UNIT_DAY;
+            break;
+        case SYMBOL_MINUTE:
+            extract_field = INTERVAL_UNIT_MINUTE;
+            break;
+        case SYMBOL_SECOND:
+            extract_field = INTERVAL_UNIT_SECOND;
+            break;
+        default:
+            goto err_expect_extract_field;
+    }
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_FROM)
+        goto err_expect_from;
+    cur_tok = lex.next();
+    // Try to parse the <extract source> element, which can be either a
+    // datetime value expression or an interval value expression
+    if (! parse_datetime_value_expression(ctx, cur_tok, value)) {
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
+        if (! parse_interval_value_expression(ctx, cur_tok, value))
+            goto err_expect_extract_source;
+    }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_extract_expression;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+err_expect_from:
+    expect_error(ctx, SYMBOL_FROM);
+    return false;
+err_expect_extract_field:
+{
+    std::stringstream estr;
+    estr << "Expected <extract field> but found " << cur_tok
+         << std::endl;
+    create_syntax_error_marker(ctx, estr);
+    return false;
+}
+err_expect_extract_source:
+{
+    std::stringstream estr;
+    estr << "Expected <extract source> which can be a datetime or "
+            "interval value expression but found " << cur_tok
+         << std::endl;
+    create_syntax_error_marker(ctx, estr);
+    return false;
+}
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 process_length_expression:
     // We get here after getting a one of the CHAR_LENGTH, BIT_LENGTH or
     // OCTET_LENGTH symbols. We now need to process the required string
@@ -721,9 +799,6 @@ process_length_expression:
         goto err_expect_rparen;
     cur_tok = lex.next();
     goto push_length_expression;
-err_expect_lparen:
-    expect_error(ctx, SYMBOL_LPAREN);
-    return false;
 err_expect_string_value_expression:
 {
     std::stringstream estr;
@@ -732,13 +807,16 @@ err_expect_string_value_expression:
     create_syntax_error_marker(ctx, estr);
     return false;
 }
-err_expect_rparen:
-    expect_error(ctx, SYMBOL_RPAREN);
-    return false;
 push_length_expression:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<length_expression_t>(func_type, value);
+    return true;
+push_extract_expression:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<extract_expression_t>(
+            extract_field, value);
     return true;
 }
 

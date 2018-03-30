@@ -93,6 +93,7 @@ std::ostream& operator<< (std::ostream& out, const datetime_t& dt);
 // TOOD(jaypipes): Move datetime and interval stuff to a separate temporal.h
 // file
 typedef enum interval_unit {
+    INTERVAL_UNIT_UNKNOWN,
     INTERVAL_UNIT_YEAR,
     INTERVAL_UNIT_MONTH,
     INTERVAL_UNIT_DAY,

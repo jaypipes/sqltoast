@@ -91,6 +91,7 @@ typedef enum symbol {
     SYMBOL_DOUBLE,
     SYMBOL_DROP,
     SYMBOL_EXISTS,
+    SYMBOL_EXTRACT,
     SYMBOL_FLOAT,
     SYMBOL_FOR,
     SYMBOL_FOREIGN,
