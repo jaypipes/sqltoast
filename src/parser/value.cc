@@ -689,8 +689,12 @@ bool parse_numeric_function(
     symbol_t cur_sym = cur_tok.symbol;
     numeric_function_type_t func_type = NUMERIC_FUNCTION_TYPE_UNKNOWN;
     interval_unit_t extract_field = INTERVAL_UNIT_UNKNOWN;
+    std::unique_ptr<value_expression_t> to_find; // only used for POSITION
     std::unique_ptr<value_expression_t> value;
     switch (cur_sym) {
+        case SYMBOL_POSITION:
+            cur_tok = lex.next();
+            goto process_position_expression;
         case SYMBOL_EXTRACT:
             cur_tok = lex.next();
             goto process_extract_expression;
@@ -710,6 +714,49 @@ bool parse_numeric_function(
         default:
             return false;
     }
+process_position_expression:
+    // We get here after getting the POSITION symbol. We now expect a
+    // parens-enclosed <to find> IN <subject>
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    if (! parse_character_value_expression(ctx, cur_tok, to_find)) {
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
+        goto err_expect_character_value_expression;
+    }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IN)
+        goto err_expect_in;
+    cur_tok = lex.next();
+    if (! parse_character_value_expression(ctx, cur_tok, value)) {
+        if (ctx.result.code == PARSE_SYNTAX_ERROR)
+            return false;
+        goto err_expect_character_value_expression;
+    }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_position_expression;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+err_expect_character_value_expression:
+{
+    std::stringstream estr;
+    estr << "Expected <character value expression> but found " << cur_tok
+         << std::endl;
+    create_syntax_error_marker(ctx, estr);
+    return false;
+}
+err_expect_in:
+    expect_error(ctx, SYMBOL_IN);
+    return false;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 process_extract_expression:
     // We get here after getting the EXTRACT symbol. We now expect a
     // parens-enclosed <extract field> FROM <extract source>
@@ -758,9 +805,6 @@ process_extract_expression:
         goto err_expect_rparen;
     cur_tok = lex.next();
     goto push_extract_expression;
-err_expect_lparen:
-    expect_error(ctx, SYMBOL_LPAREN);
-    return false;
 err_expect_from:
     expect_error(ctx, SYMBOL_FROM);
     return false;
@@ -781,9 +825,6 @@ err_expect_extract_source:
     create_syntax_error_marker(ctx, estr);
     return false;
 }
-err_expect_rparen:
-    expect_error(ctx, SYMBOL_RPAREN);
-    return false;
 process_length_expression:
     // We get here after getting a one of the CHAR_LENGTH, BIT_LENGTH or
     // OCTET_LENGTH symbols. We now need to process the required string
@@ -807,16 +848,21 @@ err_expect_string_value_expression:
     create_syntax_error_marker(ctx, estr);
     return false;
 }
-push_length_expression:
+push_position_expression:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<length_expression_t>(func_type, value);
+    out = std::make_unique<position_expression_t>(to_find, value);
     return true;
 push_extract_expression:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<extract_expression_t>(
             extract_field, value);
+    return true;
+push_length_expression:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<length_expression_t>(func_type, value);
     return true;
 }
 
@@ -868,6 +914,7 @@ optional_concat:
         case SYMBOL_GREATER_THAN:
         case SYMBOL_AND:
         case SYMBOL_OR:
+        case SYMBOL_IN:
         case SYMBOL_FROM:
         case SYMBOL_WHERE:
         case SYMBOL_HAVING:

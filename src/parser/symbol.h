@@ -128,6 +128,7 @@ typedef enum symbol {
     SYMBOL_ON,
     SYMBOL_OR,
     SYMBOL_PARTIAL,
+    SYMBOL_POSITION,
     SYMBOL_PRECISION,
     SYMBOL_PRIMARY,
     SYMBOL_REAL,

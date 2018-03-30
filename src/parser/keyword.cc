@@ -120,6 +120,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_OCTET_LENGTH, "OCTET_LENGTH"));
             return t;
         case 'p':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_POSITION, "POSITION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRECISION, "PRECISION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRIMARY, "PRIMARY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PARTIAL, "PARTIAL"));

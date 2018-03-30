@@ -143,6 +143,12 @@ std::ostream& operator<< (std::ostream& out, const length_expression_t& le) {
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const position_expression_t& pe) {
+    out << "position[" << *pe.to_find
+        << " IN " << *pe.subject << ']';
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const extract_expression_t& ee) {
     out << "extract[" << ee.extract_field
         << " FROM " << *ee.extract_source << ']';
@@ -151,13 +157,11 @@ std::ostream& operator<< (std::ostream& out, const extract_expression_t& ee) {
 
 std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf) {
     switch (nf.type) {
-        case NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
-        case NUMERIC_FUNCTION_TYPE_BIT_LENGTH:
-        case NUMERIC_FUNCTION_TYPE_OCTET_LENGTH:
+        case NUMERIC_FUNCTION_TYPE_POSITION:
             {
-                const length_expression_t& le =
-                    static_cast<const length_expression_t&>(nf);
-                out << le;
+                const position_expression_t& pe =
+                    static_cast<const position_expression_t&>(nf);
+                out << pe;
             }
             break;
         case NUMERIC_FUNCTION_TYPE_EXTRACT:
@@ -165,6 +169,15 @@ std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf) {
                 const extract_expression_t& ee =
                     static_cast<const extract_expression_t&>(nf);
                 out << ee;
+            }
+            break;
+        case NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
+        case NUMERIC_FUNCTION_TYPE_BIT_LENGTH:
+        case NUMERIC_FUNCTION_TYPE_OCTET_LENGTH:
+            {
+                const length_expression_t& le =
+                    static_cast<const length_expression_t&>(nf);
+                out << le;
             }
             break;
         default:

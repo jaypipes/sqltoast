@@ -200,18 +200,21 @@ typedef struct numeric_function : numeric_primary_t {
 
 std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf);
 
-typedef struct length_expression : numeric_function_t {
-    // Will always be static_castable to string_value_expression_t
-    std::unique_ptr<value_expression_t> operand;
-    length_expression(
-            numeric_function_type_t type,
-            std::unique_ptr<value_expression_t>& operand) :
-        numeric_function_t(type),
-        operand(std::move(operand))
+typedef struct position_expression : numeric_function_t {
+    // Will always be static_castable to character_value_expression_t
+    std::unique_ptr<value_expression_t> to_find;
+    // Will always be static_castable to character_value_expression_t
+    std::unique_ptr<value_expression_t> subject;
+    position_expression(
+            std::unique_ptr<value_expression_t>& to_find,
+            std::unique_ptr<value_expression_t>& subject) :
+        numeric_function_t(NUMERIC_FUNCTION_TYPE_POSITION),
+        to_find(std::move(to_find)),
+        subject(std::move(subject))
     {}
-} length_expression_t;
+} position_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const length_expression_t& le);
+std::ostream& operator<< (std::ostream& out, const position_expression_t& pe);
 
 typedef struct extract_expression : numeric_function_t {
     interval_unit_t extract_field;
@@ -228,6 +231,19 @@ typedef struct extract_expression : numeric_function_t {
 } extract_expression_t;
 
 std::ostream& operator<< (std::ostream& out, const extract_expression_t& ee);
+
+typedef struct length_expression : numeric_function_t {
+    // Will always be static_castable to string_value_expression_t
+    std::unique_ptr<value_expression_t> operand;
+    length_expression(
+            numeric_function_type_t type,
+            std::unique_ptr<value_expression_t>& operand) :
+        numeric_function_t(type),
+        operand(std::move(operand))
+    {}
+} length_expression_t;
+
+std::ostream& operator<< (std::ostream& out, const length_expression_t& le);
 
 typedef struct numeric_factor {
     int8_t sign;
