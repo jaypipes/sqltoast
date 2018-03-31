@@ -26,6 +26,9 @@ typedef enum table_reference_type_t {
 typedef struct table_reference {
     table_reference_type_t type;
     lexeme_t alias;
+    table_reference(table_reference_type_t type) :
+        type(type)
+    {}
     table_reference(table_reference_type_t type, lexeme_t& alias) :
         type(type), alias(alias)
     {}
@@ -45,6 +48,21 @@ typedef struct table : table_reference_t {
 } table_t;
 
 std::ostream& operator<< (std::ostream& out, const table_t& t);
+
+typedef struct derived_table : table_reference_t {
+    lexeme_t table_name;
+    // Will always be static_castable to select_statement_t
+    std::unique_ptr<statement_t> subquery;
+    derived_table(
+            lexeme_t& table_name,
+            std::unique_ptr<statement_t>& subquery) :
+        table_reference_t(TABLE_REFERENCE_TYPE_DERIVED_TABLE),
+        table_name(table_name),
+        subquery(std::move(subquery))
+    {}
+} derived_table_t;
+
+std::ostream& operator<< (std::ostream& out, const derived_table_t& dt);
 
 } // namespace sqltoast
 

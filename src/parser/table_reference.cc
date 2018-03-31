@@ -59,6 +59,7 @@ bool parse_table_reference(
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t table_name;
     lexeme_t alias;
+    std::unique_ptr<statement_t> derived;
     switch (cur_sym) {
         case SYMBOL_LPAREN:
             cur_tok = lex.next();
@@ -71,11 +72,24 @@ bool parse_table_reference(
             return false;
     }
 expect_derived_table:
+    if (! parse_select(ctx, cur_tok, derived))
+        return false;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
         goto err_expect_rparen;
     cur_tok = lex.next();
-    goto optional_alias;
+    // A derived table MUST have a <correlation specification> which means it
+    // must be given a name preceded by an optional AS symbol
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_AS) {
+        cur_tok = lex.next();
+    }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    alias = cur_tok.lexeme;
+    cur_tok = lex.next();
+    goto push_table_reference;
 err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
@@ -104,6 +118,8 @@ push_table_reference:
         return true;
     if (table_name)
         out = std::make_unique<table_t>(table_name, alias);
+    else if (derived)
+        out = std::make_unique<derived_table_t>(alias, derived);
     return true;
 }
 

@@ -16,6 +16,13 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
                 out << t;
             }
             break;
+        case TABLE_REFERENCE_TYPE_DERIVED_TABLE:
+            {
+                const derived_table_t& dt =
+                    static_cast<const derived_table_t&>(tr);
+                out << dt;
+            }
+            break;
         default:
             break;
     }
@@ -27,6 +34,11 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
 
 std::ostream& operator<< (std::ostream& out, const table_t& t) {
     out << std::string(t.table_name.start, t.table_name.end);
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const derived_table_t& dt) {
+    out << "<derived table> AS " << dt.table_name;
     return out;
 }
 
