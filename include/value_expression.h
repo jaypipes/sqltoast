@@ -105,12 +105,28 @@ std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& 
 // An interval value expression evaluates to an interval value. It may be
 // added and subtracted with an interval term and a datetime value expression
 // may subtract an interval value expression
+//
+// An interval value expression evaluates to a single interval scalar value. It
+// contains a datetime term called "left" that may be added to or subtracted
+// from an interval term or interval value expression.
 typedef struct interval_value_expression : value_expression_t {
     std::unique_ptr<interval_term_t> left;
-    interval_value_expression(std::unique_ptr<interval_term_t>& left) :
+    numeric_op_t op;
+    std::unique_ptr<interval_term_t> right;
+    interval_value_expression(
+            std::unique_ptr<interval_term_t>& left) :
         value_expression_t(VALUE_EXPRESSION_TYPE_INTERVAL_EXPRESSION),
-        left(std::move(left))
+        left(std::move(left)),
+        op(NUMERIC_OP_NONE)
     {}
+    inline void add(std::unique_ptr<interval_term_t>& operand) {
+        op = NUMERIC_OP_ADD;
+        right = std::move(operand);
+    }
+    inline void subtract(std::unique_ptr<interval_term_t>& operand) {
+        op = NUMERIC_OP_SUBTRACT;
+        right = std::move(operand);
+    }
 } interval_value_expression_t;
 
 std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& ve);

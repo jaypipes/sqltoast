@@ -100,9 +100,20 @@ std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& 
 }
 
 std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& ie) {
-    // interval expressions are the container for things that evaluate to
-    // an interval value
-    out << "interval-expression[" << *ie.left << "]";
+    // interval expressions are the container for things that may be evaluated
+    // to a number. However, interval expressions that have only a single
+    // element can be reduced to just that one element
+    if (! ie.right)
+        out << "interval-expression[" << *ie.left << "]";
+    else {
+        out << "interval-expression[";
+        out << *ie.left;
+        if (ie.op == NUMERIC_OP_ADD)
+            out << " + ";
+        else
+            out << " - ";
+        out << *ie.right << "]";
+    }
     return out;
 }
 

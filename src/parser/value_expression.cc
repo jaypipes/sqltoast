@@ -293,9 +293,9 @@ optional_operator:
                 goto err_expect_interval_term;
             }
             if (out) {
-                datetime_value_expression_t* ne =
+                datetime_value_expression_t* de =
                     static_cast<datetime_value_expression_t *>(out.get());
-                ne->add(operand);
+                de->add(operand);
             }
             goto optional_operator;
         case SYMBOL_MINUS:
@@ -306,9 +306,9 @@ optional_operator:
                 goto err_expect_interval_term;
             }
             if (out) {
-                datetime_value_expression_t* ne =
+                datetime_value_expression_t* de =
                     static_cast<datetime_value_expression_t *>(out.get());
-                ne->subtract(operand);
+                de->subtract(operand);
             }
             goto optional_operator;
         default:
@@ -339,15 +339,79 @@ bool parse_interval_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym;
     std::unique_ptr<interval_term_t> left;
+    std::unique_ptr<interval_term_t> operand;
     if (! parse_interval_term(ctx, cur_tok, left))
         return false;
-    goto push_ve;
-push_ve:
+    goto ensure_expression;
+optional_operator:
+    // Check to see if we've currently got a + or - arithmetic operator as our
+    // current symbol. If so, that indicates we should expect to parse an
+    // interval term as an operand to the interval equation represented by the
+    // entire interval value expression.
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_SEMICOLON:
+        case SYMBOL_COMMA:
+        case SYMBOL_RPAREN:
+        case SYMBOL_LPAREN:
+        case SYMBOL_EOS:
+        case SYMBOL_EQUAL:
+        case SYMBOL_NOT_EQUAL:
+        case SYMBOL_LESS_THAN:
+        case SYMBOL_GREATER_THAN:
+        case SYMBOL_AND:
+        case SYMBOL_OR:
+        case SYMBOL_FOR:
+        case SYMBOL_FROM:
+        case SYMBOL_WHERE:
+        case SYMBOL_HAVING:
+        case SYMBOL_GROUP:
+            return true;
+        case SYMBOL_PLUS:
+            cur_tok = lex.next();
+            if (! parse_interval_term(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_interval_term;
+            }
+            if (out) {
+                interval_value_expression_t* ie =
+                    static_cast<interval_value_expression_t *>(out.get());
+                ie->add(operand);
+            }
+            goto optional_operator;
+        case SYMBOL_MINUS:
+            cur_tok = lex.next();
+            if (! parse_interval_term(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_interval_term;
+            }
+            if (out) {
+                interval_value_expression_t* ie =
+                    static_cast<interval_value_expression_t *>(out.get());
+                ie->subtract(operand);
+            }
+            goto optional_operator;
+        default:
+            return false;
+    }
+err_expect_interval_term:
+    {
+        std::stringstream estr;
+        estr << "Expected <interval term> after finding numeric operator "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+ensure_expression:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<interval_value_expression_t>(left);
-    return true;
+    goto optional_operator;
 }
 
 } // namespace sqltoast

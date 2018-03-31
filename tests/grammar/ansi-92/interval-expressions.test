@@ -79,3 +79,14 @@ statements[0]:
      2: interval-expression[column-reference[a] MONTH / (numeric-expression[literal[12] / column-reference[b]])]
    referenced tables:
      0: t1>
+# interval value expression that uses addition and subtraction operators on
+# interval terms
+>SELECT a YEAR + 12 YEAR, created_on DAY TO SECOND - updated_on DAY TO SECOND from t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: interval-expression[column-reference[a] YEAR + literal[12] YEAR]
+     1: interval-expression[column-reference[created_on] DAY TO SECOND - column-reference[updated_on] DAY TO SECOND]
+   referenced tables:
+     0: t1>
