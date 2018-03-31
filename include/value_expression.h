@@ -82,10 +82,22 @@ std::ostream& operator<< (std::ostream& out, const character_value_expression_t&
 // from an interval term or interval value expression.
 typedef struct datetime_value_expression : value_expression_t {
     std::unique_ptr<datetime_term_t> left;
-    datetime_value_expression(std::unique_ptr<datetime_term_t>& left) :
+    numeric_op_t op;
+    std::unique_ptr<interval_term_t> right;
+    datetime_value_expression(
+            std::unique_ptr<datetime_term_t>& left) :
         value_expression_t(VALUE_EXPRESSION_TYPE_DATETIME_EXPRESSION),
-        left(std::move(left))
+        left(std::move(left)),
+        op(NUMERIC_OP_NONE)
     {}
+    inline void add(std::unique_ptr<interval_term_t>& operand) {
+        op = NUMERIC_OP_ADD;
+        right = std::move(operand);
+    }
+    inline void subtract(std::unique_ptr<interval_term_t>& operand) {
+        op = NUMERIC_OP_SUBTRACT;
+        right = std::move(operand);
+    }
 } datetime_value_expression_t;
 
 std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& ve);

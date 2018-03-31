@@ -82,9 +82,20 @@ std::ostream& operator<< (std::ostream& out, const character_value_expression_t&
 }
 
 std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& de) {
-    // datetime expressions are the container for things evaluate to a datetime
-    // value
-    out << "datetime-expression[" << *de.left << "]";
+    // datetime expressions are the container for things that may be evaluated
+    // to a number. However, datetime expressions that have only a single
+    // element can be reduced to just that one element
+    if (! de.right)
+        out << "datetime-expression[" << *de.left << "]";
+    else {
+        out << "datetime-expression[";
+        out << *de.left;
+        if (de.op == NUMERIC_OP_ADD)
+            out << " + ";
+        else
+            out << " - ";
+        out << *de.right << "]";
+    }
     return out;
 }
 

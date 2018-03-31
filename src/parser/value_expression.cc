@@ -254,11 +254,18 @@ bool parse_datetime_value_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_t>& out) {
+    lexer_t& lex = ctx.lexer;
     symbol_t cur_sym;
     std::unique_ptr<datetime_term_t> left;
+    std::unique_ptr<interval_term_t> operand;
     if (! parse_datetime_term(ctx, cur_tok, left))
         return false;
-    // Look for terminating symbols
+    goto ensure_expression;
+optional_operator:
+    // Check to see if we've currently got a + or - arithmetic operator as
+    // our current symbol. If so, that indicates we should expect to parse
+    // an interval term as an operand to the datetime equation represented by
+    // the entire datetime value expression.
     cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_SEMICOLON:
@@ -272,20 +279,54 @@ bool parse_datetime_value_expression(
         case SYMBOL_GREATER_THAN:
         case SYMBOL_AND:
         case SYMBOL_OR:
+        case SYMBOL_FOR:
         case SYMBOL_FROM:
         case SYMBOL_WHERE:
         case SYMBOL_HAVING:
         case SYMBOL_GROUP:
-            goto push_ve;
+            return true;
+        case SYMBOL_PLUS:
+            cur_tok = lex.next();
+            if (! parse_interval_term(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_interval_term;
+            }
+            if (out) {
+                datetime_value_expression_t* ne =
+                    static_cast<datetime_value_expression_t *>(out.get());
+                ne->add(operand);
+            }
+            goto optional_operator;
+        case SYMBOL_MINUS:
+            cur_tok = lex.next();
+            if (! parse_interval_term(ctx, cur_tok, operand)) {
+                if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                    return false;
+                goto err_expect_interval_term;
+            }
+            if (out) {
+                datetime_value_expression_t* ne =
+                    static_cast<datetime_value_expression_t *>(out.get());
+                ne->subtract(operand);
+            }
+            goto optional_operator;
         default:
             return false;
     }
-    goto push_ve;
-push_ve:
+err_expect_interval_term:
+    {
+        std::stringstream estr;
+        estr << "Expected <interval term> after finding numeric operator "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+ensure_expression:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<datetime_value_expression_t>(left);
-    return true;
+    goto optional_operator;
 }
 
 // <interval value expression> ::=
