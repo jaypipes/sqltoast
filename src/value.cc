@@ -320,14 +320,6 @@ std::ostream& operator<< (std::ostream& out, const character_factor_t& cf) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const time_zone_specifier_t& tzs) {
-    if (! tzs.local_tz)
-        out << " AT TIME ZONE ";// << *tzs.interval_value;
-    else
-        out << " AT LOCAL";
-    return out;
-}
-
 std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp) {
     out << *dp.value;
     return out;
@@ -335,8 +327,10 @@ std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp) {
 
 std::ostream& operator<< (std::ostream& out, const datetime_factor_t& factor) {
     out << *factor.value;
-    if (factor.time_zone_specifier)
-        out << *factor.time_zone_specifier;
+    if (factor.is_local_tz())
+        out << " AT LOCAL";
+    else
+        out << " AT TIME ZONE " << factor.tz;
     return out;
 }
 

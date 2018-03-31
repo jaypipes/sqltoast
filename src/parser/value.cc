@@ -1203,8 +1203,7 @@ bool parse_datetime_factor(
         std::unique_ptr<datetime_factor_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    bool local_tz = false;
-    std::unique_ptr<time_zone_specifier_t> tz_spec;
+    lexeme_t tz;
     std::unique_ptr<datetime_primary_t> primary;
     if (! parse_datetime_primary(ctx, cur_tok, primary))
         return false;
@@ -1221,30 +1220,46 @@ expect_timezone_specifier:
     switch (cur_sym) {
         case SYMBOL_LOCAL:
             cur_tok = lex.next();
-            local_tz = true;
-            break;
+            goto push_factor;
         case SYMBOL_TIME:
             cur_tok = lex.next();
             cur_sym = cur_tok.symbol;
             if (cur_sym != SYMBOL_ZONE)
                 goto err_expect_zone;
             cur_tok = lex.next();
-            break;
+            goto expect_tz_name;
         default:
             goto err_expect_local_or_time;
     }
-    goto push_factor;
 err_expect_zone:
     expect_error(ctx, SYMBOL_ZONE);
     return false;
 err_expect_local_or_time:
     expect_any_error(ctx, {SYMBOL_LOCAL, SYMBOL_TIME});
     return false;
+expect_tz_name:
+    // The ANSI standard says that <time zone specifier> is TIME ZONE
+    // <interval value expression> however I've never seen anyone
+    // specify anything other than a string timezone literal like
+    // 'UTC', so for now we're just going to store the current lexeme
+    // as the tz for the datetime factor
+    if (! cur_tok.is_literal())
+        goto err_expect_tz_name;
+    tz = cur_tok.lexeme;
+    cur_tok = lex.next();
+    goto push_factor;
+err_expect_tz_name:
+    {
+        std::stringstream estr;
+        estr << "Expected <time zone name> after AT TIME ZONE but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 push_factor:
     if (ctx.opts.disable_statement_construction)
         return true;
-    tz_spec = std::make_unique<time_zone_specifier_t>(local_tz);
-    out = std::make_unique<datetime_factor_t>(primary, tz_spec);
+    out = std::make_unique<datetime_factor_t>(primary, tz);
     return true;
 }
 

@@ -8,11 +8,11 @@ statements[0]:
    referenced tables:
      0: t1>
 # Simple datetime expression with specifier timezone
->SELECT a AT TIME ZONE FROM t1
+>SELECT a AT TIME ZONE 'UTC' FROM t1
 OK
 statements[0]:
   <statement: SELECT
    selected columns:
-     0: datetime-expression[column-reference[a] AT TIME ZONE ]
+     0: datetime-expression[column-reference[a] AT TIME ZONE 'UTC']
    referenced tables:
      0: t1>

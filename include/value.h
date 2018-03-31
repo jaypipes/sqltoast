@@ -415,25 +415,20 @@ typedef struct datetime_primary {
 
 std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp);
 
-typedef struct time_zone_specifier {
-    bool local_tz;
-    time_zone_specifier(bool local_tz) : local_tz(local_tz)
-    {}
-} time_zone_specifier_t;
-
-std::ostream& operator<< (std::ostream& out, const time_zone_specifier_t& tzs);
-
 // A datetime factor evaluates to a datetime value. It contains a datetime
 // primary and has an optional timezone component.
 typedef struct datetime_factor {
     std::unique_ptr<datetime_primary_t> value;
-    std::unique_ptr<time_zone_specifier_t> time_zone_specifier;
+    lexeme_t tz;
     datetime_factor(
             std::unique_ptr<datetime_primary_t>& value,
-            std::unique_ptr<time_zone_specifier_t>& tz_spec) :
+            lexeme_t tz) :
         value(std::move(value)),
-        time_zone_specifier(std::move(tz_spec))
+        tz(tz)
     {}
+    inline bool is_local_tz() const {
+        return ! tz;
+    }
 } datetime_factor_t;
 
 std::ostream& operator<< (std::ostream& out, const datetime_factor_t& factor);
