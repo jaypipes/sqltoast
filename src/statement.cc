@@ -152,8 +152,8 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
     }
     out << std::endl << "   referenced tables:";
     x = 0;
-    for (const table_reference_t& tr : stmt.referenced_tables) {
-        out << std::endl << "     " << x++ << ": " << tr;
+    for (const std::unique_ptr<table_reference_t>& tr : stmt.referenced_tables) {
+        out << std::endl << "     " << x++ << ": " << *tr;
     }
     if (stmt.where_condition) {
         out << std::endl << "   where:" << std::endl << "     ";

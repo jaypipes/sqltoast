@@ -41,7 +41,8 @@ bool parse_select(
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<value_expression_t> selected_col;
     std::vector<derived_column_t> selected_columns;
-    std::vector<table_reference_t> referenced_tables;
+    std::vector<std::unique_ptr<table_reference_t>> referenced_tables;
+    std::unique_ptr<table_reference_t> table_ref;
     std::vector<grouping_column_reference_t> group_by_columns;
     std::unique_ptr<search_condition_t> where_condition;
     std::unique_ptr<search_condition_t> having_condition;
@@ -116,29 +117,9 @@ err_expect_comma_or_from:
     expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_FROM});
     return false;
 expect_table_reference:
-    cur_sym = cur_tok.symbol;
-    if (cur_sym != SYMBOL_IDENTIFIER)
-        goto err_expect_identifier;
-    referenced_tables.emplace_back(table_reference_t(cur_tok.lexeme));
-    cur_tok = lex.next();
-    goto optional_table_alias;
-optional_table_alias:
-    // We get here after consuming an identifier, derived table specifier or
-    // joined table specifier. An alias can be provided for this table
-    // reference either by specifying an identifier immediately after the value
-    // expression or the keyword AS followed by the alias.
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_AS) {
-        cur_tok = lex.next();
-        cur_sym = cur_tok.symbol;
-        if (cur_sym != SYMBOL_IDENTIFIER)
-            goto err_expect_identifier;
-    }
-    if (cur_sym == SYMBOL_IDENTIFIER) {
-        table_reference_t& tr = referenced_tables.back();
-        tr.alias = cur_tok.lexeme;
-        cur_tok = lex.next();
-    }
+    if (! parse_table_reference(ctx, cur_tok, table_ref))
+        return false;
+    referenced_tables.emplace_back(std::move(table_ref));
     goto comma_or_where_group_having;
 comma_or_where_group_having:
     // We get here after consuming a table reference and now we expect to find
