@@ -85,6 +85,13 @@ bool parse_update(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
+// Returns true if a table reference can be parsed. If true, the out argument
+// will contain a new pointer to a table_reference_t.
+bool parse_table_reference(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<table_reference_t>& out);
+
 // Returns true if a search condition could be parsed. If true, the out
 // argument will have a new pointer to a search_condition_t added to it.
 bool parse_search_condition(

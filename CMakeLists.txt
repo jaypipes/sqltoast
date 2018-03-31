@@ -50,6 +50,7 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/statements/select.cc
     src/parser/statements/update.cc
     src/parser/symbol.cc
+    src/parser/table_reference.cc
     src/parser/token.cc
     src/parser/value.cc
     src/parser/value_expression.cc

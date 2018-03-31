@@ -9,11 +9,28 @@
 
 namespace sqltoast {
 
+// A table reference is an object whose columns are referenced in the <select
+// list>, <group by>, <having>, <where> or <join condition> clauses of a
+// SEELECT statement. There are three types of table references. A table is
+// simply that: a table in the database that has been directly referenced in
+// the FROM clause. A joined table is a table reference that has been referred
+// to via a JOIN expression. And a derived table is a subquery in the FROM
+// clause.
+
+typedef enum table_reference_type_t {
+    TABLE_REFERENCE_TYPE_TABLE,
+    TABLE_REFERENCE_TYPE_DERIVED_TABLE,
+    TABLE_REFERENCE_TYPE_JOINED_TABLE
+} table_reference_type_t;
+
 typedef struct table_reference {
-    lexeme_t value;
+    table_reference_type_t type;
     lexeme_t alias;
-    table_reference(lexeme_t& value) :
-        value(value)
+    table_reference(table_reference_type_t type) :
+        type(type)
+    {}
+    table_reference(table_reference_type_t type, lexeme_t& alias) :
+        type(type), alias(alias)
     {}
     inline bool has_alias() const {
         return alias.start != parse_position_t(0);
@@ -21,6 +38,31 @@ typedef struct table_reference {
 } table_reference_t;
 
 std::ostream& operator<< (std::ostream& out, const table_reference_t& tr);
+
+typedef struct table : table_reference_t {
+    lexeme_t table_name;
+    table(lexeme_t& table_name, lexeme_t& alias) :
+        table_reference_t(TABLE_REFERENCE_TYPE_TABLE, alias),
+        table_name(table_name)
+    {}
+} table_t;
+
+std::ostream& operator<< (std::ostream& out, const table_t& t);
+
+typedef struct derived_table : table_reference_t {
+    lexeme_t table_name;
+    // Will always be static_castable to select_statement_t
+    std::unique_ptr<statement_t> subquery;
+    derived_table(
+            lexeme_t& table_name,
+            std::unique_ptr<statement_t>& subquery) :
+        table_reference_t(TABLE_REFERENCE_TYPE_DERIVED_TABLE),
+        table_name(table_name),
+        subquery(std::move(subquery))
+    {}
+} derived_table_t;
+
+std::ostream& operator<< (std::ostream& out, const derived_table_t& dt);
 
 } // namespace sqltoast
 

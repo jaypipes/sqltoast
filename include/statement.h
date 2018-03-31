@@ -105,14 +105,14 @@ std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt)
 typedef struct select_statement : statement_t {
     bool distinct;
     std::vector<derived_column_t> selected_columns;
-    std::vector<table_reference_t> referenced_tables;
+    std::vector<std::unique_ptr<table_reference_t>> referenced_tables;
     std::unique_ptr<search_condition_t> where_condition;
     std::vector<grouping_column_reference_t> group_by_columns;
     std::unique_ptr<search_condition_t> having_condition;
     select_statement(
             bool distinct,
             std::vector<derived_column_t>& selected_cols,
-            std::vector<table_reference_t>& ref_tables,
+            std::vector<std::unique_ptr<table_reference_t>>& ref_tables,
             std::unique_ptr<search_condition_t>& where_cond,
             std::vector<grouping_column_reference_t>& group_by_cols,
             std::unique_ptr<search_condition_t>& having_cond) :
