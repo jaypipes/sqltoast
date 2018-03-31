@@ -28,3 +28,35 @@ statements[0]:
    default columns: true
    values:
      0: literal['a'] COLLATE utf8bin>
+# INSERT INTO using datetime value expressions
+>INSERT INTO t1 (create_date, my_date) VALUES (CURRENT_DATE, '2001-01-01' AT TIME ZONE 'UTC')
+OK
+statements[0]:
+  <statement: INSERT
+   table name: t1
+   columns:
+     0: create_date
+     1: my_date
+   values:
+     0: datetime-expression[current-date[] AT LOCAL]
+     1: datetime-expression[literal['2001-01-01'] AT TIME ZONE 'UTC']>
+# INSERT INTO using interval value expressions
+>INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
+OK
+statements[0]:
+  <statement: INSERT
+   table name: t1
+   columns:
+     0: num_seconds
+   values:
+     0: interval-expression[literal['2001-01-01'] DAY TO SECOND]>
+# INSERT INTO using numeric value expressions
+>INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
+OK
+statements[0]:
+  <statement: INSERT
+   table name: t1
+   columns:
+     0: num_seconds
+   values:
+     0: numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[3]])]>
