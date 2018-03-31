@@ -1271,21 +1271,15 @@ bool parse_datetime_primary(
         token_t& cur_tok,
         std::unique_ptr<datetime_primary_t>& out) {
     std::unique_ptr<value_expression_primary_t> primary;
-    std::unique_ptr<datetime_function_t> datetime_func;
     if (parse_value_expression_primary(ctx, cur_tok, primary))
         goto push_primary;
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
-    if (! parse_datetime_function(ctx, cur_tok, datetime_func))
-        return false;
-    goto push_primary;
+    return parse_datetime_function(ctx, cur_tok, out);
 push_primary:
     if (ctx.opts.disable_statement_construction)
         return true;
-    if (primary)
-        out = std::make_unique<datetime_primary_t>(primary);
-    else
-        out = std::make_unique<datetime_primary_t>(datetime_func);
+    out = std::make_unique<datetime_value_t>(primary);
     return true;
 }
 
@@ -1304,8 +1298,51 @@ push_primary:
 bool parse_datetime_function(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<datetime_function_t>& out) {
+        std::unique_ptr<datetime_primary_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    datetime_function_type_t func_type = DATETIME_FUNCTION_TYPE_UNKNOWN;
+    size_t time_precision = 0;
+
+    switch (cur_sym) {
+        case SYMBOL_CURRENT_DATE:
+            func_type = DATETIME_FUNCTION_TYPE_CURRENT_DATE;
+            cur_tok = lex.next();
+            goto push_func;
+        case SYMBOL_CURRENT_TIME:
+            func_type = DATETIME_FUNCTION_TYPE_CURRENT_TIME;
+            cur_tok = lex.next();
+            goto optional_time_precision;
+        case SYMBOL_CURRENT_TIMESTAMP:
+            func_type = DATETIME_FUNCTION_TYPE_CURRENT_TIMESTAMP;
+            cur_tok = lex.next();
+            goto optional_time_precision;
+        default:
+            return false;
+    }
+optional_time_precision:
+    // We get here after parsing a CURRENT_TIME or CURRENT_TIMESTAMP symbol and
+    // we can now get a parens-enclosed time precision specifier
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto push_func;
+    cur_tok = lex.next();
+    if (! parse_length_specifier(ctx, cur_tok, &time_precision))
+        return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_func;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
     return false;
+push_func:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<current_datetime_function_t>(
+            func_type, time_precision);
+    return true;
 }
 
 // <interval term> ::=

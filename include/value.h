@@ -381,39 +381,58 @@ typedef struct character_factor {
 
 std::ostream& operator<< (std::ostream& out, const character_factor_t& cf);
 
-typedef enum datetime_function_type {
-    DATETIME_FUNCTION_TYPE_CURRENT_DATE,
-    DATETIME_FUNCTION_TYPE_CURRENT_TIME,
-    DATETIME_FUNCTION_TYPE_CURRENT_TIMESTAMP
-} datetime_function_type_t;
-
-typedef struct datetime_function {
-    datetime_function_type_t type;
-    size_t time_precision;
-    datetime_function(
-            datetime_function_type_t type,
-            size_t time_precision) :
-        type(type),
-        time_precision(time_precision)
-    {}
-} datetime_function_t;
-
-std::ostream& operator<< (std::ostream& out, const datetime_function_t& df);
-
 // The datetime factor may be either a value expression primary or a datetime
 // function
+typedef enum datetime_primary_type {
+    DATETIME_PRIMARY_TYPE_VALUE,
+    DATETIME_PRIMARY_TYPE_FUNCTION
+} datetime_primary_type_t;
+
 typedef struct datetime_primary {
-    std::unique_ptr<value_expression_primary_t> value;
-    std::unique_ptr<datetime_function_t> datetime_function;
-    datetime_primary(std::unique_ptr<value_expression_primary_t>& value) :
-        value(std::move(value))
-    {}
-    datetime_primary(std::unique_ptr<datetime_function_t>& datetime_function) :
-        datetime_function(std::move(datetime_function))
+    datetime_primary_type_t type;
+    datetime_primary(datetime_primary_type_t type) :
+        type(type)
     {}
 } datetime_primary_t;
 
-std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp);
+std::ostream& operator<< (std::ostream& out, const datetime_primary_t& np);
+
+typedef struct datetime_value : datetime_primary_t {
+    std::unique_ptr<value_expression_primary_t> value;
+    datetime_value(std::unique_ptr<value_expression_primary_t>& value) :
+        datetime_primary_t(DATETIME_PRIMARY_TYPE_VALUE),
+        value(std::move(value))
+    {}
+} datetime_value_t;
+
+std::ostream& operator<< (std::ostream& out, const datetime_value_t& nv);
+
+typedef enum datetime_function_type {
+    DATETIME_FUNCTION_TYPE_UNKNOWN,
+    DATETIME_FUNCTION_TYPE_CURRENT_DATE,
+    DATETIME_FUNCTION_TYPE_CURRENT_TIME,
+    DATETIME_FUNCTION_TYPE_CURRENT_TIMESTAMP,
+} datetime_function_type_t;
+
+typedef struct datetime_function : datetime_primary_t {
+    datetime_function_type_t func_type;
+    datetime_function(datetime_function_type_t func_type) :
+        datetime_primary_t(DATETIME_PRIMARY_TYPE_FUNCTION),
+        func_type(func_type)
+    {}
+} datetime_function_t;
+
+typedef struct current_datetime_function : datetime_function_t {
+    size_t precision;
+    current_datetime_function(
+            datetime_function_type_t type,
+            size_t precision) :
+        datetime_function_t(type),
+        precision(precision)
+    {}
+} current_datetime_function_t;
+
+std::ostream& operator<< (std::ostream& out, const current_datetime_function_t& df);
 
 // A datetime factor evaluates to a datetime value. It contains a datetime
 // primary and has an optional timezone component.

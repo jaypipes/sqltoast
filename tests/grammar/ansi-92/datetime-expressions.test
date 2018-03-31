@@ -16,3 +16,57 @@ statements[0]:
      0: datetime-expression[column-reference[a] AT TIME ZONE 'UTC']
    referenced tables:
      0: t1>
+# CURRENT_DATE datetime function
+>SELECT CURRENT_DATE FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[current-date[] AT LOCAL]
+   referenced tables:
+     0: t1>
+# CURRENT_DATE datetime function with timezone component
+>SELECT CURRENT_DATE AT TIME ZONE 'UTC' FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[current-date[] AT TIME ZONE 'UTC']
+   referenced tables:
+     0: t1>
+# CURRENT_TIME datetime function with no time precision
+>SELECT CURRENT_TIME FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[current-time[] AT LOCAL]
+   referenced tables:
+     0: t1>
+# CURRENT_TIME datetime function with fractional time precision
+>SELECT CURRENT_TIME(3) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[current-time[3] AT LOCAL]
+   referenced tables:
+     0: t1>
+# CURRENT_TIMESTAMP datetime function with no time precision
+>SELECT CURRENT_TIMESTAMP FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[current-timestamp[] AT LOCAL]
+   referenced tables:
+     0: t1>
+# CURRENT_TIMESTAMP datetime function with fractional time precision
+>SELECT CURRENT_TIMESTAMP(3) FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: datetime-expression[current-timestamp[3] AT LOCAL]
+   referenced tables:
+     0: t1>

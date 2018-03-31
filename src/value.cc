@@ -320,8 +320,51 @@ std::ostream& operator<< (std::ostream& out, const character_factor_t& cf) {
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const current_datetime_function_t& df) {
+    switch (df.func_type) {
+        case DATETIME_FUNCTION_TYPE_CURRENT_DATE:
+            out << "current-date[]";
+            break;
+        case DATETIME_FUNCTION_TYPE_CURRENT_TIME:
+            out << "current-time[";
+            if (df.precision != 0)
+                out << df.precision;
+            out << ']';
+            break;
+        case DATETIME_FUNCTION_TYPE_CURRENT_TIMESTAMP:
+            out << "current-timestamp[";
+            if (df.precision != 0)
+                out << df.precision;
+            out << ']';
+            break;
+        default:
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const datetime_value_t& dv) {
+    out << *dv.value;
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp) {
-    out << *dp.value;
+    switch (dp.type) {
+        case DATETIME_PRIMARY_TYPE_VALUE:
+            {
+                const datetime_value_t& dv =
+                    static_cast<const datetime_value_t&>(dp);
+                out << dv;
+            }
+            break;
+        case DATETIME_PRIMARY_TYPE_FUNCTION:
+            {
+                const current_datetime_function_t& df =
+                    static_cast<const current_datetime_function_t&>(dp);
+                out << df;
+            }
+            break;
+    }
     return out;
 }
 

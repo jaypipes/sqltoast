@@ -251,7 +251,7 @@ bool parse_datetime_primary(
 bool parse_datetime_function(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<datetime_function_t>& out);
+        std::unique_ptr<datetime_primary_t>& out);
 
 bool parse_interval_value_expression(
         parse_context_t& ctx,
