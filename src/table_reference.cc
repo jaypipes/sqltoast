@@ -23,22 +23,62 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
                 out << dt;
             }
             break;
+        case TABLE_REFERENCE_TYPE_JOINED_TABLE:
+            {
+                const joined_table_t& jt =
+                    static_cast<const joined_table_t&>(tr);
+                out << jt;
+            }
+            break;
         default:
             break;
-    }
-    if (tr.has_alias()) {
-        out << " AS " << std::string(tr.alias.start, tr.alias.end);
     }
     return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const table_t& t) {
     out << std::string(t.table_name.start, t.table_name.end);
+    if (t.has_alias()) {
+        out << " AS " << std::string(t.alias.start, t.alias.end);
+    }
     return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const derived_table_t& dt) {
     out << "<derived table> AS " << dt.table_name;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
+    switch (jt.join_type) {
+        case JOIN_TYPE_INNER:
+            out << "inner-join[";
+            break;
+        case JOIN_TYPE_LEFT_OUTER:
+            out << "left-outer-join[";
+            break;
+        case JOIN_TYPE_RIGHT_OUTER:
+            out << "right-outer-join[";
+            break;
+        case JOIN_TYPE_CROSS:
+            out << "cross-join[";
+            break;
+        case JOIN_TYPE_UNION:
+            out << "union[";
+            break;
+        default:
+            break;
+    }
+    out << *jt.left << ',' << *jt.right;
+    if (jt.spec)
+       out << *jt.spec;
+    out << ']';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const join_specification_t& js) {
+    if (js.condition)
+        out << ',' << *js.condition;
     return out;
 }
 

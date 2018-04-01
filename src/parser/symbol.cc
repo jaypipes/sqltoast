@@ -57,6 +57,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CONVERT] = std::string("CONVERT");
     m[SYMBOL_COUNT] = std::string("COUNT");
     m[SYMBOL_CREATE] = std::string("CREATE");
+    m[SYMBOL_CROSS] = std::string("CROSS");
     m[SYMBOL_CURRENT_DATE] = std::string("CURRENT_DATE");
     m[SYMBOL_CURRENT_TIME] = std::string("CURRENT_TIME");
     m[SYMBOL_CURRENT_TIMESTAMP] = std::string("CURRENT_TIMESTAMP");
@@ -82,13 +83,16 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_HAVING] = std::string("HAVING");
     m[SYMBOL_HOUR] = std::string("HOUR");
     m[SYMBOL_IN] = std::string("IN");
+    m[SYMBOL_INNER] = std::string("INNER");
     m[SYMBOL_INSERT] = std::string("INSERT");
     m[SYMBOL_INT] = std::string("INT");
     m[SYMBOL_INTO] = std::string("INTO");
     m[SYMBOL_INTEGER] = std::string("INTEGER");
     m[SYMBOL_INTERVAL] = std::string("INTERVAL");
     m[SYMBOL_IS] = std::string("IS");
+    m[SYMBOL_JOIN] = std::string("JOIN");
     m[SYMBOL_LEADING] = std::string("LEADING");
+    m[SYMBOL_LEFT] = std::string("LEFT");
     m[SYMBOL_LOCAL] = std::string("LOCAL");
     m[SYMBOL_LIKE] = std::string("LIKE");
     m[SYMBOL_KEY] = std::string("KEY");
@@ -98,6 +102,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_MINUTE] = std::string("MINUTE");
     m[SYMBOL_MONTH] = std::string("MONTH");
     m[SYMBOL_NATIONAL] = std::string("NATIONAL");
+    m[SYMBOL_NATURAL] = std::string("NATURAL");
     m[SYMBOL_NCHAR] = std::string("NCHAR");
     m[SYMBOL_NO] = std::string("NO");
     m[SYMBOL_NOT] = std::string("NOT");
@@ -106,6 +111,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_OCTET_LENGTH] = std::string("OCTET_LENGTH");
     m[SYMBOL_ON] = std::string("ON");
     m[SYMBOL_OR] = std::string("OR");
+    m[SYMBOL_OUTER] = std::string("OUTER");
     m[SYMBOL_PARTIAL] = std::string("PARTIAL");
     m[SYMBOL_POSITION] = std::string("POSITION");
     m[SYMBOL_PRECISION] = std::string("PRECISION");
@@ -113,6 +119,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_REAL] = std::string("REAL");
     m[SYMBOL_REFERENCES] = std::string("REFERENCES");
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
+    m[SYMBOL_RIGHT] = std::string("RIGHT");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SECOND] = std::string("SECOND");
     m[SYMBOL_SELECT] = std::string("SELECT");
@@ -130,6 +137,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TRAILING] = std::string("TRAILING");
     m[SYMBOL_TRANSLATE] = std::string("TRANSLATE");
     m[SYMBOL_TRIM] = std::string("TRIM");
+    m[SYMBOL_UNION] = std::string("UNION");
     m[SYMBOL_UNIQUE] = std::string("UNIQUE");
     m[SYMBOL_UPDATE] = std::string("UPDATE");
     m[SYMBOL_UPPER] = std::string("UPPER");
