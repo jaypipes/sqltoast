@@ -59,6 +59,8 @@ bool parse_table_reference(
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t table_name;
     lexeme_t alias;
+    join_type_t join_type = JOIN_TYPE_UNKNOWN;
+    std::unique_ptr<search_condition_t> join_cond;
     std::unique_ptr<statement_t> derived;
     std::unique_ptr<table_reference_t> right;
     switch (cur_sym) {
@@ -123,6 +125,18 @@ check_join:
         case SYMBOL_CROSS:
             cur_tok = lex.next();
             goto process_cross_join;
+        case SYMBOL_INNER:
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym != SYMBOL_JOIN)
+                goto err_expect_join;
+            cur_tok = lex.next();
+            join_type = JOIN_TYPE_INNER;
+            goto optional_join_specification;
+        case SYMBOL_JOIN:
+            cur_tok = lex.next();
+            join_type = JOIN_TYPE_INNER;
+            goto optional_join_specification;
         default:
             return true;
     }
@@ -148,6 +162,34 @@ err_expect_table_reference:
         create_syntax_error_marker(ctx, estr);
         return false;
     }
+optional_join_specification:
+    // We get here after successfully parsing an INNER or OUTER symbol followed
+    // by a JOIN symbol. We now must check for the optional <join
+    // specification> clause
+    if (! parse_table_reference(ctx, cur_tok, right))
+        goto err_expect_table_reference;
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_ON:
+            cur_tok = lex.next();
+            goto process_join_condition;
+        default:
+            goto push_join;
+    }
+process_join_condition:
+    // We get here after parsing the joined table references and finding an ON
+    // symbol. We now expect to find a search condition
+    if (! parse_search_condition(ctx, cur_tok, join_cond))
+        goto err_expect_join_condition;
+    goto push_join;
+err_expect_join_condition:
+    {
+        std::stringstream estr;
+        estr << "Expected <join condition> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 ensure_normal_table:
     if (ctx.opts.disable_statement_construction)
         return true;
@@ -161,7 +203,12 @@ ensure_derived_table:
 push_cross_join:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<joined_table_t>(JOIN_TYPE_CROSS, out, right);
+    out = std::make_unique<joined_table_t>(out, right);
+    return true;
+push_join:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<joined_table_t>(join_type, out, right, join_cond);
     return true;
 }
 

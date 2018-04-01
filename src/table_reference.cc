@@ -52,23 +52,33 @@ std::ostream& operator<< (std::ostream& out, const derived_table_t& dt) {
 std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
     switch (jt.join_type) {
         case JOIN_TYPE_INNER:
-            out << "inner-join[" << *jt.left << ',' << *jt.right << ']';
+            out << "inner-join[";
             break;
         case JOIN_TYPE_LEFT_OUTER:
-            out << "left-outer-join[" << *jt.left << ',' << *jt.right << ']';
+            out << "left-outer-join[";
             break;
         case JOIN_TYPE_RIGHT_OUTER:
-            out << "right-outer-join[" << *jt.left << ',' << *jt.right << ']';
+            out << "right-outer-join[";
             break;
         case JOIN_TYPE_CROSS:
-            out << "cross-join[" << *jt.left << ',' << *jt.right << ']';
+            out << "cross-join[";
             break;
         case JOIN_TYPE_UNION:
-            out << "union[" << *jt.left << ',' << *jt.right << ']';
+            out << "union[";
             break;
         default:
             break;
     }
+    out << *jt.left << ',' << *jt.right;
+    if (jt.spec)
+       out << *jt.spec;
+    out << ']';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const join_specification_t& js) {
+    if (js.condition)
+        out << ',' << *js.condition;
     return out;
 }
 
