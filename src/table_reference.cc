@@ -42,4 +42,27 @@ std::ostream& operator<< (std::ostream& out, const derived_table_t& dt) {
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
+    switch (jt.join_type) {
+        case JOIN_TYPE_INNER:
+            out << "inner-join[" << *jt.left << ',' << *jt.right << ']';
+            break;
+        case JOIN_TYPE_LEFT_OUTER:
+            out << "left-outer-join[" << *jt.left << ',' << *jt.right << ']';
+            break;
+        case JOIN_TYPE_RIGHT_OUTER:
+            out << "right-outer-join[" << *jt.left << ',' << *jt.right << ']';
+            break;
+        case JOIN_TYPE_CROSS:
+            out << "cross-join[" << *jt.left << ',' << *jt.right << ']';
+            break;
+        case JOIN_TYPE_UNION:
+            out << "union[" << *jt.left << ',' << *jt.right << ']';
+            break;
+        default:
+            break;
+    }
+    return out;
+}
+
 } // namespace sqltoast
