@@ -14,6 +14,7 @@ typedef enum statement_type {
     STATEMENT_TYPE_CREATE_TABLE,
     STATEMENT_TYPE_DROP_SCHEMA,
     STATEMENT_TYPE_DROP_TABLE,
+    STATEMENT_TYPE_ALTER_TABLE,
     STATEMENT_TYPE_INSERT,
     STATEMENT_TYPE_INSERT_SELECT,
     STATEMENT_TYPE_DELETE,
@@ -101,6 +102,37 @@ typedef struct drop_table_statement : statement_t {
 } drop_table_statement_t;
 
 std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt);
+
+typedef enum alter_table_action_type {
+    ALTER_TABLE_ACTION_TYPE_ADD_COLUMN,
+    ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN,
+    ALTER_TABLE_ACTION_TYPE_DROP_COLUMN,
+    ALTER_TABLE_ACTION_TYPE_ADD_TABLE_CONSTRAINT,
+    ALTER_TABLE_ACTION_TYPE_DROP_TABLE_CONSTRAINT
+} alter_table_action_type_t;
+
+typedef struct alter_table_action {
+    alter_table_action_type_t type;
+    alter_table_action(alter_table_action_type_t type) :
+        type(type)
+    {}
+} alter_table_action_t;
+
+std::ostream& operator<< (std::ostream& out, const alter_table_action_t& action);
+
+typedef struct alter_table_statement : statement_t {
+    lexeme_t table_name;
+    std::unique_ptr<alter_table_action_t> action;
+    alter_table_statement(
+            lexeme_t& table_name,
+            std::unique_ptr<alter_table_action_t>& action) :
+        statement_t(STATEMENT_TYPE_ALTER_TABLE),
+        table_name(table_name),
+        action(std::move(action))
+    {}
+} alter_table_statement_t;
+
+std::ostream& operator<< (std::ostream& out, const alter_table_statement_t& stmt);
 
 typedef struct select_statement : statement_t {
     bool distinct;
