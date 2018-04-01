@@ -66,6 +66,9 @@ std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
         case JOIN_TYPE_CROSS:
             out << "cross-join[";
             break;
+        case JOIN_TYPE_NATURAL:
+            out << "natural-join[";
+            break;
         default:
             break;
     }

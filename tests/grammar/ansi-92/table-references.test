@@ -139,3 +139,12 @@ statements[0]:
      0: *
    referenced tables:
      0: inner-join[t1,t2,using[id]]>
+# NATURAL JOIN
+>SELECT * FROM t1 NATURAL JOIN t2
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: natural-join[t1,t2]>

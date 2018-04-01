@@ -126,7 +126,8 @@ check_join:
     switch (cur_sym) {
         case SYMBOL_CROSS:
             cur_tok = lex.next();
-            goto process_cross_join;
+            join_type = JOIN_TYPE_CROSS;
+            goto process_cross_or_natural_join;
         case SYMBOL_INNER:
             cur_tok = lex.next();
             cur_sym = cur_tok.symbol;
@@ -151,20 +152,24 @@ check_join:
             cur_tok = lex.next();
             join_type = JOIN_TYPE_FULL;
             goto optional_outer;
+        case SYMBOL_NATURAL:
+            cur_tok = lex.next();
+            join_type = JOIN_TYPE_NATURAL;
+            goto process_cross_or_natural_join;
         default:
             return true;
     }
-process_cross_join:
+process_cross_or_natural_join:
     // We get here after successfully parsing a normal or derived table
-    // followed by the CROSS symbol. We now expect a JOIN symbol followed by
-    // another <table_reference>
+    // followed by the CROSS or NATURAL symbol. We now expect a JOIN symbol
+    // followed by another <table_reference>
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_JOIN)
         goto err_expect_join;
     cur_tok = lex.next();
     if (! parse_table_reference(ctx, cur_tok, right))
         goto err_expect_table_reference;
-    goto push_cross_join;
+    goto push_cross_or_natural_join;
 err_expect_join:
     expect_error(ctx, SYMBOL_JOIN);
     return false;
@@ -256,10 +261,10 @@ ensure_derived_table:
         return true;
     out = std::make_unique<derived_table_t>(alias, derived);
     goto check_join;
-push_cross_join:
+push_cross_or_natural_join:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<joined_table_t>(out, right);
+    out = std::make_unique<joined_table_t>(join_type, out, right);
     return true;
 push_join:
     if (ctx.opts.disable_statement_construction)
