@@ -23,6 +23,13 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
                 out << dt;
             }
             break;
+        case TABLE_REFERENCE_TYPE_JOINED_TABLE:
+            {
+                const joined_table_t& jt =
+                    static_cast<const joined_table_t&>(tr);
+                out << jt;
+            }
+            break;
         default:
             break;
     }

@@ -60,6 +60,7 @@ bool parse_table_reference(
     lexeme_t table_name;
     lexeme_t alias;
     std::unique_ptr<statement_t> derived;
+    std::unique_ptr<table_reference_t> right;
     switch (cur_sym) {
         case SYMBOL_LPAREN:
             cur_tok = lex.next();
@@ -89,7 +90,7 @@ expect_derived_table:
         goto err_expect_identifier;
     alias = cur_tok.lexeme;
     cur_tok = lex.next();
-    goto push_table_reference;
+    goto ensure_derived_table;
 err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
@@ -109,17 +110,58 @@ optional_alias:
         alias = cur_tok.lexeme;
         cur_tok = lex.next();
     }
-    goto push_table_reference;
+    goto ensure_normal_table;
 err_expect_identifier:
     expect_error(ctx, SYMBOL_IDENTIFIER);
     return false;
-push_table_reference:
+check_join:
+    // We get here after successfully parsing a normal table or derived table.
+    // We must now check for symbols that indicate a joined table specification
+    // follows
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_CROSS:
+            cur_tok = lex.next();
+            goto process_cross_join;
+        default:
+            return true;
+    }
+process_cross_join:
+    // We get here after successfully parsing a normal or derived table
+    // followed by the CROSS symbol. We now expect a JOIN symbol followed by
+    // another <table_reference>
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_JOIN)
+        goto err_expect_join;
+    cur_tok = lex.next();
+    if (! parse_table_reference(ctx, cur_tok, right))
+        goto err_expect_table_reference;
+    goto push_cross_join;
+err_expect_join:
+    expect_error(ctx, SYMBOL_JOIN);
+    return false;
+err_expect_table_reference:
+    {
+        std::stringstream estr;
+        estr << "Expected <table reference> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+ensure_normal_table:
     if (ctx.opts.disable_statement_construction)
         return true;
-    if (table_name)
-        out = std::make_unique<table_t>(table_name, alias);
-    else if (derived)
-        out = std::make_unique<derived_table_t>(alias, derived);
+    out = std::make_unique<table_t>(table_name, alias);
+    goto check_join;
+ensure_derived_table:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<derived_table_t>(alias, derived);
+    goto check_join;
+push_cross_join:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<joined_table_t>(JOIN_TYPE_CROSS, out, right);
     return true;
 }
 

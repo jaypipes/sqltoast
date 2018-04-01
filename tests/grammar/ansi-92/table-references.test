@@ -34,3 +34,18 @@ statements[0]:
      0: *
    referenced tables:
      0: <derived table> AS t>
+# CROSS JOIN missing required JOIN symbol
+>SELECT * FROM t1 CROSS t2
+Syntax error.
+Expected to find JOIN but found identifier[t2]
+SELECT * FROM t1 CROSS t2
+                      ^^^
+# CROSS JOIN two normal tables
+>SELECT * FROM t1 CROSS JOIN t2
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: cross-join[t1,t2]>
