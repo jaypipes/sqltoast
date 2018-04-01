@@ -130,3 +130,12 @@ statements[0]:
      0: *
    referenced tables:
      0: full-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
+# JOIN with USING clause
+>SELECT * FROM t1 JOIN t2 USING (id)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: inner-join[t1,t2,using[id]]>

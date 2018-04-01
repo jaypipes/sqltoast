@@ -63,6 +63,8 @@ bool parse_table_reference(
     std::unique_ptr<search_condition_t> join_cond;
     std::unique_ptr<statement_t> derived;
     std::unique_ptr<table_reference_t> right;
+    // Used for the USING clause
+    std::vector<lexeme_t> named_columns;
     switch (cur_sym) {
         case SYMBOL_LPAREN:
             cur_tok = lex.next();
@@ -185,6 +187,9 @@ optional_join_specification:
         case SYMBOL_ON:
             cur_tok = lex.next();
             goto process_join_condition;
+        case SYMBOL_USING:
+            cur_tok = lex.next();
+            goto process_named_columns;
         default:
             goto push_join;
     }
@@ -202,6 +207,32 @@ err_expect_join_condition:
         create_syntax_error_marker(ctx, estr);
         return false;
     }
+process_named_columns:
+    // We get here after parsing a USING symbol, which must be followed by a
+    // parens-enclosed list of column identifiers
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto process_named_column;
+process_named_column:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    named_columns.emplace_back(cur_tok.lexeme);
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_named_column;
+    }
+    else if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_join;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
 optional_outer:
     // We get here after successfully parsing the FULL, LEFT or RIGHT symbols.
     // These symbols may be followed by an optional OUTER symbol and then the
@@ -233,7 +264,12 @@ push_cross_join:
 push_join:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<joined_table_t>(join_type, out, right, join_cond);
+    if (! named_columns.empty())
+        out = std::make_unique<joined_table_t>(
+                join_type, out, right, named_columns);
+    else
+        out = std::make_unique<joined_table_t>(
+                join_type, out, right, join_cond);
     return true;
 }
 

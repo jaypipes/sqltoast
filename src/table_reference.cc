@@ -71,7 +71,7 @@ std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
     }
     out << *jt.left << ',' << *jt.right;
     if (jt.spec)
-       out << *jt.spec;
+        out << *jt.spec;
     out << ']';
     return out;
 }
@@ -79,6 +79,16 @@ std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
 std::ostream& operator<< (std::ostream& out, const join_specification_t& js) {
     if (js.condition)
         out << ',' << *js.condition;
+    else if (! js.named_columns.empty()) {
+        out << ",using[";
+        size_t x = 0;
+        for (const lexeme_t& col : js.named_columns) {
+            if (x++ > 0)
+                out << ',';
+            out << col;
+        }
+        out << ']';
+    }
     return out;
 }
 
