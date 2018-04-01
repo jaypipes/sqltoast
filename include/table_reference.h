@@ -68,8 +68,7 @@ typedef enum join_type {
     JOIN_TYPE_INNER,
     JOIN_TYPE_LEFT,
     JOIN_TYPE_RIGHT,
-    JOIN_TYPE_FULL,
-    JOIN_TYPE_UNION
+    JOIN_TYPE_FULL
 } join_type_t;
 
 typedef struct join_specification {
