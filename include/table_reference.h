@@ -68,16 +68,20 @@ typedef enum join_type {
     JOIN_TYPE_INNER,
     JOIN_TYPE_LEFT,
     JOIN_TYPE_RIGHT,
-    JOIN_TYPE_FULL
+    JOIN_TYPE_FULL,
+    JOIN_TYPE_NATURAL
 } join_type_t;
 
 typedef struct join_specification {
     std::unique_ptr<search_condition_t> condition;
-    // std::vector<lexeme_t> named_columns;`
+    std::vector<lexeme_t> named_columns;
     join_specification()
     {}
     join_specification(std::unique_ptr<search_condition_t>& join_cond) :
         condition(std::move(join_cond))
+    {}
+    join_specification(std::vector<lexeme_t>& named_columns) :
+        named_columns(std::move(named_columns))
     {}
 } join_specification_t;
 
@@ -89,10 +93,11 @@ typedef struct joined_table : table_reference_t {
     std::unique_ptr<table_reference_t> right;
     std::unique_ptr<join_specification_t> spec;
     joined_table(
+            join_type_t join_type,
             std::unique_ptr<table_reference_t>& left,
             std::unique_ptr<table_reference_t>& right) :
         table_reference_t(TABLE_REFERENCE_TYPE_JOINED_TABLE),
-        join_type(JOIN_TYPE_CROSS),
+        join_type(join_type),
         left(std::move(left)),
         right(std::move(right))
     {}
@@ -106,6 +111,17 @@ typedef struct joined_table : table_reference_t {
         left(std::move(left)),
         right(std::move(right)),
         spec(std::make_unique<join_specification_t>(join_cond))
+    {}
+    joined_table(
+            join_type_t join_type,
+            std::unique_ptr<table_reference_t>& left,
+            std::unique_ptr<table_reference_t>& right,
+            std::vector<lexeme_t>& named_cols) :
+        table_reference_t(TABLE_REFERENCE_TYPE_JOINED_TABLE),
+        join_type(join_type),
+        left(std::move(left)),
+        right(std::move(right)),
+        spec(std::make_unique<join_specification_t>(named_cols))
     {}
 } joined_table_t;
 
