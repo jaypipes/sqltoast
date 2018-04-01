@@ -25,26 +25,24 @@ typedef enum table_reference_type_t {
 
 typedef struct table_reference {
     table_reference_type_t type;
-    lexeme_t alias;
     table_reference(table_reference_type_t type) :
         type(type)
     {}
-    table_reference(table_reference_type_t type, lexeme_t& alias) :
-        type(type), alias(alias)
-    {}
-    inline bool has_alias() const {
-        return alias.start != parse_position_t(0);
-    }
 } table_reference_t;
 
 std::ostream& operator<< (std::ostream& out, const table_reference_t& tr);
 
 typedef struct table : table_reference_t {
     lexeme_t table_name;
+    lexeme_t alias;
     table(lexeme_t& table_name, lexeme_t& alias) :
-        table_reference_t(TABLE_REFERENCE_TYPE_TABLE, alias),
-        table_name(table_name)
+        table_reference_t(TABLE_REFERENCE_TYPE_TABLE),
+        table_name(table_name),
+        alias(alias)
     {}
+    inline bool has_alias() const {
+        return alias.start != parse_position_t(0);
+    }
 } table_t;
 
 std::ostream& operator<< (std::ostream& out, const table_t& t);

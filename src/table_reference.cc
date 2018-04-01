@@ -26,14 +26,14 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
         default:
             break;
     }
-    if (tr.has_alias()) {
-        out << " AS " << std::string(tr.alias.start, tr.alias.end);
-    }
     return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const table_t& t) {
     out << std::string(t.table_name.start, t.table_name.end);
+    if (t.has_alias()) {
+        out << " AS " << std::string(t.alias.start, t.alias.end);
+    }
     return out;
 }
 
