@@ -76,3 +76,57 @@ statements[0]:
      0: *
    referenced tables:
      0: inner-join[t1,t2]>
+# LEFT JOIN two normal tables WITHOUT the optional OUTER symbol
+>SELECT * FROM t1 LEFT JOIN t2 ON t1.id = t2.t1_id
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: left-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
+# LEFT JOIN two normal tables WITH the optional OUTER symbol
+>SELECT * FROM t1 LEFT OUTER JOIN t2 ON t1.id = t2.t1_id
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: left-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
+# RIGHT JOIN two normal tables WITHOUT the optional OUTER symbol
+>SELECT * FROM t1 RIGHT JOIN t2 ON t1.id = t2.t1_id
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: right-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
+# RIGHT JOIN two normal tables WITH the optional OUTER symbol
+>SELECT * FROM t1 RIGHT OUTER JOIN t2 ON t1.id = t2.t1_id
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: right-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
+# FULL OUTER JOIN two normal tables WITHOUT the optional OUTER symbol
+>SELECT * FROM t1 FULL JOIN t2 ON t1.id = t2.t1_id
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: full-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
+# FULL OUTER JOIN two normal tables WITH the optional OUTER symbol
+>SELECT * FROM t1 FULL OUTER JOIN t2 ON t1.id = t2.t1_id
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: full-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>

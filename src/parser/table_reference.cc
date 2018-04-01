@@ -137,6 +137,18 @@ check_join:
             cur_tok = lex.next();
             join_type = JOIN_TYPE_INNER;
             goto optional_join_specification;
+        case SYMBOL_LEFT:
+            cur_tok = lex.next();
+            join_type = JOIN_TYPE_LEFT;
+            goto optional_outer;
+        case SYMBOL_RIGHT:
+            cur_tok = lex.next();
+            join_type = JOIN_TYPE_RIGHT;
+            goto optional_outer;
+        case SYMBOL_FULL:
+            cur_tok = lex.next();
+            join_type = JOIN_TYPE_FULL;
+            goto optional_outer;
         default:
             return true;
     }
@@ -190,6 +202,19 @@ err_expect_join_condition:
         create_syntax_error_marker(ctx, estr);
         return false;
     }
+optional_outer:
+    // We get here after successfully parsing the FULL, LEFT or RIGHT symbols.
+    // These symbols may be followed by an optional OUTER symbol and then the
+    // required JOIN symbol.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_OUTER) {
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+    }
+    if (cur_sym != SYMBOL_JOIN)
+        goto err_expect_join;
+    cur_tok = lex.next();
+    goto optional_join_specification;
 ensure_normal_table:
     if (ctx.opts.disable_statement_construction)
         return true;

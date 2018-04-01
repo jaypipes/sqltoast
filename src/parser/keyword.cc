@@ -100,6 +100,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'l':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LIKE, "LIKE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_LEFT, "LEFT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOWER, "LOWER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LOCAL, "LOCAL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_LEADING, "LEADING"));

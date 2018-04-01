@@ -54,17 +54,17 @@ std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
         case JOIN_TYPE_INNER:
             out << "inner-join[";
             break;
-        case JOIN_TYPE_LEFT_OUTER:
-            out << "left-outer-join[";
+        case JOIN_TYPE_LEFT:
+            out << "left-join[";
             break;
-        case JOIN_TYPE_RIGHT_OUTER:
-            out << "right-outer-join[";
+        case JOIN_TYPE_RIGHT:
+            out << "right-join[";
+            break;
+        case JOIN_TYPE_FULL:
+            out << "full-join[";
             break;
         case JOIN_TYPE_CROSS:
             out << "cross-join[";
-            break;
-        case JOIN_TYPE_UNION:
-            out << "union[";
             break;
         default:
             break;
