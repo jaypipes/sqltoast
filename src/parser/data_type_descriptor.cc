@@ -106,11 +106,6 @@ bool parse_character_string(
     data_type_t data_type = DATA_TYPE_CHAR;
     size_t char_len = 0;
 
-    // BEGIN STATE MACHINE
-
-    // We get here after the column name identifier has been found and
-    // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
-    // were next
     switch (cur_sym) {
         case SYMBOL_NATIONAL:
             data_type = DATA_TYPE_NCHAR;
@@ -181,40 +176,20 @@ bool parse_bit_string(
     data_type_t data_type = DATA_TYPE_BIT;
     size_t bit_len = 0;
 
-    // BEGIN STATE MACHINE
-
-    // We get here after the column name identifier has been found and
-    // we've determined that the BIT symbol is the current symbol.
-    // were next
     cur_tok = lex.next(); // consume the BIT symbol
     symbol_t cur_sym = cur_tok.symbol;
-    goto optional_varying;
-optional_varying:
-    // We get here if we got a CHAR or CHARACTER as the data type. This
-    // might be followed by the VARYING symbol, in which case we will
-    // process a VARCHAR. Otherwise, we'll process a CHAR type
-    cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_VARYING) {
         data_type = DATA_TYPE_VARBIT;
         cur_tok = lex.next();
     }
-    goto optional_length;
-optional_length:
-    // We get here after determining the exact type of the bit string. The type
-    // will be followed by an optional length specifier clause, which if an
-    // unsigned integer enclosed by parentheses.
     if (! parse_length_specifier(ctx, cur_tok, &bit_len))
         return false;
-    goto push_descriptor;
-push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<data_type_descriptor_t> dtd_p;
-        dtd_p = std::move(std::make_unique<bit_string_t>(data_type, bit_len));
-        column_def.data_type = std::move(dtd_p);
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    std::unique_ptr<data_type_descriptor_t> dtd_p;
+    dtd_p = std::move(std::make_unique<bit_string_t>(data_type, bit_len));
+    column_def.data_type = std::move(dtd_p);
+    return true;
 }
 
 // <length> ::= <unsigned integer>
@@ -226,9 +201,6 @@ bool parse_length_specifier(
     symbol_t cur_sym;
     *out = 0;
 
-    // We get here if we've processed the opening parentheses of the
-    // optional length modifier and now expect to find an unsigned integer
-    // followed by a closing parentheses
     if (cur_tok.is_literal()) {
         // Make sure we can parse our literal token to an unsigned integer
         cur_sym = cur_tok.symbol;
@@ -262,11 +234,6 @@ bool parse_exact_numeric(
     size_t prec = 0;
     size_t scale = 0;
 
-    // BEGIN STATE MACHINE
-
-    // We get here after the column name identifier has been found and
-    // we've determined that either the CHAR, CHARACTER, or VARCHAR symbols
-    // were next
     switch (cur_sym) {
         case SYMBOL_INT:
         case SYMBOL_INTEGER:
@@ -315,8 +282,6 @@ bool parse_precision_scale(
     lexer_t& lex = ctx.lexer;
     *out_precision = 0;
     *out_scale = 0;
-
-    // BEGIN STATE MACHINE
 
     symbol_t cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_LPAREN) {
@@ -392,11 +357,6 @@ bool parse_approximate_numeric(
     data_type_t data_type = DATA_TYPE_FLOAT;
     size_t prec = 0;
 
-    // BEGIN STATE MACHINE
-
-    // We get here after the column name identifier has been found and
-    // we've determined that either the FLOAT, REAL, or DOUBLE symbols
-    // were next
     switch (cur_sym) {
         case SYMBOL_FLOAT:
             cur_tok = lex.next();
@@ -437,11 +397,10 @@ expect_precision_sym:
     // We get here if we got the DOUBLE symbol, which according to ANSI-92 SQL
     // must be followed by the keyword "PRECISION"
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_PRECISION) {
-        cur_tok = lex.next();
-        goto push_descriptor;
-    }
-    goto err_expect_precision_sym;
+    if (cur_sym != SYMBOL_PRECISION)
+        goto err_expect_precision_sym;
+    cur_tok = lex.next();
+    goto push_descriptor;
 err_expect_precision_sym:
     expect_error(ctx, SYMBOL_PRECISION);
     return false;
@@ -476,11 +435,6 @@ bool parse_datetime(
     bool with_tz = false;
     size_t prec = 0;
 
-    // BEGIN STATE MACHINE
-
-    // We get here after the column name identifier has been found and
-    // we've determined that either the FLOAT, REAL, or DOUBLE symbols
-    // were next
     switch (cur_sym) {
         case SYMBOL_DATE:
             cur_tok = lex.next();
@@ -575,8 +529,6 @@ bool parse_interval(
 
     cur_tok = lex.next(); // consume the INTERVAL token
     symbol_t cur_sym = cur_tok.symbol;
-
-    // BEGIN STATE MACHINE
 
     switch (cur_sym) {
         case SYMBOL_YEAR:
