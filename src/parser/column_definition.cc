@@ -37,6 +37,7 @@ bool parse_column_definition(
     lexeme_t column_name;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<column_definition_t> cdef_p;
+    std::unique_ptr<data_type_descriptor_t> data_type;
 
     // BEGIN STATE MACHINE
 
@@ -52,13 +53,11 @@ bool parse_column_definition(
     return false;
 
 create_column_def:
-    {
-        cdef_p = std::move(std::make_unique<column_definition_t>(column_name));
-        if (! parse_data_type_descriptor(ctx, cur_tok, *cdef_p))
-            return false;
-        goto optional_default;
-    }
-    SQLTOAST_UNREACHABLE();
+    cdef_p = std::move(std::make_unique<column_definition_t>(column_name));
+    if (! parse_data_type_descriptor(ctx, cur_tok, data_type))
+        return false;
+    cdef_p->data_type = std::move(data_type);
+    goto optional_default;
 optional_default:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_DEFAULT) {
@@ -91,12 +90,10 @@ optional_collate:
     }
     goto push_column_def;
 push_column_def:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        column_defs.emplace_back(std::move(cdef_p));
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    column_defs.emplace_back(std::move(cdef_p));
+    return true;
     SQLTOAST_UNREACHABLE();
 }
 

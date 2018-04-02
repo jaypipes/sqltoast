@@ -364,30 +364,28 @@ bool parse_collate_clause(
         column_definition_t& column_def);
 
 // Returns true if a data type descriptor clause can be parsed from the supplied
-// token iterator. If the function returns true, the column_def argument will
-// have its data_type attribute set to an allocated data type descriptor
+// token iterator. If the function returns true, the out argument will
+// be a pointer to a filled-in data_type_descriptor_t struct.
 bool parse_data_type_descriptor(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<data_type_descriptor_t>& out);
 
 // Returns true if a character string descriptor clause can be parsed from the
-// supplied token iterator. If the function returns true, the column_def
-// argument will have its data_type attribute set to an allocated char_string_t
-// descriptor
+// supplied token iterator. If the function returns true, the out argument will
+// be a pointer to a filled-in data_type_descriptor_t struct.
 bool parse_character_string(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<data_type_descriptor_t>& out);
 
-// Returns true if a bit descriptor clause can be parsed from the
-// supplied token iterator. If the function returns true, the column_def
-// argument will have its data_type attribute set to an allocated bit_string_t
-// descriptor
+// Returns true if a bit descriptor clause can be parsed from the supplied
+// token iterator. If the function returns true, the out argument will be a
+// pointer to a filled-in data_type_descriptor_t struct.
 bool parse_bit_string(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<data_type_descriptor_t>& out);
 
 // Returns true if a length specifier clause can be parsed from the
 // supplied token iterator. If the function returns true, the len
@@ -398,13 +396,12 @@ bool parse_length_specifier(
         size_t* len);
 
 // Returns true if an exact numeric descriptor clause can be parsed from the
-// supplied token iterator. If the function returns true, the column_def
-// argument will have its data_type attribute set to an allocated
-// exact_numeric_t descriptor
+// supplied token iterator. If the function returns true, the out argument will
+// be a pointer to a filled-in data_type_descriptor_t struct
 bool parse_exact_numeric(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<data_type_descriptor_t>& out);
 
 // Returns true if a precision/scale specifier clause can be parsed from the
 // supplied token iterator. If the function returns true, the scale and precision
@@ -416,29 +413,28 @@ bool parse_precision_scale(
         size_t* scale);
 
 // Returns true if an approximate numeric descriptor clause can be parsed from
-// the supplied token iterator. If the function returns true, the column_def
-// argument will have its data_type attribute set to an allocated
-// approximate_numeric_t descriptor
+// the supplied token iterator. If the function returns true, the out argument
+// will be a pointer to a filled-in data_type_descriptor_t struct
 bool parse_approximate_numeric(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<data_type_descriptor_t>& out);
 
 // Returns true if a datetime descriptor clause can be parsed from the supplied
-// token iterator. If the function returns true, the column_def argument will
-// have its data_type attribute set to an allocated datetime_t descriptor
+// token iterator. If the function returns true, the out argument will be a
+// pointer to a filled-in data_type_descriptor_t struct
 bool parse_datetime(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<data_type_descriptor_t>& out);
 
 // Returns true if an interval descriptor clause can be parsed from the supplied
-// token iterator. If the function returns true, the column_def argument will
-// have its data_type attribute set to an allocated interval_t descriptor
+// token iterator. If the function returns true, the out argument will be a
+// pointer to a filled-in data_type_descriptor_t struct
 bool parse_interval(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<data_type_descriptor_t>& out);
 
 } // namespace sqltoast
 

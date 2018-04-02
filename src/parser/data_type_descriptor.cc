@@ -23,37 +23,38 @@ namespace sqltoast {
 bool parse_data_type_descriptor(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<data_type_descriptor_t>& out) {
+    lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_CHAR:
         case SYMBOL_CHARACTER:
         case SYMBOL_VARCHAR:
-            if (! parse_character_string(ctx, cur_tok, column_def))
+            if (! parse_character_string(ctx, cur_tok, out))
                 return false;
             goto optional_character_set;
         case SYMBOL_NCHAR:
         case SYMBOL_NATIONAL:
-            return parse_character_string(ctx, cur_tok, column_def);
+            return parse_character_string(ctx, cur_tok, out);
         case SYMBOL_BIT:
-            return parse_bit_string(ctx, cur_tok, column_def);
+            return parse_bit_string(ctx, cur_tok, out);
         case SYMBOL_INT:
         case SYMBOL_INTEGER:
         case SYMBOL_SMALLINT:
         case SYMBOL_NUMERIC:
         case SYMBOL_DEC:
         case SYMBOL_DECIMAL:
-            return parse_exact_numeric(ctx, cur_tok, column_def);
+            return parse_exact_numeric(ctx, cur_tok, out);
         case SYMBOL_FLOAT:
         case SYMBOL_REAL:
         case SYMBOL_DOUBLE:
-            return parse_approximate_numeric(ctx, cur_tok, column_def);
+            return parse_approximate_numeric(ctx, cur_tok, out);
         case SYMBOL_DATE:
         case SYMBOL_TIME:
         case SYMBOL_TIMESTAMP:
-            return parse_datetime(ctx, cur_tok, column_def);
+            return parse_datetime(ctx, cur_tok, out);
         case SYMBOL_INTERVAL:
-            return parse_interval(ctx, cur_tok, column_def);
+            return parse_interval(ctx, cur_tok, out);
         default:
             goto err_expect_data_type;
     }
@@ -68,7 +69,7 @@ optional_character_set:
     // We get here after processing the optional length specifier. After
     // that specifier, there may be an optional CHARACTER SET <character
     // set specification> clause
-    cur_sym = ctx.lexer.current_token.symbol;
+    cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_CHARACTER)
         goto process_character_set;
     return true;
@@ -82,11 +83,9 @@ process_character_set:
         if (! expect_sequence(ctx, exp_sym_seq, 3))
             return false;
         // tack the character set onto the char_string_t data type descriptor
-        lexer_t& lex = ctx.lexer;
-        char_string_t* dtd = static_cast<char_string_t*>(column_def.data_type.get());
-        dtd->charset = lex.current_token.lexeme;
-        cur_tok = ctx.lexer.next();
-
+        char_string_t* dtd = static_cast<char_string_t*>(out.get());
+        dtd->charset = cur_tok.lexeme;
+        cur_tok = lex.next();
         return true;
     }
 }
@@ -100,7 +99,7 @@ process_character_set:
 bool parse_character_string(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     data_type_t data_type = DATA_TYPE_CHAR;
@@ -155,14 +154,10 @@ optional_length:
         return false;
     goto push_descriptor;
 push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<data_type_descriptor_t> dtd_p;
-        dtd_p = std::move(std::make_unique<char_string_t>(data_type, char_len));
-        column_def.data_type = std::move(dtd_p);
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<char_string_t>(data_type, char_len);
+    return true;
 }
 
 // <bit string type> ::=
@@ -171,7 +166,7 @@ push_descriptor:
 bool parse_bit_string(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
     data_type_t data_type = DATA_TYPE_BIT;
     size_t bit_len = 0;
@@ -186,9 +181,7 @@ bool parse_bit_string(
         return false;
     if (ctx.opts.disable_statement_construction)
         return true;
-    std::unique_ptr<data_type_descriptor_t> dtd_p;
-    dtd_p = std::move(std::make_unique<bit_string_t>(data_type, bit_len));
-    column_def.data_type = std::move(dtd_p);
+    out = std::make_unique<bit_string_t>(data_type, bit_len);
     return true;
 }
 
@@ -227,7 +220,7 @@ err_expect_size_literal:
 bool parse_exact_numeric(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     data_type_t data_type = DATA_TYPE_INT;
@@ -260,14 +253,10 @@ optional_precision_scale:
         return false;
     goto push_descriptor;
 push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<data_type_descriptor_t> dtd_p;
-        dtd_p = std::move(std::make_unique<exact_numeric_t>(data_type, prec, scale));
-        column_def.data_type = std::move(dtd_p);
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<exact_numeric_t>(data_type, prec, scale);
+    return true;
 }
 
 // [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
@@ -351,7 +340,7 @@ err_expect_rparen:
 bool parse_approximate_numeric(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     data_type_t data_type = DATA_TYPE_FLOAT;
@@ -405,14 +394,10 @@ err_expect_precision_sym:
     expect_error(ctx, SYMBOL_PRECISION);
     return false;
 push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<data_type_descriptor_t> dtd_p;
-        dtd_p = std::move(std::make_unique<approximate_numeric_t>(data_type, prec));
-        column_def.data_type = std::move(dtd_p);
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<approximate_numeric_t>(data_type, prec);
+    return true;
 }
 
 // <datetime type> ::=
@@ -428,7 +413,7 @@ push_descriptor:
 bool parse_datetime(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     data_type_t data_type = DATA_TYPE_DATE;
@@ -487,14 +472,10 @@ optional_with_tz:
         goto push_descriptor;
     }
 push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<data_type_descriptor_t> dtd_p;
-        dtd_p = std::move(std::make_unique<datetime_t>(data_type, prec, with_tz));
-        column_def.data_type = std::move(dtd_p);
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<datetime_t>(data_type, prec, with_tz);
+    return true;
 }
 
 // <interval type> ::= INTERVAL <interval qualifier>
@@ -522,7 +503,7 @@ push_descriptor:
 bool parse_interval(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
     interval_unit_t unit = INTERVAL_UNIT_YEAR;
     size_t prec = 0;
@@ -580,14 +561,10 @@ err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
 push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<data_type_descriptor_t> dtd_p;
-        dtd_p = std::move(std::make_unique<interval_t>(unit, prec));
-        column_def.data_type = std::move(dtd_p);
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<interval_t>(unit, prec);
+    return true;
 }
 
 } // namespace sqltoast
