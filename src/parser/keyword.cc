@@ -146,6 +146,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SCHEMA, "SCHEMA"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SECOND, "SECOND"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SUBSTRING, "SUBSTRING"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SMALLINT, "SMALLINT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SESSION_USER, "SESSION_USER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SYSTEM_USER, "SYSTEM_USER"));
             return t;

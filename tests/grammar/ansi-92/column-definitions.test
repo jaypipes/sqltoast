@@ -1,0 +1,26 @@
+# Numeric column definitions
+>CREATE TABLE t1 (
+>    a INT,
+>    b INTEGER,
+>    c SMALLINT,
+>    d DEC,
+>    e DECIMAL,
+>    f NUMERIC,
+>    g FLOAT,
+>    h REAL,
+>    i DOUBLE PRECISION
+>)
+OK
+statements[0]:
+  <statement: CREATE TABLE
+    table name: t1
+    column definitions:
+      a INT
+      b INT
+      c SMALLINT
+      d NUMERIC
+      e NUMERIC
+      f NUMERIC
+      g FLOAT
+      h FLOAT(24)
+      i DOUBLE PRECISION>

@@ -4,24 +4,15 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <stdlib.h>
-
-#include <iostream>
-#include <cctype>
 #include <sstream>
 
 #include "sqltoast.h"
-
 #include "parser/parse.h"
 #include "parser/error.h"
 #include "parser/sequence.h"
 
 namespace sqltoast {
 
-//
-// Parses the <data type> clause of a column definition, which follows this
-// EBNF grammar for ANSI-92 SQL:
-//
 // <data type> ::=
 //     <character string type> [ CHARACTER SET <character set specification> ]
 //     | <national character string type>
@@ -29,18 +20,11 @@ namespace sqltoast {
 //     | <numeric type>
 //     | <datetime type>
 //     | <interval type>
-//
-
 bool parse_data_type_descriptor(
         parse_context_t& ctx,
         token_t& cur_tok,
         column_definition_t& column_def) {
     symbol_t cur_sym = cur_tok.symbol;
-
-    // BEGIN STATE MACHINE
-
-    // We start here. The first component of the column definition is the
-    // identifier that indicates the column name.
     switch (cur_sym) {
         case SYMBOL_CHAR:
         case SYMBOL_CHARACTER:
