@@ -287,7 +287,7 @@ bool parse_interval_qualifier(
 bool parse_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::vector<std::unique_ptr<constraint_t>>& constraints);
+        std::unique_ptr<constraint_t>& out);
 
 // Returns true if a foreign key constraint can be parsed from the supplied
 // token iterator. If the function returns true, constraint_p will be filled
@@ -295,7 +295,7 @@ bool parse_constraint(
 bool parse_foreign_key_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<constraint_t>& constraint_p);
+        std::unique_ptr<constraint_t>& out);
 
 // Returns true if a column definition clause can be parsed from the supplied
 // token iterator. If the function returns true, column_defs will have a new
@@ -303,8 +303,7 @@ bool parse_foreign_key_constraint(
 bool parse_column_definition(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::vector<std::unique_ptr<column_definition_t>>& column_defs,
-        std::vector<std::unique_ptr<constraint_t>>& constraints);
+        std::unique_ptr<column_definition_t>& out);
 
 // Returns true if a default clause can be parsed from the supplied
 // token iterator. If the function returns true, column_def will have a its
@@ -320,8 +319,7 @@ bool parse_default_clause(
 bool parse_column_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def,
-        std::vector<std::unique_ptr<constraint_t>>& constraints);
+        std::unique_ptr<constraint_t>& out);
 
 // Returns true if a references specification can be parsed from the
 // supplied token iterator. If the function returns true, constraint_p will be
@@ -329,7 +327,7 @@ bool parse_column_constraint(
 bool parse_references_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<constraint_t>& constraint_p);
+        std::unique_ptr<constraint_t>& out);
 
 // Returns true if one or more identifiers, delimited by commas, can be parsed
 // from the supplied token iterator. If the function returns true, identifiers

@@ -10,6 +10,8 @@
 namespace sqltoast {
 
 typedef enum constraint_type {
+    CONSTRAINT_TYPE_UNKNOWN,
+    CONSTRAINT_TYPE_NOT_NULL,
     CONSTRAINT_TYPE_UNIQUE,
     CONSTRAINT_TYPE_PRIMARY_KEY,
     CONSTRAINT_TYPE_FOREIGN_KEY,
@@ -26,6 +28,14 @@ typedef struct constraint {
 } constraint_t;
 
 std::ostream& operator<< (std::ostream& out, const constraint_t& constraint);
+
+typedef struct not_null_constraint : constraint_t {
+    not_null_constraint() :
+        constraint_t(CONSTRAINT_TYPE_NOT_NULL)
+    {}
+} not_null_constraint_t;
+
+std::ostream& operator<< (std::ostream& out, const not_null_constraint_t& constraint);
 
 typedef struct unique_constraint : constraint_t {
     unique_constraint(bool is_primary) :
@@ -50,17 +60,19 @@ typedef enum referential_action {
 
 typedef struct foreign_key_constraint : constraint_t {
     lexeme_t referenced_table;
+    std::vector<lexeme_t> referenced_columns;
     match_type_t match_type;
     referential_action_t on_update;
     referential_action_t on_delete;
-    std::vector<lexeme_t> referenced_columns;
     foreign_key_constraint(
             lexeme_t& ref_table,
+            std::vector<lexeme_t>& referenced_cols,
             match_type_t match_type,
             referential_action_t on_update,
             referential_action_t on_delete) :
         constraint(CONSTRAINT_TYPE_FOREIGN_KEY),
         referenced_table(ref_table),
+        referenced_columns(std::move(referenced_cols)),
         match_type(match_type),
         on_update(on_update),
         on_delete(on_delete)

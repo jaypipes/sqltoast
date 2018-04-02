@@ -34,7 +34,9 @@ bool parse_create_table(
     lexeme_t table_name;
     symbol_t cur_sym;
     table_type_t table_type = TABLE_TYPE_NORMAL;
+    std::unique_ptr<column_definition_t> column_def;
     std::vector<std::unique_ptr<column_definition_t>> column_defs;
+    std::unique_ptr<constraint_t> constraint;
     std::vector<std::unique_ptr<constraint_t>> constraints;
 
     cur_tok = lex.next();
@@ -124,12 +126,14 @@ expect_table_list_element:
     // We get here after finding the LPAREN opening the <table element
     // list> clause. Now we expect to find one or more column or constraint
     // definitions
-    if (! parse_column_definition(ctx, cur_tok, column_defs, constraints)) {
-        if (ctx.result.code == PARSE_SYNTAX_ERROR)
-            return false;
-        if (! parse_constraint(ctx, cur_tok, constraints))
-            goto err_expect_column_def_or_constraint;
+    if (parse_column_definition(ctx, cur_tok, column_def)) {
+        column_defs.emplace_back(std::move(column_def));
+        goto expect_table_list_close;
     }
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (! parse_constraint(ctx, cur_tok, constraint))
+        goto err_expect_column_def_or_constraint;
     goto expect_table_list_close;
 err_expect_column_def_or_constraint:
     if (ctx.result.code == PARSE_SYNTAX_ERROR)

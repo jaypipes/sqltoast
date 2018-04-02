@@ -4,21 +4,15 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <iostream>
-#include <cctype>
 #include <sstream>
 
 #include "sqltoast.h"
 
 #include "parser/parse.h"
 #include "parser/error.h"
-#include "parser/token.h"
 
 namespace sqltoast {
 
-//
-// Parses a table constraint, which follows this EBNF grammar for ANSI-92:
-//
 // <table constraint definition> ::=
 //     [ <constraint name definition> ] <table constraint> [ <constraint check time> ]
 //
@@ -29,16 +23,13 @@ namespace sqltoast {
 bool parse_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::vector<std::unique_ptr<constraint_t>>& constraints) {
+        std::unique_ptr<constraint_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t constraint_name;
-    std::unique_ptr<constraint_t> constraint_p;
-
-    // BEGIN STATE MACHINE
 
     if (cur_sym == SYMBOL_CONSTRAINT) {
-        cur_tok = ctx.lexer.next();
+        cur_tok = lex.next();
         goto expect_constraint_name;
     }
     goto expect_constraint_type;
@@ -57,14 +48,14 @@ expect_constraint_type:
     switch (cur_sym) {
         case SYMBOL_UNIQUE:
             cur_tok = ctx.lexer.next();
-            constraint_p = std::move(std::make_unique<unique_constraint_t>(false));
+            out = std::make_unique<unique_constraint_t>(false);
             goto expect_col_list;
         case SYMBOL_PRIMARY:
             cur_tok = ctx.lexer.next();
             goto expect_key;
         case SYMBOL_FOREIGN:
             cur_tok = ctx.lexer.next();
-            if (! parse_foreign_key_constraint(ctx, cur_tok, constraint_p))
+            if (! parse_foreign_key_constraint(ctx, cur_tok, out))
                 return false;
             goto push_constraint;
         case SYMBOL_CHECK:
@@ -84,7 +75,7 @@ expect_key:
     if (cur_sym != SYMBOL_KEY)
         goto err_expect_key;
     cur_tok = lex.next();
-    constraint_p = std::move(std::make_unique<unique_constraint_t>(true));
+    out = std::make_unique<unique_constraint_t>(true);
     goto expect_col_list;
 err_expect_key:
     expect_error(ctx, SYMBOL_KEY);
@@ -105,7 +96,7 @@ process_column:
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
-    constraint_p->columns.emplace_back(cur_tok.lexeme);
+    out->columns.emplace_back(cur_tok.lexeme);
     cur_tok = lex.next();
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_COMMA) {
@@ -125,14 +116,11 @@ err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
 push_constraint:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        if (constraint_name)
-            constraint_p->name = constraint_name;
-        constraints.emplace_back(std::move(constraint_p));
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    if (constraint_name)
+        out->name = constraint_name;
+    return true;
 }
 
 // <referential constraint definition> ::=
@@ -143,7 +131,7 @@ push_constraint:
 bool parse_foreign_key_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<constraint_t>& constraint_p) {
+        std::unique_ptr<constraint_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     std::vector<lexeme_t> referencing_columns;
@@ -152,7 +140,7 @@ bool parse_foreign_key_constraint(
     // now be followed by the KEY symbol, a list of referencing columns and a
     // <references specification> clause
     if (cur_sym == SYMBOL_KEY) {
-        cur_tok = ctx.lexer.next();
+        cur_tok = lex.next();
         goto process_referencing_columns;
     }
     goto err_expect_key;
@@ -177,7 +165,7 @@ expect_references_specification:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_REFERENCES) {
         cur_tok = lex.next();
-        if (! parse_references_specification(ctx, cur_tok, constraint_p))
+        if (! parse_references_specification(ctx, cur_tok, out))
             return false;
         goto push_constraint;
     }
@@ -189,7 +177,7 @@ push_constraint:
     {
         if (ctx.opts.disable_statement_construction)
             return true;
-        constraint_p->columns = std::move(referencing_columns);
+        out->columns = std::move(referencing_columns);
         return true;
     }
 }

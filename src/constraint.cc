@@ -12,16 +12,25 @@ std::ostream& operator<< (std::ostream& out, const constraint_t& constraint) {
     if (constraint.name)
         out << "CONSTRAINT " << constraint.name << " ";
     switch (constraint.type) {
+        case CONSTRAINT_TYPE_NOT_NULL:
+            {
+                const not_null_constraint_t& nnc =
+                    static_cast<const not_null_constraint_t&>(constraint);
+                out << nnc;
+            }
+            break;
         case CONSTRAINT_TYPE_UNIQUE:
         case CONSTRAINT_TYPE_PRIMARY_KEY:
             {
-                const unique_constraint_t& uniq_c = static_cast<const unique_constraint_t&>(constraint);
+                const unique_constraint_t& uniq_c =
+                    static_cast<const unique_constraint_t&>(constraint);
                 out << uniq_c;
             }
             break;
         case CONSTRAINT_TYPE_FOREIGN_KEY:
             {
-                const foreign_key_constraint_t& ref_c = static_cast<const foreign_key_constraint_t&>(constraint);
+                const foreign_key_constraint_t& ref_c =
+                    static_cast<const foreign_key_constraint_t&>(constraint);
                 out << ref_c;
             }
             break;
@@ -32,6 +41,11 @@ std::ostream& operator<< (std::ostream& out, const constraint_t& constraint) {
         default:
             break;
     }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const not_null_constraint_t& nnc) {
+    out << "NOT NULL";
     return out;
 }
 

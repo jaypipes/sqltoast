@@ -38,13 +38,17 @@ std::ostream& operator<< (std::ostream& out, const default_descriptor_t& column_
 
 typedef struct column_definition {
     lexeme_t name;
-    bool is_nullable;
     std::unique_ptr<data_type_descriptor_t> data_type;
     std::unique_ptr<default_descriptor_t> default_descriptor;
+    std::vector<std::unique_ptr<constraint_t>> constraints;
     lexeme_t collate;
-    column_definition(lexeme_t& name) :
+    column_definition(
+            lexeme_t& name,
+            std::unique_ptr<data_type_descriptor_t>& data_type,
+            std::vector<std::unique_ptr<constraint_t>>& constraints) :
         name(name),
-        is_nullable(true)
+        data_type(std::move(data_type)),
+        constraints(std::move(constraints))
     {}
 } column_definition_t;
 
