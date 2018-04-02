@@ -24,69 +24,38 @@ bool parse_data_type_descriptor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<data_type_descriptor_t>& out) {
-    lexer_t& lex = ctx.lexer;
-    symbol_t cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_CHAR:
-        case SYMBOL_CHARACTER:
-        case SYMBOL_VARCHAR:
-            if (! parse_character_string(ctx, cur_tok, out))
-                return false;
-            goto optional_character_set;
-        case SYMBOL_NCHAR:
-        case SYMBOL_NATIONAL:
-            return parse_character_string(ctx, cur_tok, out);
-        case SYMBOL_BIT:
-            return parse_bit_string(ctx, cur_tok, out);
-        case SYMBOL_INT:
-        case SYMBOL_INTEGER:
-        case SYMBOL_SMALLINT:
-        case SYMBOL_NUMERIC:
-        case SYMBOL_DEC:
-        case SYMBOL_DECIMAL:
-            return parse_exact_numeric(ctx, cur_tok, out);
-        case SYMBOL_FLOAT:
-        case SYMBOL_REAL:
-        case SYMBOL_DOUBLE:
-            return parse_approximate_numeric(ctx, cur_tok, out);
-        case SYMBOL_DATE:
-        case SYMBOL_TIME:
-        case SYMBOL_TIMESTAMP:
-            return parse_datetime(ctx, cur_tok, out);
-        case SYMBOL_INTERVAL:
-            return parse_interval(ctx, cur_tok, out);
-        default:
-            goto err_expect_data_type;
-    }
-err_expect_data_type:
+    if (parse_character_string(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (parse_national_character_string(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (parse_bit_string(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (parse_exact_numeric(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (parse_approximate_numeric(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (parse_datetime(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    if (parse_interval(ctx, cur_tok, out))
+        return true;
     {
         std::stringstream estr;
-        estr << "Expected data type after <column name> but found " << cur_tok << std::endl;
+        estr << "Expected data type after <column name> but found "
+             << cur_tok << std::endl;
         create_syntax_error_marker(ctx, estr);
         return false;
-    }
-optional_character_set:
-    // We get here after processing the optional length specifier. After
-    // that specifier, there may be an optional CHARACTER SET <character
-    // set specification> clause
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_CHARACTER)
-        goto process_character_set;
-    return true;
-process_character_set:
-    {
-        symbol_t exp_sym_seq[3] = {
-            SYMBOL_CHARACTER,
-            SYMBOL_SET,
-            SYMBOL_IDENTIFIER
-        };
-        if (! expect_sequence(ctx, exp_sym_seq, 3))
-            return false;
-        // tack the character set onto the char_string_t data type descriptor
-        char_string_t* dtd = static_cast<char_string_t*>(out.get());
-        dtd->charset = cur_tok.lexeme;
-        cur_tok = lex.next();
-        return true;
     }
 }
 
@@ -101,17 +70,12 @@ bool parse_character_string(
         token_t& cur_tok,
         std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
+    lexeme_t charset;
     symbol_t cur_sym = cur_tok.symbol;
     data_type_t data_type = DATA_TYPE_CHAR;
     size_t char_len = 0;
 
     switch (cur_sym) {
-        case SYMBOL_NATIONAL:
-            data_type = DATA_TYPE_NCHAR;
-            cur_tok = lex.next();
-            goto expect_char;
-        case SYMBOL_NCHAR:
-            data_type = DATA_TYPE_NCHAR;
         case SYMBOL_CHAR:
         case SYMBOL_CHARACTER:
             cur_tok = lex.next();
@@ -120,6 +84,86 @@ bool parse_character_string(
             data_type = DATA_TYPE_VARCHAR;
             cur_tok = lex.next();
             goto optional_length;
+        default:
+            return false;
+    }
+optional_varying:
+    // We get here if we got a CHAR or CHARACTER as the data type. This
+    // might be followed by the VARYING symbol, in which case we will
+    // process a VARCHAR. Otherwise, we'll process a CHAR type
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_VARYING) {
+        data_type = DATA_TYPE_VARCHAR;
+        cur_tok = lex.next();
+    }
+    goto optional_length;
+optional_length:
+    // We get here after determining the exact type of the character
+    // string. The type will be followed by an optional length specifier
+    // clause, which if an unsigned integer enclosed by parentheses.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto optional_character_set;
+    cur_tok = lex.next();
+    if (! parse_length_specifier(ctx, cur_tok, &char_len))
+        return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto optional_character_set;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+optional_character_set:
+    // We get here after processing the optional length specifier. After
+    // that specifier, there may be an optional CHARACTER SET <character
+    // set specification> clause
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_CHARACTER) {
+        symbol_t exp_sym_seq[3] = {
+            SYMBOL_CHARACTER,
+            SYMBOL_SET,
+            SYMBOL_IDENTIFIER
+        };
+        if (! expect_sequence(ctx, exp_sym_seq, 3))
+            return false;
+        // tack the character set onto the char_string_t data type descriptor
+        charset = cur_tok.lexeme;
+        cur_tok = lex.next();
+        return true;
+    }
+    goto push_descriptor;
+push_descriptor:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<char_string_t>(data_type, char_len, charset);
+    return true;
+}
+
+// <national character string type> ::=
+//     NATIONAL CHARACTER [ <left paren> <length> <right paren> ]
+//     | NATIONAL CHAR [ <left paren> <length> <right paren> ]
+//     | NCHAR [ <left paren> <length> <right paren> ]
+//     | NATIONAL CHARACTER VARYING [ <left paren> <length> <right paren> ]
+//     | NATIONAL CHAR VARYING [ <left paren> <length> <right paren> ]
+//     | NCHAR VARYING [ <left paren> <length> <right paren> ]
+bool parse_national_character_string(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<data_type_descriptor_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    data_type_t data_type = DATA_TYPE_NCHAR;
+    size_t char_len = 0;
+
+    switch (cur_sym) {
+        case SYMBOL_NATIONAL:
+            cur_tok = lex.next();
+            goto expect_char;
+        case SYMBOL_NCHAR:
+            cur_tok = lex.next();
+            goto optional_varying;
         default:
             return false;
     }
@@ -139,10 +183,7 @@ optional_varying:
     // process a VARCHAR. Otherwise, we'll process a CHAR type
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_VARYING) {
-        if (data_type == DATA_TYPE_CHAR)
-            data_type = DATA_TYPE_VARCHAR;
-        else
-            data_type = DATA_TYPE_NVARCHAR;
+        data_type = DATA_TYPE_NVARCHAR;
         cur_tok = lex.next();
     }
     goto optional_length;
@@ -150,9 +191,20 @@ optional_length:
     // We get here after determining the exact type of the character
     // string. The type will be followed by an optional length specifier
     // clause, which if an unsigned integer enclosed by parentheses.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto push_descriptor;
+    cur_tok = lex.next();
     if (! parse_length_specifier(ctx, cur_tok, &char_len))
         return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
     goto push_descriptor;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 push_descriptor:
     if (ctx.opts.disable_statement_construction)
         return true;
@@ -168,11 +220,14 @@ bool parse_bit_string(
         token_t& cur_tok,
         std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
     data_type_t data_type = DATA_TYPE_BIT;
     size_t bit_len = 0;
 
-    cur_tok = lex.next(); // consume the BIT symbol
-    symbol_t cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_BIT)
+        return false;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_VARYING) {
         data_type = DATA_TYPE_VARBIT;
         cur_tok = lex.next();
@@ -505,12 +560,14 @@ bool parse_interval(
         token_t& cur_tok,
         std::unique_ptr<data_type_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
     interval_unit_t unit = INTERVAL_UNIT_YEAR;
     size_t prec = 0;
 
-    cur_tok = lex.next(); // consume the INTERVAL token
-    symbol_t cur_sym = cur_tok.symbol;
-
+    if (cur_sym != SYMBOL_INTERVAL)
+        return false;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_YEAR:
             unit = INTERVAL_UNIT_YEAR;

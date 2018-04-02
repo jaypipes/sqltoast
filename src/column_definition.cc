@@ -40,7 +40,7 @@ std::ostream& operator<< (std::ostream& out, const default_descriptor_t& default
                 out << "(" << default_desc.precision << ")";
             break;
         case DEFAULT_TYPE_LITERAL:
-            out << "'" << std::string(default_desc.lexeme.start, default_desc.lexeme.end) << "'";
+            out << default_desc.lexeme;
             break;
         default:
             break;

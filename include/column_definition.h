@@ -23,8 +23,6 @@ typedef enum default_type {
 
 typedef struct default_descriptor {
     default_type_t type;
-    // TODO(jaypipes): Maybe make this a std::unique_ptr<> to some concrete
-    // struct representing a literal OR a datetime function type?
     lexeme_t lexeme;
     size_t precision;
     default_descriptor(default_type_t type, lexeme_t lexeme, size_t prec) :
@@ -45,9 +43,11 @@ typedef struct column_definition {
     column_definition(
             lexeme_t& name,
             std::unique_ptr<data_type_descriptor_t>& data_type,
+            std::unique_ptr<default_descriptor_t>& default_descriptor,
             std::vector<std::unique_ptr<constraint_t>>& constraints) :
         name(name),
         data_type(std::move(data_type)),
+        default_descriptor(std::move(default_descriptor)),
         constraints(std::move(constraints))
     {}
 } column_definition_t;

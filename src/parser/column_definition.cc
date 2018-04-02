@@ -27,6 +27,7 @@ bool parse_column_definition(
     lexeme_t column_name;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<data_type_descriptor_t> data_type;
+    std::unique_ptr<default_descriptor_t> default_descriptor;
     std::unique_ptr<constraint_t> constraint;
     std::vector<std::unique_ptr<constraint_t>> constraints;
 
@@ -41,7 +42,7 @@ optional_default:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_DEFAULT) {
         cur_tok = lex.next();
-        if (! parse_default_clause(ctx, cur_tok, *out))
+        if (! parse_default_clause(ctx, cur_tok, default_descriptor))
             return false;
     }
     goto optional_constraints;
@@ -73,85 +74,114 @@ push_column_def:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<column_definition_t>(
-            column_name, data_type, constraints);
+            column_name, data_type, default_descriptor, constraints);
     return true;
 }
 
-//  <default clause> ::= DEFAULT <default option>
+// <default clause> ::= DEFAULT <default option>
 //
-//  <default option> ::=
-//      <literal>
-//      | <datetime value function>
-//      | USER
-//      | CURRENT_USER
-//      | SESSION_USER
-//      | SYSTEM_USER
-//      | NULL
+// <default option> ::=
+//     <literal>
+//     | <datetime value function>
+//     | USER
+//     | CURRENT_USER
+//     | SESSION_USER
+//     | SYSTEM_USER
+//     | NULL
 //
-//  <datetime value function> ::=
-//      <current date value function>
-//      | <current time value function>
-//      | <current timestamp value function>
+// <datetime value function> ::=
+//     <current date value function>
+//     | <current time value function>
+//     | <current timestamp value function>
 //
-//  <current date value function> ::= CURRENT_DATE
+// <current date value function> ::= CURRENT_DATE
 //
-//  <current time value function> ::=
-//      CURRENT_TIME [ <left paren> <time precision> <right paren> ]
+// <current time value function> ::=
+//     CURRENT_TIME [ <left paren> <time precision> <right paren> ]
 //
-//  <current timestamp value function> ::=
-//      CURRENT_TIMESTAMP [ <left paren> <timestamp precision> <right paren> ]
+// <current timestamp value function> ::=
+//     CURRENT_TIMESTAMP [ <left paren> <timestamp precision> <right paren> ]
 bool parse_default_clause(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def) {
+        std::unique_ptr<default_descriptor_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     default_type_t default_type;
+    lexeme_t value;
     size_t prec;
-
-    // BEGIN STATE MACHINE
 
     switch (cur_sym) {
         case SYMBOL_NULL:
             default_type = DEFAULT_TYPE_NULL;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_USER:
             default_type = DEFAULT_TYPE_USER;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_CURRENT_USER:
             default_type = DEFAULT_TYPE_CURRENT_USER;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_SESSION_USER:
             default_type = DEFAULT_TYPE_SESSION_USER;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_SYSTEM_USER:
             default_type = DEFAULT_TYPE_SYSTEM_USER;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_CURRENT_DATE:
             default_type = DEFAULT_TYPE_CURRENT_DATE;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto push_descriptor;
         case SYMBOL_CURRENT_TIME:
             default_type = DEFAULT_TYPE_CURRENT_TIME;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto optional_precision;
         case SYMBOL_CURRENT_TIMESTAMP:
             default_type = DEFAULT_TYPE_CURRENT_TIMESTAMP;
+            value = cur_tok.lexeme;
             cur_tok = lex.next();
             goto optional_precision;
+        case SYMBOL_MINUS:
+        case SYMBOL_PLUS:
+            default_type = DEFAULT_TYPE_LITERAL;
+            value.start = cur_tok.lexeme.start;
+            cur_tok = lex.next();
+            goto expect_unsigned_numeric;
         default:
             if (cur_tok.is_literal()) {
                 default_type = DEFAULT_TYPE_LITERAL;
+                value = cur_tok.lexeme;
                 cur_tok = lex.next();
                 goto push_descriptor;
             }
             return false;
     }
+expect_unsigned_numeric:
+    // We get here after finding DEFAULT followed by a + or - sign, which
+    // indicates the default value is a signed numeric. So we now need to parse
+    // an unsigned numeric
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LITERAL_UNSIGNED_INTEGER &&
+            cur_sym != SYMBOL_LITERAL_UNSIGNED_DECIMAL)
+        goto err_expect_unsigned_numeric;
+    value.end = cur_tok.lexeme.end;
+    cur_tok = lex.next();
+    goto push_descriptor;
+err_expect_unsigned_numeric:
+    expect_any_error(ctx, {SYMBOL_LITERAL_UNSIGNED_INTEGER,
+            SYMBOL_LITERAL_UNSIGNED_DECIMAL});
+    return false;
 optional_precision:
     // We get here after getting either a CURRENT_TIME or CURRENT_TIMESTAMP
     // symbol. This can be followed by an optional LPAREN <precision> RPAREN.
@@ -160,14 +190,11 @@ optional_precision:
         return false;
     goto push_descriptor;
 push_descriptor:
-    {
-        if (ctx.opts.disable_statement_construction)
-            return true;
-        std::unique_ptr<default_descriptor_t> dd_p;
-        dd_p = std::move(std::make_unique<default_descriptor_t>(default_type, cur_tok.lexeme, prec));
-        column_def.default_descriptor = std::move(dd_p);
+    if (ctx.opts.disable_statement_construction)
         return true;
-    }
+    out = std::make_unique<default_descriptor_t>(
+            default_type, value, prec);
+    return true;
 }
 
 // <column constraint definition> ::=

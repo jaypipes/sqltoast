@@ -24,3 +24,47 @@ statements[0]:
       g FLOAT
       h FLOAT(24)
       i DOUBLE PRECISION>
+# Character column definitions
+>CREATE TABLE t1 (
+>    a CHAR,
+>    b CHARACTER,
+>    c CHAR(10),
+>    d CHARACTER(10),
+>    e VARCHAR,
+>    f CHAR VARYING,
+>    g CHARACTER VARYING,
+>    h VARCHAR(10),
+>    i CHAR VARYING(10),
+>    j CHARACTER VARYING(10)
+>)
+OK
+statements[0]:
+  <statement: CREATE TABLE
+    table name: t1
+    column definitions:
+      a CHAR
+      b CHAR
+      c CHAR(10)
+      d CHAR(10)
+      e VARCHAR
+      f VARCHAR
+      g VARCHAR
+      h VARCHAR(10)
+      i VARCHAR(10)
+      j VARCHAR(10)>
+# default descriptors of various kinds
+>CREATE TABLE t1 (
+>    a INT DEFAULT 0,
+>    b INT DEFAULT -1,
+>    c VARCHAR DEFAULT CURRENT_USER,
+>    d DATE DEFAULT CURRENT_DATE
+>)
+OK
+statements[0]:
+  <statement: CREATE TABLE
+    table name: t1
+    column definitions:
+      a INT DEFAULT 0
+      b INT DEFAULT -1
+      c VARCHAR DEFAULT CURRENT_USER
+      d DATE DEFAULT CURRENT_DATE>

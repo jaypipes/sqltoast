@@ -42,6 +42,11 @@ typedef struct char_string : data_type_descriptor_t {
         data_type_descriptor_t(type),
         size(size)
     {}
+    char_string(data_type_t type, size_t size, lexeme_t charset) :
+        data_type_descriptor_t(type),
+        size(size),
+        charset(charset)
+    {}
 } char_string_t;
 
 std::ostream& operator<< (std::ostream& out, const char_string_t& cs);

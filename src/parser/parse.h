@@ -306,24 +306,24 @@ bool parse_column_definition(
         std::unique_ptr<column_definition_t>& out);
 
 // Returns true if a default clause can be parsed from the supplied
-// token iterator. If the function returns true, column_def will have a its
-// default_descriptor member populated.
+// token iterator. If the function returns true, the out argument will contain
+// a new pointer to a default_descriptor_t.
 bool parse_default_clause(
         parse_context_t& ctx,
         token_t& cur_tok,
-        column_definition_t& column_def);
+        std::unique_ptr<default_descriptor_t>& out);
 
 // Returns true if a column constraint can be parsed from the supplied token
-// iterator. If the function returns true, column_def will have a new
-// column_constraint_t added to its constraints member.
+// iterator. If the function returns true, the out argument will contain a new
+// pointer to a constraint_t.
 bool parse_column_constraint(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<constraint_t>& out);
 
-// Returns true if a references specification can be parsed from the
-// supplied token iterator. If the function returns true, constraint_p will be
-// a populated foreign_key_constraint_t
+// Returns true if a references specification can be parsed from the supplied
+// token iterator. If the function returns true, the out argument will contain
+// a new pointer to a constraint_t.
 bool parse_references_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -373,6 +373,10 @@ bool parse_data_type_descriptor(
 // supplied token iterator. If the function returns true, the out argument will
 // be a pointer to a filled-in data_type_descriptor_t struct.
 bool parse_character_string(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<data_type_descriptor_t>& out);
+bool parse_national_character_string(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<data_type_descriptor_t>& out);
