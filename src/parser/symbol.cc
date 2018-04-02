@@ -35,8 +35,10 @@ symbol_map::symbol_map_t  _init_symbol_map() {
 
     // Reserved keywords
     m[SYMBOL_ACTION] = std::string("ACTION");
+    m[SYMBOL_ADD] = std::string("ADD");
     m[SYMBOL_ALL] = std::string("ALL");
-    m[SYMBOL_ALL] = std::string("AND");
+    m[SYMBOL_ALTER] = std::string("ALTER");
+    m[SYMBOL_AND] = std::string("AND");
     m[SYMBOL_AS] = std::string("AS");
     m[SYMBOL_AT] = std::string("AT");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
@@ -53,6 +55,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHARACTER_LENGTH] = std::string("CHARACTER_LENGTH");
     m[SYMBOL_CHECK] = std::string("CHECK");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
+    m[SYMBOL_COLUMN] = std::string("COLUMN");
     m[SYMBOL_CONSTRAINT] = std::string("CONSTRAINT");
     m[SYMBOL_CONVERT] = std::string("CONVERT");
     m[SYMBOL_COUNT] = std::string("COUNT");

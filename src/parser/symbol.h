@@ -55,7 +55,9 @@ typedef enum symbol {
 
     // Reserved keywords
     SYMBOL_ACTION,
+    SYMBOL_ADD,
     SYMBOL_ALL,
+    SYMBOL_ALTER,
     SYMBOL_AND,
     SYMBOL_AS,
     SYMBOL_AT,
@@ -73,6 +75,7 @@ typedef enum symbol {
     SYMBOL_CHARACTER_LENGTH,
     SYMBOL_CHECK,
     SYMBOL_COLLATE,
+    SYMBOL_COLUMN,
     SYMBOL_CONSTRAINT,
     SYMBOL_CONVERT,
     SYMBOL_COUNT,

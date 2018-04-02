@@ -22,9 +22,11 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AND, "AND"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AS, "AS"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AVG, "AVG"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALTER, "ALTER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALL, "ALL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AT, "AT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ADD, "ADD"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
             return t;
         case 'b':
@@ -49,6 +51,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHARACTER, "CHARACTER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CASCADE, "CASCADE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHECK, "CHECK"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_COLUMN, "COLUMN"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_COLLATE, "COLLATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CONSTRAINT, "CONSTRAINT"));
             return t;
