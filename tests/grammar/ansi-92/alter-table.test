@@ -1,0 +1,7 @@
+# Numeric column definitions
+>ALTER TABLE t1 ADD COLUMN b INT;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: ADD COLUMN>

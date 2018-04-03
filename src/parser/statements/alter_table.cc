@@ -54,6 +54,7 @@ bool parse_alter_table(
     parse_position_t start = ctx.lexer.cursor;
     lexeme_t table_name;
     symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<column_definition_t> column_def;
     std::unique_ptr<alter_table_action_t> action;
 
     cur_tok = lex.next(); // Consume the ALTER symbol
@@ -118,9 +119,18 @@ err_expect_add_column_or_constraint:
 process_add_column:
     if (ctx.opts.disable_statement_construction)
         goto push_statement;
-    action = std::make_unique<alter_table_action_t>(
-            ALTER_TABLE_ACTION_TYPE_ADD_COLUMN);
+    if (! parse_column_definition(ctx, cur_tok, column_def))
+        goto err_expect_column_definition;
+    action = std::make_unique<add_column_action_t>(column_def);
     goto statement_ending;
+err_expect_column_definition:
+    {
+        std::stringstream estr;
+        estr << "Expected <column definition> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 process_add_constraint:
     if (ctx.opts.disable_statement_construction)
         goto push_statement;
