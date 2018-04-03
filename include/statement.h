@@ -128,6 +128,8 @@ typedef struct add_column_action : alter_table_action_t {
     {}
 } add_column_action_t;
 
+std::ostream& operator<< (std::ostream& out, const add_column_action_t& action);
+
 typedef struct alter_table_statement : statement_t {
     lexeme_t table_name;
     std::unique_ptr<alter_table_action_t> action;
