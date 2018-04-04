@@ -107,8 +107,8 @@ typedef enum alter_table_action_type {
     ALTER_TABLE_ACTION_TYPE_ADD_COLUMN,
     ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN,
     ALTER_TABLE_ACTION_TYPE_DROP_COLUMN,
-    ALTER_TABLE_ACTION_TYPE_ADD_TABLE_CONSTRAINT,
-    ALTER_TABLE_ACTION_TYPE_DROP_TABLE_CONSTRAINT
+    ALTER_TABLE_ACTION_TYPE_ADD_CONSTRAINT,
+    ALTER_TABLE_ACTION_TYPE_DROP_CONSTRAINT
 } alter_table_action_type_t;
 
 typedef struct alter_table_action {
@@ -169,6 +169,16 @@ typedef struct drop_column_action : alter_table_action_t {
 } drop_column_action_t;
 
 std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action);
+
+typedef struct add_constraint_action : alter_table_action_t {
+    std::unique_ptr<constraint_t> constraint;
+    add_constraint_action(std::unique_ptr<constraint_t>& constraint) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_ADD_CONSTRAINT),
+        constraint(std::move(constraint))
+    {}
+} add_constraint_action_t;
+
+std::ostream& operator<< (std::ostream& out, const add_constraint_action_t& action);
 
 typedef struct alter_table_statement : statement_t {
     lexeme_t table_name;

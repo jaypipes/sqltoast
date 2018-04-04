@@ -88,7 +88,7 @@ std::ostream& operator<< (std::ostream& out, const foreign_key_constraint_t& con
         size_t num_referenced_columns = constraint.referenced_columns.size();
         out << ") REFERENCES " << constraint.referenced_table;
         if (num_referenced_columns > 0) {
-            out << "(";
+            out << " (";
             x = 0;
             for (const lexeme_t& col_name : constraint.referenced_columns) {
                 out << col_name;

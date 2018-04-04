@@ -58,6 +58,7 @@ bool parse_alter_table(
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<column_definition_t> column_def;
     std::unique_ptr<default_descriptor_t> default_descriptor;
+    std::unique_ptr<constraint_t> constraint;
     std::unique_ptr<alter_table_action_t> action;
 
     cur_tok = lex.next(); // Consume the ALTER symbol
@@ -104,6 +105,7 @@ process_add_actions:
         case SYMBOL_IDENTIFIER:
             goto process_add_column;
         case SYMBOL_UNIQUE:
+        case SYMBOL_PRIMARY:
         case SYMBOL_FOREIGN:
         case SYMBOL_CHECK:
         case SYMBOL_CONSTRAINT:
@@ -137,9 +139,18 @@ err_expect_column_definition:
 process_add_constraint:
     if (ctx.opts.disable_statement_construction)
         goto statement_ending;
-    action = std::make_unique<alter_table_action_t>(
-            ALTER_TABLE_ACTION_TYPE_ADD_TABLE_CONSTRAINT);
+    if (! parse_constraint(ctx, cur_tok, constraint))
+        goto err_expect_constraint;
+    action = std::make_unique<add_constraint_action_t>(constraint);
     goto statement_ending;
+err_expect_constraint:
+    {
+        std::stringstream estr;
+        estr << "Expected <constraint definition> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 process_drop_actions:
     cur_sym = cur_tok.symbol;
     switch (cur_sym) {
@@ -185,7 +196,7 @@ process_drop_constraint:
     if (ctx.opts.disable_statement_construction)
         goto statement_ending;
     action = std::make_unique<alter_table_action_t>(
-            ALTER_TABLE_ACTION_TYPE_DROP_TABLE_CONSTRAINT);
+            ALTER_TABLE_ACTION_TYPE_DROP_CONSTRAINT);
     goto statement_ending;
 process_alter_action:
     cur_sym = cur_tok.symbol;
