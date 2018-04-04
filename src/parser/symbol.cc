@@ -56,6 +56,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHECK] = std::string("CHECK");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
     m[SYMBOL_COLUMN] = std::string("COLUMN");
+    m[SYMBOL_COMMIT] = std::string("COMMIT");
     m[SYMBOL_CONSTRAINT] = std::string("CONSTRAINT");
     m[SYMBOL_CONVERT] = std::string("CONVERT");
     m[SYMBOL_COUNT] = std::string("COUNT");
@@ -123,6 +124,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_REFERENCES] = std::string("REFERENCES");
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
     m[SYMBOL_RIGHT] = std::string("RIGHT");
+    m[SYMBOL_ROLLBACK] = std::string("ROLLBACK");
     m[SYMBOL_SCHEMA] = std::string("SCHEMA");
     m[SYMBOL_SECOND] = std::string("SECOND");
     m[SYMBOL_SELECT] = std::string("SELECT");
@@ -152,6 +154,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_VARYING] = std::string("VARYING");
     m[SYMBOL_WHERE] = std::string("WHERE");
     m[SYMBOL_WITH] = std::string("WITH");
+    m[SYMBOL_WORK] = std::string("WORK");
     m[SYMBOL_YEAR] = std::string("YEAR");
     m[SYMBOL_ZONE] = std::string("ZONE");
 

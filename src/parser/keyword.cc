@@ -38,6 +38,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'c':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_COUNT, "COUNT"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_COMMIT, "COMMIT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CREATE, "CREATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_DATE, "CURRENT_DATE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIME, "CURRENT_TIME"));
@@ -137,6 +138,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PARTIAL, "PARTIAL"));
             return t;
         case 'r':
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ROLLBACK, "ROLLBACK"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_RIGHT, "RIGHT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_REAL, "REAL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_REFERENCES, "REFERENCES"));
@@ -180,6 +182,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'w':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_WHERE, "WHERE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_WITH, "WITH"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_WORK, "WORK"));
             return t;
         case 'y':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_YEAR, "YEAR"));
