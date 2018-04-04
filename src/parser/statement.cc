@@ -15,6 +15,10 @@
 
 namespace sqltoast {
 
+static const size_t NUM_ALTER_STATEMENT_PARSERS = 1;
+static const parse_func_t alter_statement_parsers[1] = {
+    &parse_alter_table
+};
 static const size_t NUM_CREATE_STATEMENT_PARSERS = 2;
 static const parse_func_t create_statement_parsers[2] = {
     &parse_create_table,
@@ -52,6 +56,12 @@ void parse_statement(parse_context_t& ctx) {
     size_t num_parsers = 0;
     const parse_func_t* parsers;
     switch (cur_sym) {
+        case SYMBOL_ALTER:
+        {
+            num_parsers = NUM_ALTER_STATEMENT_PARSERS;
+            parsers = alter_statement_parsers;
+            break;
+        }
         case SYMBOL_CREATE:
         {
             num_parsers = NUM_CREATE_STATEMENT_PARSERS;
@@ -89,7 +99,12 @@ void parse_statement(parse_context_t& ctx) {
             break;
         }
         default:
+        {
+            std::stringstream estr;
+            estr << "Failed to recognize any valid SQL statement." << std::endl;
+            create_syntax_error_marker(ctx, estr);
             return;
+        }
     }
 
     size_t x = 0;

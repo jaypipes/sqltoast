@@ -1,0 +1,19 @@
+# ADD COLUMN action missing column definition
+>ALTER TABLE t1 ADD COLUMN;
+Syntax error.
+Expected <column definition> but found symbol[';']
+ALTER TABLE t1 ADD COLUMN;
+                        ^^
+# ADD COLUMN action invalid column definition
+>ALTER TABLE t1 ADD COLUMN b;
+Syntax error.
+Expected <column definition> but found symbol[';']
+ALTER TABLE t1 ADD COLUMN b;
+                          ^^
+# ADD COLUMN action
+>ALTER TABLE t1 ADD COLUMN b INT;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: ADD COLUMN b INT>

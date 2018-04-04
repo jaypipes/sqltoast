@@ -41,6 +41,7 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/predicate.cc
     src/parser/sequence.cc
     src/parser/statement.cc
+    src/parser/statements/alter_table.cc
     src/parser/statements/create_schema.cc
     src/parser/statements/create_table.cc
     src/parser/statements/delete.cc

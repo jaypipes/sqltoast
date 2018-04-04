@@ -53,6 +53,13 @@ bool parse_drop_table(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
+// Returns true if the ALTER TABLE statement was parsed successfully from
+// the parse context
+bool parse_alter_table(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
+
 // Returns true if a SELECT statement was parsed successfully from
 // the parse context. If true, then the out parameter will be populated with an
 // allocated select_t statement struct

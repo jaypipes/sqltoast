@@ -38,6 +38,13 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_ALTER_TABLE:
+            {
+                const alter_table_statement_t& sub =
+                    static_cast<const alter_table_statement_t&>(stmt);
+                out << sub;
+            }
+            break;
         case STATEMENT_TYPE_SELECT:
             {
                 const select_statement_t& sub =
@@ -136,6 +143,45 @@ std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt)
        out << "   behaviour: CASCADE";
     else
        out << "   behaviour: RESTRICT";
+    out << ">" << std::endl;
+
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const add_column_action_t& action) {
+    out << "ADD COLUMN " << *action.column_definition;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const alter_table_action_t& action) {
+    switch (action.type) {
+        case ALTER_TABLE_ACTION_TYPE_ADD_COLUMN:
+            {
+                const add_column_action_t& sub =
+                    static_cast<const add_column_action_t&>(action);
+                out << sub;
+            }
+            break;
+        case ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN:
+            out << "ALTER COLUMN";
+            break;
+        case ALTER_TABLE_ACTION_TYPE_DROP_COLUMN:
+            out << "DROP COLUMN";
+            break;
+        case ALTER_TABLE_ACTION_TYPE_ADD_TABLE_CONSTRAINT:
+            out << "ADD CONSTRAINT";
+            break;
+        case ALTER_TABLE_ACTION_TYPE_DROP_TABLE_CONSTRAINT:
+            out << "DROP CONSTRAINT";
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const alter_table_statement_t& stmt) {
+    out << "<statement: ALTER TABLE" << std::endl
+        << "   table name: " << stmt.table_name << std::endl;
+    out << "   action: " << *stmt.action;
     out << ">" << std::endl;
 
     return out;
