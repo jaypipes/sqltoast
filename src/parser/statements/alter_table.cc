@@ -53,8 +53,10 @@ bool parse_alter_table(
     lexer_t& lex = ctx.lexer;
     parse_position_t start = ctx.lexer.cursor;
     lexeme_t table_name;
+    lexeme_t column_name;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<column_definition_t> column_def;
+    std::unique_ptr<default_descriptor_t> default_descriptor;
     std::unique_ptr<alter_table_action_t> action;
 
     cur_tok = lex.next(); // Consume the ALTER symbol
@@ -175,13 +177,52 @@ process_alter_action:
     if (cur_sym == SYMBOL_COLUMN)
         cur_tok = lex.next();
     cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_IDENTIFIER)
+    if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
+    column_name = cur_tok.lexeme;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_SET) {
+        cur_tok = lex.next();
+        goto process_alter_column_set_default_action;
+    } else if (cur_sym == SYMBOL_DROP) {
+        cur_tok = lex.next();
+        goto process_alter_column_drop_default_action;
+    } else
+        goto err_expect_set_or_drop;
+err_expect_set_or_drop:
+    expect_any_error(ctx, {SYMBOL_SET, SYMBOL_DROP});
+    return false;
+process_alter_column_set_default_action:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_DEFAULT)
+        goto err_expect_default;
+    cur_tok = lex.next();
+    if (! parse_default_clause(ctx, cur_tok, default_descriptor))
+        goto err_expect_default_clause;
+    if (ctx.opts.disable_statement_construction)
+        goto push_statement;
+    action = std::make_unique<alter_column_action_t>(
+            column_name, default_descriptor);
+    goto statement_ending;
+err_expect_default:
+    expect_error(ctx, SYMBOL_DEFAULT);
+    return false;
+err_expect_default_clause:
+    {
+        std::stringstream estr;
+        estr << "Expected <default clause> but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+process_alter_column_drop_default_action:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_DEFAULT)
+        goto err_expect_default;
     cur_tok = lex.next();
     if (ctx.opts.disable_statement_construction)
         goto push_statement;
-    action = std::make_unique<alter_table_action_t>(
-            ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN);
+    action = std::make_unique<alter_column_action_t>(column_name);
     goto statement_ending;
 statement_ending:
     // We get here after successfully parsing the statement and now expect

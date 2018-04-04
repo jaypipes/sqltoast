@@ -153,6 +153,16 @@ std::ostream& operator<< (std::ostream& out, const add_column_action_t& action) 
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const alter_column_action_t& action) {
+    if (action.alter_column_action_type == ALTER_COLUMN_ACTION_TYPE_SET_DEFAULT)
+        out << "ALTER COLUMN " << action.column_name
+            << " SET " << *action.default_descriptor;
+    else
+        out << "ALTER COLUMN " << action.column_name
+            << " DROP DEFAULT";
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const alter_table_action_t& action) {
     switch (action.type) {
         case ALTER_TABLE_ACTION_TYPE_ADD_COLUMN:
@@ -163,7 +173,11 @@ std::ostream& operator<< (std::ostream& out, const alter_table_action_t& action)
             }
             break;
         case ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN:
-            out << "ALTER COLUMN";
+            {
+                const alter_column_action_t& sub =
+                    static_cast<const alter_column_action_t&>(action);
+                out << sub;
+            }
             break;
         case ALTER_TABLE_ACTION_TYPE_DROP_COLUMN:
             out << "DROP COLUMN";

@@ -17,3 +17,31 @@ statements[0]:
   <statement: ALTER TABLE
    table name: t1
    action: ADD COLUMN b INT>
+# ADD COLUMN action without optional COLUMN keyword
+>ALTER TABLE t1 ADD b INT;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: ADD COLUMN b INT>
+# ALTER COLUMN SET DEFAULT action
+>ALTER TABLE t1 ALTER COLUMN b SET DEFAULT NULL;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: ALTER COLUMN b SET DEFAULT NULL>
+# ALTER COLUMN SET DEFAULT action optional COLUMN keyword
+>ALTER TABLE t1 ALTER b SET DEFAULT NULL;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: ALTER COLUMN b SET DEFAULT NULL>
+# ALTER COLUMN DROP DEFAULT action
+>ALTER TABLE t1 ALTER COLUMN b DROP DEFAULT;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: ALTER COLUMN b DROP DEFAULT>

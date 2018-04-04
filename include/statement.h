@@ -130,6 +130,32 @@ typedef struct add_column_action : alter_table_action_t {
 
 std::ostream& operator<< (std::ostream& out, const add_column_action_t& action);
 
+typedef enum alter_column_action_type {
+    ALTER_COLUMN_ACTION_TYPE_SET_DEFAULT,
+    ALTER_COLUMN_ACTION_TYPE_DROP_DEFAULT
+} alter_column_action_type_t;
+
+typedef struct alter_column_action : alter_table_action_t {
+    alter_column_action_type_t alter_column_action_type;
+    lexeme_t column_name;
+    std::unique_ptr<default_descriptor_t> default_descriptor;
+    alter_column_action(lexeme_t column_name) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN),
+        alter_column_action_type(ALTER_COLUMN_ACTION_TYPE_DROP_DEFAULT),
+        column_name(column_name)
+    {}
+    alter_column_action(
+            lexeme_t column_name,
+            std::unique_ptr<default_descriptor_t>& default_descriptor) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN),
+        alter_column_action_type(ALTER_COLUMN_ACTION_TYPE_SET_DEFAULT),
+        column_name(column_name),
+        default_descriptor(std::move(default_descriptor))
+    {}
+} alter_column_action_t;
+
+std::ostream& operator<< (std::ostream& out, const alter_column_action_t& action);
+
 typedef struct alter_table_statement : statement_t {
     lexeme_t table_name;
     std::unique_ptr<alter_table_action_t> action;
