@@ -45,3 +45,32 @@ statements[0]:
   <statement: ALTER TABLE
    table name: t1
    action: ALTER COLUMN b DROP DEFAULT>
+# ALTER COLUMN DROP COLUMN action no drop behaviour
+>ALTER TABLE t1 DROP COLUMN b;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: DROP COLUMN b CASCADE>
+# ALTER COLUMN DROP COLUMN action no drop behaviour no optional COLUMN keyword
+>ALTER TABLE t1 DROP b;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: DROP COLUMN b CASCADE>
+# ALTER COLUMN DROP COLUMN action with explicit drop behaviour of default
+# CASCADE
+>ALTER TABLE t1 DROP COLUMN b CASCADE;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: DROP COLUMN b CASCADE>
+# ALTER COLUMN DROP COLUMN action with explicit drop behaviour of RESTRICT
+>ALTER TABLE t1 DROP COLUMN b RESTRICT;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: DROP COLUMN b RESTRICT>

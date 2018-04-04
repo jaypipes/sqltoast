@@ -163,6 +163,15 @@ std::ostream& operator<< (std::ostream& out, const alter_column_action_t& action
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action) {
+    out << "DROP COLUMN " << action.column_name;
+    if (action.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
+        out << " CASCADE";
+    else
+        out << " RESTRICT";
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const alter_table_action_t& action) {
     switch (action.type) {
         case ALTER_TABLE_ACTION_TYPE_ADD_COLUMN:
@@ -180,7 +189,11 @@ std::ostream& operator<< (std::ostream& out, const alter_table_action_t& action)
             }
             break;
         case ALTER_TABLE_ACTION_TYPE_DROP_COLUMN:
-            out << "DROP COLUMN";
+            {
+                const drop_column_action_t& sub =
+                    static_cast<const drop_column_action_t&>(action);
+                out << sub;
+            }
             break;
         case ALTER_TABLE_ACTION_TYPE_ADD_TABLE_CONSTRAINT:
             out << "ADD CONSTRAINT";

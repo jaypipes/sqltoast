@@ -156,6 +156,20 @@ typedef struct alter_column_action : alter_table_action_t {
 
 std::ostream& operator<< (std::ostream& out, const alter_column_action_t& action);
 
+typedef struct drop_column_action : alter_table_action_t {
+    lexeme_t column_name;
+    drop_behaviour_t drop_behaviour;
+    drop_column_action(
+            lexeme_t column_name,
+            drop_behaviour_t drop_behaviour) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_DROP_COLUMN),
+        column_name(column_name),
+        drop_behaviour(drop_behaviour)
+    {}
+} drop_column_action_t;
+
+std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action);
+
 typedef struct alter_table_statement : statement_t {
     lexeme_t table_name;
     std::unique_ptr<alter_table_action_t> action;

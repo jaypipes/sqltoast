@@ -54,6 +54,7 @@ bool parse_alter_table(
     parse_position_t start = ctx.lexer.cursor;
     lexeme_t table_name;
     lexeme_t column_name;
+    drop_behaviour_t drop_behaviour = DROP_BEHAVIOUR_CASCADE;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<column_definition_t> column_def;
     std::unique_ptr<default_descriptor_t> default_descriptor;
@@ -120,7 +121,7 @@ err_expect_add_column_or_constraint:
     }
 process_add_column:
     if (ctx.opts.disable_statement_construction)
-        goto push_statement;
+        goto statement_ending;
     if (! parse_column_definition(ctx, cur_tok, column_def))
         goto err_expect_column_definition;
     action = std::make_unique<add_column_action_t>(column_def);
@@ -135,7 +136,7 @@ err_expect_column_definition:
     }
 process_add_constraint:
     if (ctx.opts.disable_statement_construction)
-        goto push_statement;
+        goto statement_ending;
     action = std::make_unique<alter_table_action_t>(
             ALTER_TABLE_ACTION_TYPE_ADD_TABLE_CONSTRAINT);
     goto statement_ending;
@@ -161,14 +162,28 @@ err_expect_drop_column_or_constraint:
         return false;
     }
 process_drop_column:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COLUMN)
+        cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    column_name = cur_tok.lexeme;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_CASCADE || cur_sym == SYMBOL_RESTRICT) {
+        if (cur_sym == SYMBOL_RESTRICT)
+            drop_behaviour = DROP_BEHAVIOUR_RESTRICT;
+        cur_tok = lex.next();
+    }
     if (ctx.opts.disable_statement_construction)
-        goto push_statement;
-    action = std::make_unique<alter_table_action_t>(
-            ALTER_TABLE_ACTION_TYPE_DROP_COLUMN);
+        goto statement_ending;
+    action = std::make_unique<drop_column_action_t>(
+            column_name, drop_behaviour);
     goto statement_ending;
 process_drop_constraint:
     if (ctx.opts.disable_statement_construction)
-        goto push_statement;
+        goto statement_ending;
     action = std::make_unique<alter_table_action_t>(
             ALTER_TABLE_ACTION_TYPE_DROP_TABLE_CONSTRAINT);
     goto statement_ending;
@@ -201,7 +216,7 @@ process_alter_column_set_default_action:
     if (! parse_default_clause(ctx, cur_tok, default_descriptor))
         goto err_expect_default_clause;
     if (ctx.opts.disable_statement_construction)
-        goto push_statement;
+        goto statement_ending;
     action = std::make_unique<alter_column_action_t>(
             column_name, default_descriptor);
     goto statement_ending;
@@ -221,7 +236,7 @@ process_alter_column_drop_default_action:
         goto err_expect_default;
     cur_tok = lex.next();
     if (ctx.opts.disable_statement_construction)
-        goto push_statement;
+        goto statement_ending;
     action = std::make_unique<alter_column_action_t>(column_name);
     goto statement_ending;
 statement_ending:
