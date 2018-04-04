@@ -107,8 +107,8 @@ typedef enum alter_table_action_type {
     ALTER_TABLE_ACTION_TYPE_ADD_COLUMN,
     ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN,
     ALTER_TABLE_ACTION_TYPE_DROP_COLUMN,
-    ALTER_TABLE_ACTION_TYPE_ADD_TABLE_CONSTRAINT,
-    ALTER_TABLE_ACTION_TYPE_DROP_TABLE_CONSTRAINT
+    ALTER_TABLE_ACTION_TYPE_ADD_CONSTRAINT,
+    ALTER_TABLE_ACTION_TYPE_DROP_CONSTRAINT
 } alter_table_action_type_t;
 
 typedef struct alter_table_action {
@@ -129,6 +129,70 @@ typedef struct add_column_action : alter_table_action_t {
 } add_column_action_t;
 
 std::ostream& operator<< (std::ostream& out, const add_column_action_t& action);
+
+typedef enum alter_column_action_type {
+    ALTER_COLUMN_ACTION_TYPE_SET_DEFAULT,
+    ALTER_COLUMN_ACTION_TYPE_DROP_DEFAULT
+} alter_column_action_type_t;
+
+typedef struct alter_column_action : alter_table_action_t {
+    alter_column_action_type_t alter_column_action_type;
+    lexeme_t column_name;
+    std::unique_ptr<default_descriptor_t> default_descriptor;
+    alter_column_action(lexeme_t column_name) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN),
+        alter_column_action_type(ALTER_COLUMN_ACTION_TYPE_DROP_DEFAULT),
+        column_name(column_name)
+    {}
+    alter_column_action(
+            lexeme_t column_name,
+            std::unique_ptr<default_descriptor_t>& default_descriptor) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_ALTER_COLUMN),
+        alter_column_action_type(ALTER_COLUMN_ACTION_TYPE_SET_DEFAULT),
+        column_name(column_name),
+        default_descriptor(std::move(default_descriptor))
+    {}
+} alter_column_action_t;
+
+std::ostream& operator<< (std::ostream& out, const alter_column_action_t& action);
+
+typedef struct drop_column_action : alter_table_action_t {
+    lexeme_t column_name;
+    drop_behaviour_t drop_behaviour;
+    drop_column_action(
+            lexeme_t column_name,
+            drop_behaviour_t drop_behaviour) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_DROP_COLUMN),
+        column_name(column_name),
+        drop_behaviour(drop_behaviour)
+    {}
+} drop_column_action_t;
+
+std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action);
+
+typedef struct add_constraint_action : alter_table_action_t {
+    std::unique_ptr<constraint_t> constraint;
+    add_constraint_action(std::unique_ptr<constraint_t>& constraint) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_ADD_CONSTRAINT),
+        constraint(std::move(constraint))
+    {}
+} add_constraint_action_t;
+
+std::ostream& operator<< (std::ostream& out, const add_constraint_action_t& action);
+
+typedef struct drop_constraint_action : alter_table_action_t {
+    lexeme_t constraint_name;
+    drop_behaviour_t drop_behaviour;
+    drop_constraint_action(
+            lexeme_t constraint_name,
+            drop_behaviour_t drop_behaviour) :
+        alter_table_action_t(ALTER_TABLE_ACTION_TYPE_DROP_CONSTRAINT),
+        constraint_name(constraint_name),
+        drop_behaviour(drop_behaviour)
+    {}
+} drop_constraint_action_t;
+
+std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action);
 
 typedef struct alter_table_statement : statement_t {
     lexeme_t table_name;
