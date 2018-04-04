@@ -54,6 +54,7 @@ bool parse_alter_table(
     parse_position_t start = ctx.lexer.cursor;
     lexeme_t table_name;
     lexeme_t column_name;
+    lexeme_t constraint_name;
     drop_behaviour_t drop_behaviour = DROP_BEHAVIOUR_CASCADE;
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<column_definition_t> column_def;
@@ -160,6 +161,7 @@ process_drop_actions:
         case SYMBOL_IDENTIFIER:
             goto process_drop_column;
         case SYMBOL_CONSTRAINT:
+            cur_tok = lex.next();
             goto process_drop_constraint;
         default:
             goto err_expect_drop_column_or_constraint;
@@ -193,10 +195,21 @@ process_drop_column:
             column_name, drop_behaviour);
     goto statement_ending;
 process_drop_constraint:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    constraint_name = cur_tok.lexeme;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_CASCADE || cur_sym == SYMBOL_RESTRICT) {
+        if (cur_sym == SYMBOL_RESTRICT)
+            drop_behaviour = DROP_BEHAVIOUR_RESTRICT;
+        cur_tok = lex.next();
+    }
     if (ctx.opts.disable_statement_construction)
         goto statement_ending;
-    action = std::make_unique<alter_table_action_t>(
-            ALTER_TABLE_ACTION_TYPE_DROP_CONSTRAINT);
+    action = std::make_unique<drop_constraint_action_t>(
+            constraint_name, drop_behaviour);
     goto statement_ending;
 process_alter_action:
     cur_sym = cur_tok.symbol;

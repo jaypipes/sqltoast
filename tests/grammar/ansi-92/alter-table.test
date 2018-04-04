@@ -45,29 +45,28 @@ statements[0]:
   <statement: ALTER TABLE
    table name: t1
    action: ALTER COLUMN b DROP DEFAULT>
-# ALTER COLUMN DROP COLUMN action no drop behaviour
+# DROP COLUMN action no drop behaviour
 >ALTER TABLE t1 DROP COLUMN b;
 OK
 statements[0]:
   <statement: ALTER TABLE
    table name: t1
    action: DROP COLUMN b CASCADE>
-# ALTER COLUMN DROP COLUMN action no drop behaviour no optional COLUMN keyword
+# DROP COLUMN action no drop behaviour no optional COLUMN keyword
 >ALTER TABLE t1 DROP b;
 OK
 statements[0]:
   <statement: ALTER TABLE
    table name: t1
    action: DROP COLUMN b CASCADE>
-# ALTER COLUMN DROP COLUMN action with explicit drop behaviour of default
-# CASCADE
+# DROP COLUMN action with explicit drop behaviour of default CASCADE
 >ALTER TABLE t1 DROP COLUMN b CASCADE;
 OK
 statements[0]:
   <statement: ALTER TABLE
    table name: t1
    action: DROP COLUMN b CASCADE>
-# ALTER COLUMN DROP COLUMN action with explicit drop behaviour of RESTRICT
+# DROP COLUMN action with explicit drop behaviour of RESTRICT
 >ALTER TABLE t1 DROP COLUMN b RESTRICT;
 OK
 statements[0]:
@@ -116,3 +115,24 @@ statements[0]:
   <statement: ALTER TABLE
    table name: t1
    action: ADD CONSTRAINT fk_t2 FOREIGN KEY (t2_id) REFERENCES t2 (id)>
+# DROP CONSTRAINT action no drop behaviour
+>ALTER TABLE t1 DROP CONSTRAINT b;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: DROP CONSTRAINT b CASCADE>
+# DROP CONSTRAINT action with explicit drop behaviour of default CASCADE
+>ALTER TABLE t1 DROP CONSTRAINT b CASCADE;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: DROP CONSTRAINT b CASCADE>
+# DROP CONSTRAINT action with explicit drop behaviour of RESTRICT
+>ALTER TABLE t1 DROP CONSTRAINT b RESTRICT;
+OK
+statements[0]:
+  <statement: ALTER TABLE
+   table name: t1
+   action: DROP CONSTRAINT b RESTRICT>
