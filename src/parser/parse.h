@@ -32,6 +32,13 @@ bool parse_commit(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
+/// Returns true if the ROLLBACK statement was parsed successfully from
+// the parse context
+bool parse_rollback(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
+
 // Returns true if the CREATE SCHEMA statement was parsed successfully from
 // the parse context
 bool parse_create_schema(

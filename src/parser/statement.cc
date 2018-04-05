@@ -45,9 +45,10 @@ static const size_t NUM_UPDATE_STATEMENT_PARSERS = 1;
 static const parse_func_t update_statement_parsers[1] = {
     &parse_update
 };
-static const size_t NUM_TRX_STATEMENT_PARSERS = 1;
-static const parse_func_t trx_statement_parsers[1] = {
-    &parse_commit
+static const size_t NUM_TRX_STATEMENT_PARSERS = 2;
+static const parse_func_t trx_statement_parsers[2] = {
+    &parse_commit,
+    &parse_rollback
 };
 
 void parse_statement(parse_context_t& ctx) {
@@ -103,6 +104,7 @@ void parse_statement(parse_context_t& ctx) {
             break;
         }
         case SYMBOL_COMMIT:
+        case SYMBOL_ROLLBACK:
         {
             num_parsers = NUM_TRX_STATEMENT_PARSERS;
             parsers = trx_statement_parsers;

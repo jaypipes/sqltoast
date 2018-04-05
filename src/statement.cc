@@ -81,6 +81,9 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
         case STATEMENT_TYPE_COMMIT:
             out << "<statement: COMMIT>" << std::endl;
             break;
+        case STATEMENT_TYPE_ROLLBACK:
+            out << "<statement: ROLLBACK>" << std::endl;
+            break;
         default:
             break;
     }
