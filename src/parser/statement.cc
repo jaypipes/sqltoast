@@ -45,6 +45,10 @@ static const size_t NUM_UPDATE_STATEMENT_PARSERS = 1;
 static const parse_func_t update_statement_parsers[1] = {
     &parse_update
 };
+static const size_t NUM_TRX_STATEMENT_PARSERS = 1;
+static const parse_func_t trx_statement_parsers[1] = {
+    &parse_commit
+};
 
 void parse_statement(parse_context_t& ctx) {
     // Assumption: the current token will be a keyword
@@ -96,6 +100,12 @@ void parse_statement(parse_context_t& ctx) {
         {
             num_parsers = NUM_UPDATE_STATEMENT_PARSERS;
             parsers = update_statement_parsers;
+            break;
+        }
+        case SYMBOL_COMMIT:
+        {
+            num_parsers = NUM_TRX_STATEMENT_PARSERS;
+            parsers = trx_statement_parsers;
             break;
         }
         default:

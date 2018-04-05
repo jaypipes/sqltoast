@@ -78,6 +78,9 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_COMMIT:
+            out << "<statement: COMMIT>" << std::endl;
+            break;
         default:
             break;
     }

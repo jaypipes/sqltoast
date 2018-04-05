@@ -25,6 +25,13 @@ typedef bool (*parse_func_t) (
 // loop over found tokens.
 void parse_statement(parse_context_t& ctx);
 
+/// Returns true if the COMMIT statement was parsed successfully from
+// the parse context
+bool parse_commit(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
+
 // Returns true if the CREATE SCHEMA statement was parsed successfully from
 // the parse context
 bool parse_create_schema(

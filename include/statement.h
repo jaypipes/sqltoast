@@ -19,7 +19,9 @@ typedef enum statement_type {
     STATEMENT_TYPE_INSERT_SELECT,
     STATEMENT_TYPE_DELETE,
     STATEMENT_TYPE_UPDATE,
-    STATEMENT_TYPE_SELECT
+    STATEMENT_TYPE_SELECT,
+    STATEMENT_TYPE_COMMIT,
+    STATEMENT_TYPE_ROLLBACK
 } statement_type_t;
 
 typedef struct statement {
