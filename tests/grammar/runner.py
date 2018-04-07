@@ -11,7 +11,8 @@ TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 RESULT_OK = 0
 RESULT_TEST_ERROR = 1
 RESULT_TEST_FAILURE = 1
-SQLTOASTER_BINARY = os.path.join(TEST_DIR, '..', '..', '_build', 'sqltoaster')
+SQLTOASTER_BINARY = os.path.join(TEST_DIR, '..', '..', '_build', 'sqltoaster',
+                                 'sqltoaster')
 
 
 def parse_options():

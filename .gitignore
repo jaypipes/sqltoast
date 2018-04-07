@@ -1,6 +1,6 @@
 _build
 _install
 # We generate this file...
-include/sqltoast.h
+sqltoast/include/sqltoast.h
 *.~
 *.swp
