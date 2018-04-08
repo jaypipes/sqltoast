@@ -11,5 +11,5 @@ SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -DSQLTOAST_DEBUG")
 # $ROOT_DIR/build $> cmake -DCMAKE_BUILD_TYPE=fast ..
 SET(CMAKE_CXX_FLAGS_FAST "-O2 -falign-functions=1 -falign-jumps=1 -falign-loops=1 -falign-labels=1")
 
-ADD_SUBDIRECTORY(sqltoast)
+ADD_SUBDIRECTORY(libsqltoast)
 ADD_SUBDIRECTORY(sqltoaster)

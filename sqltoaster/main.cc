@@ -5,7 +5,7 @@
 #include <iostream>
 #include <chrono>
 
-#include <sqltoast.h>
+#include <sqltoast/sqltoast.h>
 
 using namespace std;
 
