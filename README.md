@@ -36,3 +36,25 @@ int main(int argc, char *argv[]) {
         std::cout << "Syntax error: " << res.error << std::endl;
 }
 ```
+
+One of the most important attributes of the `sqltoast::parse_result_t` struct
+is the `statements` field, which is of type
+`std::vector<std::unique_ptr<sqltoast::statement_t>>`
+
+The [example program](sqltoaster/main.cc) included in the
+[sqltoaster/](sqltoaster/) directory can show you one way of interacting with
+this important collection of structs:
+
+```c++
+    unsigned int x = 0;
+    for (auto stmt_ptr_it = p.res.statements.cbegin();
+            stmt_ptr_it != p.res.statements.cend();
+            stmt_ptr_it++) {
+        cout << "statements[" << x++ << "]:" << endl;
+        cout << "  " << *(*stmt_ptr_it) << endl;
+    }
+```
+
+Each `sqltoast::statement_t` struct has its own "printer function" that allows
+the user of `libsqltoast` to easily use `<<` operator to print the contents of
+a `sqltoast::statement_t` to an `std::ostream`.
