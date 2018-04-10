@@ -10,7 +10,7 @@ namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const constraint_t& constraint) {
     if (constraint.name)
-        out << "CONSTRAINT " << constraint.name << " ";
+        out << " CONSTRAINT " << constraint.name;
     switch (constraint.type) {
         case CONSTRAINT_TYPE_NOT_NULL:
             {
@@ -52,10 +52,10 @@ std::ostream& operator<< (std::ostream& out, const not_null_constraint_t& nnc) {
 std::ostream& operator<< (std::ostream& out, const unique_constraint_t& constraint) {
     switch (constraint.type) {
         case CONSTRAINT_TYPE_UNIQUE:
-            out << "UNIQUE ";
+            out << " UNIQUE";
             break;
         case CONSTRAINT_TYPE_PRIMARY_KEY:
-            out << "PRIMARY KEY ";
+            out << " PRIMARY KEY";
             break;
         default:
             // Should never happen...
@@ -64,7 +64,7 @@ std::ostream& operator<< (std::ostream& out, const unique_constraint_t& constrai
     size_t x = 0;
     size_t num_columns = constraint.columns.size();
     if (num_columns > 0) {
-        out << "(";
+        out << " (";
         for (auto col : constraint.columns) {
             out << col;
             if (x++ < (num_columns - 1)) {
@@ -79,7 +79,7 @@ std::ostream& operator<< (std::ostream& out, const unique_constraint_t& constrai
 std::ostream& operator<< (std::ostream& out, const foreign_key_constraint_t& constraint) {
         size_t num_columns = constraint.columns.size();
         size_t x = 0;
-        out << "FOREIGN KEY (";
+        out << " FOREIGN KEY (";
         for (const lexeme_t& col_name : constraint.columns) {
             out << col_name;
             if (x++ != (num_columns - 1))

@@ -179,7 +179,7 @@ std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action)
 }
 
 std::ostream& operator<< (std::ostream& out, const add_constraint_action_t& action) {
-    out << "ADD " << *action.constraint;
+    out << "ADD" << *action.constraint;
     return out;
 }
 
