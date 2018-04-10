@@ -45,7 +45,7 @@ std::ostream& operator<< (std::ostream& out, const constraint_t& constraint) {
 }
 
 std::ostream& operator<< (std::ostream& out, const not_null_constraint_t& nnc) {
-    out << "NOT NULL";
+    out << " NOT NULL";
     return out;
 }
 

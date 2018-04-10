@@ -1,0 +1,10 @@
+# NOT NULL constraint
+>CREATE TABLE t1 (
+>    a INT NOT NULL
+>)
+OK
+statements[0]:
+  <statement: CREATE TABLE
+    table name: t1
+    column definitions:
+      a INT NOT NULL>
