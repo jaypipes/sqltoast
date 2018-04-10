@@ -23,8 +23,6 @@ typedef struct derived_column {
     }
 } derived_column_t;
 
-std::ostream& operator<< (std::ostream& out, const derived_column_t& dc);
-
 typedef struct grouping_column_reference {
     lexeme_t column;
     lexeme_t collation;
@@ -35,8 +33,6 @@ typedef struct grouping_column_reference {
         return collation.start != parse_position_t(0);
     }
 } grouping_column_reference_t;
-
-std::ostream& operator<< (std::ostream& out, const grouping_column_reference_t& dc);
 
 } // namespace sqltoast
 

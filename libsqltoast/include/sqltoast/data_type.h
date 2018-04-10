@@ -33,8 +33,6 @@ typedef struct data_type_descriptor {
     {}
 } data_type_descriptor_t;
 
-std::ostream& operator<< (std::ostream& out, const data_type_descriptor_t& dt);
-
 typedef struct char_string : data_type_descriptor_t {
     size_t size;
     lexeme_t charset;
@@ -49,8 +47,6 @@ typedef struct char_string : data_type_descriptor_t {
     {}
 } char_string_t;
 
-std::ostream& operator<< (std::ostream& out, const char_string_t& cs);
-
 typedef struct bit_string : data_type_descriptor_t {
     size_t size;
     bit_string(data_type_t type, size_t size) :
@@ -58,8 +54,6 @@ typedef struct bit_string : data_type_descriptor_t {
         size(size)
     {}
 } bit_string_t;
-
-std::ostream& operator<< (std::ostream& out, const bit_string_t& bs);
 
 typedef struct exact_numeric : data_type_descriptor_t {
     size_t precision;
@@ -71,8 +65,6 @@ typedef struct exact_numeric : data_type_descriptor_t {
     {}
 } exact_numeric_t;
 
-std::ostream& operator<< (std::ostream& out, const exact_numeric_t& num);
-
 typedef struct approximate_numeric : data_type_descriptor_t {
     size_t precision;
     approximate_numeric(data_type_t type, size_t prec) :
@@ -80,8 +72,6 @@ typedef struct approximate_numeric : data_type_descriptor_t {
         precision(prec)
     {}
 } approximate_numeric_t;
-
-std::ostream& operator<< (std::ostream& out, const approximate_numeric_t& num);
 
 typedef struct datetime : data_type_descriptor_t {
     size_t precision;
@@ -92,8 +82,6 @@ typedef struct datetime : data_type_descriptor_t {
         with_tz(with_tz)
     {}
 } datetime_t;
-
-std::ostream& operator<< (std::ostream& out, const datetime_t& dt);
 
 // TOOD(jaypipes): Move datetime and interval stuff to a separate temporal.h
 // file
@@ -107,8 +95,6 @@ typedef enum interval_unit {
     INTERVAL_UNIT_SECOND
 } interval_unit_t;
 
-std::ostream& operator<< (std::ostream& out, const interval_unit_t& unit);
-
 typedef struct interval : data_type_descriptor_t {
     interval_unit_t unit;
     size_t precision;
@@ -118,8 +104,6 @@ typedef struct interval : data_type_descriptor_t {
         precision(prec)
     {}
 } interval_t;
-
-std::ostream& operator<< (std::ostream& out, const interval_t& interval);
 
 } // namespace sqltoast
 

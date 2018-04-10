@@ -7,6 +7,8 @@
 
 #include <sqltoast/sqltoast.h>
 
+#include "print/printers.h"
+
 using namespace std;
 
 template<typename TimeT = std::chrono::milliseconds>

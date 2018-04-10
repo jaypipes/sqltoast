@@ -29,8 +29,6 @@ typedef struct value_expression {
     {}
 } value_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const value_expression_t& ve);
-
 // A numeric value expression is a series of value expressions and literals
 // that evaluate to a numeric value. A numeric factor is one of the parts of a
 // numeric value expression. A numeric operator applies an operation to two
@@ -55,8 +53,6 @@ typedef struct numeric_expression : value_expression_t {
     }
 } numeric_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne);
-
 // A character value expression is composed of one or more character factors
 // concatenated together using either the concatenation operator (||) or the
 // CONCAT string function
@@ -67,8 +63,6 @@ typedef struct character_value_expression : value_expression_t {
         values(std::move(values))
     {}
 } character_value_expression_t;
-
-std::ostream& operator<< (std::ostream& out, const character_value_expression_t& ve);
 
 // A datetime value expression is composed of one or more datetime factors
 // that, similar to how a numeric expression produces a numeric value, produce
@@ -100,8 +94,6 @@ typedef struct datetime_value_expression : value_expression_t {
     }
 } datetime_value_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& ve);
-
 // An interval value expression evaluates to an interval value. It may be
 // added and subtracted with an interval term and a datetime value expression
 // may subtract an interval value expression
@@ -129,8 +121,6 @@ typedef struct interval_value_expression : value_expression_t {
     }
 } interval_value_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& ve);
-
 typedef enum rvc_type {
     RVC_TYPE_UNKNOWN,
     RVC_TYPE_VALUE_EXPRESSION,
@@ -150,8 +140,6 @@ typedef struct row_value_constructor {
     {}
 } row_value_constructor_t;
 
-std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc);
-
 typedef struct row_value_expression : row_value_constructor_t {
     std::unique_ptr<value_expression_t> value;
     row_value_expression(std::unique_ptr<value_expression_t>& ve) :
@@ -159,8 +147,6 @@ typedef struct row_value_expression : row_value_constructor_t {
         value(std::move(ve))
     {}
 } row_value_expression_t;
-
-std::ostream& operator<< (std::ostream& out, const row_value_expression_t& rve);
 
 } // namespace sqltoast
 

@@ -6,6 +6,8 @@
 
 #include "sqltoast/sqltoast.h"
 
+#include "printers.h"
+
 namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {

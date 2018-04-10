@@ -32,8 +32,6 @@ typedef struct value_expression_primary {
     {}
 } value_expression_primary_t;
 
-std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep);
-
 // unsigned value specifications are unsigned numeric literals, string and
 // date/time literals, parameters, variables and some common general
 // value-producing keywords like CURRENT_USER
@@ -63,8 +61,6 @@ typedef struct unsigned_value_specification : value_expression_primary_t {
         uvs_type(uvs_type)
     {}
 } unsigned_value_specification_t;
-
-std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_t& uvs);
 
 typedef enum set_function_type {
     SET_FUNCTION_TYPE_COUNT,
@@ -100,8 +96,6 @@ typedef struct set_function : value_expression_primary_t {
     {}
 } set_function_t;
 
-std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
-
 // This is a "subexpression" inside a value expression primary
 typedef struct value_subexpression : value_expression_primary_t {
     std::unique_ptr<struct value_expression> value;
@@ -112,8 +106,6 @@ typedef struct value_subexpression : value_expression_primary_t {
         value(std::move(value))
     {}
 } value_subexpression_t;
-
-std::ostream& operator<< (std::ostream& out, const value_subexpression_t& uvs);
 
 // A value expression primary that contains a subquery that evaluates to a
 // scalar value
@@ -129,8 +121,6 @@ typedef struct scalar_subquery : value_expression_primary_t {
     {}
 } scalar_subquery_t;
 
-std::ostream& operator<< (std::ostream& out, const scalar_subquery_t& uvs);
-
 typedef enum numeric_primary_type {
     NUMERIC_PRIMARY_TYPE_VALUE,
     NUMERIC_PRIMARY_TYPE_FUNCTION
@@ -143,8 +133,6 @@ typedef struct numeric_primary {
     {}
 } numeric_primary_t;
 
-std::ostream& operator<< (std::ostream& out, const numeric_primary_t& np);
-
 typedef struct numeric_value : numeric_primary_t {
     std::unique_ptr<value_expression_primary_t> value;
     numeric_value(std::unique_ptr<value_expression_primary_t>& value) :
@@ -152,8 +140,6 @@ typedef struct numeric_value : numeric_primary_t {
         value(std::move(value))
     {}
 } numeric_value_t;
-
-std::ostream& operator<< (std::ostream& out, const numeric_value_t& nv);
 
 typedef enum numeric_function_type {
     NUMERIC_FUNCTION_TYPE_UNKNOWN,
@@ -172,8 +158,6 @@ typedef struct numeric_function : numeric_primary_t {
     {}
 } numeric_function_t;
 
-std::ostream& operator<< (std::ostream& out, const numeric_function_t& nf);
-
 typedef struct position_expression : numeric_function_t {
     // Will always be static_castable to character_value_expression_t
     std::unique_ptr<struct value_expression> to_find;
@@ -187,8 +171,6 @@ typedef struct position_expression : numeric_function_t {
         subject(std::move(subject))
     {}
 } position_expression_t;
-
-std::ostream& operator<< (std::ostream& out, const position_expression_t& pe);
 
 typedef struct extract_expression : numeric_function_t {
     interval_unit_t extract_field;
@@ -204,8 +186,6 @@ typedef struct extract_expression : numeric_function_t {
     {}
 } extract_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const extract_expression_t& ee);
-
 typedef struct length_expression : numeric_function_t {
     // Will always be static_castable to string_value_expression_t
     std::unique_ptr<struct value_expression> operand;
@@ -217,8 +197,6 @@ typedef struct length_expression : numeric_function_t {
     {}
 } length_expression_t;
 
-std::ostream& operator<< (std::ostream& out, const length_expression_t& le);
-
 typedef struct numeric_factor {
     int8_t sign;
     std::unique_ptr<numeric_primary_t> value;
@@ -227,8 +205,6 @@ typedef struct numeric_factor {
         value(std::move(value))
     {}
 } numeric_factor_t;
-
-std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf);
 
 typedef enum numeric_op {
     NUMERIC_OP_NONE,
@@ -256,8 +232,6 @@ typedef struct numeric_term {
     }
 } numeric_term_t;
 
-std::ostream& operator<< (std::ostream& out, const numeric_term_t& nt);
-
 typedef enum string_function_type {
     STRING_FUNCTION_TYPE_SUBSTRING,
     STRING_FUNCTION_TYPE_UPPER,
@@ -280,8 +254,6 @@ typedef struct string_function {
     {}
 } string_function_t;
 
-std::ostream& operator<< (std::ostream& out, const string_function_t& sf);
-
 typedef struct substring_function : string_function_t {
     // Guaranteed to be static_castable to a numeric_value_expression_t
     std::unique_ptr<struct value_expression> start_position_value;
@@ -303,8 +275,6 @@ typedef struct substring_function : string_function_t {
     {}
 } substring_function_t;
 
-std::ostream& operator<< (std::ostream& out, const substring_function_t& sf);
-
 typedef struct convert_function : string_function_t {
     lexeme_t conversion_name;
     convert_function(
@@ -315,8 +285,6 @@ typedef struct convert_function : string_function_t {
     {}
 } convert_function_t;
 
-std::ostream& operator<< (std::ostream& out, const convert_function_t& cf);
-
 typedef struct translate_function : string_function_t {
     lexeme_t translation_name;
     translate_function(
@@ -326,8 +294,6 @@ typedef struct translate_function : string_function_t {
         translation_name(translation_name)
     {}
 } translate_function_t;
-
-std::ostream& operator<< (std::ostream& out, const translate_function_t& tf);
 
 typedef enum trim_specification {
     TRIM_SPECIFICATION_LEADING,
@@ -349,8 +315,6 @@ typedef struct trim_function : string_function_t {
     {}
 } trim_function_t;
 
-std::ostream& operator<< (std::ostream& out, const trim_function_t& tf);
-
 // A character primary is a value expression primary or a string value function
 typedef struct character_primary {
     std::unique_ptr<value_expression_primary_t> value;
@@ -365,8 +329,6 @@ typedef struct character_primary {
     {}
 } character_primary_t;
 
-std::ostream& operator<< (std::ostream& out, const character_primary_t& cp);
-
 // A character factor is a character primary with an optional collation.
 typedef struct character_factor {
     std::unique_ptr<character_primary_t> value;
@@ -378,8 +340,6 @@ typedef struct character_factor {
         collation(collation)
     {}
 } character_factor_t;
-
-std::ostream& operator<< (std::ostream& out, const character_factor_t& cf);
 
 // The datetime factor may be either a value expression primary or a datetime
 // function
@@ -395,8 +355,6 @@ typedef struct datetime_primary {
     {}
 } datetime_primary_t;
 
-std::ostream& operator<< (std::ostream& out, const datetime_primary_t& np);
-
 typedef struct datetime_value : datetime_primary_t {
     std::unique_ptr<value_expression_primary_t> value;
     datetime_value(std::unique_ptr<value_expression_primary_t>& value) :
@@ -404,8 +362,6 @@ typedef struct datetime_value : datetime_primary_t {
         value(std::move(value))
     {}
 } datetime_value_t;
-
-std::ostream& operator<< (std::ostream& out, const datetime_value_t& nv);
 
 typedef enum datetime_function_type {
     DATETIME_FUNCTION_TYPE_UNKNOWN,
@@ -432,8 +388,6 @@ typedef struct current_datetime_function : datetime_function_t {
     {}
 } current_datetime_function_t;
 
-std::ostream& operator<< (std::ostream& out, const current_datetime_function_t& df);
-
 // A datetime factor evaluates to a datetime value. It contains a datetime
 // primary and has an optional timezone component.
 typedef struct datetime_factor {
@@ -450,16 +404,12 @@ typedef struct datetime_factor {
     }
 } datetime_factor_t;
 
-std::ostream& operator<< (std::ostream& out, const datetime_factor_t& factor);
-
 typedef struct datetime_term {
     std::unique_ptr<datetime_factor_t> value;
     datetime_term(std::unique_ptr<datetime_factor_t>& value) :
         value(std::move(value))
     {}
 } datetime_term_t;
-
-std::ostream& operator<< (std::ostream& out, const datetime_term_t& term);
 
 typedef struct datetime_field {
     interval_unit_t interval;
@@ -474,8 +424,6 @@ typedef struct datetime_field {
         fractional_precision(fractional_precision)
     {}
 } datetime_field_t;
-
-std::ostream& operator<< (std::ostream& out, const datetime_field_t& df);
 
 typedef struct interval_qualifier {
     datetime_field_t start;
@@ -498,8 +446,6 @@ typedef struct interval_qualifier {
     {}
 } interval_qualifier_t;
 
-std::ostream& operator<< (std::ostream& out, const interval_qualifier_t& iq);
-
 typedef struct interval_primary {
     std::unique_ptr<value_expression_primary_t> value;
     std::unique_ptr<interval_qualifier_t> qualifier;
@@ -511,8 +457,6 @@ typedef struct interval_primary {
     {}
 } interval_primary_t;
 
-std::ostream& operator<< (std::ostream& out, const interval_primary_t& primary);
-
 typedef struct interval_factor {
     int8_t sign;
     std::unique_ptr<interval_primary_t> value;
@@ -521,8 +465,6 @@ typedef struct interval_factor {
         value(std::move(value))
     {}
 } interval_factor_t;
-
-std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor);
 
 typedef struct interval_term {
     std::unique_ptr<interval_factor_t> left;
@@ -543,8 +485,6 @@ typedef struct interval_term {
         right = std::move(operand);
     }
 } interval_term_t;
-
-std::ostream& operator<< (std::ostream& out, const interval_term_t& tern);
 
 } // namespace sqltoast
 

@@ -32,8 +32,6 @@ typedef struct default_descriptor {
     {}
 } default_descriptor_t;
 
-std::ostream& operator<< (std::ostream& out, const default_descriptor_t& column_def);
-
 typedef struct column_definition {
     lexeme_t name;
     std::unique_ptr<data_type_descriptor_t> data_type;
@@ -51,8 +49,6 @@ typedef struct column_definition {
         constraints(std::move(constraints))
     {}
 } column_definition_t;
-
-std::ostream& operator<< (std::ostream& out, const column_definition_t& column_def);
 
 } // namespace sqltoast
 

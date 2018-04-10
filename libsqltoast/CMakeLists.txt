@@ -5,11 +5,6 @@ SET(PROJECT_DESCRIPTION "A recursive descent parser for SQL")
 SET(SQLTOAST_VERSION_MAJOR 0)
 SET(SQLTOAST_VERSION_MINOR 1)
 SET(LIBSQLTOAST_SOURCES
-    src/identifier.cc
-    src/constraint.cc
-    src/column_definition.cc
-    src/column_reference.cc
-    src/data_type.cc
     src/parser/column_definition.cc
     src/parser/data_type_descriptor.cc
     src/parser/comment.cc
@@ -40,11 +35,6 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/token.cc
     src/parser/value.cc
     src/parser/value_expression.cc
-    src/statement.cc
-    src/predicate.cc
-    src/table_reference.cc
-    src/value.cc
-    src/value_expression.cc
 )
 
 # Header file for configuration templated variables

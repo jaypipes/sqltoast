@@ -15,8 +15,6 @@ typedef struct identifier {
     {}
 } identifier_t;
 
-std::ostream& operator<< (std::ostream& out, const identifier_t& id);
-
 } // namespace sqltoast
 
 #endif /* SQLTOAST_IDENTIFIER_H */

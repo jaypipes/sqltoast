@@ -30,8 +30,6 @@ typedef struct table_reference {
     {}
 } table_reference_t;
 
-std::ostream& operator<< (std::ostream& out, const table_reference_t& tr);
-
 typedef struct table : table_reference_t {
     lexeme_t table_name;
     lexeme_t alias;
@@ -45,8 +43,6 @@ typedef struct table : table_reference_t {
     }
 } table_t;
 
-std::ostream& operator<< (std::ostream& out, const table_t& t);
-
 typedef struct derived_table : table_reference_t {
     lexeme_t table_name;
     // Will always be static_castable to select_statement_t
@@ -59,8 +55,6 @@ typedef struct derived_table : table_reference_t {
         subquery(std::move(subquery))
     {}
 } derived_table_t;
-
-std::ostream& operator<< (std::ostream& out, const derived_table_t& dt);
 
 typedef enum join_type {
     JOIN_TYPE_UNKNOWN,
@@ -84,8 +78,6 @@ typedef struct join_specification {
         named_columns(std::move(named_columns))
     {}
 } join_specification_t;
-
-std::ostream& operator<< (std::ostream& out, const join_specification_t& js);
 
 typedef struct joined_table : table_reference_t {
     join_type_t join_type;
@@ -124,8 +116,6 @@ typedef struct joined_table : table_reference_t {
         spec(std::make_unique<join_specification_t>(named_cols))
     {}
 } joined_table_t;
-
-std::ostream& operator<< (std::ostream& out, const joined_table_t& jt);
 
 } // namespace sqltoast
 

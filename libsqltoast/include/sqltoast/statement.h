@@ -30,8 +30,6 @@ typedef struct statement {
     {}
 } statement_t;
 
-std::ostream& operator<< (std::ostream& out, const statement_t& stmt);
-
 typedef struct create_schema_statement : statement_t {
     lexeme_t schema_name;
     // Optional elements
@@ -48,8 +46,6 @@ typedef struct create_schema_statement : statement_t {
     {}
 } create_schema_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const create_schema_statement_t& stmt);
-
 typedef enum drop_behaviour {
     DROP_BEHAVIOUR_CASCADE,
     DROP_BEHAVIOUR_RESTRICT
@@ -64,8 +60,6 @@ typedef struct drop_schema_statement : statement_t {
         drop_behaviour(drop_behaviour)
     {}
 } drop_schema_statement_t;
-
-std::ostream& operator<< (std::ostream& out, const drop_schema_statement_t& stmt);
 
 typedef enum table_type {
     TABLE_TYPE_NORMAL,
@@ -91,8 +85,6 @@ typedef struct create_table_statement : statement_t {
     {}
 } create_table_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const create_table_statement_t& stmt);
-
 typedef struct drop_table_statement : statement_t {
     lexeme_t table_name;
     drop_behaviour_t drop_behaviour;
@@ -102,8 +94,6 @@ typedef struct drop_table_statement : statement_t {
         drop_behaviour(drop_behaviour)
     {}
 } drop_table_statement_t;
-
-std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt);
 
 typedef enum alter_table_action_type {
     ALTER_TABLE_ACTION_TYPE_ADD_COLUMN,
@@ -120,8 +110,6 @@ typedef struct alter_table_action {
     {}
 } alter_table_action_t;
 
-std::ostream& operator<< (std::ostream& out, const alter_table_action_t& action);
-
 typedef struct add_column_action : alter_table_action_t {
     std::unique_ptr<column_definition_t> column_definition;
     add_column_action(std::unique_ptr<column_definition_t>& column_def) :
@@ -129,8 +117,6 @@ typedef struct add_column_action : alter_table_action_t {
         column_definition(std::move(column_def))
     {}
 } add_column_action_t;
-
-std::ostream& operator<< (std::ostream& out, const add_column_action_t& action);
 
 typedef enum alter_column_action_type {
     ALTER_COLUMN_ACTION_TYPE_SET_DEFAULT,
@@ -156,8 +142,6 @@ typedef struct alter_column_action : alter_table_action_t {
     {}
 } alter_column_action_t;
 
-std::ostream& operator<< (std::ostream& out, const alter_column_action_t& action);
-
 typedef struct drop_column_action : alter_table_action_t {
     lexeme_t column_name;
     drop_behaviour_t drop_behaviour;
@@ -170,8 +154,6 @@ typedef struct drop_column_action : alter_table_action_t {
     {}
 } drop_column_action_t;
 
-std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action);
-
 typedef struct add_constraint_action : alter_table_action_t {
     std::unique_ptr<constraint_t> constraint;
     add_constraint_action(std::unique_ptr<constraint_t>& constraint) :
@@ -179,8 +161,6 @@ typedef struct add_constraint_action : alter_table_action_t {
         constraint(std::move(constraint))
     {}
 } add_constraint_action_t;
-
-std::ostream& operator<< (std::ostream& out, const add_constraint_action_t& action);
 
 typedef struct drop_constraint_action : alter_table_action_t {
     lexeme_t constraint_name;
@@ -194,8 +174,6 @@ typedef struct drop_constraint_action : alter_table_action_t {
     {}
 } drop_constraint_action_t;
 
-std::ostream& operator<< (std::ostream& out, const drop_column_action_t& action);
-
 typedef struct alter_table_statement : statement_t {
     lexeme_t table_name;
     std::unique_ptr<alter_table_action_t> action;
@@ -207,8 +185,6 @@ typedef struct alter_table_statement : statement_t {
         action(std::move(action))
     {}
 } alter_table_statement_t;
-
-std::ostream& operator<< (std::ostream& out, const alter_table_statement_t& stmt);
 
 typedef struct select_statement : statement_t {
     bool distinct;
@@ -234,8 +210,6 @@ typedef struct select_statement : statement_t {
     {}
 } select_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt);
-
 typedef struct insert_statement : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
@@ -257,8 +231,6 @@ typedef struct insert_statement : statement_t {
     }
 } insert_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt);
-
 typedef struct insert_select_statement : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
@@ -278,8 +250,6 @@ typedef struct insert_select_statement : statement_t {
     }
 } insert_select_statement_t;
 
-std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& stmt);
-
 typedef struct delete_statement : statement_t {
     lexeme_t table_name;
     std::unique_ptr<search_condition_t> where_condition;
@@ -289,8 +259,6 @@ typedef struct delete_statement : statement_t {
         where_condition(std::move(where))
     {}
 } delete_statement_t;
-
-std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt);
 
 typedef enum set_column_type {
     SET_COLUMN_TYPE_NULL,
@@ -338,8 +306,6 @@ typedef struct update_statement : statement_t {
         where_condition(std::move(where_cond))
     {}
 } update_statement_t;
-
-std::ostream& operator<< (std::ostream& out, const update_statement_t& stmt);
 
 } // namespace sqltoast
 

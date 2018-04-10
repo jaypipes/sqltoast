@@ -27,23 +27,17 @@ typedef struct constraint {
     {}
 } constraint_t;
 
-std::ostream& operator<< (std::ostream& out, const constraint_t& constraint);
-
 typedef struct not_null_constraint : constraint_t {
     not_null_constraint() :
         constraint_t(CONSTRAINT_TYPE_NOT_NULL)
     {}
 } not_null_constraint_t;
 
-std::ostream& operator<< (std::ostream& out, const not_null_constraint_t& constraint);
-
 typedef struct unique_constraint : constraint_t {
     unique_constraint(bool is_primary) :
         constraint_t(is_primary ? CONSTRAINT_TYPE_PRIMARY_KEY : CONSTRAINT_TYPE_UNIQUE)
     {}
 } unique_constraint_t;
-
-std::ostream& operator<< (std::ostream& out, const unique_constraint_t& constraint);
 
 typedef enum match_type {
     MATCH_TYPE_NONE,
@@ -78,8 +72,6 @@ typedef struct foreign_key_constraint : constraint_t {
         on_delete(on_delete)
     {}
 } foreign_key_constraint_t;
-
-std::ostream& operator<< (std::ostream& out, const foreign_key_constraint_t& constraint);
 
 } // namespace sqltoast
 

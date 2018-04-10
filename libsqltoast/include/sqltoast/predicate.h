@@ -57,8 +57,6 @@ typedef struct predicate : boolean_factor_t {
     {}
 } predicate_t;
 
-std::ostream& operator<< (std::ostream& out, const predicate_t& pred);
-
 typedef struct comp_predicate : predicate_t {
     std::unique_ptr<row_value_constructor_t> right;
     comp_predicate(
@@ -70,8 +68,6 @@ typedef struct comp_predicate : predicate_t {
         right(std::move(right))
     {}
 } comp_predicate_t;
-
-std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred);
 
 typedef struct between_predicate : predicate_t {
     std::unique_ptr<row_value_constructor_t> comp_left;
@@ -87,8 +83,6 @@ typedef struct between_predicate : predicate_t {
     {}
 } between_predicate_t;
 
-std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred);
-
 typedef struct null_predicate : predicate_t {
     null_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
@@ -96,8 +90,6 @@ typedef struct null_predicate : predicate_t {
         predicate_t(COMP_OP_NULL, left, reverse_op)
     {}
 } null_predicate_t;
-
-std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred);
 
 typedef struct in_values_predicate : predicate_t {
     std::vector<std::unique_ptr<value_expression_t>> values;
@@ -109,8 +101,6 @@ typedef struct in_values_predicate : predicate_t {
         values(std::move(values))
     {}
 } in_values_predicate_t;
-
-std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred);
 
 typedef struct statement statement_t;
 typedef struct in_subquery_predicate : predicate_t {
@@ -124,8 +114,6 @@ typedef struct in_subquery_predicate : predicate_t {
         subquery(std::move(subq))
     {}
 } in_subquery_predicate_t;
-
-std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred);
 
 typedef struct boolean_term {
     std::unique_ptr<boolean_factor_t> factor;
@@ -142,16 +130,12 @@ typedef struct boolean_term {
     }
 } boolean_term_t;
 
-std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt);
-
 // A container for processing boolean terms found in WHERE and HAVING clause
 // conditions
 typedef struct search_condition {
     // A collection of boolean terms that are OR'd together
     std::vector<std::unique_ptr<boolean_term_t>> terms;
 } search_condition_t;
-
-std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);
 
 // A search_condition_factor_t is a specialized type of boolean_factor_t that
 // represents an "inner" search condition that exists within an enclosing
@@ -165,8 +149,6 @@ typedef struct search_condition_factor : boolean_factor_t {
         search_condition(std::move(search_cond))
     {}
 } search_condition_factor_t;
-
-std::ostream& operator<< (std::ostream& out, const search_condition_factor_t& scf);
 
 } // namespace sqltoast
 
