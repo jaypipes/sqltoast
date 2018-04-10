@@ -39,7 +39,10 @@ int main(int argc, char *argv[]) {
 
 One of the most important attributes of the `sqltoast::parse_result_t` struct
 is the `statements` field, which is of type
-`std::vector<std::unique_ptr<sqltoast::statement_t>>`
+`std::vector<std::unique_ptr<sqltoast::statement_t>>`. For each valid SQL
+statement parsed by `sqltoast::parse()`, there will be a
+`std::unique_ptr<sqltoast::statement_t>` subclassed struct in the `statements`
+field.
 
 The [example program](sqltoaster/main.cc) included in the
 [sqltoaster/](sqltoaster/) directory can show you one way of interacting with
@@ -58,3 +61,47 @@ this important collection of structs:
 Each `sqltoast::statement_t` struct has its own "printer function" that allows
 the user of `libsqltoast` to easily use `<<` operator to print the contents of
 a `sqltoast::statement_t` to an `std::ostream`.
+
+Examining the printer function for a subclass of `sqltoast::statement_t` will
+allow you to understand the various attributes and sub-structs that comprise
+the SQL statement.
+
+For example, let's take a look at the printer function (in
+[libsqltoast/src/statement.cc](libsqltoast/src/statement.cc) for the
+`sqltoast::select_t` statement subclass struct:
+
+```c++
+std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
+    out << "<statement: SELECT";
+    if (stmt.distinct)
+       out << std::endl << "   distinct: true";
+    out << std::endl << "   selected columns:";
+    size_t x = 0;
+    for (const derived_column_t& dc : stmt.selected_columns) {
+        out << std::endl << "     " << x++ << ": " << dc;
+    }
+    out << std::endl << "   referenced tables:";
+    x = 0;
+    for (const std::unique_ptr<table_reference_t>& tr : stmt.referenced_tables) {
+        out << std::endl << "     " << x++ << ": " << *tr;
+    }
+    if (stmt.where_condition) {
+        out << std::endl << "   where:" << std::endl << "     ";
+        out << *stmt.where_condition;
+    }
+    if (! stmt.group_by_columns.empty()) {
+        out << std::endl << "   group by:";
+        x = 0;
+        for (const grouping_column_reference_t& gcr : stmt.group_by_columns) {
+            out << std::endl << "     " << x++ << ": " << gcr;
+        }
+    }
+    if (stmt.having_condition) {
+        out << std::endl << "   having:" << std::endl << "     ";
+        out << *stmt.having_condition;
+    }
+    out << ">" << std::endl;
+
+    return out;
+}
+```
