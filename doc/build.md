@@ -37,3 +37,34 @@ library and `sqltoaster` binary with a simple:
 ```bash
 make
 ```
+
+# Running tests
+
+After building the library and `sqltoaster` binary, you can run tests by
+changing into the [tests/grammar](../tests/grammar) directory and executing the
+Python test runner, like so:
+
+```
+cd tests/grammar
+python runner.py run
+```
+
+which will run all the grammar tests and output something like this:
+
+```
+jaypipes@uberbox:~/src/github.com/jaypipes/sqltoast$ cd tests/grammar/
+jaypipes@uberbox:~/src/github.com/jaypipes/sqltoast/tests/grammar$ python runner.py run
+Running ansi-92/alter-table ... OK
+Running ansi-92/column-definitions ... OK
+Running ansi-92/datetime-expressions ... OK
+Running ansi-92/delete ... OK
+Running ansi-92/identifiers ... OK
+Running ansi-92/insert-default-values ... OK
+Running ansi-92/insert-values ... OK
+Running ansi-92/interval-expressions ... OK
+Running ansi-92/numeric-expressions ... OK
+Running ansi-92/predicates ... OK
+Running ansi-92/string-expressions ... OK
+Running ansi-92/table-references ... OK
+Running ansi-92/update ... OK
+```
