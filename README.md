@@ -60,13 +60,15 @@ this important collection of structs:
     }
 ```
 
-Each `sqltoast::statement_t` struct has its own "printer function" that allows
-the user of `libsqltoast` to easily use `<<` operator to print the contents of
-a `sqltoast::statement_t` to an `std::ostream`.
+The example program contains "printer functions" for each of the important
+structures that are part of the `sqltoast` library.
+
+These printer functions are merely operator `<<` overloads that accept a
+`std::ostream` and one of the `sqltoast` library structures.
 
 Examining the printer function for a subclass of `sqltoast::statement_t` will
-allow you to understand the various attributes and sub-structs that comprise
-the SQL statement.
+help you understand the various attributes and sub-structs that comprise the
+SQL statement.
 
 For example, let's take a look at the printer function (in
 [sqltoaster/src/statement.cc](sqltoast/src/statement.cc) for the
