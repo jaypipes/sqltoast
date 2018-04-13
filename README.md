@@ -67,7 +67,7 @@ allow you to understand the various attributes and sub-structs that comprise
 the SQL statement.
 
 For example, let's take a look at the printer function (in
-[libsqltoast/src/statement.cc](libsqltoast/src/statement.cc) for the
+[sqltoaster/src/statement.cc](sqltoast/src/statement.cc) for the
 `sqltoast::select_t` statement subclass struct:
 
 ```c++
