@@ -132,7 +132,7 @@ To build the `sqltoast` library and `sqltoaster` example executable, first,
 create a directory to use for building:
 
 ```
-BUILD_DIR=""$(pwd)/_build"
+BUILD_DIR="$(pwd)/_build"
 mkdir -p $BUILD_DIR
 ```
 
