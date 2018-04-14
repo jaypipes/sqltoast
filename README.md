@@ -1,7 +1,8 @@
 # sqltoast - a parser for SQL written in C++
 
-The `sqltoast` library is an Apache 2 licensed C++ library designed to be both
-fast and fully thread-safe.
+The `sqltoast` library is an Apache 2 licensed C++ library designed for both
+fast and fully thread-safe parsing of SQL into a collection of structs that
+represent the abstract syntax tree (thus SQL to AST, or "sqltoast").
 
 ## Overview
 
