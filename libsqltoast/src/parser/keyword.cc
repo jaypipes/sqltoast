@@ -44,6 +44,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIME, "CURRENT_TIME"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_TIMESTAMP, "CURRENT_TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CURRENT_USER, "CURRENT_USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_COALESCE, "COALESCE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_CASE, "CASE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CROSS, "CROSS"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CONVERT, "CONVERT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHAR_LENGTH, "CHAR_LENGTH"));
@@ -69,6 +71,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'e':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_EXISTS, "EXISTS"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_END, "END"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ELSE, "ELSE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_EXTRACT, "EXTRACT"));
             return t;
         case 'f':
@@ -161,6 +165,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TIMESTAMP, "TIMESTAMP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TEMPORARY, "TEMPORARY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRIM, "TRIM"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_THEN, "THEN"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TO, "TO"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRAILING, "TRAILING"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRANSLATE, "TRANSLATE"));
@@ -182,6 +187,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'w':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_WHERE, "WHERE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_WITH, "WITH"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_WHEN, "WHEN"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_WORK, "WORK"));
             return t;
         case 'y':

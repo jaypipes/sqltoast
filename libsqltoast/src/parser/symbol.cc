@@ -49,11 +49,13 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_BOTH] = std::string("BOTH");
     m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
+    m[SYMBOL_CASE] = std::string("CASE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
     m[SYMBOL_CHAR_LENGTH] = std::string("CHAR_LENGTH");
     m[SYMBOL_CHARACTER_LENGTH] = std::string("CHARACTER_LENGTH");
     m[SYMBOL_CHECK] = std::string("CHECK");
+    m[SYMBOL_COALESCE] = std::string("COALESCE");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
     m[SYMBOL_COLUMN] = std::string("COLUMN");
     m[SYMBOL_COMMIT] = std::string("COMMIT");
@@ -75,6 +77,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DISTINCT] = std::string("DISTINCT");
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
+    m[SYMBOL_END] = std::string("END");
+    m[SYMBOL_ELSE] = std::string("ELSE");
     m[SYMBOL_EXISTS] = std::string("EXISTS");
     m[SYMBOL_EXTRACT] = std::string("EXTRACT");
     m[SYMBOL_FLOAT] = std::string("FLOAT");
@@ -112,6 +116,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_NOT] = std::string("NOT");
     m[SYMBOL_NUMERIC] = std::string("NUMERIC");
     m[SYMBOL_NULL] = std::string("NULL");
+    m[SYMBOL_NULLIF] = std::string("NULLIF");
     m[SYMBOL_OCTET_LENGTH] = std::string("OCTET_LENGTH");
     m[SYMBOL_ON] = std::string("ON");
     m[SYMBOL_OR] = std::string("OR");
@@ -136,6 +141,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_SYSTEM_USER] = std::string("SYSTEM_USER");
     m[SYMBOL_TABLE] = std::string("TABLE");
     m[SYMBOL_TEMPORARY] = std::string("TEMPORARY");
+    m[SYMBOL_THEN] = std::string("THEN");
     m[SYMBOL_TIME] = std::string("TIME");
     m[SYMBOL_TIMESTAMP] = std::string("TIMESTAMP");
     m[SYMBOL_TO] = std::string("TO");
@@ -152,6 +158,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_VALUES] = std::string("VALUES");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
     m[SYMBOL_VARYING] = std::string("VARYING");
+    m[SYMBOL_WHEN] = std::string("WHEN");
     m[SYMBOL_WHERE] = std::string("WHERE");
     m[SYMBOL_WITH] = std::string("WITH");
     m[SYMBOL_WORK] = std::string("WORK");
