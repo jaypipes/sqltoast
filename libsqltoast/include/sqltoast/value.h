@@ -96,6 +96,46 @@ typedef struct set_function : value_expression_primary_t {
     {}
 } set_function_t;
 
+typedef enum case_expression_type {
+    CASE_EXPRESSION_TYPE_COALESCE_FUNCTION,
+    CASE_EXPRESSION_TYPE_NULLIF_FUNCTION,
+    CASE_EXPRESSION_TYPE_SIMPLE_CASE,
+    CASE_EXPRESSION_TYPE_SEARCHED_CASE
+} case_expression_type_t;
+
+typedef struct case_expression : value_expression_primary_t {
+    case_expression_type_t case_type;
+    case_expression(
+            case_expression_type_t case_type,
+            lexeme_t lexeme) :
+        value_expression_primary_t(VEP_TYPE_CASE_EXPRESSION, lexeme),
+        case_type(case_type)
+    {}
+} case_expression_t;
+
+typedef struct coalesce_function : case_expression_t {
+    std::vector<std::unique_ptr<struct value_expression>> values;
+    coalesce_function(
+            lexeme_t lexeme,
+            std::vector<std::unique_ptr<struct value_expression>> values) :
+        case_expression_t(CASE_EXPRESSION_TYPE_COALESCE_FUNCTION, lexeme),
+        values(std::move(values))
+    {}
+} coalesce_function_t;
+
+typedef struct nullif_function : case_expression_t {
+    std::unique_ptr<struct value_expression> left;
+    std::unique_ptr<struct value_expression> right;
+    nullif_function(
+            lexeme_t lexeme,
+            std::unique_ptr<struct value_expression> left,
+            std::unique_ptr<struct value_expression> right) :
+        case_expression_t(CASE_EXPRESSION_TYPE_NULLIF_FUNCTION, lexeme),
+        left(std::move(left)),
+        right(std::move(right))
+    {}
+} nullif_function_t;
+
 // This is a "subexpression" inside a value expression primary
 typedef struct value_subexpression : value_expression_primary_t {
     std::unique_ptr<struct value_expression> value;

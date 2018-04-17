@@ -50,6 +50,44 @@ std::ostream& operator<< (std::ostream& out, const set_function_t& sf) {
     }
     return out;
 }
+
+std::ostream& operator<< (std::ostream& out, const case_expression_t& ce) {
+    switch (ce.case_type) {
+        case CASE_EXPRESSION_TYPE_COALESCE_FUNCTION:
+            {
+                const coalesce_function_t& cf = static_cast<const coalesce_function_t&>(ce);
+                out << cf;
+            }
+            break;
+        case CASE_EXPRESSION_TYPE_NULLIF_FUNCTION:
+            {
+                const nullif_function_t& nf = static_cast<const nullif_function_t&>(ce);
+                out << nf;
+            }
+            break;
+        default:
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const coalesce_function_t& cf) {
+    out << "coalesce[";
+    size_t x = 0;
+    for (const auto& val : cf.values) {
+        if (x++ > 0)
+            out << ',';
+        out << *val;
+    }
+    out << ']';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const nullif_function_t& nf) {
+    out << "nullif[" << *nf.left << ',' << *nf.right << ']';
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep) {
     switch (vep.vep_type) {
         case VEP_TYPE_UNSIGNED_VALUE_SPECIFICATION:
@@ -71,6 +109,12 @@ std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& v
             {
                 const value_subexpression_t& ve = static_cast<const value_subexpression_t&>(vep);
                 out << "(" << *ve.value << ")";
+            }
+            break;
+        case VEP_TYPE_CASE_EXPRESSION:
+            {
+                const case_expression_t& ce = static_cast<const case_expression_t&>(vep);
+                out << ce;
             }
             break;
         case VEP_TYPE_SCALAR_SUBQUERY:
