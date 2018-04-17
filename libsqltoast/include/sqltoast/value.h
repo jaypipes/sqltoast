@@ -117,7 +117,7 @@ typedef struct coalesce_function : case_expression_t {
     std::vector<std::unique_ptr<struct value_expression>> values;
     coalesce_function(
             lexeme_t lexeme,
-            std::vector<std::unique_ptr<struct value_expression>> values) :
+            std::vector<std::unique_ptr<struct value_expression>>& values) :
         case_expression_t(CASE_EXPRESSION_TYPE_COALESCE_FUNCTION, lexeme),
         values(std::move(values))
     {}
@@ -128,8 +128,8 @@ typedef struct nullif_function : case_expression_t {
     std::unique_ptr<struct value_expression> right;
     nullif_function(
             lexeme_t lexeme,
-            std::unique_ptr<struct value_expression> left,
-            std::unique_ptr<struct value_expression> right) :
+            std::unique_ptr<struct value_expression>& left,
+            std::unique_ptr<struct value_expression>& right) :
         case_expression_t(CASE_EXPRESSION_TYPE_NULLIF_FUNCTION, lexeme),
         left(std::move(left)),
         right(std::move(right))

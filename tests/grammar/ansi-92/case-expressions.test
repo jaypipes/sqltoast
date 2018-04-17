@@ -1,0 +1,18 @@
+# COALESCE with 2 args
+>SELECT COALESCE(a, 'n/a') FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: coalesce[column-reference[a],literal['n/a']]
+   referenced tables:
+     0: t1>
+# COALESCE with 4 args
+>SELECT COALESCE(a, b, c, 'n/a') FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: coalesce[column-reference[a],column-reference[b],column-reference[c],literal['n/a']]
+   referenced tables:
+     0: t1>

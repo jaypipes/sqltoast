@@ -171,6 +171,10 @@ check_punc_keywords:
         case SYMBOL_MIN:
         case SYMBOL_SUM:
             return parse_set_function(ctx, cur_tok, out);
+        case SYMBOL_COALESCE:
+        case SYMBOL_NULLIF:
+        case SYMBOL_CASE:
+            return parse_case_expression(ctx, cur_tok, out);
         default:
             return false;
     }
@@ -480,9 +484,119 @@ push_set_function:
     if (ctx.opts.disable_statement_construction)
         return true;
     if (operand)
-        out = std::make_unique<set_function_t>(func_type, lexeme_t(sf_start, sf_end), operand);
+        out = std::make_unique<set_function_t>(
+                func_type, lexeme_t(sf_start, sf_end), operand);
     else
-        out = std::make_unique<set_function_t>(func_type, lexeme_t(sf_start, sf_end));
+        out = std::make_unique<set_function_t>(
+                func_type, lexeme_t(sf_start, sf_end));
+    return true;
+}
+
+// <case expression> ::= <case abbreviation> | <case specification>
+//
+// <case abbreviation> ::=
+//     NULLIF <left paren> <value expression>
+//     <comma> <value expression> <right paren>
+//     | COALESCE <left paren> <value expression>
+//     { <comma> <value expression> }... <right paren>
+//
+// <case specification> ::= <simple case> | <searched case>
+//
+// <simple case> ::=
+//     CASE <case operand>
+//     <simple when clause> ...
+//     [ <else clause> ]
+//     END
+//
+// <case operand> ::= <value expression>
+//
+// <simple when clause> ::= WHEN <when operand> THEN <result>
+//
+// <when operand> ::= <value expression>
+//
+// <result> ::= <result expression> | NULL
+//
+// <result expression> ::= <value expression>
+//
+// <else clause> ::= ELSE <result>
+//
+// <searched case> ::=
+//     CASE
+//     <searched when clause> ...
+//     [ <else clause> ]
+//     END
+//
+// <searched when clause> ::=
+//     WHEN <search condition>
+//     THEN <result>
+bool parse_case_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_primary_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    parse_position_t case_start = lex.cursor;
+    parse_position_t case_end;
+    std::unique_ptr<value_expression_t> value;
+    std::vector<std::unique_ptr<value_expression_t>> values;
+    symbol_t cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_COALESCE:
+            cur_tok = lex.next();
+            goto process_coalesce;
+        case SYMBOL_NULLIF:
+            cur_tok = lex.next();
+            goto process_nullif;
+        case SYMBOL_CASE:
+            cur_tok = lex.next();
+            goto process_case;
+        default:
+            return false;
+    }
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+process_coalesce:
+    // We get here if we found the COALESCE symbol, which must be followed by
+    // one or more value expressions enclosed by parens
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto process_coalesce_argument;
+process_coalesce_argument:
+    if (! parse_value_expression(ctx, cur_tok, value))
+        goto err_expect_value_expression;
+    values.emplace_back(std::move(value));
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_coalesce_argument;
+    }
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    case_end = lex.cursor;
+    cur_tok = lex.next();
+    goto push_coalesce;
+err_expect_value_expression:
+    {
+        std::stringstream estr;
+        estr << "expected <value expression> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+process_nullif:
+    return false;
+process_case:
+    return false;
+push_coalesce:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<coalesce_function_t>(
+            lexeme_t(case_start, case_end), values);
     return true;
 }
 
