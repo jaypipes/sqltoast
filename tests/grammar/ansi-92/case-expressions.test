@@ -1,3 +1,15 @@
+# COALESCE with no args - error, missing right parens
+>SELECT COALESCE(
+Syntax error.
+Expected to find one of ('*'|<< identifier >>) but found symbol[EOS]
+SELECT COALESCE(
+               ^
+# COALESCE with no args - error, no args
+>SELECT COALESCE()
+Syntax error.
+Expected to find one of ('*'|<< identifier >>) but found symbol[')']
+SELECT COALESCE()
+               ^^
 # COALESCE with 2 args
 >SELECT COALESCE(a, 'n/a') FROM t1
 OK
