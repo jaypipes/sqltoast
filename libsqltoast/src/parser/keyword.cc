@@ -124,6 +124,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NOT, "NOT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NO, "NO"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NULL, "NULL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_NULLIF, "NULLIF"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NATURAL, "NATURAL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NATIONAL, "NATIONAL"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_NCHAR, "NCHAR"));

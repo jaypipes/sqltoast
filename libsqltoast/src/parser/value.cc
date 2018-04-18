@@ -537,6 +537,8 @@ bool parse_case_expression(
     parse_position_t case_start = lex.cursor;
     parse_position_t case_end;
     std::unique_ptr<value_expression_t> value;
+    std::unique_ptr<value_expression_t> left;
+    std::unique_ptr<value_expression_t> right;
     std::vector<std::unique_ptr<value_expression_t>> values;
     symbol_t cur_sym = cur_tok.symbol;
     switch (cur_sym) {
@@ -552,9 +554,6 @@ bool parse_case_expression(
         default:
             return false;
     }
-err_expect_lparen:
-    expect_error(ctx, SYMBOL_LPAREN);
-    return false;
 process_coalesce:
     // We get here if we found the COALESCE symbol, which must be followed by
     // one or more value expressions enclosed by parens
@@ -563,6 +562,9 @@ process_coalesce:
         goto err_expect_lparen;
     cur_tok = lex.next();
     goto process_coalesce_argument;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
 process_coalesce_argument:
     if (! parse_value_expression(ctx, cur_tok, value))
         goto err_expect_value_expression;
@@ -589,6 +591,28 @@ err_expect_rparen:
     expect_error(ctx, SYMBOL_RPAREN);
     return false;
 process_nullif:
+    // We get here if we found the NULLIF symbol, which must be followed by two
+    // comma-separated value expressions enclosed by parens
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    if (! parse_value_expression(ctx, cur_tok, left))
+        goto err_expect_value_expression;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_COMMA)
+        goto err_expect_comma;
+    cur_tok = lex.next();
+    if (! parse_value_expression(ctx, cur_tok, right))
+        goto err_expect_value_expression;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    case_end = lex.cursor;
+    cur_tok = lex.next();
+    goto push_nullif;
+err_expect_comma:
+    expect_error(ctx, SYMBOL_COMMA);
     return false;
 process_case:
     return false;
@@ -597,6 +621,12 @@ push_coalesce:
         return true;
     out = std::make_unique<coalesce_function_t>(
             lexeme_t(case_start, case_end), values);
+    return true;
+push_nullif:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<nullif_function_t>(
+            lexeme_t(case_start, case_end), left, right);
     return true;
 }
 
