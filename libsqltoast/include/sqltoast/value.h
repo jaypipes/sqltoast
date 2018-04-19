@@ -136,6 +136,41 @@ typedef struct nullif_function : case_expression_t {
     {}
 } nullif_function_t;
 
+typedef struct simple_case_expression_when_clause {
+    std::unique_ptr<struct value_expression> operand;
+    std::unique_ptr<struct value_expression> result;
+    simple_case_expression_when_clause(
+            std::unique_ptr<struct value_expression>& operand,
+            std::unique_ptr<struct value_expression>& result) :
+        operand(std::move(operand)),
+        result(std::move(result))
+    {}
+} simple_case_expression_when_clause_t;
+
+typedef struct simple_case_expression : case_expression_t {
+    std::unique_ptr<struct value_expression> operand;
+    std::vector<simple_case_expression_when_clause_t> when_values;
+    std::unique_ptr<struct value_expression> else_value;
+    simple_case_expression(
+            lexeme_t lexeme,
+            std::unique_ptr<struct value_expression>& operand,
+            std::vector<simple_case_expression_when_clause_t>& when_values) :
+        case_expression_t(CASE_EXPRESSION_TYPE_SIMPLE_CASE, lexeme),
+        operand(std::move(operand)),
+        when_values(std::move(when_values))
+    {}
+    simple_case_expression(
+            lexeme_t lexeme,
+            std::unique_ptr<struct value_expression>& operand,
+            std::vector<simple_case_expression_when_clause_t>& when_values,
+            std::unique_ptr<struct value_expression>& else_value) :
+        case_expression_t(CASE_EXPRESSION_TYPE_SIMPLE_CASE, lexeme),
+        operand(std::move(operand)),
+        when_values(std::move(when_values)),
+        else_value(std::move(else_value))
+    {}
+} simple_case_expression_t;
+
 // This is a "subexpression" inside a value expression primary
 typedef struct value_subexpression : value_expression_primary_t {
     std::unique_ptr<struct value_expression> value;

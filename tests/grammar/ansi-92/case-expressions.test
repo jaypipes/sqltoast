@@ -37,3 +37,12 @@ statements[0]:
      0: nullif[column-reference[a],literal['n/a']]
    referenced tables:
      0: t1>
+# Simple CASE expression single WHEN no ELSE
+>SELECT CASE a WHEN 1 THEN 2 END FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2]]
+   referenced tables:
+     0: t1>

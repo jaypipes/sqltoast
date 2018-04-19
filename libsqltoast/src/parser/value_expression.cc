@@ -118,6 +118,10 @@ optional_operator:
         case SYMBOL_WHERE:
         case SYMBOL_HAVING:
         case SYMBOL_GROUP:
+        case SYMBOL_USING:
+        case SYMBOL_WHEN:
+        case SYMBOL_THEN:
+        case SYMBOL_END:
             return true;
         case SYMBOL_PLUS:
             cur_tok = lex.next();
@@ -215,6 +219,9 @@ optional_concat:
         case SYMBOL_HAVING:
         case SYMBOL_GROUP:
         case SYMBOL_USING:
+        case SYMBOL_WHEN:
+        case SYMBOL_THEN:
+        case SYMBOL_END:
             goto push_ve;
         case SYMBOL_CONCATENATION:
             cur_tok = lex.next();
@@ -284,6 +291,10 @@ optional_operator:
         case SYMBOL_WHERE:
         case SYMBOL_HAVING:
         case SYMBOL_GROUP:
+        case SYMBOL_USING:
+        case SYMBOL_WHEN:
+        case SYMBOL_THEN:
+        case SYMBOL_END:
             return true;
         case SYMBOL_PLUS:
             cur_tok = lex.next();
@@ -369,6 +380,10 @@ optional_operator:
         case SYMBOL_WHERE:
         case SYMBOL_HAVING:
         case SYMBOL_GROUP:
+        case SYMBOL_USING:
+        case SYMBOL_WHEN:
+        case SYMBOL_THEN:
+        case SYMBOL_END:
             return true;
         case SYMBOL_PLUS:
             cur_tok = lex.next();

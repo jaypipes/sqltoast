@@ -48,6 +48,9 @@ optional_operator:
         case SYMBOL_GROUP:
         case SYMBOL_PLUS:
         case SYMBOL_MINUS:
+        case SYMBOL_WHEN:
+        case SYMBOL_THEN:
+        case SYMBOL_END:
             return true;
         case SYMBOL_ASTERISK:
             cur_tok = lex.next();
@@ -501,34 +504,6 @@ push_set_function:
 //     { <comma> <value expression> }... <right paren>
 //
 // <case specification> ::= <simple case> | <searched case>
-//
-// <simple case> ::=
-//     CASE <case operand>
-//     <simple when clause> ...
-//     [ <else clause> ]
-//     END
-//
-// <case operand> ::= <value expression>
-//
-// <simple when clause> ::= WHEN <when operand> THEN <result>
-//
-// <when operand> ::= <value expression>
-//
-// <result> ::= <result expression> | NULL
-//
-// <result expression> ::= <value expression>
-//
-// <else clause> ::= ELSE <result>
-//
-// <searched case> ::=
-//     CASE
-//     <searched when clause> ...
-//     [ <else clause> ]
-//     END
-//
-// <searched when clause> ::=
-//     WHEN <search condition>
-//     THEN <result>
 bool parse_case_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -615,7 +590,12 @@ err_expect_comma:
     expect_error(ctx, SYMBOL_COMMA);
     return false;
 process_case:
-    return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_WHEN) {
+        cur_tok = lex.next();
+        return parse_searched_case_expression(ctx, cur_tok, out);
+    }
+    return parse_simple_case_expression(ctx, cur_tok, out);
 push_coalesce:
     if (ctx.opts.disable_statement_construction)
         return true;
@@ -628,6 +608,116 @@ push_nullif:
     out = std::make_unique<nullif_function_t>(
             lexeme_t(case_start, case_end), left, right);
     return true;
+}
+
+// <simple case> ::=
+//     CASE <case operand>
+//     <simple when clause> ...
+//     [ <else clause> ]
+//     END
+//
+// <case operand> ::= <value expression>
+//
+// <simple when clause> ::= WHEN <when operand> THEN <result>
+//
+// <when operand> ::= <value expression>
+//
+// <result> ::= <result expression> | NULL
+//
+// <result expression> ::= <value expression>
+//
+// <else clause> ::= ELSE <result>
+bool parse_simple_case_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_primary_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    parse_position_t case_start = lex.cursor;
+    parse_position_t case_end;
+    std::unique_ptr<value_expression_t> operand;
+    std::vector<simple_case_expression_when_clause_t> when_values;
+    std::unique_ptr<value_expression_t> else_value;
+    std::unique_ptr<value_expression_t> when_operand;
+    std::unique_ptr<value_expression_t> when_result;
+    symbol_t cur_sym = cur_tok.symbol;
+    if (! parse_value_expression(ctx, cur_tok, operand))
+        return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_WHEN)
+        goto err_expect_when;
+    cur_tok = lex.next();
+    goto process_simple_when;
+process_simple_when:
+    // A WHEN clause for a simple case expression is the following:
+    //  WHEN <value expression> THEN <value_expression>
+    // We have already processed the WHEN symbol at this point.
+    if (! parse_value_expression(ctx, cur_tok, when_operand))
+        return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_THEN)
+        goto err_expect_then;
+    cur_tok = lex.next();
+    if (! parse_value_expression(ctx, cur_tok, when_result))
+        return false;
+    when_values.emplace_back(
+            simple_case_expression_when_clause_t(
+                    when_operand, when_result));
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_WHEN) {
+        cur_tok = lex.next();
+        goto process_simple_when;
+    }
+    goto process_optional_else;
+err_expect_when:
+    expect_error(ctx, SYMBOL_WHEN);
+    return false;
+err_expect_then:
+    expect_error(ctx, SYMBOL_THEN);
+    return false;
+process_optional_else:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ELSE) {
+        cur_tok = lex.next();
+        if (! parse_value_expression(ctx, cur_tok, else_value))
+            return false;
+    }
+    goto process_end;
+process_end:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_END)
+        goto err_expect_end;
+    cur_tok = lex.next();
+    case_end = lex.cursor;
+    goto push_simple_case;
+err_expect_end:
+    expect_error(ctx, SYMBOL_END);
+    return false;
+push_simple_case:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    if (else_value)
+        out = std::make_unique<simple_case_expression_t>(
+                lexeme_t(case_start, case_end), operand, when_values, else_value);
+    else
+        out = std::make_unique<simple_case_expression_t>(
+                lexeme_t(case_start, case_end), operand, when_values);
+    return true;
+}
+
+// <searched case> ::=
+//     CASE
+//     <searched when clause> ...
+//     [ <else clause> ]
+//     END
+//
+// <searched when clause> ::=
+//     WHEN <search condition>
+//     THEN <result>
+bool parse_searched_case_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_primary_t>& out) {
+    return false;
 }
 
 // <numeric value function> ::=

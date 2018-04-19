@@ -224,6 +224,14 @@ bool parse_case_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_primary_t>& out);
+bool parse_simple_case_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_primary_t>& out);
+bool parse_searched_case_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<value_expression_primary_t>& out);
 
 bool parse_string_value_expression(
         parse_context_t& ctx,

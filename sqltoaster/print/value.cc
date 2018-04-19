@@ -55,19 +55,37 @@ std::ostream& operator<< (std::ostream& out, const case_expression_t& ce) {
     switch (ce.case_type) {
         case CASE_EXPRESSION_TYPE_COALESCE_FUNCTION:
             {
-                const coalesce_function_t& cf = static_cast<const coalesce_function_t&>(ce);
+                const coalesce_function_t& cf =
+                    static_cast<const coalesce_function_t&>(ce);
                 out << cf;
             }
             break;
         case CASE_EXPRESSION_TYPE_NULLIF_FUNCTION:
             {
-                const nullif_function_t& nf = static_cast<const nullif_function_t&>(ce);
+                const nullif_function_t& nf =
+                    static_cast<const nullif_function_t&>(ce);
                 out << nf;
+            }
+            break;
+        case CASE_EXPRESSION_TYPE_SIMPLE_CASE:
+            {
+                const simple_case_expression_t& sce =
+                    static_cast<const simple_case_expression_t&>(ce);
+                out << sce;
             }
             break;
         default:
             break;
     }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const simple_case_expression_t& sce) {
+    out << "simple-case-expression[" << *sce.operand;
+    for (const auto& when_val : sce.when_values) {
+        out << " WHEN " << *when_val.operand << " THEN " << *when_val.result;
+    }
+    out << ']';
     return out;
 }
 
