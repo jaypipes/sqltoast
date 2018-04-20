@@ -85,6 +85,8 @@ std::ostream& operator<< (std::ostream& out, const simple_case_expression_t& sce
     for (const auto& when_val : sce.when_values) {
         out << " WHEN " << *when_val.operand << " THEN " << *when_val.result;
     }
+    if (sce.else_value)
+        out << " ELSE " << *sce.else_value;
     out << ']';
     return out;
 }

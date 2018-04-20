@@ -121,6 +121,7 @@ optional_operator:
         case SYMBOL_USING:
         case SYMBOL_WHEN:
         case SYMBOL_THEN:
+        case SYMBOL_ELSE:
         case SYMBOL_END:
             return true;
         case SYMBOL_PLUS:
@@ -221,6 +222,7 @@ optional_concat:
         case SYMBOL_USING:
         case SYMBOL_WHEN:
         case SYMBOL_THEN:
+        case SYMBOL_ELSE:
         case SYMBOL_END:
             goto push_ve;
         case SYMBOL_CONCATENATION:
@@ -294,6 +296,7 @@ optional_operator:
         case SYMBOL_USING:
         case SYMBOL_WHEN:
         case SYMBOL_THEN:
+        case SYMBOL_ELSE:
         case SYMBOL_END:
             return true;
         case SYMBOL_PLUS:
@@ -383,6 +386,7 @@ optional_operator:
         case SYMBOL_USING:
         case SYMBOL_WHEN:
         case SYMBOL_THEN:
+        case SYMBOL_ELSE:
         case SYMBOL_END:
             return true;
         case SYMBOL_PLUS:

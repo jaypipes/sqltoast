@@ -50,6 +50,7 @@ optional_operator:
         case SYMBOL_MINUS:
         case SYMBOL_WHEN:
         case SYMBOL_THEN:
+        case SYMBOL_ELSE:
         case SYMBOL_END:
             return true;
         case SYMBOL_ASTERISK:
