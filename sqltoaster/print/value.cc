@@ -74,6 +74,13 @@ std::ostream& operator<< (std::ostream& out, const case_expression_t& ce) {
                 out << sce;
             }
             break;
+        case CASE_EXPRESSION_TYPE_SEARCHED_CASE:
+            {
+                const searched_case_expression_t& sce =
+                    static_cast<const searched_case_expression_t&>(ce);
+                out << sce;
+            }
+            break;
         default:
             break;
     }
@@ -82,8 +89,24 @@ std::ostream& operator<< (std::ostream& out, const case_expression_t& ce) {
 
 std::ostream& operator<< (std::ostream& out, const simple_case_expression_t& sce) {
     out << "simple-case-expression[" << *sce.operand;
-    for (const auto& when_val : sce.when_values) {
-        out << " WHEN " << *when_val.operand << " THEN " << *when_val.result;
+    for (const auto& when_clause : sce.when_clauses) {
+        out << " WHEN " << *when_clause.operand
+            << " THEN " << *when_clause.result;
+    }
+    if (sce.else_value)
+        out << " ELSE " << *sce.else_value;
+    out << ']';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const searched_case_expression_t& sce) {
+    out << "searched-case-expression[";
+    size_t x = 0;
+    for (const auto& when_clause : sce.when_clauses) {
+        if (x++ > 0)
+            out << ' ';
+        out << "WHEN " << *when_clause.condition
+            << " THEN " << *when_clause.result;
     }
     if (sce.else_value)
         out << " ELSE " << *sce.else_value;

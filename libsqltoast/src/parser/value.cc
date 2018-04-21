@@ -636,7 +636,7 @@ bool parse_simple_case_expression(
     parse_position_t case_start = lex.cursor;
     parse_position_t case_end;
     std::unique_ptr<value_expression_t> operand;
-    std::vector<simple_case_expression_when_clause_t> when_values;
+    std::vector<simple_case_expression_when_clause_t> when_clauses;
     std::unique_ptr<value_expression_t> else_value;
     std::unique_ptr<value_expression_t> when_operand;
     std::unique_ptr<value_expression_t> when_result;
@@ -660,7 +660,7 @@ process_simple_when:
     cur_tok = lex.next();
     if (! parse_value_expression(ctx, cur_tok, when_result))
         return false;
-    when_values.emplace_back(
+    when_clauses.emplace_back(
             simple_case_expression_when_clause_t(
                     when_operand, when_result));
     cur_sym = cur_tok.symbol;
@@ -698,10 +698,10 @@ push_simple_case:
         return true;
     if (else_value)
         out = std::make_unique<simple_case_expression_t>(
-                lexeme_t(case_start, case_end), operand, when_values, else_value);
+                lexeme_t(case_start, case_end), operand, when_clauses, else_value);
     else
         out = std::make_unique<simple_case_expression_t>(
-                lexeme_t(case_start, case_end), operand, when_values);
+                lexeme_t(case_start, case_end), operand, when_clauses);
     return true;
 }
 
@@ -718,7 +718,67 @@ bool parse_searched_case_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<value_expression_primary_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    parse_position_t case_start = lex.cursor;
+    parse_position_t case_end;
+    std::vector<searched_case_expression_when_clause_t> when_clauses;
+    std::unique_ptr<value_expression_t> else_value;
+    std::unique_ptr<search_condition_t> when_cond;
+    std::unique_ptr<value_expression_t> when_result;
+    symbol_t cur_sym = cur_tok.symbol;
+    goto process_searched_when;
+process_searched_when:
+    // A WHEN clause for a searched case expression is the following:
+    //  WHEN <search_condition>  THEN <value_expression>
+    // We have already processed the WHEN symbol at this point.
+    if (! parse_search_condition(ctx, cur_tok, when_cond))
+        return false;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_THEN)
+        goto err_expect_then;
+    cur_tok = lex.next();
+    if (! parse_value_expression(ctx, cur_tok, when_result))
+        return false;
+    when_clauses.emplace_back(
+            searched_case_expression_when_clause_t(
+                    when_cond, when_result));
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_WHEN) {
+        cur_tok = lex.next();
+        goto process_searched_when;
+    }
+    goto process_optional_else;
+err_expect_then:
+    expect_error(ctx, SYMBOL_THEN);
     return false;
+process_optional_else:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ELSE) {
+        cur_tok = lex.next();
+        if (! parse_value_expression(ctx, cur_tok, else_value))
+            return false;
+    }
+    goto process_end;
+process_end:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_END)
+        goto err_expect_end;
+    cur_tok = lex.next();
+    case_end = lex.cursor;
+    goto push_searched_case;
+err_expect_end:
+    expect_error(ctx, SYMBOL_END);
+    return false;
+push_searched_case:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    if (else_value)
+        out = std::make_unique<searched_case_expression_t>(
+                lexeme_t(case_start, case_end), when_clauses, else_value);
+    else
+        out = std::make_unique<searched_case_expression_t>(
+                lexeme_t(case_start, case_end), when_clauses);
+    return true;
 }
 
 // <numeric value function> ::=

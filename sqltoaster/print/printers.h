@@ -63,6 +63,7 @@ std::ostream& operator<< (std::ostream& out, const case_expression_t& ce);
 std::ostream& operator<< (std::ostream& out, const coalesce_function_t& cf);
 std::ostream& operator<< (std::ostream& out, const nullif_function_t& nf);
 std::ostream& operator<< (std::ostream& out, const simple_case_expression_t& sce);
+std::ostream& operator<< (std::ostream& out, const searched_case_expression_t& sce);
 std::ostream& operator<< (std::ostream& out, const set_function_t& sf);
 std::ostream& operator<< (std::ostream& out, const value_subexpression_t& uvs);
 std::ostream& operator<< (std::ostream& out, const scalar_subquery_t& uvs);

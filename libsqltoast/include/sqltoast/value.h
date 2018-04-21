@@ -149,27 +149,58 @@ typedef struct simple_case_expression_when_clause {
 
 typedef struct simple_case_expression : case_expression_t {
     std::unique_ptr<struct value_expression> operand;
-    std::vector<simple_case_expression_when_clause_t> when_values;
+    std::vector<simple_case_expression_when_clause_t> when_clauses;
     std::unique_ptr<struct value_expression> else_value;
     simple_case_expression(
             lexeme_t lexeme,
             std::unique_ptr<struct value_expression>& operand,
-            std::vector<simple_case_expression_when_clause_t>& when_values) :
+            std::vector<simple_case_expression_when_clause_t>& when_clauses) :
         case_expression_t(CASE_EXPRESSION_TYPE_SIMPLE_CASE, lexeme),
         operand(std::move(operand)),
-        when_values(std::move(when_values))
+        when_clauses(std::move(when_clauses))
     {}
     simple_case_expression(
             lexeme_t lexeme,
             std::unique_ptr<struct value_expression>& operand,
-            std::vector<simple_case_expression_when_clause_t>& when_values,
+            std::vector<simple_case_expression_when_clause_t>& when_clauses,
             std::unique_ptr<struct value_expression>& else_value) :
         case_expression_t(CASE_EXPRESSION_TYPE_SIMPLE_CASE, lexeme),
         operand(std::move(operand)),
-        when_values(std::move(when_values)),
+        when_clauses(std::move(when_clauses)),
         else_value(std::move(else_value))
     {}
 } simple_case_expression_t;
+
+struct search_condition;
+typedef struct searched_case_expression_when_clause {
+    std::unique_ptr<struct search_condition> condition;
+    std::unique_ptr<struct value_expression> result;
+    searched_case_expression_when_clause(
+            std::unique_ptr<struct search_condition>& condition,
+            std::unique_ptr<struct value_expression>& result) :
+        condition(std::move(condition)),
+        result(std::move(result))
+    {}
+} searched_case_expression_when_clause_t;
+
+typedef struct searched_case_expression : case_expression_t {
+    std::vector<searched_case_expression_when_clause_t> when_clauses;
+    std::unique_ptr<struct value_expression> else_value;
+    searched_case_expression(
+            lexeme_t lexeme,
+            std::vector<searched_case_expression_when_clause_t>& when_clauses) :
+        case_expression_t(CASE_EXPRESSION_TYPE_SEARCHED_CASE, lexeme),
+        when_clauses(std::move(when_clauses))
+    {}
+    searched_case_expression(
+            lexeme_t lexeme,
+            std::vector<searched_case_expression_when_clause_t>& when_clauses,
+            std::unique_ptr<struct value_expression>& else_value) :
+        case_expression_t(CASE_EXPRESSION_TYPE_SEARCHED_CASE, lexeme),
+        when_clauses(std::move(when_clauses)),
+        else_value(std::move(else_value))
+    {}
+} searched_case_expression_t;
 
 // This is a "subexpression" inside a value expression primary
 typedef struct value_subexpression : value_expression_primary_t {
