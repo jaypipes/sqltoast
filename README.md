@@ -168,6 +168,7 @@ which will run all the grammar tests and output something like this:
 jaypipes@uberbox:~/src/github.com/jaypipes/sqltoast$ cd tests/grammar/
 jaypipes@uberbox:~/src/github.com/jaypipes/sqltoast/tests/grammar$ python runner.py run
 Running ansi-92/alter-table ... OK
+Running ansi-92/case-expressions ... OK
 Running ansi-92/column-definitions ... OK
 Running ansi-92/datetime-expressions ... OK
 Running ansi-92/delete ... OK
