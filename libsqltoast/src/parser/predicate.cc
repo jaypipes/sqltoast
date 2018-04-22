@@ -376,6 +376,7 @@ bool parse_in_predicate(
         bool reverse_op) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_t> value;
     std::vector<std::unique_ptr<value_expression_t>> values;
     std::unique_ptr<statement_t> subq;
 
@@ -397,18 +398,25 @@ process_subquery:
         return false;
     goto expect_rparen;
 process_value_list_item:
-    {
-        std::unique_ptr<value_expression_t> value;
-        if (! parse_value_expression(ctx, cur_tok, value))
-            return false;
-        values.emplace_back(std::move(value));
+    if (! parse_value_expression(ctx, cur_tok, value))
+        goto err_expect_value_expression;
+    values.emplace_back(std::move(value));
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
         cur_tok = lex.next();
-        cur_sym = cur_tok.symbol;
-        if (cur_sym == SYMBOL_COMMA) {
-            cur_tok = lex.next();
-            goto process_value_list_item;
-        }
-        goto expect_rparen;
+        goto process_value_list_item;
+    }
+    goto expect_rparen;
+err_expect_value_expression:
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    {
+        std::stringstream estr;
+        estr << "Expected to find a <value expression> as "
+                "an element of the IN operator but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
     }
 expect_rparen:
     cur_sym = cur_tok.symbol;

@@ -135,7 +135,7 @@ std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) 
     size_t x = 0;
     for (auto& ve : pred.values) {
         if (x++ > 0)
-            out << ", ";
+            out << ",";
         out << *ve;
     }
     out << ")";

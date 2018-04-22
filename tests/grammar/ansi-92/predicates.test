@@ -99,3 +99,36 @@ statements[0]:
      0: t1
    where:
      column-reference[a] = literal[1] AND (column-reference[b] = literal[2] OR column-reference[c] = literal[3] AND (column-reference[d] = literal[4] OR column-reference[e] = literal[5]))>
+# IN (<value list>) operator with single value
+>SELECT * FROM t1 WHERE a IN (1)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] IN (literal[1])>
+# IN (<value list>) operator with multiple value
+>SELECT * FROM t1 WHERE a IN (1, 2, 3)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] IN (literal[1],literal[2],literal[3])>
+# IN (<value list>) operator with complex value expressions
+>SELECT * FROM t1 WHERE a IN (1 - b, CHAR_LENGTH(b))
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] IN (numeric-expression[literal[1] - column-reference[b]],char-length[column-reference[b]])>
