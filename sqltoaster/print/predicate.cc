@@ -24,37 +24,32 @@ std::ostream& operator<< (std::ostream& out, const search_condition_t& sc) {
 }
 
 std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
-    switch (pred.op) {
-        case COMP_OP_EQUAL:
-        case COMP_OP_NOT_EQUAL:
-        case COMP_OP_LESS:
-        case COMP_OP_GREATER:
-        case COMP_OP_LESS_EQUAL:
-        case COMP_OP_GREATER_EQUAL:
+    switch (pred.predicate_type) {
+        case PREDICATE_TYPE_COMPARISON:
             {
                 const comp_predicate_t& cp = static_cast<const comp_predicate_t&>(pred);
                 out << cp;
             }
             break;
-        case COMP_OP_BETWEEN:
+        case PREDICATE_TYPE_BETWEEN:
             {
                 const between_predicate_t& bp = static_cast<const between_predicate_t&>(pred);
                 out << bp;
             }
             break;
-        case COMP_OP_NULL:
+        case PREDICATE_TYPE_NULL:
             {
                 const null_predicate_t& np = static_cast<const null_predicate_t&>(pred);
                 out << np;
             }
             break;
-        case COMP_OP_IN_VALUES:
+        case PREDICATE_TYPE_IN_VALUES:
             {
                 const in_values_predicate_t& ivp = static_cast<const in_values_predicate_t&>(pred);
                 out << ivp;
             }
             break;
-        case COMP_OP_IN_SUBQUERY:
+        case PREDICATE_TYPE_IN_SUBQUERY:
             {
                 const in_subquery_predicate_t& isp = static_cast<const in_subquery_predicate_t&>(pred);
                 out << isp;

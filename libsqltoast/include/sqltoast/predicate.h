@@ -26,6 +26,31 @@ typedef struct boolean_factor {
     {}
 } boolean_factor_t;
 
+// A predicate is anything that compares one or more columnar values or sets of
+// columnar values with each other
+typedef enum predicate_type {
+    PREDICATE_TYPE_COMPARISON,
+    PREDICATE_TYPE_BETWEEN,
+    PREDICATE_TYPE_IN_VALUES,
+    PREDICATE_TYPE_IN_SUBQUERY,
+    PREDICATE_TYPE_LIKE,
+    PREDICATE_TYPE_NULL,
+    PREDICATE_TYPE_QUANTIFIED_COMPARISON,
+    PREDICATE_TYPE_EXISTS,
+    PREDICATE_TYPE_MATCH,
+    PREDICATE_TYPE_OVERLAPS
+} predicate_type_t;
+
+typedef struct predicate : boolean_factor_t {
+    predicate_type_t predicate_type;
+    predicate(
+            predicate_type_t pred_type,
+            bool reverse_op) :
+        boolean_factor_t(BOOLEAN_FACTOR_TYPE_PREDICATE, reverse_op),
+        predicate_type(pred_type)
+    {}
+} predicate_t;
+
 typedef enum comp_op {
     COMP_OP_EQUAL,
     COMP_OP_NOT_EQUAL,
@@ -33,43 +58,26 @@ typedef enum comp_op {
     COMP_OP_GREATER,
     COMP_OP_LESS_EQUAL,
     COMP_OP_GREATER_EQUAL,
-    COMP_OP_BETWEEN,
-    COMP_OP_IN_VALUES,
-    COMP_OP_IN_SUBQUERY,
-    COMP_OP_LIKE,
-    COMP_OP_NULL,
-    COMP_OP_EXISTS,
-    COMP_OP_UNIQUE
 } comp_op_t;
 
-// A predicate is anything that compares one or more columnar values or sets of
-// columnar values with each other
-typedef struct predicate : boolean_factor_t {
+typedef struct comp_predicate : predicate_t {
     comp_op_t op;
     std::unique_ptr<row_value_constructor_t> left;
-    predicate(
-            comp_op_t op,
-            std::unique_ptr<row_value_constructor_t>& left,
-            bool reverse_op) :
-        boolean_factor_t(BOOLEAN_FACTOR_TYPE_PREDICATE, reverse_op),
-        op(op),
-        left(std::move(left))
-    {}
-} predicate_t;
-
-typedef struct comp_predicate : predicate_t {
     std::unique_ptr<row_value_constructor_t> right;
     comp_predicate(
             comp_op_t op,
             std::unique_ptr<row_value_constructor_t>& left,
             std::unique_ptr<row_value_constructor_t>& right,
             bool reverse_op) :
-        predicate_t(op, left, reverse_op),
+        predicate_t(PREDICATE_TYPE_COMPARISON, reverse_op),
+        op(op),
+        left(std::move(left)),
         right(std::move(right))
     {}
 } comp_predicate_t;
 
 typedef struct between_predicate : predicate_t {
+    std::unique_ptr<row_value_constructor_t> left;
     std::unique_ptr<row_value_constructor_t> comp_left;
     std::unique_ptr<row_value_constructor_t> comp_right;
     between_predicate(
@@ -77,40 +85,47 @@ typedef struct between_predicate : predicate_t {
             std::unique_ptr<row_value_constructor_t>& comp_left,
             std::unique_ptr<row_value_constructor_t>& comp_right,
             bool reverse_op) :
-        predicate_t(COMP_OP_BETWEEN, left, reverse_op),
+        predicate_t(PREDICATE_TYPE_BETWEEN, reverse_op),
+        left(std::move(left)),
         comp_left(std::move(comp_left)),
         comp_right(std::move(comp_right))
     {}
 } between_predicate_t;
 
 typedef struct null_predicate : predicate_t {
+    std::unique_ptr<row_value_constructor_t> left;
     null_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             bool reverse_op) :
-        predicate_t(COMP_OP_NULL, left, reverse_op)
+        predicate_t(PREDICATE_TYPE_NULL, reverse_op),
+        left(std::move(left))
     {}
 } null_predicate_t;
 
 typedef struct in_values_predicate : predicate_t {
+    std::unique_ptr<row_value_constructor_t> left;
     std::vector<std::unique_ptr<value_expression_t>> values;
     in_values_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             std::vector<std::unique_ptr<value_expression_t>>& values,
             bool reverse_op) :
-        predicate_t(COMP_OP_IN_VALUES, left, reverse_op),
+        predicate_t(PREDICATE_TYPE_IN_VALUES, reverse_op),
+        left(std::move(left)),
         values(std::move(values))
     {}
 } in_values_predicate_t;
 
 typedef struct statement statement_t;
 typedef struct in_subquery_predicate : predicate_t {
+    std::unique_ptr<row_value_constructor_t> left;
     // Guaranteed to always be static_castable to a select_t
     std::unique_ptr<statement_t> subquery;
     in_subquery_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             std::unique_ptr<statement_t>& subq,
             bool reverse_op) :
-        predicate_t(COMP_OP_IN_SUBQUERY, left, reverse_op),
+        predicate_t(PREDICATE_TYPE_IN_SUBQUERY, reverse_op),
+        left(std::move(left)),
         subquery(std::move(subq))
     {}
 } in_subquery_predicate_t;
