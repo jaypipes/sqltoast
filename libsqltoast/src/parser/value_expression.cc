@@ -101,57 +101,34 @@ optional_operator:
     // our current symbol. If so, that indicates we should expect to parse
     // another numeric term as an operand to the arithmetic equation.
     cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_SEMICOLON:
-        case SYMBOL_COMMA:
-        case SYMBOL_RPAREN:
-        case SYMBOL_LPAREN:
-        case SYMBOL_EOS:
-        case SYMBOL_EQUAL:
-        case SYMBOL_NOT_EQUAL:
-        case SYMBOL_LESS_THAN:
-        case SYMBOL_GREATER_THAN:
-        case SYMBOL_NOT:
-        case SYMBOL_AND:
-        case SYMBOL_OR:
-        case SYMBOL_FOR:
-        case SYMBOL_FROM:
-        case SYMBOL_WHERE:
-        case SYMBOL_HAVING:
-        case SYMBOL_GROUP:
-        case SYMBOL_USING:
-        case SYMBOL_WHEN:
-        case SYMBOL_THEN:
-        case SYMBOL_ELSE:
-        case SYMBOL_END:
-            return true;
-        case SYMBOL_PLUS:
-            cur_tok = lex.next();
-            if (! parse_numeric_term(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_numeric_term;
-            }
-            if (out) {
-                numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
-                ne->add(operand);
-            }
-            goto optional_operator;
-        case SYMBOL_MINUS:
-            cur_tok = lex.next();
-            if (! parse_numeric_term(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_numeric_term;
-            }
-            if (out) {
-                numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
-                ne->subtract(operand);
-            }
-            goto optional_operator;
-        default:
-            return false;
+    if (is_value_expression_terminator(cur_sym))
+        return true;
+    if (cur_sym == SYMBOL_PLUS) {
+        cur_tok = lex.next();
+        if (! parse_numeric_term(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_numeric_term;
+        }
+        if (out) {
+            numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
+            ne->add(operand);
+        }
+        goto optional_operator;
+    } else if (cur_sym == SYMBOL_MINUS) {
+        cur_tok = lex.next();
+        if (! parse_numeric_term(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_numeric_term;
+        }
+        if (out) {
+            numeric_expression_t* ne = static_cast<numeric_expression_t *>(out.get());
+            ne->subtract(operand);
+        }
+        goto optional_operator;
     }
+    return false;
 err_expect_numeric_term:
     {
         std::stringstream estr;
@@ -203,44 +180,21 @@ optional_concat:
     // indicates to add further character factors to the list of factors in
     // this character value expression
     cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_SEMICOLON:
-        case SYMBOL_COMMA:
-        case SYMBOL_RPAREN:
-        case SYMBOL_LPAREN:
-        case SYMBOL_EOS:
-        case SYMBOL_EQUAL:
-        case SYMBOL_NOT_EQUAL:
-        case SYMBOL_LESS_THAN:
-        case SYMBOL_GREATER_THAN:
-        case SYMBOL_NOT:
-        case SYMBOL_AND:
-        case SYMBOL_OR:
-        case SYMBOL_IN:
-        case SYMBOL_FROM:
-        case SYMBOL_WHERE:
-        case SYMBOL_HAVING:
-        case SYMBOL_GROUP:
-        case SYMBOL_USING:
-        case SYMBOL_WHEN:
-        case SYMBOL_THEN:
-        case SYMBOL_ELSE:
-        case SYMBOL_END:
-            goto push_ve;
-        case SYMBOL_CONCATENATION:
-            cur_tok = lex.next();
-            if (! parse_character_factor(ctx, cur_tok, factor)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_char_factor;
-            }
-            if (ctx.opts.disable_statement_construction)
-                goto optional_concat;
-            values.emplace_back(std::move(factor));
+    if (is_value_expression_terminator(cur_sym))
+        goto push_ve;
+    if (cur_sym == SYMBOL_CONCATENATION) {
+        cur_tok = lex.next();
+        if (! parse_character_factor(ctx, cur_tok, factor)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_char_factor;
+        }
+        if (ctx.opts.disable_statement_construction)
             goto optional_concat;
-        default:
-            return false;
+        values.emplace_back(std::move(factor));
+        goto optional_concat;
     }
+    return false;
 err_expect_char_factor:
     {
         std::stringstream estr;
@@ -278,59 +232,36 @@ optional_operator:
     // an interval term as an operand to the datetime equation represented by
     // the entire datetime value expression.
     cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_SEMICOLON:
-        case SYMBOL_COMMA:
-        case SYMBOL_RPAREN:
-        case SYMBOL_LPAREN:
-        case SYMBOL_EOS:
-        case SYMBOL_EQUAL:
-        case SYMBOL_NOT_EQUAL:
-        case SYMBOL_LESS_THAN:
-        case SYMBOL_GREATER_THAN:
-        case SYMBOL_NOT:
-        case SYMBOL_AND:
-        case SYMBOL_OR:
-        case SYMBOL_FOR:
-        case SYMBOL_FROM:
-        case SYMBOL_WHERE:
-        case SYMBOL_HAVING:
-        case SYMBOL_GROUP:
-        case SYMBOL_USING:
-        case SYMBOL_WHEN:
-        case SYMBOL_THEN:
-        case SYMBOL_ELSE:
-        case SYMBOL_END:
-            return true;
-        case SYMBOL_PLUS:
-            cur_tok = lex.next();
-            if (! parse_interval_term(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_interval_term;
-            }
-            if (out) {
-                datetime_value_expression_t* de =
-                    static_cast<datetime_value_expression_t *>(out.get());
-                de->add(operand);
-            }
-            goto optional_operator;
-        case SYMBOL_MINUS:
-            cur_tok = lex.next();
-            if (! parse_interval_term(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_interval_term;
-            }
-            if (out) {
-                datetime_value_expression_t* de =
-                    static_cast<datetime_value_expression_t *>(out.get());
-                de->subtract(operand);
-            }
-            goto optional_operator;
-        default:
-            return false;
+    if (is_value_expression_terminator(cur_sym))
+        return true;
+    if (cur_sym == SYMBOL_PLUS) {
+        cur_tok = lex.next();
+        if (! parse_interval_term(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_interval_term;
+        }
+        if (out) {
+            datetime_value_expression_t* de =
+                static_cast<datetime_value_expression_t *>(out.get());
+            de->add(operand);
+        }
+        goto optional_operator;
+    } else if (cur_sym == SYMBOL_MINUS) {
+        cur_tok = lex.next();
+        if (! parse_interval_term(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_interval_term;
+        }
+        if (out) {
+            datetime_value_expression_t* de =
+                static_cast<datetime_value_expression_t *>(out.get());
+            de->subtract(operand);
+        }
+        goto optional_operator;
     }
+    return false;
 err_expect_interval_term:
     {
         std::stringstream estr;
@@ -369,59 +300,36 @@ optional_operator:
     // interval term as an operand to the interval equation represented by the
     // entire interval value expression.
     cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_SEMICOLON:
-        case SYMBOL_COMMA:
-        case SYMBOL_RPAREN:
-        case SYMBOL_LPAREN:
-        case SYMBOL_EOS:
-        case SYMBOL_EQUAL:
-        case SYMBOL_NOT_EQUAL:
-        case SYMBOL_LESS_THAN:
-        case SYMBOL_GREATER_THAN:
-        case SYMBOL_NOT:
-        case SYMBOL_AND:
-        case SYMBOL_OR:
-        case SYMBOL_FOR:
-        case SYMBOL_FROM:
-        case SYMBOL_WHERE:
-        case SYMBOL_HAVING:
-        case SYMBOL_GROUP:
-        case SYMBOL_USING:
-        case SYMBOL_WHEN:
-        case SYMBOL_THEN:
-        case SYMBOL_ELSE:
-        case SYMBOL_END:
-            return true;
-        case SYMBOL_PLUS:
-            cur_tok = lex.next();
-            if (! parse_interval_term(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_interval_term;
-            }
-            if (out) {
-                interval_value_expression_t* ie =
-                    static_cast<interval_value_expression_t *>(out.get());
-                ie->add(operand);
-            }
-            goto optional_operator;
-        case SYMBOL_MINUS:
-            cur_tok = lex.next();
-            if (! parse_interval_term(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_interval_term;
-            }
-            if (out) {
-                interval_value_expression_t* ie =
-                    static_cast<interval_value_expression_t *>(out.get());
-                ie->subtract(operand);
-            }
-            goto optional_operator;
-        default:
-            return false;
+    if (is_value_expression_terminator(cur_sym))
+        return true;
+    if (cur_sym == SYMBOL_PLUS) {
+        cur_tok = lex.next();
+        if (! parse_interval_term(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_interval_term;
+        }
+        if (out) {
+            interval_value_expression_t* ie =
+                static_cast<interval_value_expression_t *>(out.get());
+            ie->add(operand);
+        }
+        goto optional_operator;
+    } else if (cur_sym == SYMBOL_MINUS) {
+        cur_tok = lex.next();
+        if (! parse_interval_term(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_interval_term;
+        }
+        if (out) {
+            interval_value_expression_t* ie =
+                static_cast<interval_value_expression_t *>(out.get());
+            ie->subtract(operand);
+        }
+        goto optional_operator;
     }
+    return false;
 err_expect_interval_term:
     {
         std::stringstream estr;

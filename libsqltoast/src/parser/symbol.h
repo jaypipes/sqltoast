@@ -206,6 +206,37 @@ typedef enum symbol {
 
 std::ostream& operator<< (std::ostream& out, const symbol_t& sym);
 
+inline bool is_value_expression_terminator(const symbol_t& sym) {
+    switch (sym) {
+        case SYMBOL_AND:
+        case SYMBOL_COMMA:
+        case SYMBOL_ELSE:
+        case SYMBOL_END:
+        case SYMBOL_EOS:
+        case SYMBOL_EQUAL:
+        case SYMBOL_FOR:
+        case SYMBOL_FROM:
+        case SYMBOL_GREATER_THAN:
+        case SYMBOL_GROUP:
+        case SYMBOL_HAVING:
+        case SYMBOL_IN:
+        case SYMBOL_LESS_THAN:
+        case SYMBOL_LPAREN:
+        case SYMBOL_NOT:
+        case SYMBOL_NOT_EQUAL:
+        case SYMBOL_OR:
+        case SYMBOL_RPAREN:
+        case SYMBOL_SEMICOLON:
+        case SYMBOL_THEN:
+        case SYMBOL_USING:
+        case SYMBOL_WHEN:
+        case SYMBOL_WHERE:
+            return true;
+        default:
+            return false;
+    }
+}
+
 struct symbol_map {
     typedef std::map<symbol_t, std::string> symbol_map_t;
     static symbol_map_t m;
