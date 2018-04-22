@@ -111,6 +111,7 @@ optional_operator:
         case SYMBOL_NOT_EQUAL:
         case SYMBOL_LESS_THAN:
         case SYMBOL_GREATER_THAN:
+        case SYMBOL_NOT:
         case SYMBOL_AND:
         case SYMBOL_OR:
         case SYMBOL_FOR:
@@ -212,6 +213,7 @@ optional_concat:
         case SYMBOL_NOT_EQUAL:
         case SYMBOL_LESS_THAN:
         case SYMBOL_GREATER_THAN:
+        case SYMBOL_NOT:
         case SYMBOL_AND:
         case SYMBOL_OR:
         case SYMBOL_IN:
@@ -286,6 +288,7 @@ optional_operator:
         case SYMBOL_NOT_EQUAL:
         case SYMBOL_LESS_THAN:
         case SYMBOL_GREATER_THAN:
+        case SYMBOL_NOT:
         case SYMBOL_AND:
         case SYMBOL_OR:
         case SYMBOL_FOR:
@@ -376,6 +379,7 @@ optional_operator:
         case SYMBOL_NOT_EQUAL:
         case SYMBOL_LESS_THAN:
         case SYMBOL_GREATER_THAN:
+        case SYMBOL_NOT:
         case SYMBOL_AND:
         case SYMBOL_OR:
         case SYMBOL_FOR:
