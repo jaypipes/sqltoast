@@ -114,10 +114,6 @@ def run_test(test_name):
             return RESULT_TEST_ERROR, msg
 
         actual = actual.splitlines()
-        if len(actual) > 0:
-            if actual[0] == 'OK':
-                # Trim empty newline on successful parsing
-                actual = actual[:-1]
 
         if actual != expected:
             msg = "Test #%d\n" % testno

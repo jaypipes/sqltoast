@@ -132,3 +132,18 @@ statements[0]:
      0: t1
    where:
      column-reference[a] IN (numeric-expression[literal[1] - column-reference[b]],char-length[column-reference[b]])>
+# IN (<subquery>) operator
+>SELECT * FROM t1 WHERE a IN (SELECT t1_a FROM t2)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] IN <statement: SELECT
+   selected columns:
+     0: column-reference[t1_a]
+   referenced tables:
+     0: t2>>

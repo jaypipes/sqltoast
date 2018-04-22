@@ -81,10 +81,10 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_COMMIT:
-            out << "<statement: COMMIT>" << std::endl;
+            out << "<statement: COMMIT>";
             break;
         case STATEMENT_TYPE_ROLLBACK:
-            out << "<statement: ROLLBACK>" << std::endl;
+            out << "<statement: ROLLBACK>";
             break;
         default:
             break;
@@ -99,7 +99,7 @@ std::ostream& operator<< (std::ostream& out, const create_schema_statement_t& st
        out << std::endl << "   authorization identifier: " << stmt.authorization_identifier;
     if (stmt.default_charset)
        out << std::endl << "   default charset: " << stmt.default_charset;
-    out << ">" << std::endl;
+    out << ">";
     return out;
 }
 
@@ -110,7 +110,7 @@ std::ostream& operator<< (std::ostream& out, const drop_schema_statement_t& stmt
        out << "   behaviour: CASCADE";
     else
        out << "   behaviour: RESTRICT";
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -139,7 +139,7 @@ std::ostream& operator<< (std::ostream& out, const create_table_statement_t& stm
             out << std::endl << "      " << *(*constraint_it);
         }
     }
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -151,7 +151,7 @@ std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt)
        out << "   behaviour: CASCADE";
     else
        out << "   behaviour: RESTRICT";
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -239,7 +239,7 @@ std::ostream& operator<< (std::ostream& out, const alter_table_statement_t& stmt
     out << "<statement: ALTER TABLE" << std::endl
         << "   table name: " << stmt.table_name << std::endl;
     out << "   action: " << *stmt.action;
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -273,7 +273,7 @@ std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
         out << std::endl << "   having:" << std::endl << "     ";
         out << *stmt.having_condition;
     }
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -300,7 +300,7 @@ std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt) {
             out << std::endl << "     " << x++ << ": " << *val;
         }
     }
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -319,7 +319,7 @@ std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& st
         }
     }
     out << std::endl << "   select:" << std::endl << "     " << *stmt.select;
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -330,7 +330,7 @@ std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt) {
 
     if (stmt.where_condition)
         out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
@@ -352,7 +352,7 @@ std::ostream& operator<< (std::ostream& out, const update_statement_t& stmt) {
 
     if (stmt.where_condition)
         out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;
-    out << ">" << std::endl;
+    out << ">";
 
     return out;
 }
