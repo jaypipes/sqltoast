@@ -439,6 +439,7 @@ push_condition:
     return true;
 }
 
+// <exists predicate> ::= EXISTS <table subquery>
 bool parse_exists_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
