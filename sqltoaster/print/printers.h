@@ -32,6 +32,7 @@ std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred);
+std::ostream& operator<< (std::ostream& out, const exists_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt);
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);
 std::ostream& operator<< (std::ostream& out, const search_condition_factor_t& scf);

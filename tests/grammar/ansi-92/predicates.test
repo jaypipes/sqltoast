@@ -147,3 +147,20 @@ statements[0]:
      0: column-reference[t1_a]
    referenced tables:
      0: t2>>
+# EXISTS (<subquery>) predicate
+>SELECT * FROM t1 WHERE EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+      EXISTS <statement: SELECT
+   selected columns:
+     0: column-reference[t1_id]
+   referenced tables:
+     0: t2
+   where:
+     column-reference[t1_id] = column-reference[t1.id]>>

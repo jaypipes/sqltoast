@@ -129,9 +129,14 @@ bool parse_boolean_factor(
         std::unique_ptr<boolean_factor_t>& out);
 
 // Returns true if a oredicate could be parsed. If true, the out
-// argument will have a new pointer to a boolean_term_t subclass that
+// argument will have a new pointer to a boolean_factor_t subclass that
 // represents a prdicate added to it.
 bool parse_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_factor_t>& out,
+        bool reverse_op);
+bool parse_exists_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<boolean_factor_t>& out,

@@ -27,32 +27,44 @@ std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
     switch (pred.predicate_type) {
         case PREDICATE_TYPE_COMPARISON:
             {
-                const comp_predicate_t& cp = static_cast<const comp_predicate_t&>(pred);
+                const comp_predicate_t& cp =
+                    static_cast<const comp_predicate_t&>(pred);
                 out << cp;
             }
             break;
         case PREDICATE_TYPE_BETWEEN:
             {
-                const between_predicate_t& bp = static_cast<const between_predicate_t&>(pred);
+                const between_predicate_t& bp =
+                    static_cast<const between_predicate_t&>(pred);
                 out << bp;
             }
             break;
         case PREDICATE_TYPE_NULL:
             {
-                const null_predicate_t& np = static_cast<const null_predicate_t&>(pred);
+                const null_predicate_t& np =
+                    static_cast<const null_predicate_t&>(pred);
                 out << np;
             }
             break;
         case PREDICATE_TYPE_IN_VALUES:
             {
-                const in_values_predicate_t& ivp = static_cast<const in_values_predicate_t&>(pred);
+                const in_values_predicate_t& ivp =
+                    static_cast<const in_values_predicate_t&>(pred);
                 out << ivp;
             }
             break;
         case PREDICATE_TYPE_IN_SUBQUERY:
             {
-                const in_subquery_predicate_t& isp = static_cast<const in_subquery_predicate_t&>(pred);
+                const in_subquery_predicate_t& isp =
+                    static_cast<const in_subquery_predicate_t&>(pred);
                 out << isp;
+            }
+            break;
+        case PREDICATE_TYPE_EXISTS:
+            {
+                const exists_predicate_t& ep =
+                    static_cast<const exists_predicate_t&>(pred);
+                out << ep;
             }
             break;
         default:
@@ -139,6 +151,11 @@ std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) 
 
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred) {
     out << *pred.left << " IN " << *pred.subquery;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const exists_predicate_t& pred) {
+    out << " EXISTS " << *pred.subquery;
     return out;
 }
 

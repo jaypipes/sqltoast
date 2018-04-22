@@ -182,7 +182,8 @@ bool parse_predicate(
     cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_EXISTS:
-            return false;  // return parse_exists_predicate(ctx, cur_tok, term_p, reverse_op);
+            cur_tok = lex.next();
+            return parse_exists_predicate(ctx, cur_tok, out, reverse_op);
         default:
             return false;
     }
@@ -435,6 +436,51 @@ push_condition:
         out = std::make_unique<in_values_predicate_t>(left, values, reverse_op);
     else
         out = std::make_unique<in_subquery_predicate_t>(left, subq, reverse_op);
+    return true;
+}
+
+bool parse_exists_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_factor_t>& out,
+        bool reverse_op) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<statement_t> subq;
+
+    // We get here if we've processed the left row value constructor and the
+    // [NOT] EXISTS symbol(s). We now expect a parens-enclosed SELECT statement
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    if (! parse_select(ctx, cur_tok, subq))
+        goto err_expect_subquery;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_predicate;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+err_expect_subquery:
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    {
+        std::stringstream estr;
+        estr << "Expected to find a <subquery> after EXISTS "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_predicate:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    out = std::make_unique<exists_predicate_t>(subq, reverse_op);
     return true;
 }
 

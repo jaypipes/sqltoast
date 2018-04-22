@@ -130,6 +130,17 @@ typedef struct in_subquery_predicate : predicate_t {
     {}
 } in_subquery_predicate_t;
 
+typedef struct exists_predicate : predicate_t {
+    // Guaranteed to always be static_castable to a select_t
+    std::unique_ptr<statement_t> subquery;
+    exists_predicate(
+            std::unique_ptr<statement_t>& subq,
+            bool reverse_op) :
+        predicate_t(PREDICATE_TYPE_EXISTS, reverse_op),
+        subquery(std::move(subq))
+    {}
+} exists_predicate_t;
+
 typedef struct boolean_term {
     std::unique_ptr<boolean_factor_t> factor;
     std::unique_ptr<boolean_term> and_operand;
