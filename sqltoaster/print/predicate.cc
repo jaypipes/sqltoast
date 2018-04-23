@@ -67,6 +67,13 @@ std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
                 out << ep;
             }
             break;
+        case PREDICATE_TYPE_MATCH:
+            {
+                const match_predicate_t& mp =
+                    static_cast<const match_predicate_t&>(pred);
+                out << mp;
+            }
+            break;
         default:
             // TODO
             break;
@@ -156,6 +163,18 @@ std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred
 
 std::ostream& operator<< (std::ostream& out, const exists_predicate_t& pred) {
     out << " EXISTS " << *pred.subquery;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const match_predicate_t& pred) {
+    out << *pred.left << " MATCH ";
+    if (pred.match_unique)
+        out << "UNIQUE ";
+    if (pred.match_partial)
+        out << "PARTIAL ";
+    else
+        out << "FULL ";
+    out << *pred.subquery;
     return out;
 }
 

@@ -141,6 +141,26 @@ typedef struct exists_predicate : predicate_t {
     {}
 } exists_predicate_t;
 
+typedef struct match_predicate : predicate_t {
+    std::unique_ptr<row_value_constructor_t> left;
+    bool match_unique;
+    bool match_partial;
+    // Guaranteed to always be static_castable to a select_t
+    std::unique_ptr<statement_t> subquery;
+    match_predicate(
+            std::unique_ptr<row_value_constructor_t>& left,
+            bool match_unique,
+            bool match_partial,
+            std::unique_ptr<statement_t>& subq,
+            bool reverse_op) :
+        predicate_t(PREDICATE_TYPE_MATCH, reverse_op),
+        left(std::move(left)),
+        match_unique(match_unique),
+        match_partial(match_partial),
+        subquery(std::move(subq))
+    {}
+} match_predicate_t;
+
 typedef struct boolean_term {
     std::unique_ptr<boolean_factor_t> factor;
     std::unique_ptr<boolean_term> and_operand;
