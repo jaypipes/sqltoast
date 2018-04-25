@@ -170,6 +170,11 @@ bool parse_predicate(
             case SYMBOL_LIKE:
                 cur_tok = lex.next();
                 return false; //return parse_like_predicate(ctx, cur_tok, term_p, left_most, reverse_op);
+            case SYMBOL_MATCH:
+                if (found_not)
+                    goto err_expected_between_in_or_like;
+                cur_tok = lex.next();
+                return parse_match_predicate(ctx, cur_tok, out, left_most, reverse_op);
             default:
                 if (found_not)
                     goto err_expected_between_in_or_like;
@@ -482,6 +487,71 @@ push_predicate:
         return true;
 
     out = std::make_unique<exists_predicate_t>(subq, reverse_op);
+    return true;
+}
+
+// <match predicate> ::=
+//     <row value constructor>
+//     MATCH [ UNIQUE ] [ PARTIAL | FULL ]
+//     <table subquery>
+bool parse_match_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_factor_t>& out,
+        std::unique_ptr<row_value_constructor_t>& left,
+        bool reverse_op) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    bool match_unique = false;
+    bool match_partial = false;
+    std::unique_ptr<statement_t> subq;
+
+    // We get here if we've processed the left row value constructor and the
+    // MATCH symbol.
+    goto optional_unique;
+optional_unique:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_UNIQUE) {
+        match_unique = true;
+        cur_tok = lex.next();
+    }
+    goto optional_partial_full;
+optional_partial_full:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_PARTIAL) {
+        match_partial = true;
+        cur_tok = lex.next();
+    } else if (cur_sym == SYMBOL_FULL)
+        cur_tok = lex.next();
+    goto expect_lparen;
+expect_lparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    goto process_subquery;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+process_subquery:
+    if (! parse_select(ctx, cur_tok, subq))
+        return false;
+    goto expect_rparen;
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_predicate;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_predicate:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    out = std::make_unique<match_predicate_t>(
+            left, match_unique, match_partial, subq, reverse_op);
     return true;
 }
 

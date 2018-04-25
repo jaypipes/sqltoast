@@ -208,3 +208,71 @@ statements[0]:
      0: t2
    where:
      column-reference[t1_id] = column-reference[t1.id]>>
+# <row> MATCH (<subquery>) predicate
+>SELECT * FROM t1 WHERE id MATCH (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[id] MATCH FULL <statement: SELECT
+   selected columns:
+     0: column-reference[t1_id]
+   referenced tables:
+     0: t2
+   where:
+     column-reference[t1_id] = column-reference[t1.id]>>
+# <row> MATCH (<subquery>) predicate explicit FULL
+>SELECT * FROM t1 WHERE id MATCH FULL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[id] MATCH FULL <statement: SELECT
+   selected columns:
+     0: column-reference[t1_id]
+   referenced tables:
+     0: t2
+   where:
+     column-reference[t1_id] = column-reference[t1.id]>>
+# <row> MATCH (<subquery>) predicate with UNIQUE
+>SELECT * FROM t1 WHERE id MATCH UNIQUE (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[id] MATCH UNIQUE FULL <statement: SELECT
+   selected columns:
+     0: column-reference[t1_id]
+   referenced tables:
+     0: t2
+   where:
+     column-reference[t1_id] = column-reference[t1.id]>>
+# <row> MATCH (<subquery>) predicate explicit PARTIAL
+>SELECT * FROM t1 WHERE id MATCH PARTIAL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[id] MATCH PARTIAL <statement: SELECT
+   selected columns:
+     0: column-reference[t1_id]
+   referenced tables:
+     0: t2
+   where:
+     column-reference[t1_id] = column-reference[t1.id]>>
