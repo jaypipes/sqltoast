@@ -161,6 +161,19 @@ typedef struct match_predicate : predicate_t {
     {}
 } match_predicate_t;
 
+typedef struct overlaps_predicate : predicate_t {
+    std::unique_ptr<row_value_constructor_t> left;
+    std::unique_ptr<row_value_constructor_t> right;
+    overlaps_predicate(
+            std::unique_ptr<row_value_constructor_t>& left,
+            std::unique_ptr<row_value_constructor_t>& right,
+            bool reverse_op) :
+        predicate_t(PREDICATE_TYPE_OVERLAPS, reverse_op),
+        left(std::move(left)),
+        right(std::move(right))
+    {}
+} overlaps_predicate_t;
+
 typedef struct boolean_term {
     std::unique_ptr<boolean_factor_t> factor;
     std::unique_ptr<boolean_term> and_operand;

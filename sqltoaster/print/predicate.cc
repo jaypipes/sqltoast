@@ -74,6 +74,13 @@ std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
                 out << mp;
             }
             break;
+        case PREDICATE_TYPE_OVERLAPS:
+            {
+                const overlaps_predicate_t& op =
+                    static_cast<const overlaps_predicate_t&>(pred);
+                out << op;
+            }
+            break;
         default:
             // TODO
             break;
@@ -175,6 +182,11 @@ std::ostream& operator<< (std::ostream& out, const match_predicate_t& pred) {
     else
         out << "FULL ";
     out << *pred.subquery;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const overlaps_predicate_t& pred) {
+    out << *pred.left << " OVERLAPS " << *pred.right;
     return out;
 }
 
