@@ -120,9 +120,8 @@ std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
-    out << *pred.left;
-    switch (pred.op) {
+std::ostream& operator<< (std::ostream& out, const comp_op_t& op) {
+    switch (op) {
         case COMP_OP_EQUAL:
             out << " = ";
             break;
@@ -144,7 +143,11 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
         default:
             break;
     }
-    out << *pred.right;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
+    out << *pred.left << pred.op << *pred.right;
     return out;
 }
 

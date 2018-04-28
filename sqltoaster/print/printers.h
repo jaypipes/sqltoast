@@ -27,6 +27,7 @@ std::ostream& operator<< (std::ostream& out, const interval_unit_t& unit);
 std::ostream& operator<< (std::ostream& out, const interval_t& interval);
 std::ostream& operator<< (std::ostream& out, const identifier_t& id);
 std::ostream& operator<< (std::ostream& out, const predicate_t& pred);
+std::ostream& operator<< (std::ostream& out, const comp_op_t& op);
 std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const like_predicate_t& pred);
