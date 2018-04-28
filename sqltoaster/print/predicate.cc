@@ -39,6 +39,13 @@ std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
                 out << bp;
             }
             break;
+        case PREDICATE_TYPE_LIKE:
+            {
+                const like_predicate_t& lp =
+                    static_cast<const like_predicate_t&>(pred);
+                out << lp;
+            }
+            break;
         case PREDICATE_TYPE_NULL:
             {
                 const null_predicate_t& np =
@@ -145,6 +152,13 @@ std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred) {
     out << *pred.left << " BETWEEN " << *pred.comp_left << " AND " << *pred.comp_right;
     return out;
 };
+
+std::ostream& operator<< (std::ostream& out, const like_predicate_t& pred) {
+    out << *pred.match << " LIKE " << *pred.pattern;
+    if (pred.escape_char)
+        out << " ESCAPE " << *pred.escape_char;
+    return out;
+}
 
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred) {
     out << *pred.left << " IS NULL";

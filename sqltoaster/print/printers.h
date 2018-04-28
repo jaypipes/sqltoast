@@ -29,6 +29,7 @@ std::ostream& operator<< (std::ostream& out, const identifier_t& id);
 std::ostream& operator<< (std::ostream& out, const predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred);
+std::ostream& operator<< (std::ostream& out, const like_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred);
