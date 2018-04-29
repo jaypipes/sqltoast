@@ -67,6 +67,13 @@ std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
                 out << isp;
             }
             break;
+        case PREDICATE_TYPE_QUANTIFIED_COMPARISON:
+            {
+                const quantified_comparison_predicate_t& qp =
+                    static_cast<const quantified_comparison_predicate_t&>(pred);
+                out << qp;
+            }
+            break;
         case PREDICATE_TYPE_EXISTS:
             {
                 const exists_predicate_t& ep =
@@ -182,6 +189,16 @@ std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) 
 
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred) {
     out << *pred.left << " IN " << *pred.subquery;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const quantified_comparison_predicate_t& pred) {
+    out << *pred.left << pred.op;
+    if (pred.compare_all)
+        out << " ALL ";
+    else
+        out << " ANY ";
+    out  << *pred.subquery;
     return out;
 }
 

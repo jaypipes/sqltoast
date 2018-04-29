@@ -34,6 +34,7 @@ std::ostream& operator<< (std::ostream& out, const like_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred);
+std::ostream& operator<< (std::ostream& out, const quantified_comparison_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const exists_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const match_predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const overlaps_predicate_t& pred);

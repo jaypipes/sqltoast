@@ -148,6 +148,26 @@ typedef struct in_subquery_predicate : predicate_t {
     {}
 } in_subquery_predicate_t;
 
+typedef struct quantified_comparison_predicate : predicate_t {
+    bool compare_all;
+    comp_op_t op;
+    std::unique_ptr<row_value_constructor_t> left;
+    // Guaranteed to always be static_castable to a select_t
+    std::unique_ptr<statement_t> subquery;
+    quantified_comparison_predicate(
+            bool compare_all,
+            comp_op_t op,
+            std::unique_ptr<row_value_constructor_t>& left,
+            std::unique_ptr<statement_t>& subq,
+            bool reverse_op) :
+        predicate_t(PREDICATE_TYPE_QUANTIFIED_COMPARISON, reverse_op),
+        compare_all(compare_all),
+        op(op),
+        left(std::move(left)),
+        subquery(std::move(subq))
+    {}
+} quantified_comparison_predicate_t;
+
 typedef struct exists_predicate : predicate_t {
     // Guaranteed to always be static_castable to a select_t
     std::unique_ptr<statement_t> subquery;
