@@ -276,3 +276,25 @@ statements[0]:
      0: t2
    where:
      column-reference[t1_id] = column-reference[t1.id]>>
+# LIKE predicate with simple column comparison with string
+>SELECT * FROM t1 WHERE a LIKE 's%'
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] LIKE literal['s%']>
+# LIKE predicate with concatenated column comparison with string
+>SELECT * FROM t1 WHERE a LIKE b || '%'
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[a] LIKE concatenate[column-reference[b], literal['%']]>

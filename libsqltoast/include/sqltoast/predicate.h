@@ -93,13 +93,15 @@ typedef struct between_predicate : predicate_t {
 } between_predicate_t;
 
 typedef struct like_predicate : predicate_t {
+    std::unique_ptr<row_value_constructor_t> match;
     // Guaranteed to always be static_castable to a
     // character_value_expression_t
-    std::unique_ptr<value_expression_t> match;
     std::unique_ptr<value_expression_t> pattern;
+    // Guaranteed to always be static_castable to a
+    // character_value_expression_t
     std::unique_ptr<value_expression_t> escape_char;
     like_predicate(
-            std::unique_ptr<value_expression_t>& match,
+            std::unique_ptr<row_value_constructor_t>& match,
             std::unique_ptr<value_expression_t>& pattern,
             std::unique_ptr<value_expression_t>& escape_char,
             bool reverse_op) :

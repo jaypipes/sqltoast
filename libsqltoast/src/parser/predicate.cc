@@ -168,8 +168,13 @@ bool parse_predicate(
                 cur_tok = lex.next();
                 return parse_null_predicate(ctx, cur_tok, out, left_most, reverse_op);
             case SYMBOL_LIKE:
+                // TODO(jaypipes): Technically a LIKE predicate does not have a
+                // left-most row-value-constructor. Its left-most element is a
+                // character value expression. Rework this top-level switching
+                // so a character value expression is parsed into the left_most
+                // variable.
                 cur_tok = lex.next();
-                return false; //return parse_like_predicate(ctx, cur_tok, term_p, left_most, reverse_op);
+                return parse_like_predicate(ctx, cur_tok, out, left_most, reverse_op);
             case SYMBOL_MATCH:
                 if (found_not)
                     goto err_expected_between_in_or_like;
@@ -330,6 +335,51 @@ push_condition:
         return true;
 
     out = std::make_unique<between_predicate_t>(left, comp_left, comp_right, reverse_op);
+    return true;
+}
+
+// <like predicate> ::=
+//     <match value> [ NOT ] LIKE <pattern> [ ESCAPE <escape character> ]
+//
+// <match value> ::=
+//     <character value expression>
+//
+// <pattern> ::=
+//     <character value expression>
+//
+// <escape character> ::=
+//     <character value expression>
+bool parse_like_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_factor_t>& out,
+        std::unique_ptr<row_value_constructor_t>& left,
+        bool reverse_op) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<value_expression_t> pattern;
+    std::unique_ptr<value_expression_t> escape_char;
+
+    // We get here if we've processed the left row value constructor, an
+    // optional NOT symbol and the LIKE symbol(s). We now expect a character
+    // value expression followed by an optional ESCAPE keyword with a character
+    // value expression representing the escape char.
+    if (! parse_character_value_expression(ctx, cur_tok, pattern))
+        return false;
+    goto optional_escape_char;
+optional_escape_char:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ESCAPE) {
+        cur_tok = lex.next();
+        if (! parse_character_value_expression(ctx, cur_tok, escape_char))
+            return false;
+    }
+    goto push_predicate;
+push_predicate:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    out = std::make_unique<like_predicate_t>(left, pattern, escape_char, reverse_op);
     return true;
 }
 

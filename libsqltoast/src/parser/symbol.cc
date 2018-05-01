@@ -78,6 +78,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DROP] = std::string("DROP");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_END] = std::string("END");
+    m[SYMBOL_ESCAPE] = std::string("ESCAPE");
     m[SYMBOL_ELSE] = std::string("ELSE");
     m[SYMBOL_EXISTS] = std::string("EXISTS");
     m[SYMBOL_EXTRACT] = std::string("EXTRACT");

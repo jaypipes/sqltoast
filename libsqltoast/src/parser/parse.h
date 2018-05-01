@@ -141,6 +141,12 @@ bool parse_exists_predicate(
         token_t& cur_tok,
         std::unique_ptr<boolean_factor_t>& out,
         bool reverse_op);
+bool parse_like_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<boolean_factor_t>& out,
+        std::unique_ptr<row_value_constructor_t>& left_p,
+        bool reverse_op);
 bool parse_match_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,

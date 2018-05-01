@@ -99,6 +99,7 @@ typedef enum symbol {
     SYMBOL_DROP,
     SYMBOL_ELSE,
     SYMBOL_END,
+    SYMBOL_ESCAPE,
     SYMBOL_EXISTS,
     SYMBOL_EXTRACT,
     SYMBOL_FLOAT,
@@ -221,6 +222,7 @@ inline bool is_value_expression_terminator(const symbol_t& sym) {
         case SYMBOL_HAVING:
         case SYMBOL_IN:
         case SYMBOL_LESS_THAN:
+        case SYMBOL_LIKE:
         case SYMBOL_LPAREN:
         case SYMBOL_MATCH:
         case SYMBOL_NOT:
