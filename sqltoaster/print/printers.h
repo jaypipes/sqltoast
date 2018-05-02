@@ -104,6 +104,7 @@ std::ostream& operator<< (std::ostream& out, const character_value_expression_t&
 std::ostream& operator<< (std::ostream& out, const datetime_value_expression_t& ve);
 std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& ve);
 std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc);
+std::ostream& operator<< (std::ostream& out, const row_value_constructor_element_t& rvce);
 std::ostream& operator<< (std::ostream& out, const row_value_expression_t& rve);
 
 } // namespace sqltoast

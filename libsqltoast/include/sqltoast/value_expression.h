@@ -122,17 +122,16 @@ typedef struct interval_value_expression : value_expression_t {
 } interval_value_expression_t;
 
 typedef enum rvc_type {
-    RVC_TYPE_UNKNOWN,
-    RVC_TYPE_VALUE_EXPRESSION,
-    RVC_TYPE_NULL,
-    RVC_TYPE_DEFAULT,
-    RVC_TYPE_VALUE_LIST,
-    RVC_TYPE_ROW_SUBQUERY
+    RVC_TYPE_ELEMENT,
+    RVC_TYPE_LIST,
+    RVC_TYPE_SUBQUERY
 } rvc_type_t;
 
 // A row-value constructor is a struct that represents something that can be
-// deduced into a row value. Examples of where row-value constructors can be
-// found in the SQL grammar include either or both sides of a predicate
+// deduced into one or more row values. Typically, row value constructors
+// deduce to a single value (they are scalars). However, row value constructor
+// lists deduce to multiple values. Examples of where row-value constructors
+// can be found in the SQL grammar include either or both sides of a predicate
 // expression or the contents of the VALUES clause
 typedef struct row_value_constructor {
     rvc_type_t rvc_type;
@@ -140,10 +139,25 @@ typedef struct row_value_constructor {
     {}
 } row_value_constructor_t;
 
-typedef struct row_value_expression : row_value_constructor_t {
+typedef enum rvc_element_type {
+    RVC_ELEMENT_TYPE_VALUE_EXPRESSION,
+    RVC_ELEMENT_TYPE_NULL,
+    RVC_ELEMENT_TYPE_DEFAULT
+} rvc_element_type_t;
+
+typedef struct row_value_constructor_element : row_value_constructor_t {
+    rvc_element_type_t rvc_element_type;
+    row_value_constructor_element(
+            rvc_element_type_t rvc_element_type) :
+        row_value_constructor_t(RVC_TYPE_ELEMENT),
+        rvc_element_type(rvc_element_type)
+    {}
+} row_value_constructor_element_t;
+
+typedef struct row_value_expression : row_value_constructor_element_t {
     std::unique_ptr<value_expression_t> value;
     row_value_expression(std::unique_ptr<value_expression_t>& ve) :
-        row_value_constructor_t(RVC_TYPE_VALUE_EXPRESSION),
+        row_value_constructor_element_t(RVC_ELEMENT_TYPE_VALUE_EXPRESSION),
         value(std::move(ve))
     {}
 } row_value_expression_t;

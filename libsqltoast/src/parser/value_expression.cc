@@ -33,11 +33,11 @@ bool parse_row_value_constructor(
         lexer_t& lex = ctx.lexer;
         symbol_t cur_sym = cur_tok.symbol;
         if (cur_sym == SYMBOL_NULL) {
-            out = std::make_unique<row_value_constructor_t>(RVC_TYPE_NULL);
+            out = std::make_unique<row_value_constructor_element_t>(RVC_ELEMENT_TYPE_NULL);
             cur_tok = lex.next();
             return true;
         } else if (cur_sym == SYMBOL_DEFAULT) {
-            out = std::make_unique<row_value_constructor_t>(RVC_TYPE_DEFAULT);
+            out = std::make_unique<row_value_constructor_element_t>(RVC_ELEMENT_TYPE_DEFAULT);
             cur_tok = lex.next();
             return true;
         }

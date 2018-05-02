@@ -10,6 +10,46 @@
 
 namespace sqltoast {
 
+std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc) {
+    switch (rvc.rvc_type) {
+        case RVC_TYPE_ELEMENT:
+            {
+                const row_value_constructor_element_t& el =
+                    static_cast<const row_value_constructor_element_t&>(rvc);
+                out << el;
+            }
+            break;
+        default:
+            out << "row-value-constructor[UNKNOWN]";
+            break;
+    }
+    return out;
+}
+
+
+std::ostream& operator<< (std::ostream& out, const row_value_constructor_element_t& rvce) {
+    switch (rvce.rvc_element_type) {
+        case RVC_ELEMENT_TYPE_DEFAULT:
+            out <<"DEFAULT";
+            break;
+        case RVC_ELEMENT_TYPE_NULL:
+            out <<"NULL";
+            break;
+        case RVC_ELEMENT_TYPE_VALUE_EXPRESSION:
+            {
+                const row_value_expression_t& val = static_cast<const row_value_expression_t&>(rvce);
+                out << val;
+            }
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const row_value_expression_t& rve) {
+    out << *rve.value;
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const value_expression_t& ve) {
     switch (ve.type) {
         case VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION:
@@ -116,32 +156,6 @@ std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& 
             out << " - ";
         out << *ie.right << "]";
     }
-    return out;
-}
-
-std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc) {
-    switch (rvc.rvc_type) {
-        case RVC_TYPE_DEFAULT:
-            out <<"DEFAULT";
-            break;
-        case RVC_TYPE_NULL:
-            out <<"NULL";
-            break;
-        case RVC_TYPE_VALUE_EXPRESSION:
-            {
-                const row_value_expression_t& val = static_cast<const row_value_expression_t&>(rvc);
-                out << val;
-            }
-            break;
-        default:
-            out << "row-value-constructor[UNKNOWN]";
-            break;
-    }
-    return out;
-}
-
-std::ostream& operator<< (std::ostream& out, const row_value_expression_t& rve) {
-    out << *rve.value;
     return out;
 }
 
