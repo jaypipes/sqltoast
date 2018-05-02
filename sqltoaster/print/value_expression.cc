@@ -19,6 +19,20 @@ std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc)
                 out << el;
             }
             break;
+        case RVC_TYPE_LIST:
+            {
+                const row_value_constructor_list_t& els =
+                    static_cast<const row_value_constructor_list_t&>(rvc);
+                out << '(';
+                size_t x = 0;
+                for (const auto& el : els.elements) {
+                    if (x > 0)
+                        out << ',';
+                    out << *el;
+                }
+                out << ')';
+            }
+            break;
         default:
             out << "row-value-constructor[UNKNOWN]";
             break;
