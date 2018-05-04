@@ -13,12 +13,18 @@ namespace sqltoast {
 //     <row value constructor element>
 //     | <left paren> <row value constructor list> <right paren>
 //     | <row subquery>
-//
+bool parse_row_value_constructor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor_t>& out) {
+    return parse_row_value_constructor_element(ctx, cur_tok, out);
+}
+
 // <row value constructor element> ::=
 //     <value expression>
 //     | <null specification>
 //     | <default specification>
-bool parse_row_value_constructor(
+bool parse_row_value_constructor_element(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {

@@ -197,6 +197,10 @@ bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor>& out);
+bool parse_row_value_constructor_element(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<row_value_constructor>& out);
 
 // Returns true if a value_expression_t could be parsed. If true, the out
 // argument will be filled appropriately.
