@@ -4,6 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <iostream>
+
 #include "parser/error.h"
 #include "parser/parse.h"
 

@@ -9,23 +9,6 @@
 
 namespace sqltoast {
 
-typedef enum boolean_factor_type {
-    BOOLEAN_FACTOR_TYPE_PREDICATE,
-    BOOLEAN_FACTOR_TYPE_SEARCH_CONDITION
-} boolean_factor_type_t;
-
-// A boolean factor is anything that evaluates to a boolean. This could be a
-// simple comparison predicate or a complex IN (<subquery>) predicate or it
-// could be a pointer to another search_condition_t
-typedef struct boolean_factor {
-    boolean_factor_type_t type;
-    bool reverse_op;
-    boolean_factor(boolean_factor_type_t type, bool reverse_op) :
-        type(type),
-        reverse_op(reverse_op)
-    {}
-} boolean_factor_t;
-
 // A predicate is anything that compares one or more columnar values or sets of
 // columnar values with each other
 typedef enum predicate_type {
@@ -41,12 +24,9 @@ typedef enum predicate_type {
     PREDICATE_TYPE_OVERLAPS
 } predicate_type_t;
 
-typedef struct predicate : boolean_factor_t {
+typedef struct predicate {
     predicate_type_t predicate_type;
-    predicate(
-            predicate_type_t pred_type,
-            bool reverse_op) :
-        boolean_factor_t(BOOLEAN_FACTOR_TYPE_PREDICATE, reverse_op),
+    predicate(predicate_type_t pred_type) :
         predicate_type(pred_type)
     {}
 } predicate_t;
@@ -67,9 +47,8 @@ typedef struct comp_predicate : predicate_t {
     comp_predicate(
             comp_op_t op,
             std::unique_ptr<row_value_constructor_t>& left,
-            std::unique_ptr<row_value_constructor_t>& right,
-            bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_COMPARISON, reverse_op),
+            std::unique_ptr<row_value_constructor_t>& right) :
+        predicate_t(PREDICATE_TYPE_COMPARISON),
         op(op),
         left(std::move(left)),
         right(std::move(right))
@@ -77,6 +56,7 @@ typedef struct comp_predicate : predicate_t {
 } comp_predicate_t;
 
 typedef struct between_predicate : predicate_t {
+    bool reverse_op;
     std::unique_ptr<row_value_constructor_t> left;
     std::unique_ptr<row_value_constructor_t> comp_left;
     std::unique_ptr<row_value_constructor_t> comp_right;
@@ -85,7 +65,8 @@ typedef struct between_predicate : predicate_t {
             std::unique_ptr<row_value_constructor_t>& comp_left,
             std::unique_ptr<row_value_constructor_t>& comp_right,
             bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_BETWEEN, reverse_op),
+        predicate_t(PREDICATE_TYPE_BETWEEN),
+        reverse_op(reverse_op),
         left(std::move(left)),
         comp_left(std::move(comp_left)),
         comp_right(std::move(comp_right))
@@ -93,6 +74,7 @@ typedef struct between_predicate : predicate_t {
 } between_predicate_t;
 
 typedef struct like_predicate : predicate_t {
+    bool reverse_op;
     std::unique_ptr<row_value_constructor_t> match;
     // Guaranteed to always be static_castable to a
     // character_value_expression_t
@@ -105,7 +87,8 @@ typedef struct like_predicate : predicate_t {
             std::unique_ptr<value_expression_t>& pattern,
             std::unique_ptr<value_expression_t>& escape_char,
             bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_LIKE, reverse_op),
+        predicate_t(PREDICATE_TYPE_LIKE),
+        reverse_op(reverse_op),
         match(std::move(match)),
         pattern(std::move(pattern)),
         escape_char(std::move(escape_char))
@@ -113,23 +96,27 @@ typedef struct like_predicate : predicate_t {
 } like_predicate_t;
 
 typedef struct null_predicate : predicate_t {
+    bool reverse_op;
     std::unique_ptr<row_value_constructor_t> left;
     null_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_NULL, reverse_op),
+        predicate_t(PREDICATE_TYPE_NULL),
+        reverse_op(reverse_op),
         left(std::move(left))
     {}
 } null_predicate_t;
 
 typedef struct in_values_predicate : predicate_t {
+    bool reverse_op;
     std::unique_ptr<row_value_constructor_t> left;
     std::vector<std::unique_ptr<value_expression_t>> values;
     in_values_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             std::vector<std::unique_ptr<value_expression_t>>& values,
             bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_IN_VALUES, reverse_op),
+        predicate_t(PREDICATE_TYPE_IN_VALUES),
+        reverse_op(reverse_op),
         left(std::move(left)),
         values(std::move(values))
     {}
@@ -137,6 +124,7 @@ typedef struct in_values_predicate : predicate_t {
 
 typedef struct statement statement_t;
 typedef struct in_subquery_predicate : predicate_t {
+    bool reverse_op;
     std::unique_ptr<row_value_constructor_t> left;
     // Guaranteed to always be static_castable to a select_t
     std::unique_ptr<statement_t> subquery;
@@ -144,7 +132,8 @@ typedef struct in_subquery_predicate : predicate_t {
             std::unique_ptr<row_value_constructor_t>& left,
             std::unique_ptr<statement_t>& subq,
             bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_IN_SUBQUERY, reverse_op),
+        predicate_t(PREDICATE_TYPE_IN_SUBQUERY),
+        reverse_op(reverse_op),
         left(std::move(left)),
         subquery(std::move(subq))
     {}
@@ -160,9 +149,8 @@ typedef struct quantified_comparison_predicate : predicate_t {
             bool compare_all,
             comp_op_t op,
             std::unique_ptr<row_value_constructor_t>& left,
-            std::unique_ptr<statement_t>& subq,
-            bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_QUANTIFIED_COMPARISON, reverse_op),
+            std::unique_ptr<statement_t>& subq) :
+        predicate_t(PREDICATE_TYPE_QUANTIFIED_COMPARISON),
         compare_all(compare_all),
         op(op),
         left(std::move(left)),
@@ -173,10 +161,8 @@ typedef struct quantified_comparison_predicate : predicate_t {
 typedef struct exists_predicate : predicate_t {
     // Guaranteed to always be static_castable to a select_t
     std::unique_ptr<statement_t> subquery;
-    exists_predicate(
-            std::unique_ptr<statement_t>& subq,
-            bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_EXISTS, reverse_op),
+    exists_predicate(std::unique_ptr<statement_t>& subq) :
+        predicate_t(PREDICATE_TYPE_EXISTS),
         subquery(std::move(subq))
     {}
 } exists_predicate_t;
@@ -191,9 +177,8 @@ typedef struct match_predicate : predicate_t {
             std::unique_ptr<row_value_constructor_t>& left,
             bool match_unique,
             bool match_partial,
-            std::unique_ptr<statement_t>& subq,
-            bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_MATCH, reverse_op),
+            std::unique_ptr<statement_t>& subq) :
+        predicate_t(PREDICATE_TYPE_MATCH),
         left(std::move(left)),
         match_unique(match_unique),
         match_partial(match_partial),
@@ -206,13 +191,39 @@ typedef struct overlaps_predicate : predicate_t {
     std::unique_ptr<row_value_constructor_t> right;
     overlaps_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
-            std::unique_ptr<row_value_constructor_t>& right,
-            bool reverse_op) :
-        predicate_t(PREDICATE_TYPE_OVERLAPS, reverse_op),
+            std::unique_ptr<row_value_constructor_t>& right) :
+        predicate_t(PREDICATE_TYPE_OVERLAPS),
         left(std::move(left)),
         right(std::move(right))
     {}
 } overlaps_predicate_t;
+
+// A boolean primary evaluates to a boolean. This could be a simple comparison
+// predicate or a complex IN (<subquery>) predicate or it could be a pointer to
+// another search_condition_t
+struct search_condition;
+typedef struct boolean_primary {
+    std::unique_ptr<predicate_t> predicate;
+    std::unique_ptr<struct search_condition> search_condition;
+    boolean_primary(std::unique_ptr<predicate_t>& predicate) :
+        predicate(std::move(predicate))
+    {}
+    boolean_primary(std::unique_ptr<struct search_condition>& search_cond) :
+        search_condition(std::move(search_cond))
+    {}
+} boolean_primary_t;
+
+// A boolean factor is anything that evaluates to a boolean. This could be a
+// simple comparison predicate or a complex IN (<subquery>) predicate or it
+// could be a pointer to another search_condition_t
+typedef struct boolean_factor {
+    bool reverse_op;
+    std::unique_ptr<boolean_primary_t> primary;
+    boolean_factor(std::unique_ptr<boolean_primary_t>& primary, bool reverse_op) :
+        reverse_op(reverse_op),
+        primary(std::move(primary))
+    {}
+} boolean_factor_t;
 
 typedef struct boolean_term {
     std::unique_ptr<boolean_factor_t> factor;
@@ -235,19 +246,6 @@ typedef struct search_condition {
     // A collection of boolean terms that are OR'd together
     std::vector<std::unique_ptr<boolean_term_t>> terms;
 } search_condition_t;
-
-// A search_condition_factor_t is a specialized type of boolean_factor_t that
-// represents an "inner" search condition that exists within an enclosing
-// parentheses and should be evaluated as a single boolean factor
-typedef struct search_condition_factor : boolean_factor_t {
-    std::unique_ptr<search_condition_t> search_condition;
-    search_condition_factor(
-            std::unique_ptr<search_condition_t>& search_cond,
-            bool reverse_op) :
-        boolean_factor_t(BOOLEAN_FACTOR_TYPE_SEARCH_CONDITION, reverse_op),
-        search_condition(std::move(search_cond))
-    {}
-} search_condition_factor_t;
 
 } // namespace sqltoast
 

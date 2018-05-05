@@ -102,21 +102,18 @@ std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const search_condition_factor_t& sfc) {
-    out << "(" << *sfc.search_condition << ")";
+std::ostream& operator<< (std::ostream& out, const boolean_primary_t& bp) {
+    if (bp.predicate)
+        out << *bp.predicate;
+    else
+        out << '(' << *bp.search_condition << ')';
     return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const boolean_factor_t& bf) {
     if (bf.reverse_op)
         out << "NOT ";
-    if (bf.type == BOOLEAN_FACTOR_TYPE_PREDICATE) {
-        const predicate_t& pred = static_cast<const predicate_t&>(bf);
-        out << pred;
-    } else {
-        const search_condition_factor_t& sfc = static_cast<const search_condition_factor_t&>(bf);
-        out << sfc;
-    }
+    out << *bf.primary;
     return out;
 }
 
@@ -161,22 +158,31 @@ std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred) {
 std::ostream& operator<< (std::ostream& out, const between_predicate_t& pred) {
     out << *pred.left << " BETWEEN " << *pred.comp_left << " AND " << *pred.comp_right;
     return out;
-};
+}
 
 std::ostream& operator<< (std::ostream& out, const like_predicate_t& pred) {
-    out << *pred.match << " LIKE " << *pred.pattern;
+    out << *pred.match;
+    if (pred.reverse_op)
+        out << " NOT";
+    out << " LIKE " << *pred.pattern;
     if (pred.escape_char)
         out << " ESCAPE " << *pred.escape_char;
     return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const null_predicate_t& pred) {
-    out << *pred.left << " IS NULL";
+    out << *pred.left << " IS";
+    if (pred.reverse_op)
+        out << " NOT";
+    out << " NULL";
     return out;
-};
+}
 
 std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) {
-    out << *pred.left << " IN (";
+    out << *pred.left;
+    if (pred.reverse_op)
+        out << " NOT";
+    out << " IN (";
     size_t x = 0;
     for (auto& ve : pred.values) {
         if (x++ > 0)
@@ -185,7 +191,7 @@ std::ostream& operator<< (std::ostream& out, const in_values_predicate_t& pred) 
     }
     out << ")";
     return out;
-};
+}
 
 std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred) {
     out << *pred.left << " IN " << *pred.subquery;

@@ -4,6 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <iostream>
+
 #include "parser/error.h"
 #include "parser/parse.h"
 
@@ -155,16 +157,17 @@ bool parse_value_expression_primary(
         return true;
     if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
-    if (cur_tok.is_punctuator() || cur_tok.is_keyword())
-        goto check_punc_keywords;
     if (cur_tok.is_identifier()) {
         vep_type = VEP_TYPE_COLUMN_REFERENCE;
         vep_lexeme = cur_tok.lexeme;
         cur_tok = lex.next();
         goto push_ve;
     }
+    if (cur_tok.is_punctuator() || cur_tok.is_keyword())
+        goto check_punc_keywords;
     return false;
 check_punc_keywords:
+    cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_LPAREN:
             cur_tok = lex.next();

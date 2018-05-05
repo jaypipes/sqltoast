@@ -134,41 +134,37 @@ bool parse_boolean_factor(
 bool parse_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
-        bool reverse_op);
+        std::unique_ptr<predicate_t>& out);
 bool parse_exists_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
-        bool reverse_op);
+        std::unique_ptr<predicate_t>& out);
 bool parse_like_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
+        std::unique_ptr<predicate_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 bool parse_match_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
-        std::unique_ptr<row_value_constructor_t>& left_p,
-        bool reverse_op);
+        std::unique_ptr<predicate_t>& out,
+        std::unique_ptr<row_value_constructor_t>& left_p);
 
 // Returns true if a comp_predicate_t could be parsed. If true, the out
 // argument will be a new pointer to a comp_predicate_t
 bool parse_comparison_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
-        std::unique_ptr<row_value_constructor_t>& left_p,
-        bool reverse_op);
+        std::unique_ptr<predicate_t>& out,
+        std::unique_ptr<row_value_constructor_t>& left_p);
 
 // Returns true if a between_predicate_t could be parsed. If true, the out
 // argument will be a new pointer to a between_predicate_t
 bool parse_between_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
+        std::unique_ptr<predicate_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 
@@ -177,7 +173,7 @@ bool parse_between_predicate(
 bool parse_null_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
+        std::unique_ptr<predicate_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 
@@ -187,7 +183,7 @@ bool parse_null_predicate(
 bool parse_in_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<boolean_factor_t>& out,
+        std::unique_ptr<predicate_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p,
         bool reverse_op);
 

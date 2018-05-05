@@ -111,7 +111,7 @@ statements[0]:
    where:
      column-reference[a] IN (literal[1])>
 # Negate of IN (<value list>) operator with single value
->SELECT * FROM t1 WHERE NOT a IN (1)
+>SELECT * FROM t1 WHERE a NOT IN (1)
 OK
 statements[0]:
   <statement: SELECT
@@ -120,20 +120,9 @@ statements[0]:
    referenced tables:
      0: t1
    where:
-     NOT column-reference[a] IN (literal[1])>
+     column-reference[a] NOT IN (literal[1])>
 # top-level negation of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE NOT a IN (1)
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1
-   where:
-     NOT column-reference[a] IN (literal[1])>
-# inner-negation of IN (<value list>) operator with single value
->SELECT * FROM t1 WHERE a NOT IN (1)
 OK
 statements[0]:
   <statement: SELECT
@@ -153,7 +142,7 @@ statements[0]:
    referenced tables:
      0: t1
    where:
-     column-reference[a] IN (literal[1])>
+     NOT column-reference[a] NOT IN (literal[1])>
 # IN (<value list>) operator with multiple value
 >SELECT * FROM t1 WHERE a IN (1, 2, 3)
 OK
