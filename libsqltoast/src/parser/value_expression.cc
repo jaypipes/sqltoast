@@ -19,7 +19,61 @@ bool parse_row_value_constructor(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<row_value_constructor_t>& out) {
-    return parse_row_value_constructor_element(ctx, cur_tok, out);
+    lexer_t& lex = ctx.lexer;
+    parse_position_t start = lex.cursor;
+    token_t start_tok = lex.current_token;
+    symbol_t cur_sym = cur_tok.symbol;
+    std::unique_ptr<row_value_constructor_t> element;
+    std::vector<std::unique_ptr<row_value_constructor_t>> elements;
+    if (parse_row_value_constructor_element(ctx, cur_tok, out)) {
+        return true;
+    }
+    // Reset cursor to before parsing of element attempt. Remember that a row
+    // value constructor element can also start with a LPAREN, which is why we
+    // do this.
+    lex.cursor = start;
+    lex.current_token = cur_tok = start_tok;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        return false;
+    cur_tok = lex.next();
+    if (cur_sym == SYMBOL_SELECT) {
+        // TODO(jaypipes): handle subquery row value constructors
+        return false;
+    }
+    goto process_rvc_list_element;
+process_rvc_list_element:
+    if (! parse_row_value_constructor_element(ctx, cur_tok, element))
+        goto err_expect_row_value_constructor_element;
+    elements.emplace_back(std::move(element));
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_rvc_list_element;
+    }
+    goto expect_rparen;
+err_expect_row_value_constructor_element:
+    {
+        std::stringstream estr;
+        estr << "Expected <row value constructor element> "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_rvc;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+push_rvc:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<row_value_constructor_list_t>(elements);
+    return true;
 }
 
 // <row value constructor element> ::=

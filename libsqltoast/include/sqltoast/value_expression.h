@@ -163,9 +163,11 @@ typedef struct row_value_expression : row_value_constructor_element_t {
 } row_value_expression_t;
 
 typedef struct row_value_constructor_list : row_value_constructor_t {
-    std::vector<std::unique_ptr<row_value_constructor_element_t>> elements;
+    // Each element is guaranteed to be static_castable to
+    // row_value_constructor_element_t
+    std::vector<std::unique_ptr<row_value_constructor_t>> elements;
     row_value_constructor_list(
-            std::vector<std::unique_ptr<row_value_constructor_element_t>>& elements) :
+            std::vector<std::unique_ptr<row_value_constructor_t>>& elements) :
         row_value_constructor_t(RVC_TYPE_LIST),
         elements(std::move(elements))
     {}

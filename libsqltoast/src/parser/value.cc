@@ -4,8 +4,6 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include <iostream>
-
 #include "parser/error.h"
 #include "parser/parse.h"
 
@@ -31,53 +29,28 @@ optional_operator:
     // our current symbol. If so, that indicates we should expect to parse
     // another numeric factor as an operand to the arithmetic equation.
     cur_sym = cur_tok.symbol;
-    switch (cur_sym) {
-        case SYMBOL_SEMICOLON:
-        case SYMBOL_COMMA:
-        case SYMBOL_RPAREN:
-        case SYMBOL_LPAREN:
-        case SYMBOL_EOS:
-        case SYMBOL_EQUAL:
-        case SYMBOL_NOT_EQUAL:
-        case SYMBOL_LESS_THAN:
-        case SYMBOL_GREATER_THAN:
-        case SYMBOL_AND:
-        case SYMBOL_OR:
-        case SYMBOL_FOR:
-        case SYMBOL_FROM:
-        case SYMBOL_WHERE:
-        case SYMBOL_HAVING:
-        case SYMBOL_GROUP:
-        case SYMBOL_PLUS:
-        case SYMBOL_MINUS:
-        case SYMBOL_WHEN:
-        case SYMBOL_THEN:
-        case SYMBOL_ELSE:
-        case SYMBOL_END:
-            return true;
-        case SYMBOL_ASTERISK:
-            cur_tok = lex.next();
-            if (! parse_numeric_factor(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_numeric_factor;
-            }
-            if (out)
-                out->multiply(operand);
-            return true;
-        case SYMBOL_SOLIDUS:
-            cur_tok = lex.next();
-            if (! parse_numeric_factor(ctx, cur_tok, operand)) {
-                if (ctx.result.code == PARSE_SYNTAX_ERROR)
-                    return false;
-                goto err_expect_numeric_factor;
-            }
-            if (out)
-                out->divide(operand);
-            return true;
-        default:
-            return false;
+    if (cur_sym == SYMBOL_ASTERISK) {
+        cur_tok = lex.next();
+        if (! parse_numeric_factor(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_numeric_factor;
+        }
+        if (out)
+            out->multiply(operand);
+        return true;
+    } else if (cur_sym == SYMBOL_SOLIDUS) {
+        cur_tok = lex.next();
+        if (! parse_numeric_factor(ctx, cur_tok, operand)) {
+            if (ctx.result.code == PARSE_SYNTAX_ERROR)
+                return false;
+            goto err_expect_numeric_factor;
+        }
+        if (out)
+            out->divide(operand);
+        return true;
     }
+    return true;
 err_expect_numeric_factor:
     {
         std::stringstream estr;
@@ -88,7 +61,7 @@ err_expect_numeric_factor:
     }
 ensure_term:
     if (ctx.opts.disable_statement_construction)
-        return true;
+        goto optional_operator;
     out = std::make_unique<numeric_term_t>(factor);
     goto optional_operator;
 }
@@ -223,7 +196,7 @@ process_subexpression:
     vep_lexeme.end = inner_val_end;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
-        goto err_expect_rparen;
+        return false; // Could be a row value constructor list
     cur_tok = lex.next();
     if (ctx.opts.disable_statement_construction)
         return true;

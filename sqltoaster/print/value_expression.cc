@@ -26,7 +26,7 @@ std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc)
                 out << '(';
                 size_t x = 0;
                 for (const auto& el : els.elements) {
-                    if (x > 0)
+                    if (x++ > 0)
                         out << ',';
                     out << *el;
                 }
