@@ -34,3 +34,12 @@ statements[0]:
      0: *
    referenced tables:
      0: c1.s1.t1_backup>
+# Identifier includes a prefix and a star projection
+>SELECT t1.* FROM t1
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: column-reference[t1.*]
+   referenced tables:
+     0: t1>

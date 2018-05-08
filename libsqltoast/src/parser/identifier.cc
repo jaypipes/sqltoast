@@ -58,7 +58,7 @@ tokenize_result_t token_identifier(
 
     // If we're not a delimited identifier, then consume all non-space characters
     // until the end of the parse subject or the next whitespace character
-    while (cursor != end && (std::isalnum(*cursor) || *cursor == '.' || *cursor == '_'))
+    while (cursor != end && (std::isalnum(*cursor) || *cursor == '.' || *cursor == '_' || *cursor == '*'))
         cursor++;
 
     // if we went more than a single character, that's an identifier...
