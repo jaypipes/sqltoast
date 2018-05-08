@@ -136,6 +136,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ON, "ON"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_OUTER, "OUTER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_OCTET_LENGTH, "OCTET_LENGTH"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_OVERLAPS, "OVERLAPS"));
             return t;
         case 'p':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_POSITION, "POSITION"));

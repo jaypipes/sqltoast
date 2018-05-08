@@ -150,6 +150,11 @@ bool parse_match_predicate(
         token_t& cur_tok,
         std::unique_ptr<predicate_t>& out,
         std::unique_ptr<row_value_constructor_t>& left_p);
+bool parse_overlaps_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<predicate_t>& out,
+        std::unique_ptr<row_value_constructor_t>& left);
 
 // Returns true if a comp_predicate_t could be parsed. If true, the out
 // argument will be a new pointer to a comp_predicate_t

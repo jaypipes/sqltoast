@@ -197,6 +197,11 @@ bool parse_predicate(
                     goto err_expected_between_in_or_like;
                 cur_tok = lex.next();
                 return parse_match_predicate(ctx, cur_tok, out, left_most);
+            case SYMBOL_OVERLAPS:
+                if (found_not)
+                    goto err_expected_between_in_or_like;
+                cur_tok = lex.next();
+                return parse_overlaps_predicate(ctx, cur_tok, out, left_most);
             default:
                 if (found_not)
                     goto err_expected_between_in_or_like;
@@ -616,6 +621,36 @@ push_predicate:
 
     out = std::make_unique<match_predicate_t>(
             left, match_unique, match_partial, subq);
+    return true;
+}
+
+// <overlaps predicate> ::=
+//     <row value constructor 1> OVERLAPS <row value constructor 2>
+bool parse_overlaps_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<predicate_t>& out,
+        std::unique_ptr<row_value_constructor_t>& left) {
+    std::unique_ptr<row_value_constructor_t> right;
+
+    // We get here if we've processed the left row value constructor and the
+    // OVERLAPS symbol. We now expect a row value constructor
+    if (! parse_row_value_constructor(ctx, cur_tok, right))
+        goto err_expect_rvc;
+    goto push_predicate;
+err_expect_rvc:
+    {
+        std::stringstream estr;
+        estr << "Expected to find a <row value constructor> after OVERLAPS "
+                "but found " << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+push_predicate:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+
+    out = std::make_unique<overlaps_predicate_t>(left, right);
     return true;
 }
 

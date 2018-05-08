@@ -121,6 +121,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_OCTET_LENGTH] = std::string("OCTET_LENGTH");
     m[SYMBOL_ON] = std::string("ON");
     m[SYMBOL_OR] = std::string("OR");
+    m[SYMBOL_OVERLAPS] = std::string("OVERLAPS");
     m[SYMBOL_OUTER] = std::string("OUTER");
     m[SYMBOL_PARTIAL] = std::string("PARTIAL");
     m[SYMBOL_POSITION] = std::string("POSITION");

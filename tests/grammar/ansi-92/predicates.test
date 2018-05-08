@@ -287,3 +287,15 @@ statements[0]:
      0: t1
    where:
      column-reference[a] LIKE concatenate[column-reference[b], literal['%']]>
+# OVERLAPS predicate with date columns from multiple tables
+>SELECT * FROM t1, t2 WHERE (t1.start, t1.end) OVERLAPS (t2.start, t2.end)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+     1: t2
+   where:
+     (column-reference[t1.start],column-reference[t1.end]) OVERLAPS (column-reference[t2.start],column-reference[t2.end])>
