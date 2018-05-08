@@ -178,6 +178,7 @@ Running ansi-92/insert-values ... OK
 Running ansi-92/interval-expressions ... OK
 Running ansi-92/numeric-expressions ... OK
 Running ansi-92/predicates ... OK
+Running ansi-92/row-value-constructors ... OK
 Running ansi-92/string-expressions ... OK
 Running ansi-92/table-references ... OK
 Running ansi-92/update ... OK
