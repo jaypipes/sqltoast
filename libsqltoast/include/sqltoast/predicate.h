@@ -20,6 +20,7 @@ typedef enum predicate_type {
     PREDICATE_TYPE_NULL,
     PREDICATE_TYPE_QUANTIFIED_COMPARISON,
     PREDICATE_TYPE_EXISTS,
+    PREDICATE_TYPE_UNIQUE,
     PREDICATE_TYPE_MATCH,
     PREDICATE_TYPE_OVERLAPS
 } predicate_type_t;
@@ -166,6 +167,15 @@ typedef struct exists_predicate : predicate_t {
         subquery(std::move(subq))
     {}
 } exists_predicate_t;
+
+typedef struct unique_predicate : predicate_t {
+    // Guaranteed to always be static_castable to a select_t
+    std::unique_ptr<statement_t> subquery;
+    unique_predicate(std::unique_ptr<statement_t>& subq) :
+        predicate_t(PREDICATE_TYPE_UNIQUE),
+        subquery(std::move(subq))
+    {}
+} unique_predicate_t;
 
 typedef struct match_predicate : predicate_t {
     std::unique_ptr<row_value_constructor_t> left;

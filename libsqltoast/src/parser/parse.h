@@ -139,6 +139,10 @@ bool parse_exists_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<predicate_t>& out);
+bool parse_unique_predicate(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<predicate_t>& out);
 bool parse_like_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,

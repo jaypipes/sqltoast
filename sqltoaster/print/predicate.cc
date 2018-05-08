@@ -81,6 +81,13 @@ std::ostream& operator<< (std::ostream& out, const predicate_t& pred) {
                 out << ep;
             }
             break;
+        case PREDICATE_TYPE_UNIQUE:
+            {
+                const unique_predicate_t& ep =
+                    static_cast<const unique_predicate_t&>(pred);
+                out << ep;
+            }
+            break;
         case PREDICATE_TYPE_MATCH:
             {
                 const match_predicate_t& mp =
@@ -209,7 +216,12 @@ std::ostream& operator<< (std::ostream& out, const quantified_comparison_predica
 }
 
 std::ostream& operator<< (std::ostream& out, const exists_predicate_t& pred) {
-    out << " EXISTS " << *pred.subquery;
+    out << "EXISTS " << *pred.subquery;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const unique_predicate_t& pred) {
+    out << "UNIQUE " << *pred.subquery;
     return out;
 }
 
