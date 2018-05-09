@@ -20,6 +20,7 @@ statements[0]:
      0: *
    referenced tables:
      0: t1>>
+# Use the optional column list
 >CREATE VIEW v1 (a, b) AS SELECT a, b FROM t1
 OK
 statements[0]:
@@ -34,3 +35,45 @@ statements[0]:
      1: column-reference[b]
    referenced tables:
      0: t1>>
+# The optional WITH LOCAL CHECK OPTION clause
+>CREATE VIEW v1 AS SELECT * FROM t1 WITH LOCAL CHECK OPTION
+OK
+statements[0]:
+  <statement: CREATE VIEW
+   table name: v1
+   check option: LOCAL
+   query: <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1>>
+# The optional WITH CASCADED CHECK OPTION clause
+>CREATE VIEW v1 AS SELECT * FROM t1 WITH CASCADED CHECK OPTION
+OK
+statements[0]:
+  <statement: CREATE VIEW
+   table name: v1
+   check option: CASCADED
+   query: <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1>>
+# Missing either LOCAL or CASCADED for the check option clause
+>CREATE VIEW v1 AS SELECT * FROM t1 WITH CHECK OPTION
+Syntax error.
+Expected to find one of (CASCADED|LOCAL) but found keyword[CHECK]
+CREATE VIEW v1 AS SELECT * FROM t1 WITH CHECK OPTION
+                                       ^^^^^^^^^^^^^
+# Missing CHECK symbol for the check option clause
+>CREATE VIEW v1 AS SELECT * FROM t1 WITH LOCAL OPTION
+Syntax error.
+Expected to find CHECK but found keyword[OPTION]
+CREATE VIEW v1 AS SELECT * FROM t1 WITH LOCAL OPTION
+                                             ^^^^^^^
+# Missing CHECK symbol for the check option clause
+>CREATE VIEW v1 AS SELECT * FROM t1 WITH LOCAL CHECK
+Syntax error.
+Expected to find OPTION but found symbol[EOS]
+CREATE VIEW v1 AS SELECT * FROM t1 WITH LOCAL CHECK
+                                                  ^

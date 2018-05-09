@@ -24,6 +24,7 @@ bool parse_create_view(
     parse_position_t start = ctx.lexer.cursor;
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t table_name;
+    check_option_t check_option = CHECK_OPTION_NONE;
     std::vector<lexeme_t> columns;
     std::unique_ptr<statement_t> query;
 
@@ -87,8 +88,39 @@ err_expect_as:
 expect_query_expression:
     if (! parse_select(ctx, cur_tok, query))
         goto err_expect_query_expression;
-    // TODO(jaypipes): process the WITH levels clause
+    goto optional_check_option;
+optional_check_option:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_WITH) {
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+        if (cur_sym == SYMBOL_CASCADED) {
+            check_option = CHECK_OPTION_CASCADED;
+            cur_tok = lex.next();
+        } else if (cur_sym == SYMBOL_LOCAL) {
+            check_option = CHECK_OPTION_LOCAL;
+            cur_tok = lex.next();
+        } else
+            goto err_expect_cascaded_or_local;
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_CHECK)
+            goto err_expect_check;
+        cur_tok = lex.next();
+        cur_sym = cur_tok.symbol;
+        if (cur_sym != SYMBOL_OPTION)
+            goto err_expect_option;
+        cur_tok = lex.next();
+    }
     goto statement_ending;
+err_expect_cascaded_or_local:
+    expect_any_error(ctx, {SYMBOL_CASCADED, SYMBOL_LOCAL});
+    return false;
+err_expect_check:
+    expect_error(ctx, SYMBOL_CHECK);
+    return false;
+err_expect_option:
+    expect_error(ctx, SYMBOL_OPTION);
+    return false;
 err_expect_query_expression:
     {
         std::stringstream estr;
@@ -110,7 +142,7 @@ push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
     out = std::make_unique<create_view_statement_t>(
-            table_name, columns, query);
+            table_name, check_option, columns, query);
     return true;
 }
 

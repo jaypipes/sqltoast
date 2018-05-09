@@ -308,16 +308,25 @@ typedef struct update_statement : statement_t {
     {}
 } update_statement_t;
 
+typedef enum check_option {
+    CHECK_OPTION_NONE,
+    CHECK_OPTION_LOCAL,
+    CHECK_OPTION_CASCADED
+} check_option_t;
+
 typedef struct create_view_statement : statement_t {
     lexeme_t table_name;
+    check_option_t check_option;
     std::vector<lexeme_t> columns;
     std::unique_ptr<statement_t> query;
     create_view_statement(
             lexeme_t& table_name,
+            check_option_t check_option,
             std::vector<lexeme_t>& columns,
             std::unique_ptr<statement_t>& query) :
         statement_t(STATEMENT_TYPE_CREATE_VIEW),
         table_name(table_name),
+        check_option(check_option),
         columns(std::move(columns)),
         query(std::move(query))
     {}

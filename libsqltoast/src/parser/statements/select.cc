@@ -222,11 +222,15 @@ statement_ending:
     // token. Alternately, we can find an RPAREN, which would indicate we may
     // be at the end of a valid subquery, which is also fine. We rely on the
     // caller to check for the validity of an RPAREN in the current lexical
-    // context.
+    // context. Finally, a SELECT, not enclosed by parens, is expected for the
+    // CREATE VIEW statement, and the SELECT may be followed by a WITH <level>
+    // CHECK OPTION clause. So, we need to terminate with a WITH symbol as
+    // well...
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_SEMICOLON ||
             cur_sym == SYMBOL_EOS ||
-            cur_sym == SYMBOL_RPAREN)
+            cur_sym == SYMBOL_RPAREN ||
+            cur_sym == SYMBOL_WITH)
         goto push_statement;
     expect_any_error(ctx, {SYMBOL_EOS, SYMBOL_SEMICOLON, SYMBOL_RPAREN});
     return false;

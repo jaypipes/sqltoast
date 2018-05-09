@@ -49,6 +49,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_BOTH] = std::string("BOTH");
     m[SYMBOL_BY] = std::string("BY");
     m[SYMBOL_CASCADE] = std::string("CASCADE");
+    m[SYMBOL_CASCADED] = std::string("CASCADED");
     m[SYMBOL_CASE] = std::string("CASE");
     m[SYMBOL_CHAR] = std::string("CHAR");
     m[SYMBOL_CHARACTER] = std::string("CHARACTER");
@@ -120,6 +121,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_NULLIF] = std::string("NULLIF");
     m[SYMBOL_OCTET_LENGTH] = std::string("OCTET_LENGTH");
     m[SYMBOL_ON] = std::string("ON");
+    m[SYMBOL_OPTION] = std::string("OPTION");
     m[SYMBOL_OR] = std::string("OR");
     m[SYMBOL_OVERLAPS] = std::string("OVERLAPS");
     m[SYMBOL_OUTER] = std::string("OUTER");

@@ -260,6 +260,12 @@ std::ostream& operator<< (std::ostream& out, const create_view_statement_t& stmt
        for (const auto& column : stmt.columns)
            out << std::endl << "     " << x++ << ": " << column;
     }
+    if (stmt.check_option != CHECK_OPTION_NONE) {
+        if (stmt.check_option == CHECK_OPTION_LOCAL)
+            out << std::endl << "   check option: LOCAL";
+        else
+            out << std::endl << "   check option: CASCADED";
+    }
     out << std::endl << "   query: " << *stmt.query << '>';
     return out;
 }
