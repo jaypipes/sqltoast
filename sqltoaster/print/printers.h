@@ -9,9 +9,9 @@
 
 namespace sqltoast {
 
+/* DDL/definition elements  */
 std::ostream& operator<< (std::ostream& out, const default_descriptor_t& column_def);
 std::ostream& operator<< (std::ostream& out, const column_definition_t& column_def);
-std::ostream& operator<< (std::ostream& out, const derived_column_t& dc);
 std::ostream& operator<< (std::ostream& out, const grouping_column_reference_t& dc);
 std::ostream& operator<< (std::ostream& out, const constraint_t& constraint);
 std::ostream& operator<< (std::ostream& out, const not_null_constraint_t& constraint);
@@ -26,6 +26,9 @@ std::ostream& operator<< (std::ostream& out, const datetime_t& dt);
 std::ostream& operator<< (std::ostream& out, const interval_unit_t& unit);
 std::ostream& operator<< (std::ostream& out, const interval_t& interval);
 std::ostream& operator<< (std::ostream& out, const identifier_t& id);
+std::ostream& operator<< (std::ostream& out, const derived_column_t& dc);
+
+/*  predicates */
 std::ostream& operator<< (std::ostream& out, const predicate_t& pred);
 std::ostream& operator<< (std::ostream& out, const comp_op_t& op);
 std::ostream& operator<< (std::ostream& out, const comp_predicate_t& pred);
@@ -43,6 +46,8 @@ std::ostream& operator<< (std::ostream& out, const boolean_term_t& bt);
 std::ostream& operator<< (std::ostream& out, const boolean_factor_t& bf);
 std::ostream& operator<< (std::ostream& out, const boolean_primary_t& bp);
 std::ostream& operator<< (std::ostream& out, const search_condition_t& sc);
+
+/*  statements */
 std::ostream& operator<< (std::ostream& out, const statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const create_schema_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const drop_schema_statement_t& stmt);
@@ -60,6 +65,9 @@ std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const update_statement_t& stmt);
+std::ostream& operator<< (std::ostream& out, const create_view_statement_t& stmt);
+
+/* query components */
 std::ostream& operator<< (std::ostream& out, const table_reference_t& tr);
 std::ostream& operator<< (std::ostream& out, const table_t& t);
 std::ostream& operator<< (std::ostream& out, const derived_table_t& dt);

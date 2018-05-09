@@ -185,6 +185,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_VALUES, "VALUES"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_VARCHAR, "VARCHAR"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_VARYING, "VARYING"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_VIEW, "VIEW"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_VALUE, "VALUE"));
             return t;
         case 'w':

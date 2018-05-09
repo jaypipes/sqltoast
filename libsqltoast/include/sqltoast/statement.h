@@ -12,6 +12,7 @@ namespace sqltoast {
 typedef enum statement_type {
     STATEMENT_TYPE_CREATE_SCHEMA,
     STATEMENT_TYPE_CREATE_TABLE,
+    STATEMENT_TYPE_CREATE_VIEW,
     STATEMENT_TYPE_DROP_SCHEMA,
     STATEMENT_TYPE_DROP_TABLE,
     STATEMENT_TYPE_ALTER_TABLE,
@@ -306,6 +307,21 @@ typedef struct update_statement : statement_t {
         where_condition(std::move(where_cond))
     {}
 } update_statement_t;
+
+typedef struct create_view_statement : statement_t {
+    lexeme_t table_name;
+    std::vector<lexeme_t> columns;
+    std::unique_ptr<statement_t> query;
+    create_view_statement(
+            lexeme_t& table_name,
+            std::vector<lexeme_t>& columns,
+            std::unique_ptr<statement_t>& query) :
+        statement_t(STATEMENT_TYPE_CREATE_VIEW),
+        table_name(table_name),
+        columns(std::move(columns)),
+        query(std::move(query))
+    {}
+} create_view_statement_t;
 
 } // namespace sqltoast
 

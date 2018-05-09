@@ -47,6 +47,13 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_CREATE_VIEW:
+            {
+                const create_view_statement_t& sub =
+                    static_cast<const create_view_statement_t&>(stmt);
+                out << sub;
+            }
+            break;
         case STATEMENT_TYPE_SELECT:
             {
                 const select_statement_t& sub =
@@ -241,6 +248,19 @@ std::ostream& operator<< (std::ostream& out, const alter_table_statement_t& stmt
     out << "   action: " << *stmt.action;
     out << ">";
 
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const create_view_statement_t& stmt) {
+    out << "<statement: CREATE VIEW" << std::endl
+        << "   table name: " << stmt.table_name;
+    if (! stmt.columns.empty()) {
+       out << std::endl << "   columns:";
+       size_t x = 0;
+       for (const auto& column : stmt.columns)
+           out << std::endl << x++ << ": " << column;
+    }
+    out << std::endl << "   query: " << *stmt.query << '>';
     return out;
 }
 

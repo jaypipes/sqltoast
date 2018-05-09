@@ -1,0 +1,22 @@
+# missing table/view name
+>CREATE VIEW AS SELECT * FROM t1
+Syntax error.
+Expected to find << identifier >> but found keyword[AS]
+CREATE VIEW AS SELECT * FROM t1
+           ^^^^^^^^^^^^^^^^^^^^
+# Missing "AS" keyword results in syntax error
+>CREATE VIEW v1 SELECT * FROM t1
+Syntax error.
+Expected to find AS but found keyword[SELECT]
+CREATE VIEW v1 SELECT * FROM t1
+              ^^^^^^^^^^^^^^^^^
+>CREATE VIEW v1 AS SELECT * FROM t1
+OK
+statements[0]:
+  <statement: CREATE VIEW
+   table name: v1
+   query: <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1>>

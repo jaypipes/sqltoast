@@ -181,6 +181,7 @@ typedef enum symbol {
     SYMBOL_VALUES,
     SYMBOL_VARCHAR,
     SYMBOL_VARYING,
+    SYMBOL_VIEW,
     SYMBOL_WHEN,
     SYMBOL_WHERE,
     SYMBOL_WITH,

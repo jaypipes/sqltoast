@@ -160,6 +160,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_VALUES] = std::string("VALUES");
     m[SYMBOL_VARCHAR] = std::string("VARCHAR");
     m[SYMBOL_VARYING] = std::string("VARYING");
+    m[SYMBOL_VIEW] = std::string("VIEW");
     m[SYMBOL_WHEN] = std::string("WHEN");
     m[SYMBOL_WHERE] = std::string("WHERE");
     m[SYMBOL_WITH] = std::string("WITH");

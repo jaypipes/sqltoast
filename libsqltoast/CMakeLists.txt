@@ -22,6 +22,7 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/statements/alter_table.cc
     src/parser/statements/create_schema.cc
     src/parser/statements/create_table.cc
+    src/parser/statements/create_view.cc
     src/parser/statements/delete.cc
     src/parser/statements/drop_schema.cc
     src/parser/statements/drop_table.cc
