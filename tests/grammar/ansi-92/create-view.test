@@ -20,3 +20,17 @@ statements[0]:
      0: *
    referenced tables:
      0: t1>>
+>CREATE VIEW v1 (a, b) AS SELECT a, b FROM t1
+OK
+statements[0]:
+  <statement: CREATE VIEW
+   table name: v1
+   columns:
+     0: a
+     1: b
+   query: <statement: SELECT
+   selected columns:
+     0: column-reference[a]
+     1: column-reference[b]
+   referenced tables:
+     0: t1>>

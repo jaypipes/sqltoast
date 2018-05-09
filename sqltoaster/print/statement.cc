@@ -258,7 +258,7 @@ std::ostream& operator<< (std::ostream& out, const create_view_statement_t& stmt
        out << std::endl << "   columns:";
        size_t x = 0;
        for (const auto& column : stmt.columns)
-           out << std::endl << x++ << ": " << column;
+           out << std::endl << "     " << x++ << ": " << column;
     }
     out << std::endl << "   query: " << *stmt.query << '>';
     return out;
