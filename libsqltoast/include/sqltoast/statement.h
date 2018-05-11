@@ -15,6 +15,7 @@ typedef enum statement_type {
     STATEMENT_TYPE_CREATE_VIEW,
     STATEMENT_TYPE_DROP_SCHEMA,
     STATEMENT_TYPE_DROP_TABLE,
+    STATEMENT_TYPE_DROP_VIEW,
     STATEMENT_TYPE_ALTER_TABLE,
     STATEMENT_TYPE_INSERT,
     STATEMENT_TYPE_INSERT_SELECT,
@@ -331,6 +332,16 @@ typedef struct create_view_statement : statement_t {
         query(std::move(query))
     {}
 } create_view_statement_t;
+
+typedef struct drop_view_statement : statement_t {
+    lexeme_t table_name;
+    drop_behaviour_t drop_behaviour;
+    drop_view_statement(lexeme_t& table_name, drop_behaviour_t drop_behaviour) :
+        statement_t(STATEMENT_TYPE_DROP_VIEW),
+        table_name(table_name),
+        drop_behaviour(drop_behaviour)
+    {}
+} drop_view_statement_t;
 
 } // namespace sqltoast
 

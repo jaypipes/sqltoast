@@ -66,6 +66,7 @@ std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& st
 std::ostream& operator<< (std::ostream& out, const delete_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const update_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const create_view_statement_t& stmt);
+std::ostream& operator<< (std::ostream& out, const drop_view_statement_t& stmt);
 
 /* query components */
 std::ostream& operator<< (std::ostream& out, const table_reference_t& tr);

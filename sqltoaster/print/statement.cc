@@ -54,6 +54,13 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
+        case STATEMENT_TYPE_DROP_VIEW:
+            {
+                const drop_view_statement_t& sub =
+                    static_cast<const drop_view_statement_t&>(stmt);
+                out << sub;
+            }
+            break;
         case STATEMENT_TYPE_SELECT:
             {
                 const select_statement_t& sub =
@@ -267,6 +274,18 @@ std::ostream& operator<< (std::ostream& out, const create_view_statement_t& stmt
             out << std::endl << "   check option: CASCADED";
     }
     out << std::endl << "   query: " << *stmt.query << '>';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const drop_view_statement_t& stmt) {
+    out << "<statement: DROP VIEW " << std::endl
+        << "   view name: " << stmt.table_name << std::endl;
+    if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
+       out << "   behaviour: CASCADE";
+    else
+       out << "   behaviour: RESTRICT";
+    out << ">";
+
     return out;
 }
 
