@@ -1,0 +1,33 @@
+# Simple DROP VIEW with no drop behaviour defaults to CASCADE
+>DROP VIEW v1
+OK
+statements[0]:
+  <statement: DROP VIEW
+   view name: v1
+   behaviour: CASCADE>
+# Simple DROP VIEW with explicit drop behaviour of CASCADE
+>DROP VIEW v1 CASCADE
+OK
+statements[0]:
+  <statement: DROP VIEW
+   view name: v1
+   behaviour: CASCADE>
+# Simple DROP VIEW with explicit drop behaviour of RESTRICT
+>DROP VIEW v1 RESTRICT
+OK
+statements[0]:
+  <statement: DROP VIEW
+   view name: v1
+   behaviour: RESTRICT>
+# Syntax error missing table/view name
+>DROP VIEW
+Syntax error.
+Expected to find << identifier >> but found symbol[EOS]
+DROP VIEW
+        ^
+# Syntax error expecting statement ending
+>DROP VIEW v1 UNKNOWN
+Syntax error.
+Expected to find one of (EOS|';') but found identifier[UNKNOWN]
+DROP VIEW v1 UNKNOWN
+            ^^^^^^^^

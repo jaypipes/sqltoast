@@ -72,6 +72,13 @@ bool parse_drop_table(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
+// Returns true if the DROP VIEW statement was parsed successfully from
+// the parse context
+bool parse_drop_view(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
+
 // Returns true if the ALTER TABLE statement was parsed successfully from
 // the parse context
 bool parse_alter_table(

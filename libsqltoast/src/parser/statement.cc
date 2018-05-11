@@ -25,9 +25,10 @@ static const parse_func_t create_statement_parsers[3] = {
     &parse_create_view,
     &parse_create_schema
 };
-static const size_t NUM_DROP_STATEMENT_PARSERS = 2;
-static const parse_func_t drop_statement_parsers[2] = {
+static const size_t NUM_DROP_STATEMENT_PARSERS = 3;
+static const parse_func_t drop_statement_parsers[3] = {
     &parse_drop_table,
+    &parse_drop_view,
     &parse_drop_schema
 };
 static const size_t NUM_DELETE_STATEMENT_PARSERS = 1;

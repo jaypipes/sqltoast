@@ -278,7 +278,7 @@ std::ostream& operator<< (std::ostream& out, const create_view_statement_t& stmt
 }
 
 std::ostream& operator<< (std::ostream& out, const drop_view_statement_t& stmt) {
-    out << "<statement: DROP VIEW " << std::endl
+    out << "<statement: DROP VIEW" << std::endl
         << "   view name: " << stmt.table_name << std::endl;
     if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
        out << "   behaviour: CASCADE";

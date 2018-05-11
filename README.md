@@ -172,6 +172,7 @@ Running ansi-92/case-expressions ... OK
 Running ansi-92/column-definitions ... OK
 Running ansi-92/datetime-expressions ... OK
 Running ansi-92/delete ... OK
+Running ansi-92/drop-view ... OK
 Running ansi-92/identifiers ... OK
 Running ansi-92/insert-default-values ... OK
 Running ansi-92/insert-values ... OK
