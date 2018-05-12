@@ -23,8 +23,9 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AS, "AS"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AVG, "AVG"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALTER, "ALTER"));
-            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ALL, "ALL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ANY, "ANY"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_ACTION, "ACTION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AT, "AT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ADD, "ADD"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_AUTHORIZATION, "AUTHORIZATION"));
@@ -163,6 +164,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SMALLINT, "SMALLINT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SESSION_USER, "SESSION_USER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_SYSTEM_USER, "SYSTEM_USER"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_SOME, "SOME"));
             return t;
         case 't':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TABLE, "TABLE"));

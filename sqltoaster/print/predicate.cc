@@ -207,10 +207,10 @@ std::ostream& operator<< (std::ostream& out, const in_subquery_predicate_t& pred
 
 std::ostream& operator<< (std::ostream& out, const quantified_comparison_predicate_t& pred) {
     out << *pred.left << pred.op;
-    if (pred.compare_all)
-        out << " ALL ";
+    if (pred.quantifier == QUANTIFIER_ALL)
+        out << "ALL ";
     else
-        out << " ANY ";
+        out << "ANY ";
     out  << *pred.subquery;
     return out;
 }

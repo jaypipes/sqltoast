@@ -374,3 +374,49 @@ statements[0]:
      0: t3
    where:
      column-reference[t3.t1_id] = column-reference[t1.id]>>
+# quantified comparison predicates are like comparison predicates with an
+# ANY|ALL|SOME quantifier
+>SELECT * FROM t1 WHERE t1.start > ALL (SELECT t2.start FROM t2)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[t1.start] > ALL <statement: SELECT
+   selected columns:
+     0: column-reference[t2.start]
+   referenced tables:
+     0: t2>>
+# quantified comparison predicate with ANY quantifier
+>SELECT * FROM t1 WHERE t1.start <= ANY (SELECT t2.start FROM t2)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[t1.start] <= ANY <statement: SELECT
+   selected columns:
+     0: column-reference[t2.start]
+   referenced tables:
+     0: t2>>
+# quantified comparison predicate with SOME quantifier translated to ANY quantifier
+>SELECT * FROM t1 WHERE t1.start <= SOME (SELECT t2.start FROM t2)
+OK
+statements[0]:
+  <statement: SELECT
+   selected columns:
+     0: *
+   referenced tables:
+     0: t1
+   where:
+     column-reference[t1.start] <= ANY <statement: SELECT
+   selected columns:
+     0: column-reference[t2.start]
+   referenced tables:
+     0: t2>>

@@ -229,6 +229,15 @@ err_expected_between_in_or_like:
 
 // <comparison predicate> ::=
 //     <row value constructor> <comp op> <row value constructor>
+//
+// <quantified comparison predicate> ::=
+//     <row value constructor> <comp op> <quantifier> <table subquery>
+//
+// <quantifier> ::= <all> | <some>
+//
+// <all> ::= ALL
+//
+// <some> ::= SOME | ANY
 bool parse_comparison_predicate(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -237,20 +246,23 @@ bool parse_comparison_predicate(
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     comp_op_t op = COMP_OP_EQUAL;
+    quantifier_t quantifier = QUANTIFIER_NONE;
     std::unique_ptr<row_value_constructor_t> right;
+    std::unique_ptr<statement_t> subquery;
 
     // We get here after successfully parsing a row-value constructor and we
     // know that the current symbol is *not* BETWEEN, LIKE, IN, or IS. We now
-    // expect to find an operator and a right side row value constructor.
+    // expect to find an operator and a right side row value constructor or
+    // table subquery if a quantifier is present.
     switch (cur_sym) {
         case SYMBOL_EQUAL:
             op = COMP_OP_EQUAL;
             cur_tok = lex.next();
-            goto expect_right;
+            goto optional_quantifier;
         case SYMBOL_NOT_EQUAL:
             op = COMP_OP_NOT_EQUAL;
             cur_tok = lex.next();
-            goto expect_right;
+            goto optional_quantifier;
         case SYMBOL_LESS_THAN:
             op = COMP_OP_LESS;
             cur_tok = lex.next();
@@ -280,6 +292,18 @@ optional_equal:
         }
         cur_tok = lex.next();
     }
+    goto optional_quantifier;
+optional_quantifier:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ALL) {
+        cur_tok = lex.next();
+        quantifier = QUANTIFIER_ALL;
+    } else if (cur_sym == SYMBOL_SOME || cur_sym == SYMBOL_ANY) {
+        cur_tok = lex.next();
+        quantifier = QUANTIFIER_ANY;
+    }
+    if (quantifier != QUANTIFIER_NONE)
+        goto expect_subquery;
     goto expect_right;
 expect_right:
     // We get here after successfully parsing the left side of the predicate
@@ -297,11 +321,46 @@ err_expect_right:
         create_syntax_error_marker(ctx, estr);
         return false;
     }
+expect_subquery:
+    // We get here after successfully parsing the left side of the predicate,
+    // the operator, a quantifier and now expect to find a table subquery.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_LPAREN)
+        goto err_expect_lparen;
+    cur_tok = lex.next();
+    if (! parse_select(ctx, cur_tok, subquery))
+        goto err_expect_subquery;
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    goto push_condition;
+err_expect_lparen:
+    expect_error(ctx, SYMBOL_LPAREN);
+    return false;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+err_expect_subquery:
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+    {
+        std::stringstream estr;
+        estr << "Expected to find a << table subquery >> for "
+                "the right side of the quantified comparison predicate."
+             << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
 push_condition:
     if (ctx.opts.disable_statement_construction)
         return true;
 
-    out = std::make_unique<comp_predicate_t>(op, left, right);
+    if (quantifier == QUANTIFIER_NONE)
+        out = std::make_unique<comp_predicate_t>(op, left, right);
+    else
+        out = std::make_unique<quantified_comparison_predicate_t>(
+                op, quantifier, left, subquery);
     return true;
 }
 

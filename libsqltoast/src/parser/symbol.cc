@@ -39,6 +39,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_ALL] = std::string("ALL");
     m[SYMBOL_ALTER] = std::string("ALTER");
     m[SYMBOL_AND] = std::string("AND");
+    m[SYMBOL_ANY] = std::string("ANY");
     m[SYMBOL_AS] = std::string("AS");
     m[SYMBOL_AT] = std::string("AT");
     m[SYMBOL_AUTHORIZATION] = std::string("AUTHORIZATION");
@@ -140,6 +141,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_SESSION_USER] = std::string("SESSION_USER");
     m[SYMBOL_SET] = std::string("SET");
     m[SYMBOL_SMALLINT] = std::string("SMALLINT");
+    m[SYMBOL_SOME] = std::string("SOME");
     m[SYMBOL_SUBSTRING] = std::string("SUBSTRING");
     m[SYMBOL_SUM] = std::string("SUM");
     m[SYMBOL_SYSTEM_USER] = std::string("SYSTEM_USER");

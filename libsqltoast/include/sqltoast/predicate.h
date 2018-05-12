@@ -140,20 +140,26 @@ typedef struct in_subquery_predicate : predicate_t {
     {}
 } in_subquery_predicate_t;
 
+typedef enum quantifier {
+    QUANTIFIER_NONE,
+    QUANTIFIER_ALL,
+    QUANTIFIER_ANY
+} quantifier_t;
+
 typedef struct quantified_comparison_predicate : predicate_t {
-    bool compare_all;
     comp_op_t op;
+    quantifier_t quantifier;
     std::unique_ptr<row_value_constructor_t> left;
     // Guaranteed to always be static_castable to a select_t
     std::unique_ptr<statement_t> subquery;
     quantified_comparison_predicate(
-            bool compare_all,
             comp_op_t op,
+            quantifier_t quantifier,
             std::unique_ptr<row_value_constructor_t>& left,
             std::unique_ptr<statement_t>& subq) :
         predicate_t(PREDICATE_TYPE_QUANTIFIED_COMPARISON),
-        compare_all(compare_all),
         op(op),
+        quantifier(quantifier),
         left(std::move(left)),
         subquery(std::move(subq))
     {}
