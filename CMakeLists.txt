@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
-SET(CMAKE_CXX_FLAGS "-Wall -fno-rtti")
+SET(CMAKE_CXX_FLAGS "-std=c++11 -Wall -fno-rtti")
 
 # To build with debugging symbols and some extra tracing functionality, do:
 #
