@@ -459,7 +459,7 @@ std::ostream& operator<< (std::ostream& out, const grant_statement_t& stmt) {
         out << "   privileges:";
         size_t x = 0;
         for (const std::unique_ptr<grant_action_t>& action : stmt.privileges)
-            out << std::endl << "    " << x++ << ": " << *action;
+            out << std::endl << "     " << x++ << ": " << *action;
     }
     out << ">";
 

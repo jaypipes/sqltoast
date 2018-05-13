@@ -41,6 +41,14 @@ process_privilege:
             cur_tok = lex.next();
             privileges.emplace_back(std::make_unique<grant_action_t>(GRANT_ACTION_TYPE_SELECT));
             break;
+        case SYMBOL_DELETE:
+            cur_tok = lex.next();
+            privileges.emplace_back(std::make_unique<grant_action_t>(GRANT_ACTION_TYPE_DELETE));
+            break;
+        case SYMBOL_USAGE:
+            cur_tok = lex.next();
+            privileges.emplace_back(std::make_unique<grant_action_t>(GRANT_ACTION_TYPE_USAGE));
+            break;
         default:
             goto err_expect_any_action;
     }

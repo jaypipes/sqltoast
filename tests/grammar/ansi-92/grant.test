@@ -34,3 +34,22 @@ Syntax error.
 Expected to find OPTION but found symbol[EOS]
 GRANT ALL PRIVILEGES ON db TO usr WITH GRANT
                                            ^
+# GRANT all to a user, no grant option
+>GRANT ALL PRIVILEGES ON db TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: db
+   to: usr
+   privileges: ALL>
+# GRANT specific privileges to a user, no grant option
+>GRANT SELECT, DELETE, USAGE ON db TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: db
+   to: usr
+   privileges:
+     0: SELECT
+     1: DELETE
+     2: USAGE>
