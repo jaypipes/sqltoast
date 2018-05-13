@@ -373,14 +373,17 @@ typedef struct column_list_grant_action : grant_action_t {
 typedef struct grant_statement : statement_t {
     lexeme_t on;
     lexeme_t to;
+    bool with_grant_option;
     std::vector<std::unique_ptr<grant_action_t>> privileges;
     grant_statement(
             lexeme_t& on,
             lexeme_t& to,
+            bool with_grant_option,
             std::vector<std::unique_ptr<grant_action_t>>& privileges) :
         statement_t(STATEMENT_TYPE_GRANT),
         on(on),
         to(to),
+        with_grant_option(with_grant_option),
         privileges(std::move(privileges))
     {}
     inline bool to_public() const {
