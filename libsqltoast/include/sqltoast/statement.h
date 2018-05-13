@@ -10,20 +10,21 @@
 namespace sqltoast {
 
 typedef enum statement_type {
+    STATEMENT_TYPE_ALTER_TABLE,
+    STATEMENT_TYPE_COMMIT,
     STATEMENT_TYPE_CREATE_SCHEMA,
     STATEMENT_TYPE_CREATE_TABLE,
     STATEMENT_TYPE_CREATE_VIEW,
+    STATEMENT_TYPE_DELETE,
     STATEMENT_TYPE_DROP_SCHEMA,
     STATEMENT_TYPE_DROP_TABLE,
     STATEMENT_TYPE_DROP_VIEW,
-    STATEMENT_TYPE_ALTER_TABLE,
+    STATEMENT_TYPE_GRANT,
     STATEMENT_TYPE_INSERT,
     STATEMENT_TYPE_INSERT_SELECT,
-    STATEMENT_TYPE_DELETE,
-    STATEMENT_TYPE_UPDATE,
+    STATEMENT_TYPE_ROLLBACK,
     STATEMENT_TYPE_SELECT,
-    STATEMENT_TYPE_COMMIT,
-    STATEMENT_TYPE_ROLLBACK
+    STATEMENT_TYPE_UPDATE
 } statement_type_t;
 
 typedef struct statement {
@@ -342,6 +343,60 @@ typedef struct drop_view_statement : statement_t {
         drop_behaviour(drop_behaviour)
     {}
 } drop_view_statement_t;
+
+typedef enum grant_action_type {
+    GRANT_ACTION_TYPE_SELECT,
+    GRANT_ACTION_TYPE_DELETE,
+    GRANT_ACTION_TYPE_INSERT,
+    GRANT_ACTION_TYPE_UPDATE,
+    GRANT_ACTION_TYPE_REFERENCES,
+    GRANT_ACTION_TYPE_USAGE
+} grant_action_type_t;
+
+typedef struct grant_action {
+    grant_action_type_t type;
+    grant_action(grant_action_type_t type) :
+        type(type)
+    {}
+} grant_action_t;
+
+typedef struct column_list_grant_action : grant_action_t {
+    std::vector<lexeme_t> columns;
+    column_list_grant_action(
+            grant_action_type_t type,
+            std::vector<lexeme_t>& columns) :
+        grant_action_t(type),
+        columns(std::move(columns))
+    {}
+} column_list_grant_action_t;
+
+typedef struct grant_statement : statement_t {
+    lexeme_t on;
+    lexeme_t to;
+    bool with_grant_option;
+    std::vector<std::unique_ptr<grant_action_t>> privileges;
+    grant_statement(
+            lexeme_t& on,
+            lexeme_t& to,
+            bool with_grant_option,
+            std::vector<std::unique_ptr<grant_action_t>>& privileges) :
+        statement_t(STATEMENT_TYPE_GRANT),
+        on(on),
+        to(to),
+        with_grant_option(with_grant_option),
+        privileges(std::move(privileges))
+    {}
+    inline bool to_public() const {
+        // When TO PUBLIC is specified, the "to" lexeme_t argument in the
+        // constructor is false-valued
+        return to == false;
+    }
+    inline bool all_privileges() const {
+        // When ALL PRIVILEGES is specified, we don't add any actions to the
+        // vector of privileges, so that's empty, indicating all privileges
+        return privileges.empty();
+    }
+} grant_statement_t;
 
 } // namespace sqltoast
 

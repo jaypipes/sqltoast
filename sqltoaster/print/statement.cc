@@ -100,6 +100,12 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
         case STATEMENT_TYPE_ROLLBACK:
             out << "<statement: ROLLBACK>";
             break;
+        case STATEMENT_TYPE_GRANT:
+            {
+                const grant_statement_t& sub = static_cast<const grant_statement_t&>(stmt);
+                out << sub;
+            }
+            break;
         default:
             break;
     }
@@ -397,6 +403,64 @@ std::ostream& operator<< (std::ostream& out, const update_statement_t& stmt) {
 
     if (stmt.where_condition)
         out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;
+    out << ">";
+
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const grant_action_t& action) {
+    switch (action.type) {
+        case GRANT_ACTION_TYPE_SELECT:
+            out << "SELECT";
+            return out;
+        case GRANT_ACTION_TYPE_DELETE:
+            out << "DELETE";
+            return out;
+        case GRANT_ACTION_TYPE_USAGE:
+            out << "USAGE";
+            return out;
+        case GRANT_ACTION_TYPE_INSERT:
+            out << "INSERT";
+            break;
+        case GRANT_ACTION_TYPE_UPDATE:
+            out << "UPDATE";
+            break;
+        case GRANT_ACTION_TYPE_REFERENCES:
+            out << "REFERENCES";
+            break;
+    }
+    const column_list_grant_action_t& cla =
+        static_cast<const column_list_grant_action_t&>(action);
+    if (cla.columns.empty())
+        return out;
+    out << " (";
+    size_t x = 0;
+    for (const lexeme_t& col : cla.columns) {
+        if (x++ > 0)
+            out << ',';
+        out << col;
+    }
+    out << ')';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const grant_statement_t& stmt) {
+    out << "<statement: GRANT" << std::endl
+        << "   on: " << stmt.on << std::endl;
+    if (stmt.to_public())
+        out << "   to: PUBLIC" << std::endl;
+    else
+        out << "   to: " << stmt.to << std::endl;
+    if (stmt.with_grant_option)
+        out << "   with grant option: YES" << std::endl;
+    if (stmt.all_privileges())
+        out << "   privileges: ALL";
+    else {
+        out << "   privileges:";
+        size_t x = 0;
+        for (const std::unique_ptr<grant_action_t>& action : stmt.privileges)
+            out << std::endl << "     " << x++ << ": " << *action;
+    }
     out << ">";
 
     return out;

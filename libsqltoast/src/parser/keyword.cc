@@ -57,6 +57,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CHECK, "CHECK"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_COLUMN, "COLUMN"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_COLLATE, "COLLATE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_COLLATION, "COLLATION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CONSTRAINT, "CONSTRAINT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_CASCADED, "CASCADED"));
             return t;
@@ -70,6 +71,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DEFAULT, "DEFAULT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DROP, "DROP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_DOUBLE, "DOUBLE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_DOMAIN, "DOMAIN"));
             return t;
         case 'e':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_EXISTS, "EXISTS"));
@@ -88,6 +90,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'g':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GROUP, "GROUP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GLOBAL, "GLOBAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_GRANT, "GRANT"));
             return t;
         case 'h':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_HAVING, "HAVING"));
@@ -146,6 +149,8 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRECISION, "PRECISION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRIMARY, "PRIMARY"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_PARTIAL, "PARTIAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_PRIVILEGES, "PRIVILEGES"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_PUBLIC, "PUBLIC"));
             return t;
         case 'r':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ROLLBACK, "ROLLBACK"));
@@ -176,6 +181,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TO, "TO"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRAILING, "TRAILING"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRANSLATE, "TRANSLATE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_TRANSLATION, "TRANSLATION"));
             return t;
         case 'u':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UPDATE, "UPDATE"));
@@ -184,6 +190,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UNION, "UNION"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_USER, "USER"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_UNIQUE, "UNIQUE"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_USAGE, "USAGE"));
             return t;
         case 'v':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_VALUES, "VALUES"));

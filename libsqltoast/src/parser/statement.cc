@@ -52,6 +52,10 @@ static const parse_func_t trx_statement_parsers[2] = {
     &parse_commit,
     &parse_rollback
 };
+static const size_t NUM_GRANT_STATEMENT_PARSERS = 1;
+static const parse_func_t grant_statement_parsers[1] = {
+    &parse_grant
+};
 
 void parse_statement(parse_context_t& ctx) {
     // Assumption: the current token will be a keyword
@@ -64,54 +68,42 @@ void parse_statement(parse_context_t& ctx) {
     const parse_func_t* parsers;
     switch (cur_sym) {
         case SYMBOL_ALTER:
-        {
             num_parsers = NUM_ALTER_STATEMENT_PARSERS;
             parsers = alter_statement_parsers;
             break;
-        }
         case SYMBOL_CREATE:
-        {
             num_parsers = NUM_CREATE_STATEMENT_PARSERS;
             parsers = create_statement_parsers;
             break;
-        }
         case SYMBOL_DELETE:
-        {
             num_parsers = NUM_DELETE_STATEMENT_PARSERS;
             parsers = delete_statement_parsers;
             break;
-        }
         case SYMBOL_DROP:
-        {
             num_parsers = NUM_DROP_STATEMENT_PARSERS;
             parsers = drop_statement_parsers;
             break;
-        }
         case SYMBOL_SELECT:
-        {
             num_parsers = NUM_SELECT_STATEMENT_PARSERS;
             parsers = select_statement_parsers;
             break;
-        }
         case SYMBOL_INSERT:
-        {
             num_parsers = NUM_INSERT_STATEMENT_PARSERS;
             parsers = insert_statement_parsers;
             break;
-        }
         case SYMBOL_UPDATE:
-        {
             num_parsers = NUM_UPDATE_STATEMENT_PARSERS;
             parsers = update_statement_parsers;
             break;
-        }
         case SYMBOL_COMMIT:
         case SYMBOL_ROLLBACK:
-        {
             num_parsers = NUM_TRX_STATEMENT_PARSERS;
             parsers = trx_statement_parsers;
             break;
-        }
+        case SYMBOL_GRANT:
+            num_parsers = NUM_GRANT_STATEMENT_PARSERS;
+            parsers = grant_statement_parsers;
+            break;
         default:
         {
             std::stringstream estr;

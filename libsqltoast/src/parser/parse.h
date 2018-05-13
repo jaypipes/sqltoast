@@ -118,6 +118,13 @@ bool parse_update(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
+// Returns true if the GRANT statement was parsed successfully from
+// the parse context
+bool parse_grant(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<statement_t>& out);
+
 // Returns true if a table reference can be parsed. If true, the out argument
 // will contain a new pointer to a table_reference_t.
 bool parse_table_reference(

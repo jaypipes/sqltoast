@@ -1,0 +1,55 @@
+# Syntax error expected PRIVILEGES
+>GRANT ALL
+Syntax error.
+Expected to find PRIVILEGES but found symbol[EOS]
+GRANT ALL
+        ^
+# Syntax error expected ON
+>GRANT ALL PRIVILEGES
+Syntax error.
+Expected to find ON but found symbol[EOS]
+GRANT ALL PRIVILEGES
+                   ^
+# Syntax error expected TO
+>GRANT ALL PRIVILEGES ON db
+Syntax error.
+Expected to find TO but found symbol[EOS]
+GRANT ALL PRIVILEGES ON db
+                         ^
+# Syntax error expected identifier or PUBLIC
+>GRANT ALL PRIVILEGES ON db TO WITH GRANT
+Syntax error.
+Expected to find one of (<< identifier >>|PUBLIC) but found symbol[WITH]
+GRANT ALL PRIVILEGES ON db TO WITH GRANT
+                             ^^^^^^^^^^^
+# Syntax error expected GRANT
+>GRANT ALL PRIVILEGES ON db TO usr WITH
+Syntax error.
+Expected to find GRANT but found symbol[EOS]
+GRANT ALL PRIVILEGES ON db TO usr WITH
+                                     ^
+# Syntax error expected OPTION
+>GRANT ALL PRIVILEGES ON db TO usr WITH GRANT
+Syntax error.
+Expected to find OPTION but found symbol[EOS]
+GRANT ALL PRIVILEGES ON db TO usr WITH GRANT
+                                           ^
+# GRANT all to a user, no grant option
+>GRANT ALL PRIVILEGES ON db TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: db
+   to: usr
+   privileges: ALL>
+# GRANT specific privileges to a user, no grant option
+>GRANT SELECT, DELETE, USAGE ON db TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: db
+   to: usr
+   privileges:
+     0: SELECT
+     1: DELETE
+     2: USAGE>
