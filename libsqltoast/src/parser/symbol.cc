@@ -59,6 +59,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_CHECK] = std::string("CHECK");
     m[SYMBOL_COALESCE] = std::string("COALESCE");
     m[SYMBOL_COLLATE] = std::string("COLLATE");
+    m[SYMBOL_COLLATION] = std::string("COLLATION");
     m[SYMBOL_COLUMN] = std::string("COLUMN");
     m[SYMBOL_COMMIT] = std::string("COMMIT");
     m[SYMBOL_CONSTRAINT] = std::string("CONSTRAINT");
@@ -78,6 +79,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_DELETE] = std::string("DELETE");
     m[SYMBOL_DISTINCT] = std::string("DISTINCT");
     m[SYMBOL_DROP] = std::string("DROP");
+    m[SYMBOL_DOMAIN] = std::string("DOMAIN");
     m[SYMBOL_DOUBLE] = std::string("DOUBLE");
     m[SYMBOL_END] = std::string("END");
     m[SYMBOL_ESCAPE] = std::string("ESCAPE");
@@ -90,6 +92,7 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_FROM] = std::string("FROM");
     m[SYMBOL_FULL] = std::string("FULL");
     m[SYMBOL_GLOBAL] = std::string("GLOBAL");
+    m[SYMBOL_GRANT] = std::string("GRANT");
     m[SYMBOL_GROUP] = std::string("GROUP");
     m[SYMBOL_HAVING] = std::string("HAVING");
     m[SYMBOL_HOUR] = std::string("HOUR");
@@ -130,6 +133,8 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_POSITION] = std::string("POSITION");
     m[SYMBOL_PRECISION] = std::string("PRECISION");
     m[SYMBOL_PRIMARY] = std::string("PRIMARY");
+    m[SYMBOL_PRIVILEGES] = std::string("PRIVILEGES");
+    m[SYMBOL_PUBLIC] = std::string("PUBLIC");
     m[SYMBOL_REAL] = std::string("REAL");
     m[SYMBOL_REFERENCES] = std::string("REFERENCES");
     m[SYMBOL_RESTRICT] = std::string("RESTRICT");
@@ -153,11 +158,13 @@ symbol_map::symbol_map_t  _init_symbol_map() {
     m[SYMBOL_TO] = std::string("TO");
     m[SYMBOL_TRAILING] = std::string("TRAILING");
     m[SYMBOL_TRANSLATE] = std::string("TRANSLATE");
+    m[SYMBOL_TRANSLATION] = std::string("TRANSLATION");
     m[SYMBOL_TRIM] = std::string("TRIM");
     m[SYMBOL_UNION] = std::string("UNION");
     m[SYMBOL_UNIQUE] = std::string("UNIQUE");
     m[SYMBOL_UPDATE] = std::string("UPDATE");
     m[SYMBOL_UPPER] = std::string("UPPER");
+    m[SYMBOL_USAGE] = std::string("USAGE");
     m[SYMBOL_USER] = std::string("USER");
     m[SYMBOL_USING] = std::string("USING");
     m[SYMBOL_VALUE] = std::string("VALUE");
