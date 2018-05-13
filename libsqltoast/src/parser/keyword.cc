@@ -90,6 +90,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
         case 'g':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GROUP, "GROUP"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_GLOBAL, "GLOBAL"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_GRANT, "GRANT"));
             return t;
         case 'h':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_HAVING, "HAVING"));
