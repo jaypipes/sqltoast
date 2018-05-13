@@ -53,3 +53,23 @@ statements[0]:
      0: SELECT
      1: DELETE
      2: USAGE>
+# GRANT privilege with action taking columns
+>GRANT INSERT (a, b, c) ON tbl TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: tbl
+   to: usr
+   privileges:
+     0: INSERT (a,b,c)>
+# GRANT privilege with action taking columns along with no optional columns for
+# update
+>GRANT INSERT (a, b, c), UPDATE ON tbl TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: tbl
+   to: usr
+   privileges:
+     0: INSERT (a,b,c)
+     1: UPDATE>

@@ -17,6 +17,8 @@ bool parse_grant(
     lexeme_t on;
     lexeme_t to;
     bool with_grant_option = false;
+    grant_action_type_t action_type;
+    std::vector<lexeme_t> columns;
     std::vector<std::unique_ptr<grant_action_t>> privileges;
     symbol_t cur_sym;
     cur_tok = lex.next(); // Consumer the GRANT symbol...
@@ -49,6 +51,10 @@ process_privilege:
             cur_tok = lex.next();
             privileges.emplace_back(std::make_unique<grant_action_t>(GRANT_ACTION_TYPE_USAGE));
             break;
+        case SYMBOL_INSERT:
+        case SYMBOL_UPDATE:
+        case SYMBOL_REFERENCES:
+            goto process_columnar_action;
         default:
             goto err_expect_any_action;
     }
@@ -65,6 +71,57 @@ err_expect_any_action:
             SYMBOL_UPDATE, SYMBOL_REFERENCES, SYMBOL_USAGE
         }
     );
+    return false;
+process_columnar_action:
+    // We get here if we git an UPDATE, INSERT or REFERENCES privilege action.
+    // These actions take an optional list of columns that may be applied to
+    // the privilege action. Stash the action type.
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_INSERT)
+        action_type = GRANT_ACTION_TYPE_INSERT;
+    else if (cur_sym == SYMBOL_UPDATE)
+        action_type = GRANT_ACTION_TYPE_UPDATE;
+    else
+        action_type = GRANT_ACTION_TYPE_REFERENCES;
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_LPAREN) {
+        cur_tok = lex.next();
+        goto process_column_list_element;
+    } else if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_privilege;
+    }
+    privileges.emplace_back(
+        std::make_unique<column_list_grant_action_t>(action_type, columns));
+    goto expect_on;
+process_column_list_element:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    columns.emplace_back(lexeme_t(cur_tok.lexeme));
+    cur_tok = lex.next();
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_column_list_element;
+    }
+    goto expect_rparen;
+expect_rparen:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+    cur_tok = lex.next();
+    privileges.emplace_back(
+        std::make_unique<column_list_grant_action_t>(action_type, columns));
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_privilege;
+    }
+    goto expect_on;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
     return false;
 expect_on:
     // We get here after successfully parsing the privileges list or the ALL
