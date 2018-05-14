@@ -446,7 +446,24 @@ std::ostream& operator<< (std::ostream& out, const grant_action_t& action) {
 
 std::ostream& operator<< (std::ostream& out, const grant_statement_t& stmt) {
     out << "<statement: GRANT" << std::endl
-        << "   on: " << stmt.on << std::endl;
+        << "   on: ";
+    switch (stmt.object_type) {
+        case GRANT_OBJECT_TYPE_TABLE:
+            break;
+        case GRANT_OBJECT_TYPE_DOMAIN:
+            out << "DOMAIN ";
+            break;
+        case GRANT_OBJECT_TYPE_COLLATION:
+            out << "COLLATION ";
+            break;
+        case GRANT_OBJECT_TYPE_CHARACTER_SET:
+            out << "CHARACTER SET ";
+            break;
+        case GRANT_OBJECT_TYPE_TRANSLATION:
+            out << "TRANSLATION ";
+            break;
+    }
+    out << stmt.on << std::endl;
     if (stmt.to_public())
         out << "   to: PUBLIC" << std::endl;
     else
