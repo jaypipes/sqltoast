@@ -73,3 +73,41 @@ statements[0]:
    privileges:
      0: INSERT (a,b,c)
      1: UPDATE>
+# GRANT all on domain object to a user
+>GRANT ALL PRIVILEGES ON DOMAIN dom TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: DOMAIN dom
+   to: usr
+   privileges: ALL>
+# GRANT all on collation object to a user
+>GRANT ALL PRIVILEGES ON COLLATION utf8bin TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: COLLATION utf8bin
+   to: usr
+   privileges: ALL>
+# GRANT all on characterset object to a user
+>GRANT ALL PRIVILEGES ON CHARACTER SET utf8 TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: CHARACTER SET utf8
+   to: usr
+   privileges: ALL>
+# GRANT all on translation object to a user
+>GRANT ALL PRIVILEGES ON TRANSLATION trns TO usr
+OK
+statements[0]:
+  <statement: GRANT
+   on: TRANSLATION trns
+   to: usr
+   privileges: ALL>
+# Syntax error expecting SET after CHARACTER
+>GRANT ALL PRIVILEGES ON CHARACTER utf8 TO usr
+Syntax error.
+Expected to find SET but found identifier[utf8]
+GRANT ALL PRIVILEGES ON CHARACTER utf8 TO usr
+                                 ^^^^^^^^^^^^

@@ -17,6 +17,7 @@ bool parse_grant(
     lexeme_t on;
     lexeme_t to;
     bool with_grant_option = false;
+    grant_object_type_t object_type = GRANT_OBJECT_TYPE_TABLE;
     grant_action_type_t action_type;
     std::vector<lexeme_t> columns;
     std::vector<std::unique_ptr<grant_action_t>> privileges;
@@ -131,11 +132,39 @@ expect_on:
         goto err_expect_on;
     cur_tok = lex.next();
     cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_DOMAIN:
+            object_type = GRANT_OBJECT_TYPE_DOMAIN;
+            cur_tok = lex.next();
+            break;
+        case SYMBOL_COLLATION:
+            object_type = GRANT_OBJECT_TYPE_COLLATION;
+            cur_tok = lex.next();
+            break;
+        case SYMBOL_CHARACTER:
+            cur_tok = lex.next();
+            cur_sym = cur_tok.symbol;
+            if (cur_sym != SYMBOL_SET)
+                goto err_expect_set;
+            object_type = GRANT_OBJECT_TYPE_CHARACTER_SET;
+            cur_tok = lex.next();
+            break;
+        case SYMBOL_TRANSLATION:
+            object_type = GRANT_OBJECT_TYPE_TRANSLATION;
+            cur_tok = lex.next();
+            break;
+        default:
+            break;
+    }
+    cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_IDENTIFIER)
         goto err_expect_identifier;
     on = cur_tok.lexeme;
     cur_tok = lex.next();
     goto expect_to;
+err_expect_set:
+    expect_error(ctx, SYMBOL_SET);
+    return false;
 err_expect_on:
     expect_error(ctx, SYMBOL_ON);
     return false;
@@ -195,7 +224,8 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<grant_statement_t>(on, to, with_grant_option, privileges);
+    out = std::make_unique<grant_statement_t>(
+            object_type, on, to, with_grant_option, privileges);
     return true;
 }
 

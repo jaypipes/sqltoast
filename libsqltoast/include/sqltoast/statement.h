@@ -370,17 +370,28 @@ typedef struct column_list_grant_action : grant_action_t {
     {}
 } column_list_grant_action_t;
 
+typedef enum grant_object_type {
+    GRANT_OBJECT_TYPE_TABLE,
+    GRANT_OBJECT_TYPE_DOMAIN,
+    GRANT_OBJECT_TYPE_COLLATION,
+    GRANT_OBJECT_TYPE_CHARACTER_SET,
+    GRANT_OBJECT_TYPE_TRANSLATION
+} grant_object_type_t;
+
 typedef struct grant_statement : statement_t {
+    grant_object_type_t object_type;
     lexeme_t on;
     lexeme_t to;
     bool with_grant_option;
     std::vector<std::unique_ptr<grant_action_t>> privileges;
     grant_statement(
+            grant_object_type_t object_type,
             lexeme_t& on,
             lexeme_t& to,
             bool with_grant_option,
             std::vector<std::unique_ptr<grant_action_t>>& privileges) :
         statement_t(STATEMENT_TYPE_GRANT),
+        object_type(object_type),
         on(on),
         to(to),
         with_grant_option(with_grant_option),
