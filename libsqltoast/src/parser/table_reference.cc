@@ -127,7 +127,7 @@ check_join:
         case SYMBOL_CROSS:
             cur_tok = lex.next();
             join_type = JOIN_TYPE_CROSS;
-            goto process_cross_or_natural_join;
+            goto process_union_cross_or_natural_join;
         case SYMBOL_INNER:
             cur_tok = lex.next();
             cur_sym = cur_tok.symbol;
@@ -155,14 +155,19 @@ check_join:
         case SYMBOL_NATURAL:
             cur_tok = lex.next();
             join_type = JOIN_TYPE_NATURAL;
-            goto process_cross_or_natural_join;
+            goto process_union_cross_or_natural_join;
+        case SYMBOL_UNION:
+            // NOTE(jaypipes): UNION JOIN was removed in ANSI-SQL 2003
+            cur_tok = lex.next();
+            join_type = JOIN_TYPE_UNION;
+            goto process_union_cross_or_natural_join;
         default:
             return true;
     }
-process_cross_or_natural_join:
+process_union_cross_or_natural_join:
     // We get here after successfully parsing a normal or derived table
-    // followed by the CROSS or NATURAL symbol. We now expect a JOIN symbol
-    // followed by another <table_reference>
+    // followed by the UNION, CROSS or NATURAL symbol. We now expect a JOIN
+    // symbol followed by another <table_reference>
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_JOIN)
         goto err_expect_join;

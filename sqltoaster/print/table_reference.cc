@@ -71,6 +71,9 @@ std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
         case JOIN_TYPE_NATURAL:
             out << "natural-join[";
             break;
+        case JOIN_TYPE_UNION:
+            out << "union-join[";
+            break;
         default:
             break;
     }
