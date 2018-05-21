@@ -27,6 +27,7 @@
 #include "column_reference.h"
 #include "predicate.h"
 #include "table_reference.h"
+#include "query.h"
 #include "statement.h"
 
 namespace sqltoast {
