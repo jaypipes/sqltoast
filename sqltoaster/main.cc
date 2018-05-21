@@ -8,6 +8,7 @@
 #include <sqltoast/sqltoast.h>
 
 #include "print/printers.h"
+#include "printer.h"
 
 using namespace std;
 
@@ -75,15 +76,10 @@ int main (int argc, char *argv[])
     parser p(opts, input);
 
     auto dur = measure<std::chrono::nanoseconds>::execution(p);
+    sqltoaster::printer ptr(p.res);
     if (p.res.code == sqltoast::PARSE_OK) {
         cout << "OK";
-        unsigned int x = 0;
-        for (auto stmt_ptr_it = p.res.statements.cbegin();
-                stmt_ptr_it != p.res.statements.cend();
-                stmt_ptr_it++) {
-            cout << endl << "statements[" << x++ << "]:" << endl;
-            cout << "  " << *(*stmt_ptr_it) << endl;
-        }
+        cout << ptr;
     } else if (p.res.code == sqltoast::PARSE_INPUT_ERROR) {
         cout << "Input error: " << p.res.error << endl;
     } else {
