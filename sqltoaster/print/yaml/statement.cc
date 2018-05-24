@@ -16,7 +16,7 @@ namespace sqltoaster {
 void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
     switch (stmt.type) {
         case STATEMENT_TYPE_CREATE_SCHEMA:
-            out << "type: CREATE_SCHEMA" << std::endl;
+            out << "type: CREATE_SCHEMA";
             {
                 const create_schema_statement_t& sub =
                     static_cast<const create_schema_statement_t&>(stmt);
@@ -24,7 +24,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DROP_SCHEMA:
-            out << "type: DROP_SCHEMA" << std::endl;
+            out << "type: DROP_SCHEMA";
             {
                 const drop_schema_statement_t& sub =
                     static_cast<const drop_schema_statement_t&>(stmt);
@@ -32,7 +32,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_CREATE_TABLE:
-            out << "type: CREATE_TABLE" << std::endl;
+            out << "type: CREATE_TABLE";
             {
                 const create_table_statement_t& sub =
                     static_cast<const create_table_statement_t&>(stmt);
@@ -40,7 +40,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DROP_TABLE:
-            out << "type: DROP_TABLE" << std::endl;
+            out << "type: DROP_TABLE";
             {
                 const drop_table_statement_t& sub =
                     static_cast<const drop_table_statement_t&>(stmt);
@@ -48,7 +48,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_ALTER_TABLE:
-            out << "type: ALTER_TABLE" << std::endl;
+            out << "type: ALTER_TABLE";
             {
                 const alter_table_statement_t& sub =
                     static_cast<const alter_table_statement_t&>(stmt);
@@ -56,7 +56,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_CREATE_VIEW:
-            out << "type: CREATE_VIEW" << std::endl;
+            out << "type: CREATE_VIEW";
             {
                 const create_view_statement_t& sub =
                     static_cast<const create_view_statement_t&>(stmt);
@@ -64,7 +64,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DROP_VIEW:
-            out << "type: DROP_VIEW" << std::endl;
+            out << "type: DROP_VIEW";
             {
                 const drop_view_statement_t& sub =
                     static_cast<const drop_view_statement_t&>(stmt);
@@ -72,7 +72,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_SELECT:
-            out << "type: SELECT" << std::endl;
+            out << "type: SELECT";
             {
                 const select_statement_t& sub =
                     static_cast<const select_statement_t&>(stmt);
@@ -80,7 +80,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_INSERT:
-            out << "type: INSERT" << std::endl;
+            out << "type: INSERT";
             {
                 const insert_statement_t& sub =
                     static_cast<const insert_statement_t&>(stmt);
@@ -88,7 +88,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_INSERT_SELECT:
-            out << "type: INSERT_SELECT" << std::endl;
+            out << "type: INSERT_SELECT";
             {
                 const insert_select_statement_t& sub =
                     static_cast<const insert_select_statement_t&>(stmt);
@@ -96,14 +96,14 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DELETE:
-            out << "type: DELETE" << std::endl;
+            out << "type: DELETE";
             {
                 const delete_statement_t& sub = static_cast<const delete_statement_t&>(stmt);
                 to_yaml(ptr, out, sub);
             }
             break;
         case STATEMENT_TYPE_UPDATE:
-            out << "type: UPDATE" << std::endl;
+            out << "type: UPDATE";
             {
                 const update_statement_t& sub = static_cast<const update_statement_t&>(stmt);
                 to_yaml(ptr, out, sub);
@@ -116,7 +116,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             out << "type: ROLLBACK";
             break;
         case STATEMENT_TYPE_GRANT:
-            out << "type: GRANT" << std::endl;
+            out << "type: GRANT";
             {
                 const grant_statement_t& sub = static_cast<const grant_statement_t&>(stmt);
                 to_yaml(ptr, out, sub);
@@ -130,22 +130,19 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
 void to_yaml(printer_t& ptr, std::ostream& out, const create_schema_statement_t& stmt) {
     ptr.indent(out) << "schema_name: " << stmt.schema_name;
     if (stmt.authorization_identifier) {
-       out << std::endl;
        ptr.indent(out) << "authorization_identifier: " << stmt.authorization_identifier;
     }
     if (stmt.default_charset) {
-       out << std::endl;
        ptr.indent(out) << "default_charset: " << stmt.default_charset;
     }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const drop_schema_statement_t& stmt) {
-    out << "<statement: DROP SCHEMA" << std::endl
-        << "   schema name: " << stmt.schema_name << std::endl;
+    ptr.indent(out) << "schema_name: " << stmt.schema_name;
     if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
-       out << "   behaviour: CASCADE";
+       ptr.indent(out) << "drop_behaviour: CASCADE";
     else
-       out << "   behaviour: RESTRICT";
+       ptr.indent(out) << "drop_behaviour: RESTRICT";
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const create_table_statement_t& stmt) {
