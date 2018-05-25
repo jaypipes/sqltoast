@@ -23,29 +23,49 @@ const int INDENT_LEVEL_XALLOC_INDEX = 1;
 typedef struct printer {
     int iomanip_indexes[2];
     sqltoast::parse_result_t& res;
-    printer(sqltoast::parse_result_t& res) : res(res)
+    printer(sqltoast::parse_result_t& res, std::ostream& out) : res(res)
     {
         iomanip_indexes[OUTPUT_FORMAT_XALLOC_INDEX] = std::ios_base::xalloc();
         iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX] = std::ios_base::xalloc();
+        int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
+        out.iword(idx_indent) = 0;
+    }
+    inline void set_yaml(std::ostream& out) {
+        int idx_format = iomanip_indexes[OUTPUT_FORMAT_XALLOC_INDEX];
+        out.iword(idx_format) = OUTPUT_FORMAT_YAML;
     }
     inline bool use_yaml(std::ostream& out) const {
         return (out.iword(iomanip_indexes[OUTPUT_FORMAT_XALLOC_INDEX]) == OUTPUT_FORMAT_YAML);
     }
+    inline void indent_push(std::ostream& out) {
+        int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
+        long cur_indent = out.iword(idx_indent);
+        out.iword(idx_indent) = ++cur_indent;
+    }
+    inline void indent_pop(std::ostream& out) {
+        int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
+        long cur_indent = out.iword(idx_indent);
+        out.iword(idx_indent) = --cur_indent;
+    }
+    inline std::ostream& indent(std::ostream& out) {
+        int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
+        long cur_indent = out.iword(idx_indent);
+        out << std::endl;
+        if (cur_indent > 0)
+            out << std::string(cur_indent * 2, ' ');
+        return out;
+    }
+    inline std::ostream& indent_noendl(std::ostream& out) {
+        int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
+        long cur_indent = out.iword(idx_indent);
+        if (cur_indent > 1)
+            out << std::string(cur_indent * 2, ' ');
+        return out;
+    }
 } printer_t;
 
-inline std::ostream& operator<< (std::ostream& out, const printer_t& ptr) {
-    if (! ptr.use_yaml(out)) {
-        unsigned int x = 0;
-        for (auto stmt_ptr_it = ptr.res.statements.cbegin();
-                stmt_ptr_it != ptr.res.statements.cend();
-                stmt_ptr_it++) {
-            out << std::endl << "statements[" << x++ << "]:" << std::endl;
-            out << "  " << *(*stmt_ptr_it) << std::endl;
-        }
-    }
-    return out;
-}
+std::ostream& operator<< (std::ostream& out, printer_t& ptr);
 
-} // namespace sqltoast
+} // namespace sqltoaster
 
 #endif /* SQLTOASTER_PRINTER_H */

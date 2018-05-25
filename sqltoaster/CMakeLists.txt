@@ -5,6 +5,7 @@ SET(PROJECT_DESCRIPTION "A demonstration of the sqltoast library")
 
 SET(SQLTOASTER_SOURCES
     main.cc
+    printer.cc
     print/identifier.cc
     print/constraint.cc
     print/column_definition.cc
@@ -15,6 +16,7 @@ SET(SQLTOASTER_SOURCES
     print/table_reference.cc
     print/value.cc
     print/value_expression.cc
+    print/yaml/statement.cc
 )
 
 ADD_EXECUTABLE(sqltoaster ${SQLTOASTER_SOURCES})
