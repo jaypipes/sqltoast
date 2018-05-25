@@ -16,7 +16,7 @@ namespace sqltoaster {
 void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
     switch (stmt.type) {
         case STATEMENT_TYPE_CREATE_SCHEMA:
-            out << "type: CREATE_SCHEMA";
+            ptr.indent_noendl(out) << "type: CREATE_SCHEMA";
             {
                 const create_schema_statement_t& sub =
                     static_cast<const create_schema_statement_t&>(stmt);
@@ -24,7 +24,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DROP_SCHEMA:
-            out << "type: DROP_SCHEMA";
+            ptr.indent_noendl(out) << "type: DROP_SCHEMA";
             {
                 const drop_schema_statement_t& sub =
                     static_cast<const drop_schema_statement_t&>(stmt);
@@ -32,7 +32,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_CREATE_TABLE:
-            out << "type: CREATE_TABLE";
+            ptr.indent_noendl(out) << "type: CREATE_TABLE";
             {
                 const create_table_statement_t& sub =
                     static_cast<const create_table_statement_t&>(stmt);
@@ -40,7 +40,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DROP_TABLE:
-            out << "type: DROP_TABLE";
+            ptr.indent_noendl(out) << "type: DROP_TABLE";
             {
                 const drop_table_statement_t& sub =
                     static_cast<const drop_table_statement_t&>(stmt);
@@ -48,7 +48,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_ALTER_TABLE:
-            out << "type: ALTER_TABLE";
+            ptr.indent_noendl(out) << "type: ALTER_TABLE";
             {
                 const alter_table_statement_t& sub =
                     static_cast<const alter_table_statement_t&>(stmt);
@@ -56,7 +56,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_CREATE_VIEW:
-            out << "type: CREATE_VIEW";
+            ptr.indent_noendl(out) << "type: CREATE_VIEW";
             {
                 const create_view_statement_t& sub =
                     static_cast<const create_view_statement_t&>(stmt);
@@ -64,7 +64,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DROP_VIEW:
-            out << "type: DROP_VIEW";
+            ptr.indent_noendl(out) << "type: DROP_VIEW";
             {
                 const drop_view_statement_t& sub =
                     static_cast<const drop_view_statement_t&>(stmt);
@@ -72,7 +72,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_SELECT:
-            out << "type: SELECT";
+            ptr.indent_noendl(out) << "type: SELECT";
             {
                 const select_statement_t& sub =
                     static_cast<const select_statement_t&>(stmt);
@@ -80,7 +80,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_INSERT:
-            out << "type: INSERT";
+            ptr.indent_noendl(out) << "type: INSERT";
             {
                 const insert_statement_t& sub =
                     static_cast<const insert_statement_t&>(stmt);
@@ -88,7 +88,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_INSERT_SELECT:
-            out << "type: INSERT_SELECT";
+            ptr.indent_noendl(out) << "type: INSERT_SELECT";
             {
                 const insert_select_statement_t& sub =
                     static_cast<const insert_select_statement_t&>(stmt);
@@ -96,27 +96,27 @@ void to_yaml(printer_t& ptr, std::ostream& out, const statement_t& stmt) {
             }
             break;
         case STATEMENT_TYPE_DELETE:
-            out << "type: DELETE";
+            ptr.indent_noendl(out) << "type: DELETE";
             {
                 const delete_statement_t& sub = static_cast<const delete_statement_t&>(stmt);
                 to_yaml(ptr, out, sub);
             }
             break;
         case STATEMENT_TYPE_UPDATE:
-            out << "type: UPDATE";
+            ptr.indent_noendl(out) << "type: UPDATE";
             {
                 const update_statement_t& sub = static_cast<const update_statement_t&>(stmt);
                 to_yaml(ptr, out, sub);
             }
             break;
         case STATEMENT_TYPE_COMMIT:
-            out << "type: COMMIT";
+            ptr.indent_noendl(out) << "type: COMMIT";
             break;
         case STATEMENT_TYPE_ROLLBACK:
-            out << "type: ROLLBACK";
+            ptr.indent_noendl(out) << "type: ROLLBACK";
             break;
         case STATEMENT_TYPE_GRANT:
-            out << "type: GRANT";
+            ptr.indent_noendl(out) << "type: GRANT";
             {
                 const grant_statement_t& sub = static_cast<const grant_statement_t&>(stmt);
                 to_yaml(ptr, out, sub);
@@ -146,38 +146,40 @@ void to_yaml(printer_t& ptr, std::ostream& out, const drop_schema_statement_t& s
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const create_table_statement_t& stmt) {
-    out << "<statement: CREATE TABLE" << std::endl
-        << "    table name: " << stmt.table_name;
+    ptr.indent(out) << "table_name: " << stmt.table_name;
     if (stmt.table_type != TABLE_TYPE_NORMAL) {
-        out << std::endl << "    temporary: true (";
+        ptr.indent(out) << "temporary: true (";
         if (stmt.table_type == TABLE_TYPE_TEMPORARY_GLOBAL)
             out << "global)";
         else
             out << "local)";
     }
-    out << std::endl << "    column definitions:";
+    ptr.indent(out) << "column_definitions:";
+    ptr.indent_push(out);
     for (auto cdef_it = stmt.column_definitions.begin();
             cdef_it != stmt.column_definitions.end();
             cdef_it++) {
-        out << std::endl << "      " << *(*cdef_it);
+        ptr.indent(out) << "- "<< *(*cdef_it);
     }
+    ptr.indent_pop(out);
     if (stmt.constraints.size() > 0) {
-        out << std::endl << "    constraints:";
+        ptr.indent(out) << "constraints:";
+        ptr.indent_push(out);
         for (auto constraint_it = stmt.constraints.begin();
              constraint_it != stmt.constraints.end();
              constraint_it++) {
-            out << std::endl << "      " << *(*constraint_it);
+            ptr.indent(out) << "- " << *(*constraint_it);
         }
+        ptr.indent_pop(out);
     }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const drop_table_statement_t& stmt) {
-    out << "<statement: DROP TABLE" << std::endl
-        << "   table name: " << stmt.table_name << std::endl;
+    ptr.indent(out) << "table_name: " << stmt.table_name;
     if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
-       out << "   behaviour: CASCADE";
+       ptr.indent(out) << "drop_behaviour: CASCADE";
     else
-       out << "   behaviour: RESTRICT";
+       ptr.indent(out) << "drop_behaviour: RESTRICT";
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const add_column_action_t& action) {
@@ -260,61 +262,58 @@ void to_yaml(printer_t& ptr, std::ostream& out, const alter_table_statement_t& s
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const create_view_statement_t& stmt) {
-    out << "<statement: CREATE VIEW" << std::endl
-        << "   table name: " << stmt.table_name;
+    ptr.indent(out) << "table_name: " << stmt.table_name;
     if (! stmt.columns.empty()) {
-       out << std::endl << "   columns:";
-       size_t x = 0;
-       for (const auto& column : stmt.columns)
-           out << std::endl << "     " << x++ << ": " << column;
+        ptr.indent(out) << "column_definitions:";
+        ptr.indent_push(out);
+        for (const auto& column : stmt.columns)
+            ptr.indent(out) << "- "<< column;
+        ptr.indent_pop(out);
     }
     if (stmt.check_option != CHECK_OPTION_NONE) {
         if (stmt.check_option == CHECK_OPTION_LOCAL)
-            out << std::endl << "   check option: LOCAL";
+            ptr.indent(out) << "check_option: LOCAL";
         else
-            out << std::endl << "   check option: CASCADED";
+            ptr.indent(out) << "check_option: CASCADED";
     }
-    out << std::endl << "   query: " << *stmt.query << '>';
+    ptr.indent(out) << "query:" << std::endl;
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *stmt.query);
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const drop_view_statement_t& stmt) {
-    out << "<statement: DROP VIEW" << std::endl
-        << "   view name: " << stmt.table_name << std::endl;
+    ptr.indent(out) << "table_name: " << stmt.table_name;
     if (stmt.drop_behaviour == DROP_BEHAVIOUR_CASCADE)
-       out << "   behaviour: CASCADE";
+       ptr.indent(out) << "drop_behaviour: CASCADE";
     else
-       out << "   behaviour: RESTRICT";
+       ptr.indent(out) << "drop_behaviour: RESTRICT";
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const select_statement_t& stmt) {
-    out << "<statement: SELECT";
     if (stmt.distinct)
-       out << std::endl << "   distinct: true";
-    out << std::endl << "   selected columns:";
-    size_t x = 0;
-    for (const derived_column_t& dc : stmt.selected_columns) {
-        out << std::endl << "     " << x++ << ": " << dc;
-    }
-    out << std::endl << "   referenced tables:";
-    x = 0;
-    for (const std::unique_ptr<table_reference_t>& tr : stmt.referenced_tables) {
-        out << std::endl << "     " << x++ << ": " << *tr;
-    }
-    if (stmt.where_condition) {
-        out << std::endl << "   where:" << std::endl << "     ";
-        out << *stmt.where_condition;
-    }
+       ptr.indent(out) << "distinct: true";
+    ptr.indent(out) << "selected_columns:";
+    ptr.indent_push(out);
+    for (const derived_column_t& dc : stmt.selected_columns)
+        ptr.indent(out) << "- " << dc;
+    ptr.indent_pop(out);
+    ptr.indent(out) << "referenced_tables:";
+    ptr.indent_push(out);
+    for (const std::unique_ptr<table_reference_t>& tr : stmt.referenced_tables)
+        ptr.indent(out) << "- " << *tr;
+    ptr.indent_pop(out);
+    if (stmt.where_condition)
+        ptr.indent(out) << "where:" << *stmt.where_condition;
     if (! stmt.group_by_columns.empty()) {
-        out << std::endl << "   group by:";
-        x = 0;
-        for (const grouping_column_reference_t& gcr : stmt.group_by_columns) {
-            out << std::endl << "     " << x++ << ": " << gcr;
-        }
+        ptr.indent(out) << "group_by:";
+        ptr.indent_push(out);
+        for (const grouping_column_reference_t& gcr : stmt.group_by_columns)
+            ptr.indent(out) << "- " << gcr;
+        ptr.indent_pop(out);
     }
-    if (stmt.having_condition) {
-        out << std::endl << "   having:" << std::endl << "     ";
-        out << *stmt.having_condition;
-    }
+    if (stmt.having_condition)
+        ptr.indent(out) << "having:" << *stmt.having_condition;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const insert_statement_t& stmt) {

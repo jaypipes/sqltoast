@@ -55,6 +55,13 @@ typedef struct printer {
             out << std::string(cur_indent * 2, ' ');
         return out;
     }
+    inline std::ostream& indent_noendl(std::ostream& out) {
+        int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
+        long cur_indent = out.iword(idx_indent);
+        if (cur_indent > 1)
+            out << std::string(cur_indent * 2, ' ');
+        return out;
+    }
 } printer_t;
 
 std::ostream& operator<< (std::ostream& out, printer_t& ptr);
