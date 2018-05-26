@@ -13,8 +13,6 @@
 #include "measure.h"
 #include "printer.h"
 
-using namespace std;
-
 struct parser {
     sqltoast::parse_options_t opts;
     sqltoast::parse_input_t subject;
@@ -29,10 +27,11 @@ struct parser {
 };
 
 void usage(const char* prg_name) {
-    cout << "Usage: " << prg_name << " [--disable-timer] [--yaml] <SQL>" << endl;
-    cout << " using libsqltoast version " <<
+    std::cout << "Usage: " << prg_name <<
+        " [--disable-timer] [--yaml] <SQL>" << std::endl;
+    std::cout << " using libsqltoast version " <<
         SQLTOAST_VERSION_MAJOR << '.' <<
-        SQLTOAST_VERSION_MINOR << endl;
+        SQLTOAST_VERSION_MINOR << std::endl;
 }
 
 int main (int argc, char *argv[])
@@ -62,19 +61,19 @@ int main (int argc, char *argv[])
     parser p(opts, input);
 
     auto dur = measure<std::chrono::nanoseconds>::execution(p);
-    sqltoaster::printer ptr(p.res, cout);
+    sqltoaster::printer ptr(p.res, std::cout);
     if (use_yaml)
-        ptr.set_yaml(cout);
+        ptr.set_yaml(std::cout);
     if (p.res.code == sqltoast::PARSE_OK) {
-        cout << "OK";
-        cout << ptr << std::endl;
+        std::cout << "OK";
+        std::cout << ptr << std::endl;
     } else if (p.res.code == sqltoast::PARSE_INPUT_ERROR) {
-        cout << "Input error: " << p.res.error << endl;
+        std::cout << "Input error: " << p.res.error << std::endl;
     } else {
-        cout << "Syntax error." << endl;
-        cout << p.res.error << endl;
+        std::cout << "Syntax error." << std::endl;
+        std::cout << p.res.error << std::endl;
     }
     if (! disable_timer)
-        cout << "(took " << dur << " nanoseconds)" << endl;
+        std::cout << "(took " << dur << " nanoseconds)" << std::endl;
     return 0;
 }
