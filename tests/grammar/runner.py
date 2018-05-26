@@ -105,7 +105,7 @@ def run_test(test_name):
     for testno, iblock in enumerate(input_blocks):
         expected = output_blocks[testno]
         input_sql = "\n".join(iblock)
-        cmd_args = [SQLTOASTER_BINARY, '--disable-timer', input_sql]
+        cmd_args = [SQLTOASTER_BINARY, '--disable-timer', '--yaml', input_sql]
         try:
             actual = subprocess.check_output(cmd_args)
         except subprocess.CalledProcessError as err:
