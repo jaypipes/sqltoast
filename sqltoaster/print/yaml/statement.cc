@@ -327,7 +327,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement
         ptr.indent_pop(out);
     }
     if (stmt.having_condition)
-        ptr.indent(out) << "having:" << *stmt.having_condition;
+        ptr.indent(out) << "having: " << *stmt.having_condition;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt) {
