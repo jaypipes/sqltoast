@@ -276,7 +276,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_stat
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt) {
-    ptr.indent(out) << "table_name: " << stmt.table_name;
+    ptr.indent(out) << "view_name: " << stmt.table_name;
     if (! stmt.columns.empty()) {
         ptr.indent(out) << "columns:";
         ptr.indent_push(out);
@@ -297,7 +297,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_stat
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_view_statement_t& stmt) {
-    ptr.indent(out) << "table_name: " << stmt.table_name;
+    ptr.indent(out) << "view_name: " << stmt.table_name;
     if (stmt.drop_behaviour == sqltoast::DROP_BEHAVIOUR_CASCADE)
        ptr.indent(out) << "drop_behaviour: CASCADE";
     else
