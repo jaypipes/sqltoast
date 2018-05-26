@@ -1,7 +1,6 @@
 # Row value constructor list is parens-enclosed comma-separated list of row
 # value constructor elements
 >SELECT  * FROM t1 WHERE (a, b) = (b, a)
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -12,7 +11,6 @@ statements[0]:
      (column-reference[a],column-reference[b]) = (column-reference[b],column-reference[a])>
 # Single-value row value constructor lists are OK too
 >SELECT * FROM t1 WHERE (a) = (b)
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -23,7 +21,6 @@ statements[0]:
      (column-reference[a]) = (column-reference[b])>
 # scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2)
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -39,7 +36,6 @@ statements[0]:
      0: t2>]>
 # scalar subquery inside another scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2 WHERE b = (SELECT c FROM t3))
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -62,7 +58,6 @@ statements[0]:
      0: t3>]>]>
 # scalar subquery with correlation and alias
 >SELECT * FROM t1 WHERE num_t2 = (SELECT COUNT(*) FROM t2 WHERE t2.t1_id = t1.id)
-OK
 statements[0]:
   <statement: SELECT
    selected columns:

@@ -1,6 +1,5 @@
 # Simple datetime expression with local timezone
 >SELECT a AT LOCAL FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -9,7 +8,6 @@ statements[0]:
      0: t1>
 # Simple datetime expression with specifier timezone
 >SELECT a AT TIME ZONE 'UTC' FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -18,7 +16,6 @@ statements[0]:
      0: t1>
 # CURRENT_DATE datetime function
 >SELECT CURRENT_DATE FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -27,7 +24,6 @@ statements[0]:
      0: t1>
 # CURRENT_DATE datetime function with timezone component
 >SELECT CURRENT_DATE AT TIME ZONE 'UTC' FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -36,7 +32,6 @@ statements[0]:
      0: t1>
 # CURRENT_TIME datetime function with no time precision
 >SELECT CURRENT_TIME FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -45,7 +40,6 @@ statements[0]:
      0: t1>
 # CURRENT_TIME datetime function with fractional time precision
 >SELECT CURRENT_TIME(3) FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -54,7 +48,6 @@ statements[0]:
      0: t1>
 # CURRENT_TIMESTAMP datetime function with no time precision
 >SELECT CURRENT_TIMESTAMP FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -63,7 +56,6 @@ statements[0]:
      0: t1>
 # CURRENT_TIMESTAMP datetime function with fractional time precision
 >SELECT CURRENT_TIMESTAMP(3) FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -72,7 +64,6 @@ statements[0]:
      0: t1>
 # Add a datetime term to an interval term
 >SELECT a AT LOCAL + b YEAR TO MONTH FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -81,7 +72,6 @@ statements[0]:
      0: t1>
 # Subtract an interval term from a datetime expression
 >SELECT a AT LOCAL - b DAY FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:

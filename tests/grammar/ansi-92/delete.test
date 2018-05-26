@@ -1,12 +1,10 @@
 # DELETE with no WHERE condition
 >DELETE FROM t1
-OK
 statements[0]:
   <statement: DELETE
    table name: t1>
 # DELETE with simple WHERE condition with equality comparison
 >DELETE FROM t1 WHERE a = 10
-OK
 statements[0]:
   <statement: DELETE
    table name: t1

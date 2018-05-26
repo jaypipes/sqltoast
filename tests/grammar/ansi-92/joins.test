@@ -6,7 +6,6 @@ SELECT * FROM t1 CROSS t2
                       ^^^
 # CROSS JOIN two normal tables
 >SELECT * FROM t1 CROSS JOIN t2
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -15,7 +14,6 @@ statements[0]:
      0: cross-join[t1,t2]>
 # INNER JOIN two normal tables WITHOUT the INNER symbol
 >SELECT * FROM t1 JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -24,7 +22,6 @@ statements[0]:
      0: inner-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # INNER JOIN two normal tables WITH the INNER symbol
 >SELECT * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -33,7 +30,6 @@ statements[0]:
      0: inner-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # INNER JOIN two normal tables with no join condition
 >SELECT * FROM t1 JOIN t2
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -42,7 +38,6 @@ statements[0]:
      0: inner-join[t1,t2]>
 # LEFT JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 LEFT JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -51,7 +46,6 @@ statements[0]:
      0: left-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # LEFT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 LEFT OUTER JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -60,7 +54,6 @@ statements[0]:
      0: left-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # RIGHT JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 RIGHT JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -69,7 +62,6 @@ statements[0]:
      0: right-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # RIGHT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 RIGHT OUTER JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -78,7 +70,6 @@ statements[0]:
      0: right-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # FULL OUTER JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 FULL JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -87,7 +78,6 @@ statements[0]:
      0: full-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # FULL OUTER JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 FULL OUTER JOIN t2 ON t1.id = t2.t1_id
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -96,7 +86,6 @@ statements[0]:
      0: full-join[t1,t2,column-reference[t1.id] = column-reference[t2.t1_id]]>
 # JOIN with USING clause
 >SELECT * FROM t1 JOIN t2 USING (id)
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -105,7 +94,6 @@ statements[0]:
      0: inner-join[t1,t2,using[id]]>
 # NATURAL JOIN
 >SELECT * FROM t1 NATURAL JOIN t2
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -114,7 +102,6 @@ statements[0]:
      0: natural-join[t1,t2]>
 # UNION JOIN of two tables
 >SELECT * FROM t1 UNION JOIN t2
-OK
 statements[0]:
   <statement: SELECT
    selected columns:

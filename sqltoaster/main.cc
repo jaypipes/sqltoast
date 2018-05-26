@@ -64,12 +64,11 @@ int main (int argc, char *argv[])
     sqltoaster::printer ptr(p.res, std::cout);
     if (use_yaml)
         ptr.set_yaml(std::cout);
-    if (p.res.code == sqltoast::PARSE_OK) {
-        std::cout << "OK";
+    if (p.res.code == sqltoast::PARSE_OK)
         std::cout << ptr << std::endl;
-    } else if (p.res.code == sqltoast::PARSE_INPUT_ERROR) {
+    else if (p.res.code == sqltoast::PARSE_INPUT_ERROR)
         std::cout << "Input error: " << p.res.error << std::endl;
-    } else {
+    else {
         std::cout << "Syntax error." << std::endl;
         std::cout << p.res.error << std::endl;
     }

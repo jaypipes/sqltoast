@@ -1,6 +1,5 @@
 # UPDATE with no WHERE condition
 >UPDATE t1 SET a = 1
-OK
 statements[0]:
   <statement: UPDATE
    table name: t1
@@ -8,7 +7,6 @@ statements[0]:
      a = literal[1]>
 # UPDATE with simple WHERE condition with equality comparison
 >UPDATE t1 SET a = 1 WHERE b = 2
-OK
 statements[0]:
   <statement: UPDATE
    table name: t1

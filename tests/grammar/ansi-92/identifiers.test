@@ -1,6 +1,5 @@
 # Simple identifier all alphanumeric
 >SELECT * FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -9,7 +8,6 @@ statements[0]:
      0: t1>
 # Identifier includes an underscore
 >SELECT * FROM t1_backup
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -18,7 +16,6 @@ statements[0]:
      0: t1_backup>
 # Identifier includes a period
 >SELECT * FROM s1.t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -27,7 +24,6 @@ statements[0]:
      0: s1.t1>
 # Identifier includes multiple periods and underscore
 >SELECT * FROM c1.s1.t1_backup
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -36,7 +32,6 @@ statements[0]:
      0: c1.s1.t1_backup>
 # Identifier includes a prefix and a star projection
 >SELECT t1.* FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:

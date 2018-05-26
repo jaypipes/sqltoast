@@ -64,7 +64,6 @@ statement and output the parsed information as a YAML document.
 
 ```
 sqltoaster --yaml "SELECT a FROM t1"
-OK
 statements:
 - type: SELECT
   selected_columns:

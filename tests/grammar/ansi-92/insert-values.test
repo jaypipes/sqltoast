@@ -1,5 +1,4 @@
 >INSERT INTO t1 (a, b) VALUES (1, 2)
-OK
 statements[0]:
   <statement: INSERT
    table name: t1
@@ -11,7 +10,6 @@ statements[0]:
      1: literal[2]>
 # INSERT INTO with a default columns list
 >INSERT INTO t1 VALUES (1, 2)
-OK
 statements[0]:
   <statement: INSERT
    table name: t1
@@ -21,7 +19,6 @@ statements[0]:
      1: literal[2]>
 # INSERT INTO using a character values expression
 >INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
-OK
 statements[0]:
   <statement: INSERT
    table name: t1
@@ -30,7 +27,6 @@ statements[0]:
      0: literal['a'] COLLATE utf8bin>
 # INSERT INTO using datetime value expressions
 >INSERT INTO t1 (create_date, my_date) VALUES (CURRENT_DATE, '2001-01-01' AT TIME ZONE 'UTC')
-OK
 statements[0]:
   <statement: INSERT
    table name: t1
@@ -42,7 +38,6 @@ statements[0]:
      1: datetime-expression[literal['2001-01-01'] AT TIME ZONE 'UTC']>
 # INSERT INTO using interval value expressions
 >INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
-OK
 statements[0]:
   <statement: INSERT
    table name: t1
@@ -52,7 +47,6 @@ statements[0]:
      0: interval-expression[literal['2001-01-01'] DAY TO SECOND]>
 # INSERT INTO using numeric value expressions
 >INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
-OK
 statements[0]:
   <statement: INSERT
    table name: t1

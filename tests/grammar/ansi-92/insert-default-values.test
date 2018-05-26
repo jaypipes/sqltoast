@@ -1,5 +1,4 @@
 >INSERT INTO t1 DEFAULT VALUES
-OK
 statements[0]:
   <statement: INSERT
    table name: t1

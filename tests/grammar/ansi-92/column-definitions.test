@@ -10,7 +10,6 @@
 >    h REAL,
 >    i DOUBLE PRECISION
 >)
-OK
 statements[0]:
   <statement: CREATE TABLE
     table name: t1
@@ -37,7 +36,6 @@ statements[0]:
 >    i CHAR VARYING(10),
 >    j CHARACTER VARYING(10)
 >)
-OK
 statements[0]:
   <statement: CREATE TABLE
     table name: t1
@@ -59,7 +57,6 @@ statements[0]:
 >    c VARCHAR DEFAULT CURRENT_USER,
 >    d DATE DEFAULT CURRENT_DATE
 >)
-OK
 statements[0]:
   <statement: CREATE TABLE
     table name: t1

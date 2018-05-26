@@ -12,7 +12,6 @@ SELECT COALESCE()
                ^^
 # COALESCE with 2 args
 >SELECT COALESCE(a, 'n/a') FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -21,7 +20,6 @@ statements[0]:
      0: t1>
 # COALESCE with 4 args
 >SELECT COALESCE(a, b, c, 'n/a') FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -30,7 +28,6 @@ statements[0]:
      0: t1>
 # NULLIF with 2 args
 >SELECT NULLIF(a, 'n/a') FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -39,7 +36,6 @@ statements[0]:
      0: t1>
 # Simple CASE expression single WHEN no ELSE
 >SELECT CASE a WHEN 1 THEN 2 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -48,7 +44,6 @@ statements[0]:
      0: t1>
 # Simple CASE expression multiple WHEN no ELSE
 >SELECT CASE a WHEN 1 THEN 2 WHEN 2 THEN 3 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -57,7 +52,6 @@ statements[0]:
      0: t1>
 # Simple CASE expression single WHEN with ELSE
 >SELECT CASE a WHEN 1 THEN 2 ELSE 42 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -66,7 +60,6 @@ statements[0]:
      0: t1>
 # Simple CASE expression multiple WHEN with ELSE
 >SELECT CASE a WHEN 1 THEN 2 WHEN 2 THEN 3 ELSE 4 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -75,7 +68,6 @@ statements[0]:
      0: t1>
 # Searched CASE expression single WHEN no ELSE
 >SELECT CASE WHEN a = 1 THEN 2 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -84,7 +76,6 @@ statements[0]:
      0: t1>
 # Searched CASE expression multiple WHEN no ELSE
 >SELECT CASE WHEN a = 1 THEN 2 WHEN a = 2 THEN 3 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -93,7 +84,6 @@ statements[0]:
      0: t1>
 # Searched CASE expression single WHEN with ELSE
 >SELECT CASE WHEN a = 1 THEN 2 ELSE 42 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -102,7 +92,6 @@ statements[0]:
      0: t1>
 # Searched CASE expression multiple WHEN with ELSE
 >SELECT CASE WHEN a = 1 THEN 2 WHEN a = 2 THEN 3 ELSE 4 END FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:

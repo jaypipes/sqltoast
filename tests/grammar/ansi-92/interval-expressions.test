@@ -1,6 +1,5 @@
 # Simple interval value expression with non-second interval qualifier
 >SELECT a YEAR FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -10,7 +9,6 @@ statements[0]:
 # Simple interval value expression with non-second interval qualifier with a
 # leading precision
 >SELECT a DAY(2) FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -20,7 +18,6 @@ statements[0]:
 # Simple interval value expression with second interval qualifier with a
 # leading precision and no fractional precision
 >SELECT a SECOND(2) FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -30,7 +27,6 @@ statements[0]:
 # Simple interval value expression with second interval qualifier with a
 # leading precision and no fractional precision
 >SELECT a SECOND(2, 5) FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -40,7 +36,6 @@ statements[0]:
 # interval value expression with start and end non-second interval qualifier
 # with no precision specifiers
 >SELECT a YEAR TO MONTH FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -50,7 +45,6 @@ statements[0]:
 # interval value expression with start non-second and end second interval
 # qualifier with no precision specifiers
 >SELECT a DAY TO SECOND FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -60,7 +54,6 @@ statements[0]:
 # interval value expression with start non-second and end second interval
 # qualifier with a second fractional precision specifier
 >SELECT a DAY TO SECOND(5) FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -70,7 +63,6 @@ statements[0]:
 # interval value expression that operates on an interval term with a numeric
 # factor
 >SELECT a YEAR * 12, a YEAR / 2, a MONTH / (12 / b) FROM t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
@@ -82,7 +74,6 @@ statements[0]:
 # interval value expression that uses addition and subtraction operators on
 # interval terms
 >SELECT a YEAR + 12 YEAR, created_on DAY TO SECOND - updated_on DAY TO SECOND from t1
-OK
 statements[0]:
   <statement: SELECT
    selected columns:
