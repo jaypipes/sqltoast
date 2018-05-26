@@ -143,11 +143,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[a] IN <statement: SELECT
-   selected columns:
-     0: column-reference[t1_a]
-   referenced tables:
-     0: t2>
+  where: column-reference[a] IN query[selected-columns[column-reference[t1_a]] table-expression[referenced-tables[t2]]
 # EXISTS (<subquery>) predicate
 >SELECT * FROM t1 WHERE EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -156,13 +152,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: EXISTS <statement: SELECT
-   selected columns:
-     0: column-reference[t1_id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t1_id] = column-reference[t1.id]>
+  where: EXISTS query[selected-columns[column-reference[t1_id]] table-expression[referenced-tables[t2 where[column-reference[t1_id] = column-reference[t1.id]]]]
 # NOT EXISTS (<subquery>) predicate
 >SELECT * FROM t1 WHERE NOT EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -171,13 +161,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: NOT EXISTS <statement: SELECT
-   selected columns:
-     0: column-reference[t1_id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t1_id] = column-reference[t1.id]>
+  where: NOT EXISTS query[selected-columns[column-reference[t1_id]] table-expression[referenced-tables[t2 where[column-reference[t1_id] = column-reference[t1.id]]]]
 # <row> MATCH (<subquery>) predicate
 >SELECT * FROM t1 WHERE id MATCH (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -186,13 +170,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[id] MATCH FULL <statement: SELECT
-   selected columns:
-     0: column-reference[t1_id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t1_id] = column-reference[t1.id]>
+  where: column-reference[id] MATCH FULL query[selected-columns[column-reference[t1_id]] table-expression[referenced-tables[t2 where[column-reference[t1_id] = column-reference[t1.id]]]]
 # <row> MATCH (<subquery>) predicate explicit FULL
 >SELECT * FROM t1 WHERE id MATCH FULL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -201,13 +179,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[id] MATCH FULL <statement: SELECT
-   selected columns:
-     0: column-reference[t1_id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t1_id] = column-reference[t1.id]>
+  where: column-reference[id] MATCH FULL query[selected-columns[column-reference[t1_id]] table-expression[referenced-tables[t2 where[column-reference[t1_id] = column-reference[t1.id]]]]
 # <row> MATCH (<subquery>) predicate with UNIQUE
 >SELECT * FROM t1 WHERE id MATCH UNIQUE (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -216,13 +188,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[id] MATCH UNIQUE FULL <statement: SELECT
-   selected columns:
-     0: column-reference[t1_id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t1_id] = column-reference[t1.id]>
+  where: column-reference[id] MATCH UNIQUE FULL query[selected-columns[column-reference[t1_id]] table-expression[referenced-tables[t2 where[column-reference[t1_id] = column-reference[t1.id]]]]
 # <row> MATCH (<subquery>) predicate explicit PARTIAL
 >SELECT * FROM t1 WHERE id MATCH PARTIAL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -231,13 +197,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[id] MATCH PARTIAL <statement: SELECT
-   selected columns:
-     0: column-reference[t1_id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t1_id] = column-reference[t1.id]>
+  where: column-reference[id] MATCH PARTIAL query[selected-columns[column-reference[t1_id]] table-expression[referenced-tables[t2 where[column-reference[t1_id] = column-reference[t1.id]]]]
 # LIKE predicate with simple column comparison with string
 >SELECT * FROM t1 WHERE a LIKE 's%'
 statements:
@@ -275,13 +235,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: UNIQUE <statement: SELECT
-   selected columns:
-     0: column-reference[t2.id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t2.t1_id] = column-reference[t1.id]>
+  where: UNIQUE query[selected-columns[column-reference[t2.id]] table-expression[referenced-tables[t2 where[column-reference[t2.t1_id] = column-reference[t1.id]]]]
 # negated UNIQUE predicate
 >SELECT * FROM t1 WHERE NOT UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id);
 statements:
@@ -290,13 +244,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: NOT UNIQUE <statement: SELECT
-   selected columns:
-     0: column-reference[t2.id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t2.t1_id] = column-reference[t1.id]>
+  where: NOT UNIQUE query[selected-columns[column-reference[t2.id]] table-expression[referenced-tables[t2 where[column-reference[t2.t1_id] = column-reference[t1.id]]]]
 # Combine EXISTS and UNIQUE predicate
 >SELECT * FROM t1 WHERE UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id) AND EXISTS (SELECT t3.id FROM t3 WHERE t3.t1_id = t1.id);
 statements:
@@ -305,19 +253,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: UNIQUE <statement: SELECT
-   selected columns:
-     0: column-reference[t2.id]
-   referenced tables:
-     0: t2
-   where:
-     column-reference[t2.t1_id] = column-reference[t1.id]> AND EXISTS <statement: SELECT
-   selected columns:
-     0: column-reference[t3.id]
-   referenced tables:
-     0: t3
-   where:
-     column-reference[t3.t1_id] = column-reference[t1.id]>
+  where: UNIQUE query[selected-columns[column-reference[t2.id]] table-expression[referenced-tables[t2 where[column-reference[t2.t1_id] = column-reference[t1.id]]]] AND EXISTS query[selected-columns[column-reference[t3.id]] table-expression[referenced-tables[t3 where[column-reference[t3.t1_id] = column-reference[t1.id]]]]
 # quantified comparison predicates are like comparison predicates with an
 # ANY|ALL|SOME quantifier
 >SELECT * FROM t1 WHERE t1.start > ALL (SELECT t2.start FROM t2)
@@ -327,11 +263,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[t1.start] > ALL <statement: SELECT
-   selected columns:
-     0: column-reference[t2.start]
-   referenced tables:
-     0: t2>
+  where: column-reference[t1.start] > ALL query[selected-columns[column-reference[t2.start]] table-expression[referenced-tables[t2]]
 # quantified comparison predicate with ANY quantifier
 >SELECT * FROM t1 WHERE t1.start <= ANY (SELECT t2.start FROM t2)
 statements:
@@ -340,11 +272,7 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[t1.start] <= ANY <statement: SELECT
-   selected columns:
-     0: column-reference[t2.start]
-   referenced tables:
-     0: t2>
+  where: column-reference[t1.start] <= ANY query[selected-columns[column-reference[t2.start]] table-expression[referenced-tables[t2]]
 # quantified comparison predicate with SOME quantifier translated to ANY quantifier
 >SELECT * FROM t1 WHERE t1.start <= SOME (SELECT t2.start FROM t2)
 statements:
@@ -353,8 +281,4 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[t1.start] <= ANY <statement: SELECT
-   selected columns:
-     0: column-reference[t2.start]
-   referenced tables:
-     0: t2>
+  where: column-reference[t1.start] <= ANY query[selected-columns[column-reference[t2.start]] table-expression[referenced-tables[t2]]

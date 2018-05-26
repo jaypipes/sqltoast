@@ -248,7 +248,7 @@ bool parse_comparison_predicate(
     comp_op_t op = COMP_OP_EQUAL;
     quantifier_t quantifier = QUANTIFIER_NONE;
     std::unique_ptr<row_value_constructor_t> right;
-    std::unique_ptr<statement_t> subquery;
+    std::unique_ptr<query_expression_t> subquery;
 
     // We get here after successfully parsing a row-value constructor and we
     // know that the current symbol is *not* BETWEEN, LIKE, IN, or IS. We now
@@ -328,7 +328,7 @@ expect_subquery:
     if (cur_sym != SYMBOL_LPAREN)
         goto err_expect_lparen;
     cur_tok = lex.next();
-    if (! parse_select(ctx, cur_tok, subquery))
+    if (! parse_query_expression(ctx, cur_tok, subquery))
         goto err_expect_subquery;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
@@ -517,7 +517,7 @@ bool parse_in_predicate(
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<value_expression_t> value;
     std::vector<std::unique_ptr<value_expression_t>> values;
-    std::unique_ptr<statement_t> subq;
+    std::unique_ptr<query_expression_t> subq;
 
     // We get here if we've processed the left row value constructor and the
     // [NOT] IN symbol(s). We now expect a LPAREN followed by either the SELECT
@@ -533,7 +533,7 @@ err_expect_lparen:
     expect_error(ctx, SYMBOL_LPAREN);
     return false;
 process_subquery:
-    if (! parse_select(ctx, cur_tok, subq))
+    if (! parse_query_expression(ctx, cur_tok, subq))
         return false;
     goto expect_rparen;
 process_value_list_item:
@@ -584,14 +584,14 @@ bool parse_exists_predicate(
         std::unique_ptr<predicate_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<statement_t> subq;
+    std::unique_ptr<query_expression_t> subq;
 
     // We get here if we've processed the left row value constructor and the
     // [NOT] EXISTS symbol(s). We now expect a parens-enclosed SELECT statement
     if (cur_sym != SYMBOL_LPAREN)
         goto err_expect_lparen;
     cur_tok = lex.next();
-    if (! parse_select(ctx, cur_tok, subq))
+    if (! parse_query_expression(ctx, cur_tok, subq))
         goto err_expect_subquery;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
@@ -629,14 +629,14 @@ bool parse_unique_predicate(
         std::unique_ptr<predicate_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    std::unique_ptr<statement_t> subq;
+    std::unique_ptr<query_expression_t> subq;
 
     // We get here if we've processed the left row value constructor and the
     // [NOT] UNIQUE symbol(s). We now expect a parens-enclosed SELECT statement
     if (cur_sym != SYMBOL_LPAREN)
         goto err_expect_lparen;
     cur_tok = lex.next();
-    if (! parse_select(ctx, cur_tok, subq))
+    if (! parse_query_expression(ctx, cur_tok, subq))
         goto err_expect_subquery;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
@@ -680,7 +680,7 @@ bool parse_match_predicate(
     symbol_t cur_sym = cur_tok.symbol;
     bool match_unique = false;
     bool match_partial = false;
-    std::unique_ptr<statement_t> subq;
+    std::unique_ptr<query_expression_t> subq;
 
     // We get here if we've processed the left row value constructor and the
     // MATCH symbol.
@@ -710,7 +710,7 @@ err_expect_lparen:
     expect_error(ctx, SYMBOL_LPAREN);
     return false;
 process_subquery:
-    if (! parse_select(ctx, cur_tok, subq))
+    if (! parse_query_expression(ctx, cur_tok, subq))
         return false;
     goto expect_rparen;
 expect_rparen:

@@ -15,7 +15,6 @@ statements:
 - type: CREATE_VIEW
   view_name: v1
   query:
-    type: SELECT
     selected_columns:
       - *
     referenced_tables:
@@ -29,7 +28,6 @@ statements:
     - a
     - b
   query:
-    type: SELECT
     selected_columns:
       - column-reference[a]
       - column-reference[b]
@@ -42,7 +40,6 @@ statements:
   view_name: v1
   check_option: LOCAL
   query:
-    type: SELECT
     selected_columns:
       - *
     referenced_tables:
@@ -54,7 +51,6 @@ statements:
   view_name: v1
   check_option: CASCADED
   query:
-    type: SELECT
     selected_columns:
       - *
     referenced_tables:

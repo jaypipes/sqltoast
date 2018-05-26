@@ -26,7 +26,7 @@ bool parse_create_view(
     lexeme_t table_name;
     check_option_t check_option = CHECK_OPTION_NONE;
     std::vector<lexeme_t> columns;
-    std::unique_ptr<statement_t> query;
+    std::unique_ptr<query_expression_t> query;
 
     cur_tok = lex.next();
     cur_sym = cur_tok.symbol;
@@ -86,7 +86,7 @@ err_expect_as:
     expect_error(ctx, SYMBOL_AS);
     return false;
 expect_query_expression:
-    if (! parse_select(ctx, cur_tok, query))
+    if (! parse_query_expression(ctx, cur_tok, query))
         goto err_expect_query_expression;
     goto optional_check_option;
 optional_check_option:

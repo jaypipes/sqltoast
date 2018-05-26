@@ -14,7 +14,6 @@
 namespace sqltoaster {
 namespace print {
 
-/*  statements */
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::add_column_action_t& action);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::add_constraint_action_t& action);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_column_action_t& action);
@@ -33,8 +32,17 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& jt);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_query_expression_t& qe);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_expression_t& qe);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_primary_t& primary);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_term_t& term);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_expression_t& qe);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_non_join_query_primary_t& primary);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_t& query);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stmt);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt);
 
 } // namespace sqltoast::print

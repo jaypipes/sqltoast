@@ -45,6 +45,7 @@ SET(LIBSQLTOAST_SOURCES
     src/print/data_type.cc
     src/print/identifier.cc
     src/print/predicate.cc
+    src/print/query.cc
     src/print/statement.cc
     src/print/table_reference.cc
     src/print/value.cc

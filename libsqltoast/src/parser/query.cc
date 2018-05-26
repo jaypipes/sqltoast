@@ -380,7 +380,6 @@ comma_or_from:
     }
     if (cur_sym != SYMBOL_FROM)
         goto err_expect_comma_or_from;
-    cur_tok = lex.next();
     goto expect_table_expression;
 err_expect_comma_or_from:
     expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_FROM});

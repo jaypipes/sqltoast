@@ -190,26 +190,11 @@ typedef struct alter_table_statement : statement_t {
 } alter_table_statement_t;
 
 typedef struct select_statement : statement_t {
-    bool distinct;
-    std::vector<derived_column_t> selected_columns;
-    std::vector<std::unique_ptr<table_reference_t>> referenced_tables;
-    std::unique_ptr<search_condition_t> where_condition;
-    std::vector<grouping_column_reference_t> group_by_columns;
-    std::unique_ptr<search_condition_t> having_condition;
+    std::unique_ptr<query_specification_t> query;
     select_statement(
-            bool distinct,
-            std::vector<derived_column_t>& selected_cols,
-            std::vector<std::unique_ptr<table_reference_t>>& ref_tables,
-            std::unique_ptr<search_condition_t>& where_cond,
-            std::vector<grouping_column_reference_t>& group_by_cols,
-            std::unique_ptr<search_condition_t>& having_cond) :
+            std::unique_ptr<query_specification_t>& query) :
         statement_t(STATEMENT_TYPE_SELECT),
-        distinct(distinct),
-        selected_columns(std::move(selected_cols)),
-        referenced_tables(std::move(ref_tables)),
-        where_condition(std::move(where_cond)),
-        group_by_columns(std::move(group_by_cols)),
-        having_condition(std::move(having_cond))
+        query(std::move(query))
     {}
 } select_statement_t;
 
@@ -320,12 +305,12 @@ typedef struct create_view_statement : statement_t {
     lexeme_t table_name;
     check_option_t check_option;
     std::vector<lexeme_t> columns;
-    std::unique_ptr<statement_t> query;
+    std::unique_ptr<query_expression_t> query;
     create_view_statement(
             lexeme_t& table_name,
             check_option_t check_option,
             std::vector<lexeme_t>& columns,
-            std::unique_ptr<statement_t>& query) :
+            std::unique_ptr<query_expression_t>& query) :
         statement_t(STATEMENT_TYPE_CREATE_VIEW),
         table_name(table_name),
         check_option(check_option),
