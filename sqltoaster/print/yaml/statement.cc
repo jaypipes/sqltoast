@@ -278,7 +278,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_stat
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt) {
     ptr.indent(out) << "table_name: " << stmt.table_name;
     if (! stmt.columns.empty()) {
-        ptr.indent(out) << "column_definitions:";
+        ptr.indent(out) << "columns:";
         ptr.indent_push(out);
         for (const auto& column : stmt.columns)
             ptr.indent(out) << "- "<< column;
