@@ -154,6 +154,10 @@ bool parse_query_specification(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<query_specification_t>& out);
+bool parse_table_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<table_expression_t>& out);
 
 // Returns true if a table reference can be parsed. If true, the out argument
 // will contain a new pointer to a table_reference_t.
