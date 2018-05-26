@@ -4,9 +4,7 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#include "sqltoast/sqltoast.h"
-
-#include "printers.h"
+#include "sqltoast/print.h"
 
 namespace sqltoast {
 

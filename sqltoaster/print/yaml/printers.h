@@ -7,6 +7,8 @@
 #ifndef SQLTOASTER_PRINT_YAML_PRINTERS_H
 #define SQLTOASTER_PRINT_YAML_PRINTERS_H
 
+#include <sqltoast/print.h>
+
 #include "../../printer.h"
 
 using namespace sqltoast;

@@ -38,6 +38,16 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/token.cc
     src/parser/value.cc
     src/parser/value_expression.cc
+    src/print/column_definition.cc
+    src/print/column_reference.cc
+    src/print/constraint.cc
+    src/print/data_type.cc
+    src/print/identifier.cc
+    src/print/predicate.cc
+    src/print/statement.cc
+    src/print/table_reference.cc
+    src/print/value.cc
+    src/print/value_expression.cc
 )
 
 # Header file for configuration templated variables

@@ -7,7 +7,6 @@
 
 #include <sqltoast/sqltoast.h>
 
-#include "print/printers.h"
 #include "printer.h"
 
 using namespace std;
