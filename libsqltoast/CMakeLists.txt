@@ -17,6 +17,7 @@ SET(LIBSQLTOAST_SOURCES
     src/parser/literal.cc
     src/parser/parse.cc
     src/parser/predicate.cc
+    src/parser/query.cc
     src/parser/sequence.cc
     src/parser/statement.cc
     src/parser/statements/alter_table.cc

@@ -125,6 +125,36 @@ bool parse_grant(
         token_t& cur_tok,
         std::unique_ptr<statement_t>& out);
 
+// Returns true if a query expression can be parsed. If true, the out argument
+// will contain a new pointer to a query_expression_t.
+bool parse_query_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<query_expression_t>& out);
+bool parse_non_join_query_expression(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<query_expression_t>& out);
+bool parse_non_join_query_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<non_join_query_term_t>& out);
+bool parse_non_join_query_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<non_join_query_primary_t>& out);
+bool parse_joined_table(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<joined_table_t>& out);
+
+// Returns true if a query specification can be parsed. If true, the out
+// argument will contain a new pointer to a query_specification_t.
+bool parse_query_specification(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<query_specification_t>& out);
+
 // Returns true if a table reference can be parsed. If true, the out argument
 // will contain a new pointer to a table_reference_t.
 bool parse_table_reference(
