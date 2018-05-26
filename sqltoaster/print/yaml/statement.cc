@@ -318,7 +318,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement
         ptr.indent(out) << "- " << *tr;
     ptr.indent_pop(out);
     if (stmt.where_condition)
-        ptr.indent(out) << "where:" << *stmt.where_condition;
+        ptr.indent(out) << "where: " << *stmt.where_condition;
     if (! stmt.group_by_columns.empty()) {
         ptr.indent(out) << "group_by:";
         ptr.indent_push(out);
@@ -371,12 +371,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_st
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt) {
     ptr.indent(out) << "table_name: " << stmt.table_name;
-    if (stmt.where_condition) {
-        ptr.indent(out) << "where:";
-        ptr.indent_push(out);
-        ptr.indent(out) << *stmt.where_condition;
-        ptr.indent_pop(out);
-    }
+    if (stmt.where_condition)
+        ptr.indent(out) << "where: " << *stmt.where_condition;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt) {
@@ -394,12 +390,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement
     }
     ptr.indent_pop(out);
 
-    if (stmt.where_condition) {
-        ptr.indent(out) << "where:";
-        ptr.indent_push(out);
-        ptr.indent(out) << *stmt.where_condition;
-        ptr.indent_pop(out);
-    }
+    if (stmt.where_condition)
+        ptr.indent(out) << "where: " << *stmt.where_condition;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& action) {
