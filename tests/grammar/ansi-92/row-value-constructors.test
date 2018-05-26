@@ -1,53 +1,45 @@
 # Row value constructor list is parens-enclosed comma-separated list of row
 # value constructor elements
 >SELECT  * FROM t1 WHERE (a, b) = (b, a)
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1
-   where:
-     (column-reference[a],column-reference[b]) = (column-reference[b],column-reference[a])>
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1
+  where: (column-reference[a],column-reference[b]) = (column-reference[b],column-reference[a])
 # Single-value row value constructor lists are OK too
 >SELECT * FROM t1 WHERE (a) = (b)
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1
-   where:
-     (column-reference[a]) = (column-reference[b])>
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1
+  where: (column-reference[a]) = (column-reference[b])
 # scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2)
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1
-   where:
-     column-reference[a] = scalar-subquery[
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1
+  where: column-reference[a] = scalar-subquery[
 <statement: SELECT
    selected columns:
      0: column-reference[b]
    referenced tables:
-     0: t2>]>
+     0: t2>]
 # scalar subquery inside another scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2 WHERE b = (SELECT c FROM t3))
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1
-   where:
-     column-reference[a] = scalar-subquery[
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1
+  where: column-reference[a] = scalar-subquery[
 <statement: SELECT
    selected columns:
      0: column-reference[b]
@@ -59,22 +51,20 @@ statements[0]:
    selected columns:
      0: column-reference[c]
    referenced tables:
-     0: t3>]>]>
+     0: t3>]>]
 # scalar subquery with correlation and alias
 >SELECT * FROM t1 WHERE num_t2 = (SELECT COUNT(*) FROM t2 WHERE t2.t1_id = t1.id)
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1
-   where:
-     column-reference[num_t2] = scalar-subquery[
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1
+  where: column-reference[num_t2] = scalar-subquery[
 <statement: SELECT
    selected columns:
      0: COUNT(*)
    referenced tables:
      0: t2
    where:
-     column-reference[t2.t1_id] = column-reference[t1.id]>]>
+     column-reference[t2.t1_id] = column-reference[t1.id]>]

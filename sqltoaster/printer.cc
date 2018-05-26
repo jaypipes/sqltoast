@@ -15,11 +15,11 @@ std::ostream& operator<< (std::ostream& out, printer_t& ptr) {
         for (auto stmt_ptr_it = ptr.res.statements.cbegin();
                 stmt_ptr_it != ptr.res.statements.cend();
                 stmt_ptr_it++) {
-            out << std::endl << "statements[" << x++ << "]:" << std::endl;
+            out << "statements[" << x++ << "]:" << std::endl;
             out << "  " << *(*stmt_ptr_it);
         }
     } else {
-        out << std::endl << "statements:";
+        out << "statements:";
         for (auto stmt_ptr_it = ptr.res.statements.cbegin();
                 stmt_ptr_it != ptr.res.statements.cend();
                 stmt_ptr_it++) {

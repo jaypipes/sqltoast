@@ -1,18 +1,15 @@
 # UPDATE with no WHERE condition
 >UPDATE t1 SET a = 1
-OK
-statements[0]:
-  <statement: UPDATE
-   table name: t1
-   set columns:
-     a = literal[1]>
+statements:
+- type: UPDATE
+  table_name: t1
+  set_columns:
+    a: literal[1]
 # UPDATE with simple WHERE condition with equality comparison
 >UPDATE t1 SET a = 1 WHERE b = 2
-OK
-statements[0]:
-  <statement: UPDATE
-   table name: t1
-   set columns:
-     a = literal[1]
-   where:
-     column-reference[b] = literal[2]>
+statements:
+- type: UPDATE
+  table_name: t1
+  set_columns:
+    a: literal[1]
+  where: column-reference[b] = literal[2]

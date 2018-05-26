@@ -157,10 +157,24 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_table_sta
     }
     ptr.indent(out) << "column_definitions:";
     ptr.indent_push(out);
-    for (auto cdef_it = stmt.column_definitions.begin();
-            cdef_it != stmt.column_definitions.end();
+    for (auto cdef_it = stmt.column_definitions.cbegin();
+            cdef_it != stmt.column_definitions.cend();
             cdef_it++) {
-        ptr.indent(out) << "- "<< *(*cdef_it);
+        const sqltoast::column_definition_t& cdef = *(*cdef_it);
+        ptr.indent(out) << cdef.name << ": ";
+        if (cdef.data_type.get()) {
+            out << *cdef.data_type;
+        } else {
+            out << " UNKNOWN";
+        }
+        if (cdef.default_descriptor.get()) {
+            out << " " << *cdef.default_descriptor;
+        }
+        for (const std::unique_ptr<sqltoast::constraint_t>& c: cdef.constraints)
+            out << *c;
+        if (cdef.collate) {
+            out << " COLLATE " << cdef.collate;
+        }
     }
     ptr.indent_pop(out);
     if (stmt.constraints.size() > 0) {
@@ -262,9 +276,9 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_stat
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt) {
-    ptr.indent(out) << "table_name: " << stmt.table_name;
+    ptr.indent(out) << "view_name: " << stmt.table_name;
     if (! stmt.columns.empty()) {
-        ptr.indent(out) << "column_definitions:";
+        ptr.indent(out) << "columns:";
         ptr.indent_push(out);
         for (const auto& column : stmt.columns)
             ptr.indent(out) << "- "<< column;
@@ -283,7 +297,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_stat
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_view_statement_t& stmt) {
-    ptr.indent(out) << "table_name: " << stmt.table_name;
+    ptr.indent(out) << "view_name: " << stmt.table_name;
     if (stmt.drop_behaviour == sqltoast::DROP_BEHAVIOUR_CASCADE)
        ptr.indent(out) << "drop_behaviour: CASCADE";
     else
@@ -304,7 +318,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement
         ptr.indent(out) << "- " << *tr;
     ptr.indent_pop(out);
     if (stmt.where_condition)
-        ptr.indent(out) << "where:" << *stmt.where_condition;
+        ptr.indent(out) << "where: " << *stmt.where_condition;
     if (! stmt.group_by_columns.empty()) {
         ptr.indent(out) << "group_by:";
         ptr.indent_push(out);
@@ -313,7 +327,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement
         ptr.indent_pop(out);
     }
     if (stmt.having_condition)
-        ptr.indent(out) << "having:" << *stmt.having_condition;
+        ptr.indent(out) << "having: " << *stmt.having_condition;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt) {
@@ -357,12 +371,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_st
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt) {
     ptr.indent(out) << "table_name: " << stmt.table_name;
-    if (stmt.where_condition) {
-        ptr.indent(out) << "where:";
-        ptr.indent_push(out);
-        ptr.indent(out) << *stmt.where_condition;
-        ptr.indent_pop(out);
-    }
+    if (stmt.where_condition)
+        ptr.indent(out) << "where: " << *stmt.where_condition;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt) {
@@ -380,12 +390,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement
     }
     ptr.indent_pop(out);
 
-    if (stmt.where_condition) {
-        ptr.indent(out) << "where:";
-        ptr.indent_push(out);
-        ptr.indent(out) << *stmt.where_condition;
-        ptr.indent_pop(out);
-    }
+    if (stmt.where_condition)
+        ptr.indent(out) << "where: " << *stmt.where_condition;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& action) {

@@ -1,7 +1,6 @@
 >INSERT INTO t1 DEFAULT VALUES
-OK
-statements[0]:
-  <statement: INSERT
-   table name: t1
-   default columns: true
-   default values: true>
+statements:
+- type: INSERT
+  table_name: t1
+  default_columns: true
+  default_values: true

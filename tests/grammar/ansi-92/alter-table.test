@@ -12,127 +12,109 @@ ALTER TABLE t1 ADD COLUMN b;
                           ^^
 # ADD COLUMN action
 >ALTER TABLE t1 ADD COLUMN b INT;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD COLUMN b INT>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD COLUMN b INT
 # ADD COLUMN action without optional COLUMN keyword
 >ALTER TABLE t1 ADD b INT;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD COLUMN b INT>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD COLUMN b INT
 # ALTER COLUMN SET DEFAULT action
 >ALTER TABLE t1 ALTER COLUMN b SET DEFAULT NULL;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ALTER COLUMN b SET DEFAULT NULL>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ALTER COLUMN b SET DEFAULT NULL
 # ALTER COLUMN SET DEFAULT action optional COLUMN keyword
 >ALTER TABLE t1 ALTER b SET DEFAULT NULL;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ALTER COLUMN b SET DEFAULT NULL>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ALTER COLUMN b SET DEFAULT NULL
 # ALTER COLUMN DROP DEFAULT action
 >ALTER TABLE t1 ALTER COLUMN b DROP DEFAULT;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ALTER COLUMN b DROP DEFAULT>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ALTER COLUMN b DROP DEFAULT
 # DROP COLUMN action no drop behaviour
 >ALTER TABLE t1 DROP COLUMN b;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: DROP COLUMN b CASCADE>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: DROP COLUMN b CASCADE
 # DROP COLUMN action no drop behaviour no optional COLUMN keyword
 >ALTER TABLE t1 DROP b;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: DROP COLUMN b CASCADE>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: DROP COLUMN b CASCADE
 # DROP COLUMN action with explicit drop behaviour of default CASCADE
 >ALTER TABLE t1 DROP COLUMN b CASCADE;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: DROP COLUMN b CASCADE>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: DROP COLUMN b CASCADE
 # DROP COLUMN action with explicit drop behaviour of RESTRICT
 >ALTER TABLE t1 DROP COLUMN b RESTRICT;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: DROP COLUMN b RESTRICT>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: DROP COLUMN b RESTRICT
 # ADD CONSTRAINT action with UNIQUE constraint
 >ALTER TABLE t1 ADD UNIQUE (b, c);
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD UNIQUE (b,c)>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD UNIQUE (b,c)
 # ADD CONSTRAINT action with UNIQUE constraint with constraint name
 >ALTER TABLE t1 ADD CONSTRAINT u_bc UNIQUE (b, c);
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD CONSTRAINT u_bc UNIQUE (b,c)>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD CONSTRAINT u_bc UNIQUE (b,c)
 # ADD CONSTRAINT action with PRIMARY KEY constraint
 >ALTER TABLE t1 ADD PRIMARY KEY (b, c);
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD PRIMARY KEY (b,c)>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD PRIMARY KEY (b,c)
 # ADD CONSTRAINT action with PRIMARY KEY constraint with constraint name
 >ALTER TABLE t1 ADD CONSTRAINT pk PRIMARY KEY (b, c);
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD CONSTRAINT pk PRIMARY KEY (b,c)>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD CONSTRAINT pk PRIMARY KEY (b,c)
 # ADD CONSTRAINT action with FOREIGN KEY constraint
 >ALTER TABLE t1 ADD FOREIGN KEY (t2_id) REFERENCES t2 (id);
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD FOREIGN KEY (t2_id) REFERENCES t2 (id)>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD FOREIGN KEY (t2_id) REFERENCES t2 (id)
 # ADD CONSTRAINT action with FOREIGN KEY constraint with constraint name
 >ALTER TABLE t1 ADD CONSTRAINT fk_t2 FOREIGN KEY (t2_id) REFERENCES t2 (id);
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: ADD CONSTRAINT fk_t2 FOREIGN KEY (t2_id) REFERENCES t2 (id)>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: ADD CONSTRAINT fk_t2 FOREIGN KEY (t2_id) REFERENCES t2 (id)
 # DROP CONSTRAINT action no drop behaviour
 >ALTER TABLE t1 DROP CONSTRAINT b;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: DROP CONSTRAINT b CASCADE>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: DROP CONSTRAINT b CASCADE
 # DROP CONSTRAINT action with explicit drop behaviour of default CASCADE
 >ALTER TABLE t1 DROP CONSTRAINT b CASCADE;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: DROP CONSTRAINT b CASCADE>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: DROP CONSTRAINT b CASCADE
 # DROP CONSTRAINT action with explicit drop behaviour of RESTRICT
 >ALTER TABLE t1 DROP CONSTRAINT b RESTRICT;
-OK
-statements[0]:
-  <statement: ALTER TABLE
-   table name: t1
-   action: DROP CONSTRAINT b RESTRICT>
+statements:
+- type: ALTER_TABLE
+  table_name: t1
+  action: DROP CONSTRAINT b RESTRICT

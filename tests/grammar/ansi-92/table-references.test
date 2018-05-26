@@ -1,36 +1,32 @@
 # Normal table with no alias
 >SELECT * FROM t1
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1>
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1
 # Normal table with an alias using AS keyword
 >SELECT * FROM t1 AS t1_alias
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1 AS t1_alias>
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1 AS t1_alias
 # Normal table with an alias NOT using AS keyword
 >SELECT * FROM t1 t1_alias
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: t1 AS t1_alias>
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - t1 AS t1_alias
 # Derived table with name using AS keyword
 >SELECT * FROM (SELECT a, b FROM t1) AS t
-OK
-statements[0]:
-  <statement: SELECT
-   selected columns:
-     0: *
-   referenced tables:
-     0: <derived table> AS t>
+statements:
+- type: SELECT
+  selected_columns:
+    - *
+  referenced_tables:
+    - <derived table> AS t
