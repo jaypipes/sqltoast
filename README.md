@@ -40,74 +40,105 @@ int main(int argc, char *argv[]) {
 }
 ```
 
-One of the most important attributes of the `sqltoast::parse_result_t` struct
-is the `statements` field, which is of type
+An important attribute of the `sqltoast::parse_result_t` struct is the
+`statements` field, which is of type
 `std::vector<std::unique_ptr<sqltoast::statement_t>>`. For each valid SQL
 statement parsed by `sqltoast::parse()`, there will be a
 `std::unique_ptr<sqltoast::statement_t>` subclassed struct in the `statements`
 field.
 
 The [example program](sqltoaster/main.cc) included in the
-[sqltoaster/](sqltoaster/) directory can show you one way of interacting with
-this important collection of structs:
+[sqltoaster/](sqltoaster/) directory can be a good guide to lean about the
+collection of `sqltoast::statement_t` structs.
 
-```c++
-    unsigned int x = 0;
-    for (auto stmt_ptr_it = p.res.statements.cbegin();
-            stmt_ptr_it != p.res.statements.cend();
-            stmt_ptr_it++) {
-        cout << "statements[" << x++ << "]:" << endl;
-        cout << "  " << *(*stmt_ptr_it) << endl;
-    }
+The example program contains "printer functions" for each type of
+`sqltoast::statement_t` struct that is part of the `sqltoast` library. The
+example program outputs in a variety of formats, including YAML, so you can,
+for example, see a YAML document that describes the parsed
+`sqltoast::statement_t` type. Reading through the printer functions can give
+you a good idea of the structure of these `sqltoast::statement_t` types and how
+to utilize the parsed information.
+
+After building the `sqltoaster` binary, let's ask it to parse a `SELECT`
+statement and output the parsed information as a YAML document.
+
+```
+sqltoaster --yaml "SELECT a FROM t1"
+OK
+statements:
+- type: SELECT
+  selected_columns:
+    - column-reference[a]
+  referenced_tables:
+    - t1
+(took 15790 nanoseconds)
 ```
 
-The example program contains "printer functions" for each of the important
-structures that are part of the `sqltoast` library.
+By examining the `sqltoaster::print::to_yaml()` function in the `sqltoaster`
+program, we can see how to read information about a particular
+`sqltoast::statement_t` struct that is contained in the
+`sqltoast::parse_result_t` struct's `statements` attribute.
 
-These printer functions are merely operator `<<` overloads that accept a
-`std::ostream` and one of the `sqltoast` library structures.
+**NOTE**: I've trimmed the code below and slightly modified it (removing some
+indenting-related fluff) for brevity.
 
-Examining the printer function for a subclass of `sqltoast::statement_t` will
-help you understand the various attributes and sub-structs that comprise the
-SQL statement.
-
-For example, let's take a look at the printer function (in
-[sqltoaster/src/statement.cc](sqltoast/src/statement.cc) for the
-`sqltoast::select_t` statement subclass struct:
+First, let's take a look at the `sqltoaster::print::to_yaml()` function that
+receives a `sqltoast::statement_t` object. This is our "top-level" YAML-output
+function for SQL statements.
 
 ```c++
-std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt) {
-    out << "<statement: SELECT";
-    if (stmt.distinct)
-       out << std::endl << "   distinct: true";
-    out << std::endl << "   selected columns:";
-    size_t x = 0;
-    for (const derived_column_t& dc : stmt.selected_columns) {
-        out << std::endl << "     " << x++ << ": " << dc;
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stmt) {
+    switch (stmt.type) {
+        // ...
+        case sqltoast::STATEMENT_TYPE_SELECT:
+            out << "type: SELECT";
+            {
+                const sqltoast::select_statement_t& sub =
+                    static_cast<const sqltoast::select_statement_t&>(stmt);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        // ...
     }
-    out << std::endl << "   referenced tables:";
-    x = 0;
-    for (const std::unique_ptr<table_reference_t>& tr : stmt.referenced_tables) {
-        out << std::endl << "     " << x++ << ": " << *tr;
-    }
-    if (stmt.where_condition) {
-        out << std::endl << "   where:" << std::endl << "     ";
-        out << *stmt.where_condition;
-    }
-    if (! stmt.group_by_columns.empty()) {
-        out << std::endl << "   group by:";
-        x = 0;
-        for (const grouping_column_reference_t& gcr : stmt.group_by_columns) {
-            out << std::endl << "     " << x++ << ": " << gcr;
-        }
-    }
-    if (stmt.having_condition) {
-        out << std::endl << "   having:" << std::endl << "     ";
-        out << *stmt.having_condition;
-    }
-    out << ">" << std::endl;
+}
+```
 
-    return out;
+The above demonstrates an important pattern deployed in the `sqltoast` library
+and a fundamental technique used by the example `sqltoaster` program to sift
+through the components of the parse tree.
+
+For performance reasons, `sqltoast` is built with no run-time type
+identification (RTTI). All type identification must be handled at compile time,
+and due to this, users of the `sqltoast` library (in this case, the example
+`sqltoaster` program) use a "type switch" approach to determine what class of
+statement the supplied `sqltoast::statement_t` reference is and then use a
+`static_cast<>` to convert the `sqltoast::statement_t&` into the appropriate
+derived type.
+
+Once you've `static_cast<>`'d to a reference of the derived type, you would
+operate on that derived type reference, as shown in this code that examines the
+elements of the `sqltoast::select_statement_t` sub-type and outputs those
+elements into the YAML document.
+
+```c++
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt) {
+    if (stmt.distinct)
+       out << "distinct: true";
+    out << "selected_columns:";
+    for (const sqltoast::derived_column_t& dc : stmt.selected_columns)
+        out << "- " << dc;
+    out << "referenced_tables:";
+    for (const std::unique_ptr<sqltoast::table_reference_t>& tr : stmt.referenced_tables)
+        out << "- " << *tr;
+    if (stmt.where_condition)
+        out << "where:" << *stmt.where_condition;
+    if (! stmt.group_by_columns.empty()) {
+        out << "group_by:";
+        for (const sqltoast::grouping_column_reference_t& gcr : stmt.group_by_columns)
+            out << "- " << gcr;
+    }
+    if (stmt.having_condition)
+        out << "having:" << *stmt.having_condition;
 }
 ```
 

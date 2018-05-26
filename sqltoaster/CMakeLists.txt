@@ -6,16 +6,6 @@ SET(PROJECT_DESCRIPTION "A demonstration of the sqltoast library")
 SET(SQLTOASTER_SOURCES
     main.cc
     printer.cc
-    print/identifier.cc
-    print/constraint.cc
-    print/column_definition.cc
-    print/column_reference.cc
-    print/data_type.cc
-    print/statement.cc
-    print/predicate.cc
-    print/table_reference.cc
-    print/value.cc
-    print/value_expression.cc
     print/yaml/statement.cc
 )
 
