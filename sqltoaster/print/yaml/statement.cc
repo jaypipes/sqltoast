@@ -257,9 +257,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_acti
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_statement_t& stmt) {
-    out << "<statement: ALTER TABLE" << std::endl
-        << "   table name: " << stmt.table_name << std::endl;
-    out << "   action: " << *stmt.action;
+    ptr.indent(out) << "table_name: " << stmt.table_name;
+    ptr.indent(out) << "action: " << *stmt.action;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt) {
@@ -318,60 +317,60 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt) {
-    out << "<statement: INSERT" << std::endl
-        << "   table name: " << stmt.table_name;
-
+    ptr.indent(out) << "table_name: " << stmt.table_name;
     if (stmt.use_default_columns())
-        out << std::endl << "   default columns: true";
+        ptr.indent(out) << "default_columns: true";
     else {
-        out << std::endl << "   columns:";
-        size_t x = 0;
-        for (const sqltoast::lexeme_t& col : stmt.insert_columns) {
-            out << std::endl << "     " << x++ << ": " << col;
-        }
+        ptr.indent(out) << "columns:";
+        ptr.indent_push(out);
+        for (const sqltoast::lexeme_t& col : stmt.insert_columns)
+            ptr.indent(out) << "- " << col;
+        ptr.indent_pop(out);
     }
     if (stmt.use_default_values())
-        out << std::endl << "   default values: true";
+        ptr.indent(out) << "default_values: true";
     else {
-        size_t x = 0;
-        out << std::endl << "   values:";
-        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values) {
-            out << std::endl << "     " << x++ << ": " << *val;
-        }
+        ptr.indent(out) << "values:";
+        ptr.indent_push(out);
+        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values)
+            ptr.indent(out) << "- " << *val;
+        ptr.indent_pop(out);
     }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_statement_t& stmt) {
-    out << "<statement: INSERT" << std::endl
-        << "   table name: " << stmt.table_name;
-
+    ptr.indent(out) << "table_name: " << stmt.table_name;
     if (stmt.use_default_columns())
-        out << std::endl << "   default columns: true";
+        ptr.indent(out) << "default_columns: true";
     else {
-        out << std::endl << "   columns:";
-        size_t x = 0;
-        for (const sqltoast::lexeme_t& col : stmt.insert_columns) {
-            out << std::endl << "     " << x++ << ": " << col;
-        }
+        ptr.indent(out) << "columns:";
+        ptr.indent_push(out);
+        for (const sqltoast::lexeme_t& col : stmt.insert_columns)
+            ptr.indent(out) << "- " << col;
+        ptr.indent_pop(out);
     }
-    out << std::endl << "   select:" << std::endl << "     " << *stmt.select;
+    ptr.indent(out) << "select:";
+    ptr.indent_push(out);
+    ptr.indent(out) << *stmt.select;
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt) {
-    out << "<statement: DELETE" << std::endl
-        << "   table name: " << stmt.table_name;
-
-    if (stmt.where_condition)
-        out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;
+    ptr.indent(out) << "table_name: " << stmt.table_name;
+    if (stmt.where_condition) {
+        ptr.indent(out) << "where:";
+        ptr.indent_push(out);
+        ptr.indent(out) << *stmt.where_condition;
+        ptr.indent_pop(out);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt) {
-    out << "<statement: UPDATE" << std::endl
-        << "   table name: " << stmt.table_name;
-
-    out << std::endl << "   set columns:";
+    ptr.indent(out) << "table_name: " << stmt.table_name;
+    ptr.indent(out) << "set_columns:";
+    ptr.indent_push(out);
     for (const sqltoast::set_column_t& set_col : stmt.set_columns) {
-        out << std::endl << "     " << set_col.column_name << " = ";
+        ptr.indent(out) << set_col.column_name << ": ";
         if (set_col.type == sqltoast::SET_COLUMN_TYPE_NULL)
             out << "NULL";
         else if (set_col.type == sqltoast::SET_COLUMN_TYPE_DEFAULT)
@@ -379,9 +378,14 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement
         else
             out << *set_col.value;
     }
+    ptr.indent_pop(out);
 
-    if (stmt.where_condition)
-        out << std::endl << "   where:" << std::endl << "     " << *stmt.where_condition;
+    if (stmt.where_condition) {
+        ptr.indent(out) << "where:";
+        ptr.indent_push(out);
+        ptr.indent(out) << *stmt.where_condition;
+        ptr.indent_pop(out);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& action) {
@@ -420,8 +424,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& 
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_statement_t& stmt) {
-    out << "<statement: GRANT" << std::endl
-        << "   on: ";
+    ptr.indent(out) << "on: ";
     switch (stmt.object_type) {
         case sqltoast::GRANT_OBJECT_TYPE_TABLE:
             break;
@@ -438,20 +441,24 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_statement_
             out << "TRANSLATION ";
             break;
     }
-    out << stmt.on << std::endl;
+    out << stmt.on;
     if (stmt.to_public())
-        out << "   to: PUBLIC" << std::endl;
+        ptr.indent(out) << "to: PUBLIC";
     else
-        out << "   to: " << stmt.to << std::endl;
+        ptr.indent(out) << "to: " << stmt.to;
     if (stmt.with_grant_option)
-        out << "   with grant option: YES" << std::endl;
-    if (stmt.all_privileges())
-        out << "   privileges: ALL";
-    else {
-        out << "   privileges:";
-        size_t x = 0;
+        ptr.indent(out) << "with_grant_option: YES";
+    if (stmt.all_privileges()) {
+        ptr.indent(out) << "privileges:";
+        ptr.indent_push(out);
+        ptr.indent(out) << "- ALL";
+        ptr.indent_pop(out);
+    } else {
+        ptr.indent(out) << "privileges:";
+        ptr.indent_push(out);
         for (const std::unique_ptr<sqltoast::grant_action_t>& action : stmt.privileges)
-            out << std::endl << "     " << x++ << ": " << *action;
+            ptr.indent(out) << "- " << *action;
+        ptr.indent_pop(out);
     }
 }
 
