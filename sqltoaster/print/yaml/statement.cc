@@ -157,10 +157,24 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_table_sta
     }
     ptr.indent(out) << "column_definitions:";
     ptr.indent_push(out);
-    for (auto cdef_it = stmt.column_definitions.begin();
-            cdef_it != stmt.column_definitions.end();
+    for (auto cdef_it = stmt.column_definitions.cbegin();
+            cdef_it != stmt.column_definitions.cend();
             cdef_it++) {
-        ptr.indent(out) << "- "<< *(*cdef_it);
+        const sqltoast::column_definition_t& cdef = *(*cdef_it);
+        ptr.indent(out) << cdef.name << ": ";
+        if (cdef.data_type.get()) {
+            out << *cdef.data_type;
+        } else {
+            out << " UNKNOWN";
+        }
+        if (cdef.default_descriptor.get()) {
+            out << " " << *cdef.default_descriptor;
+        }
+        for (const std::unique_ptr<sqltoast::constraint_t>& c: cdef.constraints)
+            out << *c;
+        if (cdef.collate) {
+            out << " COLLATE " << cdef.collate;
+        }
     }
     ptr.indent_pop(out);
     if (stmt.constraints.size() > 0) {
