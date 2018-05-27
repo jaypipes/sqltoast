@@ -735,18 +735,36 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::comp_op_t& op) {
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::comp_predicate_t& pred) {
     to_yaml(ptr, out, pred.op);
-    ptr.indent(out) << "left: " << *pred.left;
-    ptr.indent(out) << "right: "<< *pred.right;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.left);
+    ptr.indent_pop(out);
+    ptr.indent(out) << "right:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.right);
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::between_predicate_t& pred) {
-    ptr.indent(out) << "left: " << *pred.left;
-    ptr.indent(out) << "comp_left: " << *pred.comp_left;
-    ptr.indent(out) << "comp_right: "<< *pred.comp_right;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.left);
+    ptr.indent_pop(out);
+    ptr.indent(out) << "comp_left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.comp_left);
+    ptr.indent_pop(out);
+    ptr.indent(out) << "comp_right:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.comp_right);
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::like_predicate_t& pred) {
-    ptr.indent(out) << "match: " << *pred.match;
+    ptr.indent(out) << "match:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.match);
+    ptr.indent_pop(out);
     if (pred.reverse_op)
         ptr.indent(out) << "predicate_negate: true";
     ptr.indent(out) << "pattern: " << *pred.pattern;
@@ -760,7 +778,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::null_predicate_t
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_values_predicate_t& pred) {
-    ptr.indent(out) << "left: " << *pred.left;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.left);
+    ptr.indent_pop(out);
     if (pred.reverse_op)
         ptr.indent(out) << "predicate_negate: true";
     ptr.indent(out) << "values:";
@@ -771,7 +792,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_values_predic
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_subquery_predicate_t& pred) {
-    ptr.indent(out) << "left: " << *pred.left;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.left);
+    ptr.indent_pop(out);
     ptr.indent(out) << "query:";
     ptr.indent_push(out);
     to_yaml(ptr, out, *pred.subquery);
@@ -780,7 +804,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_subquery_pred
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::quantified_comparison_predicate_t& pred) {
     to_yaml(ptr, out, pred.op);
-    ptr.indent(out) << "left: " << *pred.left;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.left);
+    ptr.indent_pop(out);
     if (pred.quantifier == sqltoast::QUANTIFIER_ALL)
         ptr.indent(out) << "quantifier: ALL";
     else
@@ -806,7 +833,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::unique_predicate
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::match_predicate_t& pred) {
-    ptr.indent(out) << "left: " << *pred.left;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.left);
+    ptr.indent_pop(out);
     if (pred.match_unique)
         ptr.indent(out) << "unique: true";
     if (pred.match_partial)
@@ -818,8 +848,14 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::match_predicate_
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::overlaps_predicate_t& pred) {
-    ptr.indent(out) << "left: " << *pred.left;
-    ptr.indent(out) << "right: " << *pred.right;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.left);
+    ptr.indent_pop(out);
+    ptr.indent(out) << "right:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.right);
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_primary_t& bp) {
@@ -848,6 +884,63 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_term_t& 
         ptr.indent_pop(out);
         ptr.indent_pop(out);
     }
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_t& rvc) {
+    switch (rvc.rvc_type) {
+        case sqltoast::RVC_TYPE_ELEMENT:
+            {
+                const sqltoast::row_value_constructor_element_t& el =
+                    static_cast<const sqltoast::row_value_constructor_element_t&>(rvc);
+                to_yaml(ptr, out, el, false);
+            }
+            break;
+        case sqltoast::RVC_TYPE_LIST:
+            {
+                const sqltoast::row_value_constructor_list_t& els =
+                    static_cast<const sqltoast::row_value_constructor_list_t&>(rvc);
+                for (const auto& rvc_el : els.elements) {
+                    const sqltoast::row_value_constructor_element_t& el =
+                        static_cast<const sqltoast::row_value_constructor_element_t&>(*rvc_el);
+                    to_yaml(ptr, out, el, true);
+                }
+            }
+            break;
+        case sqltoast::RVC_TYPE_SUBQUERY:
+            // TODO
+            out << "row-value-constructor-subquery";
+            break;
+    }
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_element_t& rvce, bool list_item) {
+    std::string prefix;
+    if (list_item)
+        prefix.assign("- ");
+    switch (rvce.rvc_element_type) {
+        case sqltoast::RVC_ELEMENT_TYPE_DEFAULT:
+            ptr.indent(out) << prefix << "element_type: DEFAULT";
+            break;
+        case sqltoast::RVC_ELEMENT_TYPE_NULL:
+            ptr.indent(out) << prefix << "element_type: NULL";
+            break;
+        case sqltoast::RVC_ELEMENT_TYPE_VALUE_EXPRESSION:
+            ptr.indent(out) << prefix << "element_type: VALUE_EXPRESSION";
+            if (list_item)
+                ptr.indent_push(out);
+            {
+                const sqltoast::row_value_expression_t& val =
+                    static_cast<const sqltoast::row_value_expression_t&>(rvce);
+                to_yaml(ptr, out, val);
+            }
+            if (list_item)
+                ptr.indent_pop(out);
+            break;
+    }
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_expression_t& rve) {
+    ptr.indent(out) << "value: " << *rve.value;
 }
 
 } // namespace sqltoast::print

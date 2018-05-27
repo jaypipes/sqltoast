@@ -38,14 +38,13 @@ std::ostream& operator<< (std::ostream& out, const row_value_constructor_t& rvc)
     return out;
 }
 
-
 std::ostream& operator<< (std::ostream& out, const row_value_constructor_element_t& rvce) {
     switch (rvce.rvc_element_type) {
         case RVC_ELEMENT_TYPE_DEFAULT:
-            out <<"DEFAULT";
+            out << "DEFAULT";
             break;
         case RVC_ELEMENT_TYPE_NULL:
-            out <<"NULL";
+            out << "NULL";
             break;
         case RVC_ELEMENT_TYPE_VALUE_EXPRESSION:
             {

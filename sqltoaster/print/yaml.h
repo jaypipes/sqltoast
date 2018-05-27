@@ -55,6 +55,9 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::quantified_compa
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_expression_t& qe);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_non_join_query_primary_t& primary);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_t& query);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_element_t& rvce, bool list_item);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_t& rvc);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_expression_t& rve);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::search_condition_t& sc);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stmt);
