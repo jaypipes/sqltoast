@@ -5,7 +5,7 @@
  */
 
 #include "printer.h"
-#include "print/yaml/printers.h"
+#include "print/yaml.h"
 
 namespace sqltoaster {
 

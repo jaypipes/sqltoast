@@ -6,7 +6,7 @@
 
 #include <sqltoast/print.h>
 
-#include "printers.h"
+#include "yaml.h"
 
 namespace sqltoaster {
 namespace print {

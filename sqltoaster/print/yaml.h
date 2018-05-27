@@ -9,7 +9,7 @@
 
 #include <sqltoast/print.h>
 
-#include "../../printer.h"
+#include "../printer.h"
 
 namespace sqltoaster {
 namespace print {
@@ -45,7 +45,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt);
 
-} // namespace sqltoast::print
-} // namespace sqltoast
+} // namespace sqltoaster::print
+} // namespace sqltoaster
 
 #endif /* SQLTOASTER_PRINT_YAML_PRINTERS_H */

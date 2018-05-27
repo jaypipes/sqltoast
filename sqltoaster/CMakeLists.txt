@@ -6,7 +6,7 @@ SET(PROJECT_DESCRIPTION "A demonstration of the sqltoast library")
 SET(SQLTOASTER_SOURCES
     main.cc
     printer.cc
-    print/yaml/statement.cc
+    print/yaml.cc
 )
 
 ADD_EXECUTABLE(sqltoaster ${SQLTOASTER_SOURCES})
