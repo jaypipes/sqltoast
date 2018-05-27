@@ -170,8 +170,8 @@ subquery_or_subexpression:
 process_subquery:
 {
     parse_position_t subq_start = cur_tok.lexeme.start;
-    std::unique_ptr<statement_t> subq;
-    if (! parse_select(ctx, cur_tok, subq))
+    std::unique_ptr<query_expression_t> subq;
+    if (! parse_query_expression(ctx, cur_tok, subq))
         return false;
     parse_position_t subq_end = cur_tok.lexeme.start - 1;
     vep_lexeme.start = subq_start;

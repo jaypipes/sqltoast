@@ -61,7 +61,7 @@ bool parse_table_reference(
     lexeme_t alias;
     join_type_t join_type = JOIN_TYPE_UNKNOWN;
     std::unique_ptr<search_condition_t> join_cond;
-    std::unique_ptr<statement_t> derived;
+    std::unique_ptr<query_expression_t> derived;
     std::unique_ptr<table_reference_t> right;
     // Used for the USING clause
     std::vector<lexeme_t> named_columns;
@@ -77,7 +77,7 @@ bool parse_table_reference(
             return false;
     }
 expect_derived_table:
-    if (! parse_select(ctx, cur_tok, derived))
+    if (! parse_query_expression(ctx, cur_tok, derived))
         return false;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)

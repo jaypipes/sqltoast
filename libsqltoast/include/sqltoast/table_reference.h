@@ -43,13 +43,13 @@ typedef struct table : table_reference_t {
     }
 } table_t;
 
+struct query_expression;
 typedef struct derived_table : table_reference_t {
     lexeme_t table_name;
-    // Will always be static_castable to select_statement_t
-    std::unique_ptr<statement_t> subquery;
+    std::unique_ptr<struct query_expression> subquery;
     derived_table(
             lexeme_t& table_name,
-            std::unique_ptr<statement_t>& subquery) :
+            std::unique_ptr<struct query_expression>& subquery) :
         table_reference_t(TABLE_REFERENCE_TYPE_DERIVED_TABLE),
         table_name(table_name),
         subquery(std::move(subquery))

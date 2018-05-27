@@ -123,15 +123,14 @@ typedef struct in_values_predicate : predicate_t {
     {}
 } in_values_predicate_t;
 
-typedef struct statement statement_t;
+struct query_expression;
 typedef struct in_subquery_predicate : predicate_t {
     bool reverse_op;
     std::unique_ptr<row_value_constructor_t> left;
-    // Guaranteed to always be static_castable to a select_t
-    std::unique_ptr<statement_t> subquery;
+    std::unique_ptr<struct query_expression> subquery;
     in_subquery_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
-            std::unique_ptr<statement_t>& subq,
+            std::unique_ptr<struct query_expression>& subq,
             bool reverse_op) :
         predicate_t(PREDICATE_TYPE_IN_SUBQUERY),
         reverse_op(reverse_op),
@@ -150,13 +149,12 @@ typedef struct quantified_comparison_predicate : predicate_t {
     comp_op_t op;
     quantifier_t quantifier;
     std::unique_ptr<row_value_constructor_t> left;
-    // Guaranteed to always be static_castable to a select_t
-    std::unique_ptr<statement_t> subquery;
+    std::unique_ptr<struct query_expression> subquery;
     quantified_comparison_predicate(
             comp_op_t op,
             quantifier_t quantifier,
             std::unique_ptr<row_value_constructor_t>& left,
-            std::unique_ptr<statement_t>& subq) :
+            std::unique_ptr<struct query_expression>& subq) :
         predicate_t(PREDICATE_TYPE_QUANTIFIED_COMPARISON),
         op(op),
         quantifier(quantifier),
@@ -166,9 +164,8 @@ typedef struct quantified_comparison_predicate : predicate_t {
 } quantified_comparison_predicate_t;
 
 typedef struct exists_predicate : predicate_t {
-    // Guaranteed to always be static_castable to a select_t
-    std::unique_ptr<statement_t> subquery;
-    exists_predicate(std::unique_ptr<statement_t>& subq) :
+    std::unique_ptr<struct query_expression> subquery;
+    exists_predicate(std::unique_ptr<struct query_expression>& subq) :
         predicate_t(PREDICATE_TYPE_EXISTS),
         subquery(std::move(subq))
     {}
@@ -176,8 +173,8 @@ typedef struct exists_predicate : predicate_t {
 
 typedef struct unique_predicate : predicate_t {
     // Guaranteed to always be static_castable to a select_t
-    std::unique_ptr<statement_t> subquery;
-    unique_predicate(std::unique_ptr<statement_t>& subq) :
+    std::unique_ptr<struct query_expression> subquery;
+    unique_predicate(std::unique_ptr<struct query_expression>& subq) :
         predicate_t(PREDICATE_TYPE_UNIQUE),
         subquery(std::move(subq))
     {}
@@ -188,12 +185,12 @@ typedef struct match_predicate : predicate_t {
     bool match_unique;
     bool match_partial;
     // Guaranteed to always be static_castable to a select_t
-    std::unique_ptr<statement_t> subquery;
+    std::unique_ptr<struct query_expression> subquery;
     match_predicate(
             std::unique_ptr<row_value_constructor_t>& left,
             bool match_unique,
             bool match_partial,
-            std::unique_ptr<statement_t>& subq) :
+            std::unique_ptr<struct query_expression>& subq) :
         predicate_t(PREDICATE_TYPE_MATCH),
         left(std::move(left)),
         match_unique(match_unique),

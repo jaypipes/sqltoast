@@ -36,11 +36,7 @@ statements:
 - type: SELECT
   selected_columns:
     - scalar-subquery[
-<statement: SELECT
-   selected columns:
-     0: column-reference[b]
-   referenced tables:
-     0: t2>]
+query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
   referenced_tables:
     - t1
 # named and dynamic parameters

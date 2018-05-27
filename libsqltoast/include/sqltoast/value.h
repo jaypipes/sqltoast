@@ -215,12 +215,11 @@ typedef struct value_subexpression : value_expression_primary_t {
 
 // A value expression primary that contains a subquery that evaluates to a
 // scalar value
-struct statement;
+struct query_expression;
 typedef struct scalar_subquery : value_expression_primary_t {
-    // Always static_castable to a select_statement_t
-    std::unique_ptr<struct statement> subquery;
+    std::unique_ptr<struct query_expression> subquery;
     scalar_subquery(
-            std::unique_ptr<struct statement>& subquery,
+            std::unique_ptr<struct query_expression>& subquery,
             lexeme_t lexeme) :
         value_expression_primary_t(VEP_TYPE_SCALAR_SUBQUERY, lexeme),
         subquery(std::move(subquery))
