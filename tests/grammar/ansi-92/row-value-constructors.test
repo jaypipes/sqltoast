@@ -7,7 +7,11 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: (column-reference[a],column-reference[b]) = (column-reference[b],column-reference[a])
+  where:
+    - predicate_type: COMPARISON
+      op: EQUAL
+      left: (column-reference[a],column-reference[b])
+      right: (column-reference[b],column-reference[a])
 # Single-value row value constructor lists are OK too
 >SELECT * FROM t1 WHERE (a) = (b)
 statements:
@@ -16,7 +20,11 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: (column-reference[a]) = (column-reference[b])
+  where:
+    - predicate_type: COMPARISON
+      op: EQUAL
+      left: (column-reference[a])
+      right: (column-reference[b])
 # scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2)
 statements:
@@ -25,7 +33,11 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[a] = scalar-subquery[
+  where:
+    - predicate_type: COMPARISON
+      op: EQUAL
+      left: column-reference[a]
+      right: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
 # scalar subquery inside another scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2 WHERE b = (SELECT c FROM t3))
@@ -35,7 +47,11 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[a] = scalar-subquery[
+  where:
+    - predicate_type: COMPARISON
+      op: EQUAL
+      left: column-reference[a]
+      right: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2 where[column-reference[b] = scalar-subquery[
 query[selected-columns[column-reference[c]] table-expression[referenced-tables[t3]]]]]]]
 # scalar subquery with correlation and alias
@@ -46,5 +62,9 @@ statements:
     - *
   referenced_tables:
     - t1
-  where: column-reference[num_t2] = scalar-subquery[
+  where:
+    - predicate_type: COMPARISON
+      op: EQUAL
+      left: column-reference[num_t2]
+      right: scalar-subquery[
 query[selected-columns[COUNT(*)] table-expression[referenced-tables[t2 where[column-reference[t2.t1_id] = column-reference[t1.id]]]]]
