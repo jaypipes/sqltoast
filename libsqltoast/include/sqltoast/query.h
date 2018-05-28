@@ -11,7 +11,6 @@ namespace sqltoast {
 
 // A table expression describes the tables involved in a query expression along
 // with filtering, grouping and aggregate expressions on those tables
-
 typedef struct table_expression {
     std::vector<std::unique_ptr<table_reference_t>> referenced_tables;
     std::unique_ptr<search_condition_t> where_condition;
@@ -51,13 +50,28 @@ typedef enum query_component_type_t {
 } query_component_type_t;
 
 // A query expression produces a table-like selection of rows.
-
 typedef struct query_expression {
     query_component_type_t query_component_type;
     query_expression(query_component_type_t qe_type) :
         query_component_type(qe_type)
     {}
 } query_expression_t;
+
+// A query term is a component of a query expression
+typedef struct query_term {
+    query_component_type_t query_component_type;
+    query_term(query_component_type_t component_type) :
+        query_component_type(component_type)
+    {}
+} query_term_t;
+
+// A query primary is a component of a query term
+typedef struct query_primary {
+    query_component_type_t query_component_type;
+    query_primary(query_component_type_t component_type) :
+        query_component_type(component_type)
+    {}
+} query_primary_t;
 
 typedef enum non_join_query_primary_type {
     NON_JOIN_QUERY_PRIMARY_TYPE_QUERY_SPECIFICATION,
@@ -66,10 +80,11 @@ typedef enum non_join_query_primary_type {
     NON_JOIN_QUERY_PRIMARY_TYPE_SUBEXPRESSION
 } non_join_query_primary_type_t;
 
-typedef struct non_join_query_primary {
+typedef struct non_join_query_primary : query_primary_t {
     non_join_query_primary_type primary_type;
     non_join_query_primary(
             non_join_query_primary_type_t primary_type) :
+        query_primary_t(QUERY_COMPONENT_TYPE_NON_JOIN),
         primary_type(primary_type)
     {}
 } non_join_query_primary_t;
@@ -100,12 +115,14 @@ typedef struct table_value_constructor_non_join_query_primary : non_join_query_p
     {}
 } table_value_constructor_non_join_query_primary_t;
 
-typedef struct query_term {
-    query_component_type_t query_component_type;
-    query_term(query_component_type_t component_type) :
-        query_component_type(component_type)
+typedef struct joined_table_query_primary : query_primary_t {
+    std::unique_ptr<joined_table_t> joined_table;
+    joined_table_query_primary(
+            std::unique_ptr<joined_table_t>& joined_table) :
+        query_primary_t(QUERY_COMPONENT_TYPE_JOINED_TABLE),
+        joined_table(std::move(joined_table))
     {}
-} query_term_t;
+} joined_table_query_primary_t;
 
 typedef struct non_join_query_term : query_term_t {
     std::unique_ptr<non_join_query_primary_t> primary;
@@ -115,6 +132,15 @@ typedef struct non_join_query_term : query_term_t {
         primary(std::move(primary))
     {}
 } non_join_query_term_t;
+
+typedef struct joined_table_query_term : query_term_t {
+    std::unique_ptr<joined_table_t> joined_table;
+    joined_table_query_term(
+            std::unique_ptr<joined_table_t>& joined_table) :
+        query_term_t(QUERY_COMPONENT_TYPE_JOINED_TABLE),
+        joined_table(std::move(joined_table))
+    {}
+} joined_table_query_term_t;
 
 typedef struct non_join_query_expression : query_expression_t {
     std::unique_ptr<non_join_query_term_t> term;
