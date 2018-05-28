@@ -54,15 +54,15 @@ std::ostream& operator<< (std::ostream& out, const table_expression_t& table_exp
 }
 
 std::ostream& operator<< (std::ostream& out, const query_expression_t& qe) {
-    switch (qe.query_expression_type) {
-        case QUERY_EXPRESSION_TYPE_NON_JOIN_QUERY_EXPRESSION:
+    switch (qe.query_component_type) {
+        case QUERY_COMPONENT_TYPE_NON_JOIN:
             {
                 const non_join_query_expression_t& sub =
                     static_cast<const non_join_query_expression_t&>(qe);
                 out << sub;
             }
             break;
-        case QUERY_EXPRESSION_TYPE_JOINED_TABLE:
+        case QUERY_COMPONENT_TYPE_JOINED_TABLE:
             {
                 const joined_table_query_expression_t& sub =
                     static_cast<const joined_table_query_expression_t&>(qe);

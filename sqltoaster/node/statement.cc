@@ -294,15 +294,15 @@ void fill(mapping_t& node, const sqltoast::table_expression_t& table_exp) {
 }
 
 void fill(mapping_t& node, const sqltoast::query_expression_t& qe) {
-    switch (qe.query_expression_type) {
-        case sqltoast::QUERY_EXPRESSION_TYPE_NON_JOIN_QUERY_EXPRESSION:
+    switch (qe.query_component_type) {
+        case sqltoast::QUERY_COMPONENT_TYPE_NON_JOIN:
             {
                 const sqltoast::non_join_query_expression_t& sub =
                     static_cast<const sqltoast::non_join_query_expression_t&>(qe);
                 fill(node, sub);
             }
             break;
-        case sqltoast::QUERY_EXPRESSION_TYPE_JOINED_TABLE:
+        case sqltoast::QUERY_COMPONENT_TYPE_JOINED_TABLE:
             {
                 const sqltoast::joined_table_query_expression_t& sub =
                     static_cast<const sqltoast::joined_table_query_expression_t&>(qe);
