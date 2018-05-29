@@ -80,6 +80,7 @@ void fill(mapping_t& node, const sqltoast::quantified_comparison_predicate_t& pr
 void fill(mapping_t& node, const sqltoast::query_expression_t& qe);
 void fill(mapping_t& node, const sqltoast::query_specification_non_join_query_primary_t& primary);
 void fill(mapping_t& node, const sqltoast::query_specification_t& query);
+void fill(mapping_t& node, const sqltoast::query_term_t& term);
 void fill(mapping_t& node, const sqltoast::row_value_constructor_element_t& rvce);
 void fill(mapping_t& node, const sqltoast::row_value_constructor_t& rvc);
 void fill(mapping_t& node, const sqltoast::row_value_expression_t& rve);

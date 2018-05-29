@@ -135,10 +135,14 @@ bool parse_non_join_query_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<query_expression_t>& out);
+bool parse_query_term(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<query_term_t>& out);
 bool parse_non_join_query_term(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<non_join_query_term_t>& out);
+        std::unique_ptr<query_term_t>& out);
 bool parse_non_join_query_primary(
         parse_context_t& ctx,
         token_t& cur_tok,

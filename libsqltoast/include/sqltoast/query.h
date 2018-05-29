@@ -143,9 +143,10 @@ typedef struct joined_table_query_term : query_term_t {
 } joined_table_query_term_t;
 
 typedef struct non_join_query_expression : query_expression_t {
-    std::unique_ptr<non_join_query_term_t> term;
+    // Guaranteed to be static_castable to non_join_query_term_t.
+    std::unique_ptr<query_term_t> term;
     non_join_query_expression(
-            std::unique_ptr<non_join_query_term_t>& term) :
+            std::unique_ptr<query_term_t>& term) :
         query_expression_t(QUERY_COMPONENT_TYPE_NON_JOIN),
         term(std::move(term))
     {}
