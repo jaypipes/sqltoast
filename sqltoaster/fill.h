@@ -78,6 +78,7 @@ void fill(mapping_t& node, const sqltoast::position_expression_t& expr);
 void fill(mapping_t& node, const sqltoast::predicate_t& pred);
 void fill(mapping_t& node, const sqltoast::quantified_comparison_predicate_t& pred);
 void fill(mapping_t& node, const sqltoast::query_expression_t& qe);
+void fill(mapping_t& node, const sqltoast::query_primary_t& primary);
 void fill(mapping_t& node, const sqltoast::query_specification_non_join_query_primary_t& primary);
 void fill(mapping_t& node, const sqltoast::query_specification_t& query);
 void fill(mapping_t& node, const sqltoast::query_term_t& term);

@@ -53,6 +53,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::overlaps_predica
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pred);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::quantified_comparison_predicate_t& pred);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_expression_t& qe);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_primary_t& primary);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_non_join_query_primary_t& primary);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_t& query);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_term_t& term);

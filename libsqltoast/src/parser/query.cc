@@ -12,10 +12,6 @@ namespace sqltoast {
 // <query expression> ::=
 //     <non-join query expression>
 //     | <joined table>
-//
-// <query primary> ::=
-//     <non-join query primary>
-//     | <joined table>
 bool parse_query_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
@@ -107,14 +103,51 @@ bool parse_non_join_query_term(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<query_term_t>& out) {
-    std::unique_ptr<non_join_query_primary_t> njqp;
+    std::unique_ptr<query_primary_t> query_primary;
 
-    if (! parse_non_join_query_primary(ctx, cur_tok, njqp))
+    if (! parse_non_join_query_primary(ctx, cur_tok, query_primary))
         return false;
     // TODO(jaypipes): Handle INTERSECT
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<non_join_query_term_t>(njqp);
+    out = std::make_unique<non_join_query_term_t>(query_primary);
+    return true;
+}
+
+// <query primary> ::=
+//     <non-join query primary>
+//     | <joined table>
+bool parse_query_primary(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<query_primary_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    parse_position_t start = lex.cursor;
+    token_t start_tok = lex.current_token;
+    std::unique_ptr<joined_table_t> joined_table;
+    if (parse_non_join_query_primary(ctx, cur_tok, out))
+        return true;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+
+    // Reset cursor to before parsing of joined table attempt.
+    lex.cursor = start;
+    lex.current_token = cur_tok = start_tok;
+    if (! parse_joined_table(ctx, cur_tok, joined_table))
+        goto err_expect_joined_table;
+    goto push_joined_table_primary;
+err_expect_joined_table:
+    {
+        std::stringstream estr;
+        estr << "Expected <joined table> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+push_joined_table_primary:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<joined_table_query_primary_t>(joined_table);
     return true;
 }
 
@@ -129,7 +162,7 @@ bool parse_non_join_query_term(
 bool parse_non_join_query_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<non_join_query_primary_t>& out) {
+        std::unique_ptr<query_primary_t>& out) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = lex.cursor;
     token_t start_tok = lex.current_token;

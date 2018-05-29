@@ -103,6 +103,26 @@ std::ostream& operator<< (std::ostream& out, const non_join_query_term_t& term) 
     return out;
 }
 
+std::ostream& operator<< (std::ostream& out, const query_primary_t& primary) {
+    switch (primary.query_component_type) {
+        case QUERY_COMPONENT_TYPE_NON_JOIN:
+            {
+                const non_join_query_primary_t& sub =
+                    static_cast<const non_join_query_primary_t&>(primary);
+                out << sub;
+            }
+            break;
+        case QUERY_COMPONENT_TYPE_JOINED_TABLE:
+            {
+                const joined_table_query_primary_t& sub =
+                    static_cast<const joined_table_query_primary_t&>(primary);
+                out << sub;
+            }
+            break;
+    }
+    return out;
+}
+
 std::ostream& operator<< (std::ostream& out, const non_join_query_primary_t& primary) {
     switch (primary.primary_type) {
         case NON_JOIN_QUERY_PRIMARY_TYPE_QUERY_SPECIFICATION:

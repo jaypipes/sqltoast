@@ -376,6 +376,25 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_t
     to_yaml(ptr, out, *term.primary);
 }
 
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_primary_t& primary) {
+    switch (primary.query_component_type) {
+        case sqltoast::QUERY_COMPONENT_TYPE_NON_JOIN:
+            {
+                const sqltoast::non_join_query_primary_t& sub =
+                    static_cast<const sqltoast::non_join_query_primary_t&>(primary);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::QUERY_COMPONENT_TYPE_JOINED_TABLE:
+            {
+                const sqltoast::joined_table_query_primary_t& sub =
+                    static_cast<const sqltoast::joined_table_query_primary_t&>(primary);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+    }
+}
+
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_primary_t& primary) {
     switch (primary.primary_type) {
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_QUERY_SPECIFICATION:

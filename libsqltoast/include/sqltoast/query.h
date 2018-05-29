@@ -125,9 +125,10 @@ typedef struct joined_table_query_primary : query_primary_t {
 } joined_table_query_primary_t;
 
 typedef struct non_join_query_term : query_term_t {
-    std::unique_ptr<non_join_query_primary_t> primary;
+    // Guaranteed to be static_castable to non_join_query_primary_t
+    std::unique_ptr<query_primary_t> primary;
     non_join_query_term(
-            std::unique_ptr<non_join_query_primary_t>& primary) :
+            std::unique_ptr<query_primary_t>& primary) :
         query_term_t(QUERY_COMPONENT_TYPE_NON_JOIN),
         primary(std::move(primary))
     {}
