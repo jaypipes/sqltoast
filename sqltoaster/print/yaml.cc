@@ -903,60 +903,88 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_term_t& 
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_t& rvc) {
+    ptr.indent(out) << "row_value_constructor:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
     switch (rvc.rvc_type) {
         case sqltoast::RVC_TYPE_ELEMENT:
+            out << "ELEMENT";
+            ptr.indent(out) << "element:";
+            ptr.indent_push(out);
             {
-                const sqltoast::row_value_constructor_element_t& el =
+                const sqltoast::row_value_constructor_element_t& sub =
                     static_cast<const sqltoast::row_value_constructor_element_t&>(rvc);
-                to_yaml(ptr, out, el, false);
+                to_yaml(ptr, out, sub);
             }
+            ptr.indent_pop(out);
             break;
         case sqltoast::RVC_TYPE_LIST:
+            out << "LIST";
+            ptr.indent(out) << "elements:";
+            ptr.indent_push(out);
             {
-                const sqltoast::row_value_constructor_list_t& els =
+                const sqltoast::row_value_constructor_list_t& sub =
                     static_cast<const sqltoast::row_value_constructor_list_t&>(rvc);
-                for (const auto& rvc_el : els.elements) {
+                for (const auto& rvc_el : sub.elements) {
                     const sqltoast::row_value_constructor_element_t& el =
                         static_cast<const sqltoast::row_value_constructor_element_t&>(*rvc_el);
-                    to_yaml(ptr, out, el, true);
+                    ptr.start_list(out);
+                    to_yaml(ptr, out, el);
                 }
             }
+            ptr.indent_pop(out);
             break;
         case sqltoast::RVC_TYPE_SUBQUERY:
+            out << "SUBQUERY";
             // TODO
-            out << "row-value-constructor-subquery";
             break;
     }
+    ptr.indent_pop(out);
 }
 
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_element_t& rvce, bool list_item) {
-    std::string prefix;
-    if (list_item)
-        prefix.assign("- ");
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_element_t& rvce) {
+    // Need to save whether this was a list item so we can properly de-indent
+    // at the end
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- type: ";
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "type: ";
+    }
     switch (rvce.rvc_element_type) {
         case sqltoast::RVC_ELEMENT_TYPE_DEFAULT:
-            ptr.indent(out) << prefix << "element_type: DEFAULT";
+            out << "DEFAULT";
             break;
         case sqltoast::RVC_ELEMENT_TYPE_NULL:
-            ptr.indent(out) << prefix << "element_type: NULL";
+            out << "NULL";
             break;
         case sqltoast::RVC_ELEMENT_TYPE_VALUE_EXPRESSION:
-            ptr.indent(out) << prefix << "element_type: VALUE_EXPRESSION";
-            if (list_item)
-                ptr.indent_push(out);
+            out << "VALUE_EXPRESSION";
             {
                 const sqltoast::row_value_expression_t& val =
                     static_cast<const sqltoast::row_value_expression_t&>(rvce);
                 to_yaml(ptr, out, val);
             }
-            if (list_item)
-                ptr.indent_pop(out);
             break;
     }
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_expression_t& rve) {
-    ptr.indent(out) << "value: " << *rve.value;
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- value: ";
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "value: ";
+    }
+    out << *rve.value;
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 } // namespace sqltoast::print
