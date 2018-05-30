@@ -974,17 +974,161 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constr
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_expression_t& rve) {
+    // row_value_expressions only have a single attribute -- the value, so just
+    // pass through to that and condense the YAML output accordingly
+    to_yaml(ptr, out, *rve.value);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression_t& ve) {
     bool is_list = ptr.in_list(out);
     if (is_list) {
-        ptr.indent(out) << "- value: ";
+        ptr.indent(out) << "- value_expression:";
         ptr.end_list(out);
         ptr.indent_push(out);
     } else {
-        ptr.indent(out) << "value: ";
+        ptr.indent(out) << "value_expression:";
     }
-    out << *rve.value;
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
+    switch (ve.type) {
+        case sqltoast::VALUE_EXPRESSION_TYPE_NUMERIC_EXPRESSION:
+            out << "NUMERIC_EXPRESSION";
+            {
+                const sqltoast::numeric_expression_t& sub =
+                    static_cast<const sqltoast::numeric_expression_t&>(ve);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::VALUE_EXPRESSION_TYPE_STRING_EXPRESSION:
+            out << "STRING_EXPRESSION";
+            {
+                const sqltoast::character_value_expression_t& sub =
+                    static_cast<const sqltoast::character_value_expression_t&>(ve);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::VALUE_EXPRESSION_TYPE_DATETIME_EXPRESSION:
+            out << "DATETIME_EXPRESSION";
+            {
+                const sqltoast::datetime_value_expression_t& sub =
+                    static_cast<const sqltoast::datetime_value_expression_t&>(ve);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::VALUE_EXPRESSION_TYPE_INTERVAL_EXPRESSION:
+            out << "INTERVAL_EXPRESSION";
+            {
+                const sqltoast::interval_value_expression_t& sub =
+                    static_cast<const sqltoast::interval_value_expression_t&>(ve);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+    }
+    ptr.indent_pop(out);
     if (is_list)
         ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_expression_t& ne) {
+    ptr.indent(out) << "numeric_expression:";
+    ptr.indent_push(out);
+    if (! ne.right) {
+        if (! ne.left->right)
+            to_yaml(ptr, out, *ne.left);
+    } else {
+        ptr.indent(out) << "left:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *ne.left);
+        ptr.indent_pop(out);
+        if (ne.right) {
+            if (ne.op == sqltoast::NUMERIC_OP_ADD)
+                ptr.indent(out) << "op: ADD";
+            else
+                ptr.indent(out) << "op: SUBTRACT";
+            ptr.indent(out) << "right:";
+            ptr.indent_push(out);
+            to_yaml(ptr, out, *ne.right);
+            ptr.indent_pop(out);
+        }
+    }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t& nf) {
+    ptr.indent(out) << "factor:";
+    ptr.indent_push(out);
+    if (nf.sign != 0)
+        ptr.indent(out) << "sign: " << nf.sign;
+    ptr.indent(out) << "primary: " << *nf.value;
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& nt) {
+    ptr.indent(out) << "term:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *nt.left);
+    ptr.indent_pop(out);
+    if (nt.right) {
+        if (nt.op == sqltoast::NUMERIC_OP_MULTIPLY)
+            ptr.indent(out) << "op: MULTIPLY";
+        else
+            ptr.indent(out) << "op: DIVIDE";
+        ptr.indent(out) << "right:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *nt.right);
+        ptr.indent_pop(out);
+    }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_expression_t& cve) {
+    if (cve.values.size() > 1) {
+        out << "concatenate[";
+        size_t x = 0;
+        for (const std::unique_ptr<sqltoast::character_factor_t>& val : cve.values) {
+            if (x++ > 0)
+                out << ", ";
+            out << *val;
+        }
+        out << "]";
+    } else
+        out << *cve.values[0];
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de) {
+    // datetime expressions are the container for things that may be evaluated
+    // to a number. However, datetime expressions that have only a single
+    // element can be reduced to just that one element
+    if (! de.right)
+        out << "datetime-expression[" << *de.left << "]";
+    else {
+        out << "datetime-expression[";
+        out << *de.left;
+        if (de.op == sqltoast::NUMERIC_OP_ADD)
+            out << " + ";
+        else
+            out << " - ";
+        out << *de.right << "]";
+    }
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& ie) {
+    // interval expressions are the container for things that may be evaluated
+    // to a number. However, interval expressions that have only a single
+    // element can be reduced to just that one element
+    if (! ie.right)
+        out << "interval-expression[" << *ie.left << "]";
+    else {
+        out << "interval-expression[";
+        out << *ie.left;
+        if (ie.op == sqltoast::NUMERIC_OP_ADD)
+            out << " + ";
+        else
+            out << " - ";
+        out << *ie.right << "]";
+    }
 }
 
 } // namespace sqltoast::print
