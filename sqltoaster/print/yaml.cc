@@ -12,9 +12,14 @@ namespace sqltoaster {
 namespace print {
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stmt) {
+    if (ptr.in_list(out))
+        ptr.indent(out) << "- type: ";
+    else
+        ptr.indent(out) << "type: ";
+    ptr.indent_push(out);
     switch (stmt.type) {
         case sqltoast::STATEMENT_TYPE_CREATE_SCHEMA:
-            ptr.indent_noendl(out) << "type: CREATE_SCHEMA";
+            out << "CREATE_SCHEMA";
             {
                 const sqltoast::create_schema_statement_t& sub =
                     static_cast<const sqltoast::create_schema_statement_t&>(stmt);
@@ -22,7 +27,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_DROP_SCHEMA:
-            ptr.indent_noendl(out) << "type: DROP_SCHEMA";
+            out << "DROP_SCHEMA";
             {
                 const sqltoast::drop_schema_statement_t& sub =
                     static_cast<const sqltoast::drop_schema_statement_t&>(stmt);
@@ -30,7 +35,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_CREATE_TABLE:
-            ptr.indent_noendl(out) << "type: CREATE_TABLE";
+            out << "CREATE_TABLE";
             {
                 const sqltoast::create_table_statement_t& sub =
                     static_cast<const sqltoast::create_table_statement_t&>(stmt);
@@ -38,7 +43,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_DROP_TABLE:
-            ptr.indent_noendl(out) << "type: DROP_TABLE";
+            out << "DROP_TABLE";
             {
                 const sqltoast::drop_table_statement_t& sub =
                     static_cast<const sqltoast::drop_table_statement_t&>(stmt);
@@ -46,7 +51,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_ALTER_TABLE:
-            ptr.indent_noendl(out) << "type: ALTER_TABLE";
+            out << "ALTER_TABLE";
             {
                 const sqltoast::alter_table_statement_t& sub =
                     static_cast<const sqltoast::alter_table_statement_t&>(stmt);
@@ -54,7 +59,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_CREATE_VIEW:
-            ptr.indent_noendl(out) << "type: CREATE_VIEW";
+            out << "CREATE_VIEW";
             {
                 const sqltoast::create_view_statement_t& sub =
                     static_cast<const sqltoast::create_view_statement_t&>(stmt);
@@ -62,7 +67,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_DROP_VIEW:
-            ptr.indent_noendl(out) << "type: DROP_VIEW";
+            out << "DROP_VIEW";
             {
                 const sqltoast::drop_view_statement_t& sub =
                     static_cast<const sqltoast::drop_view_statement_t&>(stmt);
@@ -70,7 +75,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_SELECT:
-            ptr.indent_noendl(out) << "type: SELECT";
+            out << "SELECT";
             {
                 const sqltoast::select_statement_t& sub =
                     static_cast<const sqltoast::select_statement_t&>(stmt);
@@ -78,7 +83,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_INSERT:
-            ptr.indent_noendl(out) << "type: INSERT";
+            out << "INSERT";
             {
                 const sqltoast::insert_statement_t& sub =
                     static_cast<const sqltoast::insert_statement_t&>(stmt);
@@ -86,7 +91,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_INSERT_SELECT:
-            ptr.indent_noendl(out) << "type: INSERT_SELECT";
+            out << "INSERT_SELECT";
             {
                 const sqltoast::insert_select_statement_t& sub =
                     static_cast<const sqltoast::insert_select_statement_t&>(stmt);
@@ -94,7 +99,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_DELETE:
-            ptr.indent_noendl(out) << "type: DELETE";
+            out << "DELETE";
             {
                 const sqltoast::delete_statement_t& sub =
                     static_cast<const sqltoast::delete_statement_t&>(stmt);
@@ -102,7 +107,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_UPDATE:
-            ptr.indent_noendl(out) << "type: UPDATE";
+            out << "UPDATE";
             {
                 const sqltoast::update_statement_t& sub =
                     static_cast<const sqltoast::update_statement_t&>(stmt);
@@ -110,13 +115,13 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
             }
             break;
         case sqltoast::STATEMENT_TYPE_COMMIT:
-            ptr.indent_noendl(out) << "type: COMMIT";
+            out << "COMMIT";
             break;
         case sqltoast::STATEMENT_TYPE_ROLLBACK:
-            ptr.indent_noendl(out) << "type: ROLLBACK";
+            out << "ROLLBACK";
             break;
         case sqltoast::STATEMENT_TYPE_GRANT:
-            ptr.indent_noendl(out) << "type: GRANT";
+            out << "GRANT";
             {
                 const sqltoast::grant_statement_t& sub =
                     static_cast<const sqltoast::grant_statement_t&>(stmt);
@@ -126,6 +131,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
         default:
             break;
     }
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_schema_statement_t& stmt) {
