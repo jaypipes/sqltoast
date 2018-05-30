@@ -3,43 +3,43 @@
 >    a INT NOT NULL
 >)
 statements:
-- type: CREATE_TABLE
-  table_name: t1
-  column_definitions:
-    a: INT NOT NULL
+  - type: CREATE_TABLE
+    table_name: t1
+    column_definitions:
+      a: INT NOT NULL
 # PRIMARY KEY
 >CREATE TABLE t1 (
 >    a INT PRIMARY KEY
 >)
 statements:
-- type: CREATE_TABLE
-  table_name: t1
-  column_definitions:
-    a: INT PRIMARY KEY
+  - type: CREATE_TABLE
+    table_name: t1
+    column_definitions:
+      a: INT PRIMARY KEY
 # NOT NULL constraint plus PRIMARY KEY
 >CREATE TABLE t1 (
 >    a INT NOT NULL PRIMARY KEY
 >)
 statements:
-- type: CREATE_TABLE
-  table_name: t1
-  column_definitions:
-    a: INT NOT NULL PRIMARY KEY
+  - type: CREATE_TABLE
+    table_name: t1
+    column_definitions:
+      a: INT NOT NULL PRIMARY KEY
 # UNIQUE constraint on single column
 >CREATE TABLE t1 (
 >    a CHAR UNIQUE
 >)
 statements:
-- type: CREATE_TABLE
-  table_name: t1
-  column_definitions:
-    a: CHAR UNIQUE
+  - type: CREATE_TABLE
+    table_name: t1
+    column_definitions:
+      a: CHAR UNIQUE
 # NOT NULL constraint plus UNIQUE
 >CREATE TABLE t1 (
 >    a CHAR(10) NOT NULL UNIQUE
 >)
 statements:
-- type: CREATE_TABLE
-  table_name: t1
-  column_definitions:
-    a: CHAR(10) NOT NULL UNIQUE
+  - type: CREATE_TABLE
+    table_name: t1
+    column_definitions:
+      a: CHAR(10) NOT NULL UNIQUE
