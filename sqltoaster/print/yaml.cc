@@ -12,8 +12,10 @@ namespace sqltoaster {
 namespace print {
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stmt) {
-    if (ptr.in_list(out))
+    if (ptr.in_list(out)) {
         ptr.indent(out) << "- type: ";
+        ptr.end_list(out);
+    }
     else
         ptr.indent(out) << "type: ";
     ptr.indent_push(out);
@@ -606,15 +608,24 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::search_condition
     // OR'd operands are on the same "level" as each other for evaluation
     // purposes, which is why we don't attempt to indent here and just
     // output the terms in a list
-    for (const std::unique_ptr<sqltoast::boolean_term_t>& or_term_p : sc.terms)
+    ptr.indent(out) << "search_condition:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "terms:";
+    ptr.indent_push(out);
+    for (const std::unique_ptr<sqltoast::boolean_term_t>& or_term_p : sc.terms) {
+        ptr.start_list(out);
         to_yaml(ptr, out, *or_term_p);
+    }
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pred) {
+    ptr.indent(out) << "predicate:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
     switch (pred.predicate_type) {
         case sqltoast::PREDICATE_TYPE_COMPARISON:
-            ptr.indent(out) << "- predicate_type: COMPARISON";
-            ptr.indent_push(out);
+            out << "COMPARISON";
             {
                 const sqltoast::comp_predicate_t& sub =
                     static_cast<const sqltoast::comp_predicate_t&>(pred);
@@ -622,8 +633,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_BETWEEN:
-            ptr.indent(out) << "- predicate_type: BETWEEN";
-            ptr.indent_push(out);
+            out << "BETWEEN";
             {
                 const sqltoast::between_predicate_t& sub =
                     static_cast<const sqltoast::between_predicate_t&>(pred);
@@ -631,8 +641,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_LIKE:
-            ptr.indent(out) << "- predicate_type: LIKE";
-            ptr.indent_push(out);
+            out << "LIKE";
             {
                 const sqltoast::like_predicate_t& sub =
                     static_cast<const sqltoast::like_predicate_t&>(pred);
@@ -640,8 +649,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_NULL:
-            ptr.indent(out) << "- predicate_type: NULL";
-            ptr.indent_push(out);
+            out << "NULL";
             {
                 const sqltoast::null_predicate_t& sub =
                     static_cast<const sqltoast::null_predicate_t&>(pred);
@@ -649,8 +657,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_IN_VALUES:
-            ptr.indent(out) << "- predicate_type: IN_VALUES";
-            ptr.indent_push(out);
+            out << "IN_VALUES";
             {
                 const sqltoast::in_values_predicate_t& sub =
                     static_cast<const sqltoast::in_values_predicate_t&>(pred);
@@ -658,8 +665,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_IN_SUBQUERY:
-            ptr.indent(out) << "- predicate_type: IN_SUBQUERY";
-            ptr.indent_push(out);
+            out << "IN_SUBQUERY";
             {
                 const sqltoast::in_subquery_predicate_t& sub =
                     static_cast<const sqltoast::in_subquery_predicate_t&>(pred);
@@ -667,8 +673,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_QUANTIFIED_COMPARISON:
-            ptr.indent(out) << "- predicate_type: QUANTIFIED_COMPARISON";
-            ptr.indent_push(out);
+            out << "QUANTIFIED_COMPARISON";
             {
                 const sqltoast::quantified_comparison_predicate_t& sub =
                     static_cast<const sqltoast::quantified_comparison_predicate_t&>(pred);
@@ -676,8 +681,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_EXISTS:
-            ptr.indent(out) << "- predicate_type: EXISTS";
-            ptr.indent_push(out);
+            out << "EXISTS";
             {
                 const sqltoast::exists_predicate_t& sub =
                     static_cast<const sqltoast::exists_predicate_t&>(pred);
@@ -685,8 +689,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_UNIQUE:
-            ptr.indent(out) << "- predicate_type: UNIQUE";
-            ptr.indent_push(out);
+            out << "UNIQUE";
             {
                 const sqltoast::unique_predicate_t& sub =
                     static_cast<const sqltoast::unique_predicate_t&>(pred);
@@ -694,8 +697,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_MATCH:
-            ptr.indent(out) << "- predicate_type: MATCH";
-            ptr.indent_push(out);
+            out << "MATCH";
             {
                 const sqltoast::match_predicate_t& sub =
                     static_cast<const sqltoast::match_predicate_t&>(pred);
@@ -703,8 +705,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pre
             }
             break;
         case sqltoast::PREDICATE_TYPE_OVERLAPS:
-            ptr.indent(out) << "- predicate_type: OVERLAPS";
-            ptr.indent_push(out);
+            out << "OVERLAPS";
             {
                 const sqltoast::overlaps_predicate_t& sub =
                     static_cast<const sqltoast::overlaps_predicate_t&>(pred);
@@ -772,7 +773,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::like_predicate_t
     to_yaml(ptr, out, *pred.match);
     ptr.indent_pop(out);
     if (pred.reverse_op)
-        ptr.indent(out) << "predicate_negate: true";
+        ptr.indent(out) << "negate: true";
     ptr.indent(out) << "pattern: " << *pred.pattern;
     if (pred.escape_char)
         ptr.indent(out) << "escape_char: " << *pred.escape_char;
@@ -789,7 +790,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_values_predic
     to_yaml(ptr, out, *pred.left);
     ptr.indent_pop(out);
     if (pred.reverse_op)
-        ptr.indent(out) << "predicate_negate: true";
+        ptr.indent(out) << "negate: true";
     ptr.indent(out) << "values:";
     ptr.indent_push(out);
     for (auto& ve : pred.values)
@@ -873,23 +874,32 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_primary_
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_factor_t& bf) {
     to_yaml(ptr, out, *bf.primary);
-    if (bf.reverse_op) {
-        ptr.indent_push(out);
-        ptr.indent(out) << "factor_negate: true";
-        ptr.indent_pop(out);
-    }
+    if (bf.reverse_op)
+        ptr.indent(out) << "negate: true";
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_term_t& bt) {
-    to_yaml(ptr, out, *bt.factor);
-    if (bt.and_operand) {
+    // Need to save whether this was a list item so we can properly de-indent
+    // at the end
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- factor:";
+        ptr.end_list(out);
         ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "factor:";
+    }
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *bt.factor);
+    ptr.indent_pop(out);
+    if (bt.and_operand) {
         ptr.indent(out) << "and:";
         ptr.indent_push(out);
         to_yaml(ptr, out, *bt.and_operand);
         ptr.indent_pop(out);
-        ptr.indent_pop(out);
     }
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_t& rvc) {

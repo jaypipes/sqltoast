@@ -8,18 +8,22 @@ statements:
     referenced_tables:
       - t1
     where:
-      - predicate_type: COMPARISON
-        op: EQUAL
-        left:
-          - element_type: VALUE_EXPRESSION
-            value: column-reference[a]
-          - element_type: VALUE_EXPRESSION
-            value: column-reference[b]
-        right:
-          - element_type: VALUE_EXPRESSION
-            value: column-reference[b]
-          - element_type: VALUE_EXPRESSION
-            value: column-reference[a]
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  - element_type: VALUE_EXPRESSION
+                    value: column-reference[a]
+                  - element_type: VALUE_EXPRESSION
+                    value: column-reference[b]
+                right:
+                  - element_type: VALUE_EXPRESSION
+                    value: column-reference[b]
+                  - element_type: VALUE_EXPRESSION
+                    value: column-reference[a]
 # Single-value row value constructor lists are OK too
 >SELECT * FROM t1 WHERE (a) = (b)
 statements:
@@ -29,14 +33,18 @@ statements:
     referenced_tables:
       - t1
     where:
-      - predicate_type: COMPARISON
-        op: EQUAL
-        left:
-          element_type: VALUE_EXPRESSION
-          value: (column-reference[a])
-        right:
-          element_type: VALUE_EXPRESSION
-          value: (column-reference[b])
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  element_type: VALUE_EXPRESSION
+                  value: (column-reference[a])
+                right:
+                  element_type: VALUE_EXPRESSION
+                  value: (column-reference[b])
 # scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2)
 statements:
@@ -46,14 +54,18 @@ statements:
     referenced_tables:
       - t1
     where:
-      - predicate_type: COMPARISON
-        op: EQUAL
-        left:
-          element_type: VALUE_EXPRESSION
-          value: column-reference[a]
-        right:
-          element_type: VALUE_EXPRESSION
-          value: scalar-subquery[
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  element_type: VALUE_EXPRESSION
+                  value: column-reference[a]
+                right:
+                  element_type: VALUE_EXPRESSION
+                  value: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
 # scalar subquery inside another scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2 WHERE b = (SELECT c FROM t3))
@@ -64,14 +76,18 @@ statements:
     referenced_tables:
       - t1
     where:
-      - predicate_type: COMPARISON
-        op: EQUAL
-        left:
-          element_type: VALUE_EXPRESSION
-          value: column-reference[a]
-        right:
-          element_type: VALUE_EXPRESSION
-          value: scalar-subquery[
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  element_type: VALUE_EXPRESSION
+                  value: column-reference[a]
+                right:
+                  element_type: VALUE_EXPRESSION
+                  value: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2 where[column-reference[b] = scalar-subquery[
 query[selected-columns[column-reference[c]] table-expression[referenced-tables[t3]]]]]]]
 # scalar subquery with correlation and alias
@@ -83,12 +99,16 @@ statements:
     referenced_tables:
       - t1
     where:
-      - predicate_type: COMPARISON
-        op: EQUAL
-        left:
-          element_type: VALUE_EXPRESSION
-          value: column-reference[num_t2]
-        right:
-          element_type: VALUE_EXPRESSION
-          value: scalar-subquery[
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  element_type: VALUE_EXPRESSION
+                  value: column-reference[num_t2]
+                right:
+                  element_type: VALUE_EXPRESSION
+                  value: scalar-subquery[
 query[selected-columns[COUNT(*)] table-expression[referenced-tables[t2 where[column-reference[t2.t1_id] = column-reference[t1.id]]]]]
