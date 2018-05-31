@@ -1106,17 +1106,31 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& 
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_expression_t& cve) {
-    if (cve.values.size() > 1) {
-        out << "concatenate[";
-        size_t x = 0;
-        for (const std::unique_ptr<sqltoast::character_factor_t>& val : cve.values) {
-            if (x++ > 0)
-                out << ", ";
-            out << *val;
-        }
-        out << "]";
-    } else
-        out << *cve.values[0];
+    ptr.indent(out) << "character_expression:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "factors:";
+    ptr.indent_push(out);
+    for (const std::unique_ptr<sqltoast::character_factor_t>& factor : cve.values) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, *factor);
+    }
+    ptr.indent_pop(out);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_factor_t& factor) {
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- value: " << *factor.value;
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "value:";
+    }
+    if (factor.collation)
+        ptr.indent(out) << "collation: " << factor.collation;
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de) {
