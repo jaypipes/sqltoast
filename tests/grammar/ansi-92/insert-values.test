@@ -6,8 +6,28 @@ statements:
       - a
       - b
     values:
-      - literal[1]
-      - literal[2]
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: literal[1]
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: literal[2]
 # INSERT INTO with a default columns list
 >INSERT INTO t1 VALUES (1, 2)
 statements:
@@ -15,8 +35,28 @@ statements:
     table_name: t1
     default_columns: true
     values:
-      - literal[1]
-      - literal[2]
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: literal[1]
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: literal[2]
 # INSERT INTO using a character values expression
 >INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
 statements:
@@ -24,7 +64,12 @@ statements:
     table_name: t1
     default_columns: true
     values:
-      - literal['a'] COLLATE utf8bin
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: STRING_EXPRESSIONliteral['a'] COLLATE utf8bin
 # INSERT INTO using datetime value expressions
 >INSERT INTO t1 (create_date, my_date) VALUES (CURRENT_DATE, '2001-01-01' AT TIME ZONE 'UTC')
 statements:
@@ -34,8 +79,18 @@ statements:
       - create_date
       - my_date
     values:
-      - datetime-expression[current-date[] AT LOCAL]
-      - datetime-expression[literal['2001-01-01'] AT TIME ZONE 'UTC']
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: DATETIME_EXPRESSIONdatetime-expression[current-date[] AT LOCAL]
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: DATETIME_EXPRESSIONdatetime-expression[literal['2001-01-01'] AT TIME ZONE 'UTC']
 # INSERT INTO using interval value expressions
 >INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
 statements:
@@ -44,7 +99,12 @@ statements:
     columns:
       - num_seconds
     values:
-      - interval-expression[literal['2001-01-01'] DAY TO SECOND]
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: INTERVAL_EXPRESSIONinterval-expression[literal['2001-01-01'] DAY TO SECOND]
 # INSERT INTO using numeric value expressions
 >INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
 statements:
@@ -53,4 +113,21 @@ statements:
     columns:
       - num_seconds
     values:
-      - numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[3]])]
+      - row_value_constructor:
+          type: ELEMENT
+          element:
+            type: VALUE_EXPRESSION
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                left:
+                  term:
+                    left:
+                      factor:
+                        primary: literal[1]
+                op: ADD
+                right:
+                  term:
+                    left:
+                      factor:
+                        primary: (numeric-expression[literal[2] * literal[3]])

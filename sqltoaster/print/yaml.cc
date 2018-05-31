@@ -482,8 +482,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement
     else {
         ptr.indent(out) << "values:";
         ptr.indent_push(out);
-        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values)
-            ptr.indent(out) << "- " << *val;
+        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values) {
+            ptr.start_list(out);
+            to_yaml(ptr, out, *val);
+        }
         ptr.indent_pop(out);
     }
 }
@@ -912,7 +914,16 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_term_t& 
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_t& rvc) {
-    ptr.indent(out) << "row_value_constructor:";
+    // Need to save whether this was a list item so we can properly de-indent
+    // at the end
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- row_value_constructor:";
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "row_value_constructor:";
+    }
     ptr.indent_push(out);
     ptr.indent(out) << "type: ";
     switch (rvc.rvc_type) {
@@ -949,6 +960,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constr
             break;
     }
     ptr.indent_pop(out);
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_element_t& rvce) {
