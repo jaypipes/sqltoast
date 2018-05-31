@@ -526,8 +526,12 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement
     }
     ptr.indent_pop(out);
 
-    if (stmt.where_condition)
-        ptr.indent(out) << "where: " << *stmt.where_condition;
+    if (stmt.where_condition) {
+        ptr.indent(out) << "where:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *stmt.where_condition);
+        ptr.indent_pop(out);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& action) {

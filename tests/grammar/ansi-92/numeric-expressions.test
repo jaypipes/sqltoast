@@ -13,7 +13,37 @@ statements:
     table_name: t1
     set_columns:
       x: literal[1]
-    where: column-reference[a] = (numeric-expression[literal[2] + column-reference[b]])
+    where:
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: column-reference[a]
+                right:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: (numeric-expression[literal[2] + column-reference[b]])
 # Simple subtraction of literal number from column reference
 >UPDATE t1 SET x = 1 WHERE a = (b - 2)
 statements:
@@ -21,7 +51,37 @@ statements:
     table_name: t1
     set_columns:
       x: literal[1]
-    where: column-reference[a] = (numeric-expression[column-reference[b] - literal[2]])
+    where:
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: column-reference[a]
+                right:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: (numeric-expression[column-reference[b] - literal[2]])
 # Simple multiplication of two literals
 >UPDATE t1 SET x = 1 WHERE a = (2 * 1)
 statements:
@@ -29,7 +89,37 @@ statements:
     table_name: t1
     set_columns:
       x: literal[1]
-    where: column-reference[a] = (numeric-expression[literal[2] * literal[1]])
+    where:
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: column-reference[a]
+                right:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: (numeric-expression[literal[2] * literal[1]])
 # Simple division of two literals
 >UPDATE t1 SET x = 1 WHERE a = (1 / 2)
 statements:
@@ -37,7 +127,37 @@ statements:
     table_name: t1
     set_columns:
       x: literal[1]
-    where: column-reference[a] = (numeric-expression[literal[1] / literal[2]])
+    where:
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: column-reference[a]
+                right:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: (numeric-expression[literal[1] / literal[2]])
 # Addition of numeric expression to a literal
 >UPDATE t1 SET x = 1 WHERE a = (1 + (2 * 1))
 statements:
@@ -45,7 +165,37 @@ statements:
     table_name: t1
     set_columns:
       x: literal[1]
-    where: column-reference[a] = (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])
+    where:
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: column-reference[a]
+                right:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])
 # General value expression primaries
 >SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
 statements:
