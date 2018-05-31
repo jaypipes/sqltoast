@@ -88,13 +88,25 @@ statements:
           element:
             type: VALUE_EXPRESSION
             value_expression:
-              type: DATETIME_EXPRESSIONdatetime-expression[current-date[] AT LOCAL]
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: current-date[]
       - row_value_constructor:
           type: ELEMENT
           element:
             type: VALUE_EXPRESSION
             value_expression:
-              type: DATETIME_EXPRESSIONdatetime-expression[literal['2001-01-01'] AT TIME ZONE 'UTC']
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: 'UTC'
+                      value: literal['2001-01-01']
 # INSERT INTO using interval value expressions
 >INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
 statements:

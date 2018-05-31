@@ -1054,10 +1054,9 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_expression_t& ne) {
     ptr.indent(out) << "numeric_expression:";
     ptr.indent_push(out);
-    if (! ne.right) {
-        if (! ne.left->right)
-            to_yaml(ptr, out, *ne.left);
-    } else {
+    if ((! ne.right) && (! ne.left->right))
+        to_yaml(ptr, out, *ne.left);
+    else {
         ptr.indent(out) << "left:";
         ptr.indent_push(out);
         to_yaml(ptr, out, *ne.left);
@@ -1073,15 +1072,6 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_expressi
             ptr.indent_pop(out);
         }
     }
-    ptr.indent_pop(out);
-}
-
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t& nf) {
-    ptr.indent(out) << "factor:";
-    ptr.indent_push(out);
-    if (nf.sign != 0)
-        ptr.indent(out) << "sign: " << nf.sign;
-    ptr.indent(out) << "primary: " << *nf.value;
     ptr.indent_pop(out);
 }
 
@@ -1102,6 +1092,15 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& 
         to_yaml(ptr, out, *nt.right);
         ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t& nf) {
+    ptr.indent(out) << "factor:";
+    ptr.indent_push(out);
+    if (nf.sign != 0)
+        ptr.indent(out) << "sign: " << nf.sign;
+    ptr.indent(out) << "primary: " << *nf.value;
     ptr.indent_pop(out);
 }
 
@@ -1134,20 +1133,41 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_factor
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de) {
-    // datetime expressions are the container for things that may be evaluated
-    // to a number. However, datetime expressions that have only a single
-    // element can be reduced to just that one element
-    if (! de.right)
-        out << "datetime-expression[" << *de.left << "]";
-    else {
-        out << "datetime-expression[";
-        out << *de.left;
+    ptr.indent(out) << "datetime_expression:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *de.left);
+    ptr.indent_pop(out);
+    if (de.right) {
         if (de.op == sqltoast::NUMERIC_OP_ADD)
-            out << " + ";
+            ptr.indent(out) << "op: ADD";
         else
-            out << " - ";
-        out << *de.right << "]";
+            ptr.indent(out) << "op: SUBTRACT";
+        ptr.indent(out) << "right:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *de.right);
+        ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_term_t& term) {
+    ptr.indent(out) << "term:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *term.value);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_t& factor) {
+    ptr.indent(out) << "factor:";
+    ptr.indent_push(out);
+    if (factor.is_local_tz())
+        ptr.indent(out) << "time_zone: LOCAL";
+    else
+        ptr.indent(out) << "time_zone: " << factor.tz;
+    ptr.indent(out) << "value: " << *factor.value;
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& ie) {
@@ -1164,6 +1184,19 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_e
         else
             out << " - ";
         out << *ie.right << "]";
+    }
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_term_t& term) {
+    if (! term.right) {
+        out << *term.left;
+    } else {
+        out << *term.left;
+        if (term.op == sqltoast::NUMERIC_OP_MULTIPLY)
+            out << " * ";
+        else
+            out << " / ";
+        out << *term.right;
     }
 }
 

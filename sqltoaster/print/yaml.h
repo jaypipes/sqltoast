@@ -30,6 +30,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::comp_predicate_t
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_schema_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_table_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_t& factor);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_term_t& term);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_column_action_t& action);
@@ -44,6 +46,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_subquery_pred
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_values_predicate_t& pred);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_term_t& term);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& ie);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_query_expression_t& qe);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& jt);
