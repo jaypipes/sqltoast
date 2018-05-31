@@ -222,16 +222,15 @@ typedef struct insert_statement : statement_t {
 typedef struct insert_select_statement : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
-    // Guaranteed to always be static_castable to a select_t
-    std::unique_ptr<statement_t> select;
+    std::unique_ptr<query_expression_t> query;
     insert_select_statement(
             lexeme_t& table_name,
             std::vector<lexeme_t>& col_list,
-            std::unique_ptr<statement_t>& select) :
+            std::unique_ptr<query_expression_t>& query) :
         statement_t(STATEMENT_TYPE_INSERT_SELECT),
         table_name(table_name),
         insert_columns(std::move(col_list)),
-        select(std::move(select))
+        query(std::move(query))
     {}
     inline bool use_default_columns() const {
         return insert_columns.empty();

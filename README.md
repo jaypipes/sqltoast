@@ -207,6 +207,7 @@ Running ansi-92/grant ... OK
 Running ansi-92/identifiers ... OK
 Running ansi-92/joins ... OK
 Running ansi-92/insert-default-values ... OK
+Running ansi-92/insert-select ... OK
 Running ansi-92/insert-values ... OK
 Running ansi-92/interval-expressions ... OK
 Running ansi-92/numeric-expressions ... OK

@@ -342,7 +342,7 @@ std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& st
             out << std::endl << "     " << x++ << ": " << col;
         }
     }
-    out << std::endl << "   select:" << std::endl << "     " << *stmt.select;
+    out << std::endl << "   query:" << std::endl << "     " << *stmt.query;
     out << ">";
 
     return out;
