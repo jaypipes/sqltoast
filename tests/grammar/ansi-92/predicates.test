@@ -749,7 +749,13 @@ statements:
                                 factor:
                                   primary: column-reference[a]
                   values:
-                    - literal[1]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: literal[1]
 # Negate of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE a NOT IN (1)
 statements:
@@ -780,7 +786,13 @@ statements:
                                   primary: column-reference[a]
                   negate: true
                   values:
-                    - literal[1]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: literal[1]
 # top-level negation of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE NOT a IN (1)
 statements:
@@ -810,7 +822,13 @@ statements:
                                 factor:
                                   primary: column-reference[a]
                   values:
-                    - literal[1]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: literal[1]
                 negate: true
 # double-negation of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE NOT a NOT IN (1)
@@ -842,7 +860,13 @@ statements:
                                   primary: column-reference[a]
                   negate: true
                   values:
-                    - literal[1]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: literal[1]
                 negate: true
 # IN (<value list>) operator with multiple value
 >SELECT * FROM t1 WHERE a IN (1, 2, 3)
@@ -873,9 +897,27 @@ statements:
                                 factor:
                                   primary: column-reference[a]
                   values:
-                    - literal[1]
-                    - literal[2]
-                    - literal[3]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: literal[1]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: literal[2]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: literal[3]
 # IN (<value list>) operator with complex value expressions
 >SELECT * FROM t1 WHERE a IN (1 - b, CHAR_LENGTH(b))
 statements:
@@ -905,8 +947,27 @@ statements:
                                 factor:
                                   primary: column-reference[a]
                   values:
-                    - numeric-expression[literal[1] - column-reference[b]]
-                    - char-length[column-reference[b]]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            term:
+                              left:
+                                factor:
+                                  primary: literal[1]
+                          op: SUBTRACT
+                          right:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[b]
+                    - value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary: char-length[column-reference[b]]
 # IN (<subquery>) operator
 >SELECT * FROM t1 WHERE a IN (SELECT t1_a FROM t2)
 statements:
@@ -1380,7 +1441,12 @@ statements:
                               left:
                                 factor:
                                   primary: column-reference[a]
-                  pattern: literal['s%']
+                  pattern:
+                    value_expression:
+                      type: STRING_EXPRESSION
+                      character_expression:
+                        factors:
+                          - value: literal['s%']
 # LIKE predicate with concatenated column comparison with string
 >SELECT * FROM t1 WHERE a LIKE b || '%'
 statements:
@@ -1409,7 +1475,13 @@ statements:
                               left:
                                 factor:
                                   primary: column-reference[a]
-                  pattern: concatenate[column-reference[b], literal['%']]
+                  pattern:
+                    value_expression:
+                      type: STRING_EXPRESSION
+                      character_expression:
+                        factors:
+                          - value: column-reference[b]
+                          - value: literal['%']
 # OVERLAPS predicate with date columns from multiple tables
 >SELECT * FROM t1, t2 WHERE (t1.start, t1.end) OVERLAPS (t2.start, t2.end)
 statements:

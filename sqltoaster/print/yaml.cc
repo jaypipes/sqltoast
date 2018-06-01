@@ -782,7 +782,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::like_predicate_t
     ptr.indent_pop(out);
     if (pred.reverse_op)
         ptr.indent(out) << "negate: true";
-    ptr.indent(out) << "pattern: " << *pred.pattern;
+    ptr.indent(out) << "pattern:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.pattern);
+    ptr.indent_pop(out);
     if (pred.escape_char)
         ptr.indent(out) << "escape_char: " << *pred.escape_char;
 }
@@ -801,8 +804,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_values_predic
         ptr.indent(out) << "negate: true";
     ptr.indent(out) << "values:";
     ptr.indent_push(out);
-    for (auto& ve : pred.values)
-        ptr.indent(out) << "- " << *ve;
+    for (auto& ve : pred.values) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, *ve);
+    }
     ptr.indent_pop(out);
 }
 
