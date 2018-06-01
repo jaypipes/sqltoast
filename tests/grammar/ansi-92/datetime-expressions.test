@@ -2,79 +2,181 @@
 >SELECT a AT LOCAL FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[column-reference[a] AT LOCAL]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: column-reference[a]
+      referenced_tables:
+        - t1
 # Simple datetime expression with specifier timezone
 >SELECT a AT TIME ZONE 'UTC' FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[column-reference[a] AT TIME ZONE 'UTC']
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: 'UTC'
+                      value: column-reference[a]
+      referenced_tables:
+        - t1
 # CURRENT_DATE datetime function
 >SELECT CURRENT_DATE FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[current-date[] AT LOCAL]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: current-date[]
+      referenced_tables:
+        - t1
 # CURRENT_DATE datetime function with timezone component
 >SELECT CURRENT_DATE AT TIME ZONE 'UTC' FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[current-date[] AT TIME ZONE 'UTC']
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: 'UTC'
+                      value: current-date[]
+      referenced_tables:
+        - t1
 # CURRENT_TIME datetime function with no time precision
 >SELECT CURRENT_TIME FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[current-time[] AT LOCAL]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: current-time[]
+      referenced_tables:
+        - t1
 # CURRENT_TIME datetime function with fractional time precision
 >SELECT CURRENT_TIME(3) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[current-time[3] AT LOCAL]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: current-time[3]
+      referenced_tables:
+        - t1
 # CURRENT_TIMESTAMP datetime function with no time precision
 >SELECT CURRENT_TIMESTAMP FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[current-timestamp[] AT LOCAL]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: current-timestamp[]
+      referenced_tables:
+        - t1
 # CURRENT_TIMESTAMP datetime function with fractional time precision
 >SELECT CURRENT_TIMESTAMP(3) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[current-timestamp[3] AT LOCAL]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: current-timestamp[3]
+      referenced_tables:
+        - t1
 # Add a datetime term to an interval term
 >SELECT a AT LOCAL + b YEAR TO MONTH FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[column-reference[a] AT LOCAL + column-reference[b] YEAR TO MONTH]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: column-reference[a]
+                op: ADD
+                right:
+                  term:
+                    left:
+                      factor:
+                        primary: column-reference[b] YEAR TO MONTH
+      referenced_tables:
+        - t1
 # Subtract an interval term from a datetime expression
 >SELECT a AT LOCAL - b DAY FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - datetime-expression[column-reference[a] AT LOCAL - column-reference[b] DAY]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: DATETIME_EXPRESSION
+              datetime_expression:
+                left:
+                  term:
+                    factor:
+                      time_zone: LOCAL
+                      value: column-reference[a]
+                op: SUBTRACT
+                right:
+                  term:
+                    left:
+                      factor:
+                        primary: column-reference[b] DAY
+      referenced_tables:
+        - t1

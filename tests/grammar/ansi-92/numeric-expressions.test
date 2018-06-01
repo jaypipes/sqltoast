@@ -2,10 +2,18 @@
 >SELECT 1 FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - literal[1]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: literal[1]
+      referenced_tables:
+        - t1
 # Simple addition of literal number to column reference
 >UPDATE t1 SET x = 1 WHERE a = (2 + b)
 statements:
@@ -200,99 +208,278 @@ statements:
 >SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - USER
-      - CURRENT_USER
-      - SESSION_USER
-      - SYSTEM_USER
-      - VALUE
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: USER
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: CURRENT_USER
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: SESSION_USER
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: SYSTEM_USER
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: VALUE
+      referenced_tables:
+        - t1
 # COUNT set function specifications
 >SELECT COUNT(*), COUNT(DISTINCT a), COUNT(a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - COUNT(*)
-      - COUNT(DISTINCT column-reference[a])
-      - COUNT(column-reference[a])
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: COUNT(*)
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: COUNT(DISTINCT column-reference[a])
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: COUNT(column-reference[a])
+      referenced_tables:
+        - t1
 # SUM set function specifications
 >SELECT SUM(DISTINCT a), SUM(a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - SUM(DISTINCT column-reference[a])
-      - SUM(column-reference[a])
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: SUM(DISTINCT column-reference[a])
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: SUM(column-reference[a])
+      referenced_tables:
+        - t1
 # AVG set function specifications
 >SELECT AVG(DISTINCT a), AVG(a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - AVG(DISTINCT column-reference[a])
-      - AVG(column-reference[a])
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: AVG(DISTINCT column-reference[a])
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: AVG(column-reference[a])
+      referenced_tables:
+        - t1
 # MIN set function specifications
 >SELECT MIN(DISTINCT a), MIN(a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - MIN(DISTINCT column-reference[a])
-      - MIN(column-reference[a])
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: MIN(DISTINCT column-reference[a])
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: MIN(column-reference[a])
+      referenced_tables:
+        - t1
 # MAX set function specifications
 >SELECT MAX(DISTINCT a), MAX(a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - MAX(DISTINCT column-reference[a])
-      - MAX(column-reference[a])
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: MAX(DISTINCT column-reference[a])
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: MAX(column-reference[a])
+      referenced_tables:
+        - t1
 # Nested set function specifications
 >SELECT MAX(COUNT(a)) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - MAX(COUNT(column-reference[a]))
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: MAX(COUNT(column-reference[a]))
+      referenced_tables:
+        - t1
 # Use of CHAR_LENGTH and CHARACTER_LENGTH numeric functions
 >SELECT CHAR_LENGTH(a), CHARACTER_LENGTH(a) + 1 FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - char-length[column-reference[a]]
-      - numeric-expression[char-length[column-reference[a]] + literal[1]]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: char-length[column-reference[a]]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                left:
+                  term:
+                    left:
+                      factor:
+                        primary: char-length[column-reference[a]]
+                op: ADD
+                right:
+                  term:
+                    left:
+                      factor:
+                        primary: literal[1]
+      referenced_tables:
+        - t1
 # Use of BIT_LENGTH and OCTET_LENGTH numeric functions
 >SELECT BIT_LENGTH(a), OCTET_LENGTH(a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - bit-length[column-reference[a]]
-      - octet-length[column-reference[a]]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: bit-length[column-reference[a]]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: octet-length[column-reference[a]]
+      referenced_tables:
+        - t1
 # Use of EXTRACT numeric function
 >SELECT EXTRACT(YEAR FROM a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - extract[YEAR FROM datetime-expression[column-reference[a] AT LOCAL]]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: extract[YEAR FROM datetime-expression[column-reference[a] AT LOCAL]]
+      referenced_tables:
+        - t1
 # Use of POSITION numeric function
 >SELECT POSITION('123' IN a) FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - position[literal['123'] IN column-reference[a]]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: position[literal['123'] IN column-reference[a]]
+      referenced_tables:
+        - t1

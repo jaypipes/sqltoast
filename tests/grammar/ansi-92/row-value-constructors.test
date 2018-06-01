@@ -3,214 +3,224 @@
 >SELECT  * FROM t1 WHERE (a, b) = (b, a)
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1
-    where:
-      search_condition:
-        terms:
-          - factor:
-              predicate:
-                type: COMPARISON
-                op: EQUAL
-                left:
-                  row_value_constructor:
-                    type: LIST
-                    elements:
-                      - type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
-                                  primary: column-reference[a]
-                      - type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
-                                  primary: column-reference[b]
-                right:
-                  row_value_constructor:
-                    type: LIST
-                    elements:
-                      - type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
-                                  primary: column-reference[b]
-                      - type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
-                                  primary: column-reference[a]
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1
+      where:
+        search_condition:
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  op: EQUAL
+                  left:
+                    row_value_constructor:
+                      type: LIST
+                      elements:
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary: column-reference[a]
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary: column-reference[b]
+                  right:
+                    row_value_constructor:
+                      type: LIST
+                      elements:
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary: column-reference[b]
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary: column-reference[a]
 # Single-value row value constructor lists are OK too
 >SELECT * FROM t1 WHERE (a) = (b)
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1
-    where:
-      search_condition:
-        terms:
-          - factor:
-              predicate:
-                type: COMPARISON
-                op: EQUAL
-                left:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: (column-reference[a])
-                right:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: (column-reference[b])
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1
+      where:
+        search_condition:
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  op: EQUAL
+                  left:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: (column-reference[a])
+                  right:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: (column-reference[b])
 # scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2)
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1
-    where:
-      search_condition:
-        terms:
-          - factor:
-              predicate:
-                type: COMPARISON
-                op: EQUAL
-                left:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: column-reference[a]
-                right:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: scalar-subquery[
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1
+      where:
+        search_condition:
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  op: EQUAL
+                  left:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[a]
+                  right:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
 # scalar subquery inside another scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2 WHERE b = (SELECT c FROM t3))
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1
-    where:
-      search_condition:
-        terms:
-          - factor:
-              predicate:
-                type: COMPARISON
-                op: EQUAL
-                left:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: column-reference[a]
-                right:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: scalar-subquery[
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1
+      where:
+        search_condition:
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  op: EQUAL
+                  left:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[a]
+                  right:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2 where[column-reference[b] = scalar-subquery[
 query[selected-columns[column-reference[c]] table-expression[referenced-tables[t3]]]]]]]
 # scalar subquery with correlation and alias
 >SELECT * FROM t1 WHERE num_t2 = (SELECT COUNT(*) FROM t2 WHERE t2.t1_id = t1.id)
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1
-    where:
-      search_condition:
-        terms:
-          - factor:
-              predicate:
-                type: COMPARISON
-                op: EQUAL
-                left:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: column-reference[num_t2]
-                right:
-                  row_value_constructor:
-                    type: ELEMENT
-                    element:
-                      type: VALUE_EXPRESSION
-                      value_expression:
-                        type: NUMERIC_EXPRESSION
-                        numeric_expression:
-                          term:
-                            left:
-                              factor:
-                                primary: scalar-subquery[
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1
+      where:
+        search_condition:
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  op: EQUAL
+                  left:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[num_t2]
+                  right:
+                    row_value_constructor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: scalar-subquery[
 query[selected-columns[COUNT(*)] table-expression[referenced-tables[t2 where[column-reference[t2.t1_id] = column-reference[t1.id]]]]]

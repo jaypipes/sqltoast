@@ -457,40 +457,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_view_statem
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt) {
-    const sqltoast::query_specification& query = *stmt.query;
-    if (query.distinct)
-       ptr.indent(out) << "distinct: true";
-    ptr.indent(out) << "selected_columns:";
+    ptr.indent(out) << "query:";
     ptr.indent_push(out);
-    for (const sqltoast::derived_column_t& dc : query.selected_columns)
-        ptr.indent(out) << "- " << dc;
+    to_yaml(ptr, out, *stmt.query);
     ptr.indent_pop(out);
-
-    const sqltoast::table_expression_t& table_exp = *query.table_expression;
-    ptr.indent(out) << "referenced_tables:";
-    ptr.indent_push(out);
-    for (const std::unique_ptr<sqltoast::table_reference_t>& tr : table_exp.referenced_tables)
-        ptr.indent(out) << "- " << *tr;
-    ptr.indent_pop(out);
-    if (table_exp.where_condition) {
-        ptr.indent(out) << "where:";
-        ptr.indent_push(out);
-        to_yaml(ptr, out, *table_exp.where_condition);
-        ptr.indent_pop(out);
-    }
-    if (! table_exp.group_by_columns.empty()) {
-        ptr.indent(out) << "group_by:";
-        ptr.indent_push(out);
-        for (const sqltoast::grouping_column_reference_t& gcr : table_exp.group_by_columns)
-            ptr.indent(out) << "- " << gcr;
-        ptr.indent_pop(out);
-    }
-    if (table_exp.having_condition) {
-        ptr.indent(out) << "having:";
-        ptr.indent_push(out);
-        to_yaml(ptr, out, *table_exp.having_condition);
-        ptr.indent_pop(out);
-    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt) {
