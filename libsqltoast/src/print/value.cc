@@ -297,7 +297,7 @@ std::ostream& operator<< (std::ostream& out, const numeric_primary_t& np) {
 std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf) {
     if (nf.sign != 0)
         out << nf.sign << ' ';
-    out << *nf.value;
+    out << *nf.primary;
     return out;
 }
 

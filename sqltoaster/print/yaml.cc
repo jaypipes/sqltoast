@@ -1102,7 +1102,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t
     ptr.indent_push(out);
     if (nf.sign != 0)
         ptr.indent(out) << "sign: " << nf.sign;
-    ptr.indent(out) << "primary: " << *nf.value;
+    ptr.indent(out) << "primary: " << *nf.primary;
     ptr.indent_pop(out);
 }
 
