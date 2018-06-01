@@ -8,4 +8,38 @@ statements:
 statements:
   - type: DELETE
     table_name: t1
-    where: column-reference[a] = literal[10]
+    where:
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
+                right:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary:
+                                  type: VALUE
+                                  value: literal[10]

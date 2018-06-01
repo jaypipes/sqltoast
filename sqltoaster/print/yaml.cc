@@ -289,7 +289,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_stat
         ptr.indent(out) << "columns:";
         ptr.indent_push(out);
         for (const auto& column : stmt.columns)
-            ptr.indent(out) << "- "<< column;
+            ptr.indent(out) << "- " << column;
         ptr.indent_pop(out);
     }
     if (stmt.check_option != sqltoast::CHECK_OPTION_NONE) {
@@ -309,10 +309,37 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specificat
        ptr.indent(out) << "distinct: true";
     ptr.indent(out) << "selected_columns:";
     ptr.indent_push(out);
-    for (const sqltoast::derived_column_t& dc : query.selected_columns)
-        ptr.indent(out) << "- " << dc;
+    for (const sqltoast::derived_column_t& dc : query.selected_columns) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, dc);
+    }
     ptr.indent_pop(out);
     to_yaml(ptr, out, *query.table_expression);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_column_t& dc) {
+    // Need to save whether this was a list item so we can properly de-indent
+    // at the end
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- derived_column:";
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "derived_column:";
+    }
+    ptr.indent_push(out);
+    if (dc.value) {
+        to_yaml(ptr, out, *dc.value);
+        if (dc.alias)
+            ptr.indent(out) << "alias: " << dc.alias;
+    }
+    else
+        // NOTE(jaypipes): the * cannot be aliased in a production
+        ptr.indent(out) << "asterisk: true";
+    ptr.indent_pop(out);
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp) {
@@ -430,40 +457,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_view_statem
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt) {
-    const sqltoast::query_specification& query = *stmt.query;
-    if (query.distinct)
-       ptr.indent(out) << "distinct: true";
-    ptr.indent(out) << "selected_columns:";
+    ptr.indent(out) << "query:";
     ptr.indent_push(out);
-    for (const sqltoast::derived_column_t& dc : query.selected_columns)
-        ptr.indent(out) << "- " << dc;
+    to_yaml(ptr, out, *stmt.query);
     ptr.indent_pop(out);
-
-    const sqltoast::table_expression_t& table_exp = *query.table_expression;
-    ptr.indent(out) << "referenced_tables:";
-    ptr.indent_push(out);
-    for (const std::unique_ptr<sqltoast::table_reference_t>& tr : table_exp.referenced_tables)
-        ptr.indent(out) << "- " << *tr;
-    ptr.indent_pop(out);
-    if (table_exp.where_condition) {
-        ptr.indent(out) << "where:";
-        ptr.indent_push(out);
-        to_yaml(ptr, out, *table_exp.where_condition);
-        ptr.indent_pop(out);
-    }
-    if (! table_exp.group_by_columns.empty()) {
-        ptr.indent(out) << "group_by:";
-        ptr.indent_push(out);
-        for (const sqltoast::grouping_column_reference_t& gcr : table_exp.group_by_columns)
-            ptr.indent(out) << "- " << gcr;
-        ptr.indent_pop(out);
-    }
-    if (table_exp.having_condition) {
-        ptr.indent(out) << "having:";
-        ptr.indent_push(out);
-        to_yaml(ptr, out, *table_exp.having_condition);
-        ptr.indent_pop(out);
-    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt) {
@@ -482,8 +479,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement
     else {
         ptr.indent(out) << "values:";
         ptr.indent_push(out);
-        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values)
-            ptr.indent(out) << "- " << *val;
+        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values) {
+            ptr.start_list(out);
+            to_yaml(ptr, out, *val);
+        }
         ptr.indent_pop(out);
     }
 }
@@ -499,16 +498,21 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_st
             ptr.indent(out) << "- " << col;
         ptr.indent_pop(out);
     }
-    ptr.indent(out) << "select:";
+    ptr.indent(out) << "query:";
     ptr.indent_push(out);
-    ptr.indent(out) << *stmt.select;
+    to_yaml(ptr, out, *stmt.query);
     ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt) {
     ptr.indent(out) << "table_name: " << stmt.table_name;
-    if (stmt.where_condition)
-        ptr.indent(out) << "where: " << *stmt.where_condition;
+
+    if (stmt.where_condition) {
+        ptr.indent(out) << "where:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *stmt.where_condition);
+        ptr.indent_pop(out);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt) {
@@ -526,8 +530,12 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement
     }
     ptr.indent_pop(out);
 
-    if (stmt.where_condition)
-        ptr.indent(out) << "where: " << *stmt.where_condition;
+    if (stmt.where_condition) {
+        ptr.indent(out) << "where:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *stmt.where_condition);
+        ptr.indent_pop(out);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& action) {
@@ -774,7 +782,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::like_predicate_t
     ptr.indent_pop(out);
     if (pred.reverse_op)
         ptr.indent(out) << "negate: true";
-    ptr.indent(out) << "pattern: " << *pred.pattern;
+    ptr.indent(out) << "pattern:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *pred.pattern);
+    ptr.indent_pop(out);
     if (pred.escape_char)
         ptr.indent(out) << "escape_char: " << *pred.escape_char;
 }
@@ -793,8 +804,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_values_predic
         ptr.indent(out) << "negate: true";
     ptr.indent(out) << "values:";
     ptr.indent_push(out);
-    for (auto& ve : pred.values)
-        ptr.indent(out) << "- " << *ve;
+    for (auto& ve : pred.values) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, *ve);
+    }
     ptr.indent_pop(out);
 }
 
@@ -903,7 +916,16 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_term_t& 
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_t& rvc) {
-    ptr.indent(out) << "row_value_constructor:";
+    // Need to save whether this was a list item so we can properly de-indent
+    // at the end
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- row_value_constructor:";
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "row_value_constructor:";
+    }
     ptr.indent_push(out);
     ptr.indent(out) << "type: ";
     switch (rvc.rvc_type) {
@@ -940,6 +962,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constr
             break;
     }
     ptr.indent_pop(out);
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_constructor_element_t& rvce) {
@@ -1032,10 +1056,9 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_expression_t& ne) {
     ptr.indent(out) << "numeric_expression:";
     ptr.indent_push(out);
-    if (! ne.right) {
-        if (! ne.left->right)
-            to_yaml(ptr, out, *ne.left);
-    } else {
+    if ((! ne.right) && (! ne.left->right))
+        to_yaml(ptr, out, *ne.left);
+    else {
         ptr.indent(out) << "left:";
         ptr.indent_push(out);
         to_yaml(ptr, out, *ne.left);
@@ -1054,81 +1077,173 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_expressi
     ptr.indent_pop(out);
 }
 
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t& nf) {
-    ptr.indent(out) << "factor:";
-    ptr.indent_push(out);
-    if (nf.sign != 0)
-        ptr.indent(out) << "sign: " << nf.sign;
-    ptr.indent(out) << "primary: " << *nf.value;
-    ptr.indent_pop(out);
-}
-
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& nt) {
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& term) {
     ptr.indent(out) << "term:";
     ptr.indent_push(out);
     ptr.indent(out) << "left:";
     ptr.indent_push(out);
-    to_yaml(ptr, out, *nt.left);
+    to_yaml(ptr, out, *term.left);
     ptr.indent_pop(out);
-    if (nt.right) {
-        if (nt.op == sqltoast::NUMERIC_OP_MULTIPLY)
+    if (term.right) {
+        if (term.op == sqltoast::NUMERIC_OP_MULTIPLY)
             ptr.indent(out) << "op: MULTIPLY";
         else
             ptr.indent(out) << "op: DIVIDE";
         ptr.indent(out) << "right:";
         ptr.indent_push(out);
-        to_yaml(ptr, out, *nt.right);
+        to_yaml(ptr, out, *term.right);
         ptr.indent_pop(out);
     }
     ptr.indent_pop(out);
 }
 
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t& factor) {
+    ptr.indent(out) << "factor:";
+    ptr.indent_push(out);
+    if (factor.sign != 0)
+        ptr.indent(out) << "sign: " << factor.sign;
+    to_yaml(ptr, out, *factor.primary);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_primary_t& primary) {
+    ptr.indent(out) << "primary:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
+    switch (primary.type) {
+        case sqltoast::NUMERIC_PRIMARY_TYPE_VALUE:
+            out << "VALUE";
+            {
+                const sqltoast::numeric_value_t& sub =
+                    static_cast<const sqltoast::numeric_value_t&>(primary);
+                ptr.indent(out) << "value: " << sub;
+            }
+            break;
+        case sqltoast::NUMERIC_PRIMARY_TYPE_FUNCTION:
+            out << "FUNCTION";
+            {
+                const sqltoast::numeric_function_t& sub =
+                    static_cast<const sqltoast::numeric_function_t&>(primary);
+                ptr.indent(out) << "function: " << sub;
+            }
+            break;
+    }
+    ptr.indent_pop(out);
+}
+
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_expression_t& cve) {
-    if (cve.values.size() > 1) {
-        out << "concatenate[";
-        size_t x = 0;
-        for (const std::unique_ptr<sqltoast::character_factor_t>& val : cve.values) {
-            if (x++ > 0)
-                out << ", ";
-            out << *val;
-        }
-        out << "]";
-    } else
-        out << *cve.values[0];
+    ptr.indent(out) << "character_expression:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "factors:";
+    ptr.indent_push(out);
+    for (const std::unique_ptr<sqltoast::character_factor_t>& factor : cve.values) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, *factor);
+    }
+    ptr.indent_pop(out);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_factor_t& factor) {
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- value: " << *factor.value;
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "value:";
+    }
+    if (factor.collation)
+        ptr.indent(out) << "collation: " << factor.collation;
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de) {
-    // datetime expressions are the container for things that may be evaluated
-    // to a number. However, datetime expressions that have only a single
-    // element can be reduced to just that one element
-    if (! de.right)
-        out << "datetime-expression[" << *de.left << "]";
-    else {
-        out << "datetime-expression[";
-        out << *de.left;
+    ptr.indent(out) << "datetime_expression:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *de.left);
+    ptr.indent_pop(out);
+    if (de.right) {
         if (de.op == sqltoast::NUMERIC_OP_ADD)
-            out << " + ";
+            ptr.indent(out) << "op: ADD";
         else
-            out << " - ";
-        out << *de.right << "]";
+            ptr.indent(out) << "op: SUBTRACT";
+        ptr.indent(out) << "right:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *de.right);
+        ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
 }
 
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& ie) {
-    // interval expressions are the container for things that may be evaluated
-    // to a number. However, interval expressions that have only a single
-    // element can be reduced to just that one element
-    if (! ie.right)
-        out << "interval-expression[" << *ie.left << "]";
-    else {
-        out << "interval-expression[";
-        out << *ie.left;
-        if (ie.op == sqltoast::NUMERIC_OP_ADD)
-            out << " + ";
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_term_t& term) {
+    ptr.indent(out) << "term:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *term.value);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_t& factor) {
+    ptr.indent(out) << "factor:";
+    ptr.indent_push(out);
+    if (factor.is_local_tz())
+        ptr.indent(out) << "time_zone: LOCAL";
+    else
+        ptr.indent(out) << "time_zone: " << factor.tz;
+    ptr.indent(out) << "value: " << *factor.value;
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& expr) {
+    ptr.indent(out) << "interval_expression:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *expr.left);
+    ptr.indent_pop(out);
+    if (expr.right) {
+        if (expr.op == sqltoast::NUMERIC_OP_ADD)
+            ptr.indent(out) << "op: ADD";
         else
-            out << " - ";
-        out << *ie.right << "]";
+            ptr.indent(out) << "op: SUBTRACT";
+        ptr.indent(out) << "right:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *expr.right);
+        ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_term_t& term) {
+    ptr.indent(out) << "term:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *term.left);
+    ptr.indent_pop(out);
+    if (term.right) {
+        if (term.op == sqltoast::NUMERIC_OP_MULTIPLY)
+            ptr.indent(out) << "op: MULTIPLY";
+        else
+            ptr.indent(out) << "op: DIVIDE";
+        ptr.indent(out) << "right:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *term.right);
+        ptr.indent_pop(out);
+    }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_factor_t& factor) {
+    ptr.indent(out) << "factor:";
+    ptr.indent_push(out);
+    if (factor.sign != 0)
+        ptr.indent(out) << "sign: " << factor.sign;
+    ptr.indent(out) << "primary: " << *factor.value;
+    ptr.indent_pop(out);
 }
 
 } // namespace sqltoast::print

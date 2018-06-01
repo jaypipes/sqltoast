@@ -2,31 +2,39 @@
 >SELECT * FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1
 # Normal table with an alias using AS keyword
 >SELECT * FROM t1 AS t1_alias
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1 AS t1_alias
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1 AS t1_alias
 # Normal table with an alias NOT using AS keyword
 >SELECT * FROM t1 t1_alias
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1 AS t1_alias
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1 AS t1_alias
 # Derived table with name using AS keyword
 >SELECT * FROM (SELECT a, b FROM t1) AS t
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - <derived table> AS t
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - <derived table> AS t

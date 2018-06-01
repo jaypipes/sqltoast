@@ -31,7 +31,7 @@ bool parse_insert(
     std::vector<lexeme_t> col_list;
     std::vector<std::unique_ptr<row_value_constructor_t>> val_list;
     std::unique_ptr<row_value_constructor_t> val_list_item;
-    std::unique_ptr<statement_t> sel;
+    std::unique_ptr<query_expression_t> query;
 
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_INSERT) {
@@ -150,7 +150,7 @@ err_expect_lparen:
     expect_error(ctx, SYMBOL_LPAREN);
     return false;
 process_insert_select:
-    if (! parse_select(ctx, cur_tok, sel))
+    if (! parse_query_expression(ctx, cur_tok, query))
         return false;
     goto statement_ending;
 statement_ending:
@@ -165,9 +165,9 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    if (sel)
+    if (query)
         out = std::make_unique<insert_select_statement_t>(
-                table_name, col_list, sel);
+                table_name, col_list, query);
     else
         out = std::make_unique<insert_statement_t>(
                 table_name, col_list, val_list);

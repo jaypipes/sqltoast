@@ -2,39 +2,57 @@
 >SELECT * FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1
 # Identifier includes an underscore
 >SELECT * FROM t1_backup
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - t1_backup
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - t1_backup
 # Identifier includes a period
 >SELECT * FROM s1.t1
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - s1.t1
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - s1.t1
 # Identifier includes multiple periods and underscore
 >SELECT * FROM c1.s1.t1_backup
 statements:
   - type: SELECT
-    selected_columns:
-      - *
-    referenced_tables:
-      - c1.s1.t1_backup
+    query:
+      selected_columns:
+        - derived_column:
+            asterisk: true
+      referenced_tables:
+        - c1.s1.t1_backup
 # Identifier includes a prefix and a star projection
 >SELECT t1.* FROM t1
 statements:
   - type: SELECT
-    selected_columns:
-      - column-reference[t1.*]
-    referenced_tables:
-      - t1
+    query:
+      selected_columns:
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary:
+                        type: VALUE
+                        value: column-reference[t1.*]
+      referenced_tables:
+        - t1

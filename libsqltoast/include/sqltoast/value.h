@@ -304,10 +304,10 @@ typedef struct length_expression : numeric_function_t {
 
 typedef struct numeric_factor {
     int8_t sign;
-    std::unique_ptr<numeric_primary_t> value;
-    numeric_factor(std::unique_ptr<numeric_primary_t>& value, int8_t sign) :
+    std::unique_ptr<numeric_primary_t> primary;
+    numeric_factor(std::unique_ptr<numeric_primary_t>& primary, int8_t sign) :
         sign(0),
-        value(std::move(value))
+        primary(std::move(primary))
     {}
 } numeric_factor_t;
 

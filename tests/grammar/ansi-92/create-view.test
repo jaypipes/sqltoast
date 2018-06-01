@@ -16,7 +16,8 @@ statements:
     view_name: v1
     query:
       selected_columns:
-        - *
+        - derived_column:
+            asterisk: true
       referenced_tables:
         - t1
 # Use the optional column list
@@ -29,8 +30,26 @@ statements:
       - b
     query:
       selected_columns:
-        - column-reference[a]
-        - column-reference[b]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary:
+                        type: VALUE
+                        value: column-reference[a]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary:
+                        type: VALUE
+                        value: column-reference[b]
       referenced_tables:
         - t1
 # The optional WITH LOCAL CHECK OPTION clause
@@ -41,7 +60,8 @@ statements:
     check_option: LOCAL
     query:
       selected_columns:
-        - *
+        - derived_column:
+            asterisk: true
       referenced_tables:
         - t1
 # The optional WITH CASCADED CHECK OPTION clause
@@ -52,7 +72,8 @@ statements:
     check_option: CASCADED
     query:
       selected_columns:
-        - *
+        - derived_column:
+            asterisk: true
       referenced_tables:
         - t1
 # Missing either LOCAL or CASCADED for the check option clause

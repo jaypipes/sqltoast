@@ -12,4 +12,38 @@ statements:
     table_name: t1
     set_columns:
       a: literal[1]
-    where: column-reference[b] = literal[2]
+    where:
+      search_condition:
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                op: EQUAL
+                left:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[b]
+                right:
+                  row_value_constructor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary:
+                                  type: VALUE
+                                  value: literal[2]
