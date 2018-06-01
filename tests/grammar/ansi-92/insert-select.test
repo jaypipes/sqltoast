@@ -6,8 +6,22 @@ statements:
     default_columns: true
     query:
       selected_columns:
-        - column-reference[a]
-        - column-reference[b]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: column-reference[a]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: column-reference[b]
       referenced_tables:
         - t1
 # INSERT SELECT with target columns and a search condition
@@ -20,8 +34,22 @@ statements:
       - t1_b
     query:
       selected_columns:
-        - column-reference[a]
-        - column-reference[b]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: column-reference[a]
+        - derived_column:
+            value_expression:
+              type: NUMERIC_EXPRESSION
+              numeric_expression:
+                term:
+                  left:
+                    factor:
+                      primary: column-reference[b]
       referenced_tables:
         - t1
       where:

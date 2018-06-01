@@ -905,7 +905,14 @@ statements:
                                 primary: column-reference[a]
                 query:
                   selected_columns:
-                    - column-reference[t1_a]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t1_a]
                   referenced_tables:
                     - t2
 # EXISTS (<subquery>) predicate
@@ -924,7 +931,14 @@ statements:
                 type: EXISTS
                 query:
                   selected_columns:
-                    - column-reference[t1_id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t1_id]
                   referenced_tables:
                     - t2
                   where:
@@ -974,7 +988,14 @@ statements:
                 type: EXISTS
                 query:
                   selected_columns:
-                    - column-reference[t1_id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t1_id]
                   referenced_tables:
                     - t2
                   where:
@@ -1037,7 +1058,14 @@ statements:
                                 primary: column-reference[id]
                 query:
                   selected_columns:
-                    - column-reference[t1_id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t1_id]
                   referenced_tables:
                     - t2
                   where:
@@ -1099,7 +1127,14 @@ statements:
                                 primary: column-reference[id]
                 query:
                   selected_columns:
-                    - column-reference[t1_id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t1_id]
                   referenced_tables:
                     - t2
                   where:
@@ -1162,7 +1197,14 @@ statements:
                 unique: true
                 query:
                   selected_columns:
-                    - column-reference[t1_id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t1_id]
                   referenced_tables:
                     - t2
                   where:
@@ -1225,7 +1267,14 @@ statements:
                 partial: true
                 query:
                   selected_columns:
-                    - column-reference[t1_id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t1_id]
                   referenced_tables:
                     - t2
                   where:
@@ -1385,7 +1434,14 @@ statements:
                 type: UNIQUE
                 query:
                   selected_columns:
-                    - column-reference[t2.id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t2.id]
                   referenced_tables:
                     - t2
                   where:
@@ -1435,7 +1491,14 @@ statements:
                 type: UNIQUE
                 query:
                   selected_columns:
-                    - column-reference[t2.id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t2.id]
                   referenced_tables:
                     - t2
                   where:
@@ -1486,7 +1549,14 @@ statements:
                 type: UNIQUE
                 query:
                   selected_columns:
-                    - column-reference[t2.id]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t2.id]
                   referenced_tables:
                     - t2
                   where:
@@ -1526,7 +1596,14 @@ statements:
                     type: EXISTS
                     query:
                       selected_columns:
-                        - column-reference[t3.id]
+                        - derived_column:
+                            value_expression:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                term:
+                                  left:
+                                    factor:
+                                      primary: column-reference[t3.id]
                       referenced_tables:
                         - t3
                       where:
@@ -1591,7 +1668,14 @@ statements:
                 quantifier: ALL
                 query:
                   selected_columns:
-                    - column-reference[t2.start]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t2.start]
                   referenced_tables:
                     - t2
 # quantified comparison predicate with ANY quantifier
@@ -1624,7 +1708,14 @@ statements:
                 quantifier: ANY
                 query:
                   selected_columns:
-                    - column-reference[t2.start]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t2.start]
                   referenced_tables:
                     - t2
 # quantified comparison predicate with SOME quantifier translated to ANY quantifier
@@ -1657,6 +1748,13 @@ statements:
                 quantifier: ANY
                 query:
                   selected_columns:
-                    - column-reference[t2.start]
+                    - derived_column:
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            term:
+                              left:
+                                factor:
+                                  primary: column-reference[t2.start]
                   referenced_tables:
                     - t2

@@ -289,7 +289,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_stat
         ptr.indent(out) << "columns:";
         ptr.indent_push(out);
         for (const auto& column : stmt.columns)
-            ptr.indent(out) << "- "<< column;
+            ptr.indent(out) << "- " << column;
         ptr.indent_pop(out);
     }
     if (stmt.check_option != sqltoast::CHECK_OPTION_NONE) {
@@ -309,10 +309,37 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specificat
        ptr.indent(out) << "distinct: true";
     ptr.indent(out) << "selected_columns:";
     ptr.indent_push(out);
-    for (const sqltoast::derived_column_t& dc : query.selected_columns)
-        ptr.indent(out) << "- " << dc;
+    for (const sqltoast::derived_column_t& dc : query.selected_columns) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, dc);
+    }
     ptr.indent_pop(out);
     to_yaml(ptr, out, *query.table_expression);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_column_t& dc) {
+    // Need to save whether this was a list item so we can properly de-indent
+    // at the end
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
+        ptr.indent(out) << "- derived_column:";
+        ptr.end_list(out);
+        ptr.indent_push(out);
+    } else {
+        ptr.indent(out) << "derived_column:";
+    }
+    ptr.indent_push(out);
+    if (dc.value) {
+        to_yaml(ptr, out, *dc.value);
+        if (dc.alias)
+            ptr.indent(out) << "alias: " << dc.alias;
+    }
+    else
+        // NOTE(jaypipes): the * cannot be aliased in a production
+        ptr.indent(out) << "asterisk: true";
+    ptr.indent_pop(out);
+    if (is_list)
+        ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp) {
