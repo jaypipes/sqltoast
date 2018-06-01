@@ -1170,34 +1170,53 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_
     ptr.indent_pop(out);
 }
 
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& ie) {
-    // interval expressions are the container for things that may be evaluated
-    // to a number. However, interval expressions that have only a single
-    // element can be reduced to just that one element
-    if (! ie.right)
-        out << "interval-expression[" << *ie.left << "]";
-    else {
-        out << "interval-expression[";
-        out << *ie.left;
-        if (ie.op == sqltoast::NUMERIC_OP_ADD)
-            out << " + ";
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& expr) {
+    ptr.indent(out) << "interval_expression:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *expr.left);
+    ptr.indent_pop(out);
+    if (expr.right) {
+        if (expr.op == sqltoast::NUMERIC_OP_ADD)
+            ptr.indent(out) << "op: ADD";
         else
-            out << " - ";
-        out << *ie.right << "]";
+            ptr.indent(out) << "op: SUBTRACT";
+        ptr.indent(out) << "right:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *expr.right);
+        ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_term_t& term) {
-    if (! term.right) {
-        out << *term.left;
-    } else {
-        out << *term.left;
+    ptr.indent(out) << "term:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *term.left);
+    ptr.indent_pop(out);
+    if (term.right) {
         if (term.op == sqltoast::NUMERIC_OP_MULTIPLY)
-            out << " * ";
+            ptr.indent(out) << "op: MULTIPLY";
         else
-            out << " / ";
-        out << *term.right;
+            ptr.indent(out) << "op: DIVIDE";
+        ptr.indent(out) << "right:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *term.right);
+        ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_factor_t& factor) {
+    ptr.indent(out) << "factor:";
+    ptr.indent_push(out);
+    if (factor.sign != 0)
+        ptr.indent(out) << "sign: " << factor.sign;
+    ptr.indent(out) << "primary: " << *factor.value;
+    ptr.indent_pop(out);
 }
 
 } // namespace sqltoast::print

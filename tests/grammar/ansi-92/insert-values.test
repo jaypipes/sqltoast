@@ -120,7 +120,13 @@ statements:
           element:
             type: VALUE_EXPRESSION
             value_expression:
-              type: INTERVAL_EXPRESSIONinterval-expression[literal['2001-01-01'] DAY TO SECOND]
+              type: INTERVAL_EXPRESSION
+              interval_expression:
+                left:
+                  term:
+                    left:
+                      factor:
+                        primary: literal['2001-01-01'] DAY TO SECOND
 # INSERT INTO using numeric value expressions
 >INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
 statements:
