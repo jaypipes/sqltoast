@@ -13,7 +13,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: column-reference[a]
+                      primary:
+                        type: VALUE
+                        value: column-reference[a]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -21,7 +23,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: column-reference[b]
+                      primary:
+                        type: VALUE
+                        value: column-reference[b]
       referenced_tables:
         - t1
 # INSERT SELECT with target columns and a search condition
@@ -41,7 +45,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: column-reference[a]
+                      primary:
+                        type: VALUE
+                        value: column-reference[a]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -49,7 +55,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: column-reference[b]
+                      primary:
+                        type: VALUE
+                        value: column-reference[b]
       referenced_tables:
         - t1
       where:
@@ -70,7 +78,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: column-reference[c]
+                                  primary:
+                                    type: VALUE
+                                    value: column-reference[c]
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -82,4 +92,6 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: literal[3]
+                                  primary:
+                                    type: VALUE
+                                    value: literal[3]

@@ -142,7 +142,9 @@ statements:
                     op: MULTIPLY
                     right:
                       factor:
-                        primary: literal[12]
+                        primary:
+                          type: VALUE
+                          value: literal[12]
         - derived_column:
             value_expression:
               type: INTERVAL_EXPRESSION
@@ -155,7 +157,9 @@ statements:
                     op: DIVIDE
                     right:
                       factor:
-                        primary: literal[2]
+                        primary:
+                          type: VALUE
+                          value: literal[2]
         - derived_column:
             value_expression:
               type: INTERVAL_EXPRESSION
@@ -168,7 +172,9 @@ statements:
                     op: DIVIDE
                     right:
                       factor:
-                        primary: (numeric-expression[literal[12] / column-reference[b]])
+                        primary:
+                          type: VALUE
+                          value: (numeric-expression[literal[12] / column-reference[b]])
       referenced_tables:
         - t1
 # interval value expression that uses addition and subtraction operators on

@@ -37,7 +37,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: column-reference[a]
+                      primary:
+                        type: VALUE
+                        value: column-reference[a]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -45,7 +47,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: column-reference[b]
+                      primary:
+                        type: VALUE
+                        value: column-reference[b]
       referenced_tables:
         - t1
 # The optional WITH LOCAL CHECK OPTION clause

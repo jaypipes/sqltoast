@@ -11,7 +11,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal['a']
+                      primary:
+                        type: VALUE
+                        value: literal['a']
       referenced_tables:
         - t1
 # national character string literal value expression primary
@@ -27,7 +29,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal['motorček']
+                      primary:
+                        type: VALUE
+                        value: literal['motorček']
       referenced_tables:
         - t1
 # bit string literal value expression primary
@@ -43,7 +47,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal['01000101101']
+                      primary:
+                        type: VALUE
+                        value: literal['01000101101']
       referenced_tables:
         - t1
 # hex string literal value expression primary
@@ -59,7 +65,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal['FE1CD34A']
+                      primary:
+                        type: VALUE
+                        value: literal['FE1CD34A']
       referenced_tables:
         - t1
 # A simple scalar subquery
@@ -75,7 +83,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: scalar-subquery[
+                      primary:
+                        type: VALUE
+                        value: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
       referenced_tables:
         - t1
@@ -92,7 +102,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: parameter[name]
+                      primary:
+                        type: VALUE
+                        value: parameter[name]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -100,7 +112,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: parameter[name_long]
+                      primary:
+                        type: VALUE
+                        value: parameter[name_long]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -108,7 +122,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: parameter[?]
+                      primary:
+                        type: VALUE
+                        value: parameter[?]
       referenced_tables:
         - t1
 # character value expression using collation

@@ -51,6 +51,8 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: column-reference[t1.*]
+                      primary:
+                        type: VALUE
+                        value: column-reference[t1.*]
       referenced_tables:
         - t1

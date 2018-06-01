@@ -1077,32 +1077,57 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_expressi
     ptr.indent_pop(out);
 }
 
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& nt) {
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& term) {
     ptr.indent(out) << "term:";
     ptr.indent_push(out);
     ptr.indent(out) << "left:";
     ptr.indent_push(out);
-    to_yaml(ptr, out, *nt.left);
+    to_yaml(ptr, out, *term.left);
     ptr.indent_pop(out);
-    if (nt.right) {
-        if (nt.op == sqltoast::NUMERIC_OP_MULTIPLY)
+    if (term.right) {
+        if (term.op == sqltoast::NUMERIC_OP_MULTIPLY)
             ptr.indent(out) << "op: MULTIPLY";
         else
             ptr.indent(out) << "op: DIVIDE";
         ptr.indent(out) << "right:";
         ptr.indent_push(out);
-        to_yaml(ptr, out, *nt.right);
+        to_yaml(ptr, out, *term.right);
         ptr.indent_pop(out);
     }
     ptr.indent_pop(out);
 }
 
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t& nf) {
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t& factor) {
     ptr.indent(out) << "factor:";
     ptr.indent_push(out);
-    if (nf.sign != 0)
-        ptr.indent(out) << "sign: " << nf.sign;
-    ptr.indent(out) << "primary: " << *nf.primary;
+    if (factor.sign != 0)
+        ptr.indent(out) << "sign: " << factor.sign;
+    to_yaml(ptr, out, *factor.primary);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_primary_t& primary) {
+    ptr.indent(out) << "primary:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
+    switch (primary.type) {
+        case sqltoast::NUMERIC_PRIMARY_TYPE_VALUE:
+            out << "VALUE";
+            {
+                const sqltoast::numeric_value_t& sub =
+                    static_cast<const sqltoast::numeric_value_t&>(primary);
+                ptr.indent(out) << "value: " << sub;
+            }
+            break;
+        case sqltoast::NUMERIC_PRIMARY_TYPE_FUNCTION:
+            out << "FUNCTION";
+            {
+                const sqltoast::numeric_function_t& sub =
+                    static_cast<const sqltoast::numeric_function_t&>(primary);
+                ptr.indent(out) << "function: " << sub;
+            }
+            break;
+    }
     ptr.indent_pop(out);
 }
 

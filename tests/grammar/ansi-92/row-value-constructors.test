@@ -27,7 +27,9 @@ statements:
                               term:
                                 left:
                                   factor:
-                                    primary: column-reference[a]
+                                    primary:
+                                      type: VALUE
+                                      value: column-reference[a]
                         - type: VALUE_EXPRESSION
                           value_expression:
                             type: NUMERIC_EXPRESSION
@@ -35,7 +37,9 @@ statements:
                               term:
                                 left:
                                   factor:
-                                    primary: column-reference[b]
+                                    primary:
+                                      type: VALUE
+                                      value: column-reference[b]
                   right:
                     row_value_constructor:
                       type: LIST
@@ -47,7 +51,9 @@ statements:
                               term:
                                 left:
                                   factor:
-                                    primary: column-reference[b]
+                                    primary:
+                                      type: VALUE
+                                      value: column-reference[b]
                         - type: VALUE_EXPRESSION
                           value_expression:
                             type: NUMERIC_EXPRESSION
@@ -55,7 +61,9 @@ statements:
                               term:
                                 left:
                                   factor:
-                                    primary: column-reference[a]
+                                    primary:
+                                      type: VALUE
+                                      value: column-reference[a]
 # Single-value row value constructor lists are OK too
 >SELECT * FROM t1 WHERE (a) = (b)
 statements:
@@ -84,7 +92,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: (column-reference[a])
+                                  primary:
+                                    type: VALUE
+                                    value: (column-reference[a])
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -96,7 +106,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: (column-reference[b])
+                                  primary:
+                                    type: VALUE
+                                    value: (column-reference[b])
 # scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2)
 statements:
@@ -125,7 +137,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: column-reference[a]
+                                  primary:
+                                    type: VALUE
+                                    value: column-reference[a]
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -137,7 +151,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: scalar-subquery[
+                                  primary:
+                                    type: VALUE
+                                    value: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
 # scalar subquery inside another scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2 WHERE b = (SELECT c FROM t3))
@@ -167,7 +183,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: column-reference[a]
+                                  primary:
+                                    type: VALUE
+                                    value: column-reference[a]
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -179,7 +197,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: scalar-subquery[
+                                  primary:
+                                    type: VALUE
+                                    value: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2 where[column-reference[b] = scalar-subquery[
 query[selected-columns[column-reference[c]] table-expression[referenced-tables[t3]]]]]]]
 # scalar subquery with correlation and alias
@@ -210,7 +230,9 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: column-reference[num_t2]
+                                  primary:
+                                    type: VALUE
+                                    value: column-reference[num_t2]
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -222,5 +244,7 @@ statements:
                             term:
                               left:
                                 factor:
-                                  primary: scalar-subquery[
+                                  primary:
+                                    type: VALUE
+                                    value: scalar-subquery[
 query[selected-columns[COUNT(*)] table-expression[referenced-tables[t2 where[column-reference[t2.t1_id] = column-reference[t1.id]]]]]

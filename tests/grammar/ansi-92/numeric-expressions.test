@@ -11,7 +11,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal[1]
+                      primary:
+                        type: VALUE
+                        value: literal[1]
       referenced_tables:
         - t1
 # Simple addition of literal number to column reference
@@ -39,7 +41,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: column-reference[a]
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
                 right:
                   row_value_constructor:
                     type: ELEMENT
@@ -51,7 +55,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: (numeric-expression[literal[2] + column-reference[b]])
+                                primary:
+                                  type: VALUE
+                                  value: (numeric-expression[literal[2] + column-reference[b]])
 # Simple subtraction of literal number from column reference
 >UPDATE t1 SET x = 1 WHERE a = (b - 2)
 statements:
@@ -77,7 +83,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: column-reference[a]
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
                 right:
                   row_value_constructor:
                     type: ELEMENT
@@ -89,7 +97,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: (numeric-expression[column-reference[b] - literal[2]])
+                                primary:
+                                  type: VALUE
+                                  value: (numeric-expression[column-reference[b] - literal[2]])
 # Simple multiplication of two literals
 >UPDATE t1 SET x = 1 WHERE a = (2 * 1)
 statements:
@@ -115,7 +125,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: column-reference[a]
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
                 right:
                   row_value_constructor:
                     type: ELEMENT
@@ -127,7 +139,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: (numeric-expression[literal[2] * literal[1]])
+                                primary:
+                                  type: VALUE
+                                  value: (numeric-expression[literal[2] * literal[1]])
 # Simple division of two literals
 >UPDATE t1 SET x = 1 WHERE a = (1 / 2)
 statements:
@@ -153,7 +167,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: column-reference[a]
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
                 right:
                   row_value_constructor:
                     type: ELEMENT
@@ -165,7 +181,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: (numeric-expression[literal[1] / literal[2]])
+                                primary:
+                                  type: VALUE
+                                  value: (numeric-expression[literal[1] / literal[2]])
 # Addition of numeric expression to a literal
 >UPDATE t1 SET x = 1 WHERE a = (1 + (2 * 1))
 statements:
@@ -191,7 +209,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: column-reference[a]
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
                 right:
                   row_value_constructor:
                     type: ELEMENT
@@ -203,7 +223,9 @@ statements:
                           term:
                             left:
                               factor:
-                                primary: (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])
+                                primary:
+                                  type: VALUE
+                                  value: (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])
 # General value expression primaries
 >SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
 statements:
@@ -217,7 +239,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: USER
+                      primary:
+                        type: VALUE
+                        value: USER
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -225,7 +249,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: CURRENT_USER
+                      primary:
+                        type: VALUE
+                        value: CURRENT_USER
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -233,7 +259,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: SESSION_USER
+                      primary:
+                        type: VALUE
+                        value: SESSION_USER
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -241,7 +269,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: SYSTEM_USER
+                      primary:
+                        type: VALUE
+                        value: SYSTEM_USER
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -249,7 +279,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: VALUE
+                      primary:
+                        type: VALUE
+                        value: VALUE
       referenced_tables:
         - t1
 # COUNT set function specifications
@@ -265,7 +297,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: COUNT(*)
+                      primary:
+                        type: VALUE
+                        value: COUNT(*)
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -273,7 +307,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: COUNT(DISTINCT column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: COUNT(DISTINCT column-reference[a])
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -281,7 +317,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: COUNT(column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: COUNT(column-reference[a])
       referenced_tables:
         - t1
 # SUM set function specifications
@@ -297,7 +335,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: SUM(DISTINCT column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: SUM(DISTINCT column-reference[a])
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -305,7 +345,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: SUM(column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: SUM(column-reference[a])
       referenced_tables:
         - t1
 # AVG set function specifications
@@ -321,7 +363,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: AVG(DISTINCT column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: AVG(DISTINCT column-reference[a])
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -329,7 +373,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: AVG(column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: AVG(column-reference[a])
       referenced_tables:
         - t1
 # MIN set function specifications
@@ -345,7 +391,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: MIN(DISTINCT column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: MIN(DISTINCT column-reference[a])
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -353,7 +401,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: MIN(column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: MIN(column-reference[a])
       referenced_tables:
         - t1
 # MAX set function specifications
@@ -369,7 +419,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: MAX(DISTINCT column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: MAX(DISTINCT column-reference[a])
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -377,7 +429,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: MAX(column-reference[a])
+                      primary:
+                        type: VALUE
+                        value: MAX(column-reference[a])
       referenced_tables:
         - t1
 # Nested set function specifications
@@ -393,7 +447,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: MAX(COUNT(column-reference[a]))
+                      primary:
+                        type: VALUE
+                        value: MAX(COUNT(column-reference[a]))
       referenced_tables:
         - t1
 # Use of CHAR_LENGTH and CHARACTER_LENGTH numeric functions
@@ -409,7 +465,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: char-length[column-reference[a]]
+                      primary:
+                        type: FUNCTION
+                        function: char-length[column-reference[a]]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -418,13 +476,17 @@ statements:
                   term:
                     left:
                       factor:
-                        primary: char-length[column-reference[a]]
+                        primary:
+                          type: FUNCTION
+                          function: char-length[column-reference[a]]
                 op: ADD
                 right:
                   term:
                     left:
                       factor:
-                        primary: literal[1]
+                        primary:
+                          type: VALUE
+                          value: literal[1]
       referenced_tables:
         - t1
 # Use of BIT_LENGTH and OCTET_LENGTH numeric functions
@@ -440,7 +502,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: bit-length[column-reference[a]]
+                      primary:
+                        type: FUNCTION
+                        function: bit-length[column-reference[a]]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -448,7 +512,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: octet-length[column-reference[a]]
+                      primary:
+                        type: FUNCTION
+                        function: octet-length[column-reference[a]]
       referenced_tables:
         - t1
 # Use of EXTRACT numeric function
@@ -464,7 +530,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: extract[YEAR FROM datetime-expression[column-reference[a] AT LOCAL]]
+                      primary:
+                        type: FUNCTION
+                        function: extract[YEAR FROM datetime-expression[column-reference[a] AT LOCAL]]
       referenced_tables:
         - t1
 # Use of POSITION numeric function
@@ -480,6 +548,8 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: position[literal['123'] IN column-reference[a]]
+                      primary:
+                        type: FUNCTION
+                        function: position[literal['123'] IN column-reference[a]]
       referenced_tables:
         - t1

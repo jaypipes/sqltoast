@@ -16,7 +16,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal[1]
+                      primary:
+                        type: VALUE
+                        value: literal[1]
       - row_value_constructor:
           type: ELEMENT
           element:
@@ -27,7 +29,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal[2]
+                      primary:
+                        type: VALUE
+                        value: literal[2]
 # INSERT INTO with a default columns list
 >INSERT INTO t1 VALUES (1, 2)
 statements:
@@ -45,7 +49,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal[1]
+                      primary:
+                        type: VALUE
+                        value: literal[1]
       - row_value_constructor:
           type: ELEMENT
           element:
@@ -56,7 +62,9 @@ statements:
                 term:
                   left:
                     factor:
-                      primary: literal[2]
+                      primary:
+                        type: VALUE
+                        value: literal[2]
 # INSERT INTO using a character values expression
 >INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
 statements:
@@ -146,10 +154,14 @@ statements:
                   term:
                     left:
                       factor:
-                        primary: literal[1]
+                        primary:
+                          type: VALUE
+                          value: literal[1]
                 op: ADD
                 right:
                   term:
                     left:
                       factor:
-                        primary: (numeric-expression[literal[2] * literal[3]])
+                        primary:
+                          type: VALUE
+                          value: (numeric-expression[literal[2] * literal[3]])
