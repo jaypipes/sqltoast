@@ -24,6 +24,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_factor_t
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_primary_t& bp);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::boolean_term_t& bt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_factor_t& factor);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_primary_t& cp);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_expression_t& cve);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::comp_op_t& op);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::comp_predicate_t& pred);

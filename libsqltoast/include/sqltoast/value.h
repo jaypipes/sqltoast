@@ -436,12 +436,12 @@ typedef struct character_primary {
 
 // A character factor is a character primary with an optional collation.
 typedef struct character_factor {
-    std::unique_ptr<character_primary_t> value;
+    std::unique_ptr<character_primary_t> primary;
     lexeme_t collation;
     character_factor(
-            std::unique_ptr<character_primary_t>& value,
+            std::unique_ptr<character_primary_t>& primary,
             lexeme_t collation) :
-        value(std::move(value)),
+        primary(std::move(primary)),
         collation(collation)
     {}
 } character_factor_t;

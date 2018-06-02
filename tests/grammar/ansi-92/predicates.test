@@ -1614,7 +1614,7 @@ statements:
                       type: STRING_EXPRESSION
                       character_expression:
                         factors:
-                          - value: literal['s%']
+                          - primary: literal['s%']
 # LIKE predicate with concatenated column comparison with string
 >SELECT * FROM t1 WHERE a LIKE b || '%'
 statements:
@@ -1650,8 +1650,8 @@ statements:
                       type: STRING_EXPRESSION
                       character_expression:
                         factors:
-                          - value: column-reference[b]
-                          - value: literal['%']
+                          - primary: column-reference[b]
+                          - primary: literal['%']
 # OVERLAPS predicate with date columns from multiple tables
 >SELECT * FROM t1, t2 WHERE (t1.start, t1.end) OVERLAPS (t2.start, t2.end)
 statements:

@@ -1207,16 +1207,23 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_factor_t& factor) {
     bool is_list = ptr.in_list(out);
     if (is_list) {
-        ptr.indent(out) << "- value: " << *factor.value;
+        ptr.indent(out) << "- primary: " << *factor.primary;
         ptr.end_list(out);
         ptr.indent_push(out);
     } else {
-        ptr.indent(out) << "value:";
+        ptr.indent(out) << "primary:";
     }
     if (factor.collation)
         ptr.indent(out) << "collation: " << factor.collation;
     if (is_list)
         ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_primary_t& cp) {
+    if (cp.value)
+        out << *cp.value;
+    else
+        out << *cp.string_function;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de) {

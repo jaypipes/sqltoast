@@ -80,7 +80,7 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - value: literal['a']
+                  - primary: literal['a']
                     collation: utf8bin
 # INSERT INTO using datetime value expressions
 >INSERT INTO t1 (create_date, my_date) VALUES (CURRENT_DATE, '2001-01-01' AT TIME ZONE 'UTC')
