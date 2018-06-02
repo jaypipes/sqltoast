@@ -467,7 +467,9 @@ statements:
                     factor:
                       primary:
                         type: FUNCTION
-                        function: char-length[column-reference[a]]
+                        function:
+                          type: CHAR_LENGTH
+                          operand: column-reference[a]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -478,7 +480,9 @@ statements:
                       factor:
                         primary:
                           type: FUNCTION
-                          function: char-length[column-reference[a]]
+                          function:
+                            type: CHAR_LENGTH
+                            operand: column-reference[a]
                 op: ADD
                 right:
                   term:
@@ -504,7 +508,9 @@ statements:
                     factor:
                       primary:
                         type: FUNCTION
-                        function: bit-length[column-reference[a]]
+                        function:
+                          type: BIT_LENGTH
+                          operand: column-reference[a]
         - derived_column:
             value_expression:
               type: NUMERIC_EXPRESSION
@@ -514,7 +520,9 @@ statements:
                     factor:
                       primary:
                         type: FUNCTION
-                        function: octet-length[column-reference[a]]
+                        function:
+                          type: OCTET_LENGTH
+                          operand: column-reference[a]
       referenced_tables:
         - t1
 # Use of EXTRACT numeric function
@@ -532,7 +540,10 @@ statements:
                     factor:
                       primary:
                         type: FUNCTION
-                        function: extract[YEAR FROM datetime-expression[column-reference[a] AT LOCAL]]
+                        function:
+                          type: EXTRACT
+                          field: YEAR
+                          source: datetime-expression[column-reference[a] AT LOCAL]
       referenced_tables:
         - t1
 # Use of POSITION numeric function
@@ -550,6 +561,9 @@ statements:
                     factor:
                       primary:
                         type: FUNCTION
-                        function: position[literal['123'] IN column-reference[a]]
+                        function:
+                          type: POSITION
+                          find: literal['123']
+                          in: column-reference[a]
       referenced_tables:
         - t1

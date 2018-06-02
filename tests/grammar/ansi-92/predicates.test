@@ -1083,7 +1083,9 @@ statements:
                               factor:
                                 primary:
                                   type: FUNCTION
-                                  function: char-length[column-reference[b]]
+                                  function:
+                                    type: CHAR_LENGTH
+                                    operand: column-reference[b]
 # IN (<subquery>) operator
 >SELECT * FROM t1 WHERE a IN (SELECT t1_a FROM t2)
 statements:

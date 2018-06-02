@@ -1124,11 +1124,71 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_primary_
             {
                 const sqltoast::numeric_function_t& sub =
                     static_cast<const sqltoast::numeric_function_t&>(primary);
-                ptr.indent(out) << "function: " << sub;
+                to_yaml(ptr, out, sub);
             }
             break;
     }
     ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_function_t& func) {
+    bool found_length_func = false;
+    ptr.indent(out) << "function:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
+    switch (func.type) {
+        case sqltoast::NUMERIC_FUNCTION_TYPE_POSITION:
+            out << "POSITION";
+            {
+                const sqltoast::position_expression_t& sub =
+                    static_cast<const sqltoast::position_expression_t&>(func);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::NUMERIC_FUNCTION_TYPE_EXTRACT:
+            out << "EXTRACT";
+            {
+                const sqltoast::extract_expression_t& sub =
+                    static_cast<const sqltoast::extract_expression_t&>(func);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
+            out << "CHAR_LENGTH";
+            found_length_func = true;
+            break;
+        case sqltoast::NUMERIC_FUNCTION_TYPE_BIT_LENGTH:
+            out << "BIT_LENGTH";
+            found_length_func = true;
+            break;
+        case sqltoast::NUMERIC_FUNCTION_TYPE_OCTET_LENGTH:
+            out << "OCTET_LENGTH";
+            found_length_func = true;
+            break;
+        default:
+            // TODO(jaypipes)
+            break;
+    }
+    if (found_length_func) {
+        const sqltoast::length_expression_t& sub =
+            static_cast<const sqltoast::length_expression_t&>(func);
+        to_yaml(ptr, out, sub);
+    }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::length_expression_t& expr) {
+    ptr.indent(out) << "operand: " << *expr.operand;
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::position_expression_t& expr) {
+    ptr.indent(out) << "find: " << *expr.to_find;
+    ptr.indent(out) << "in: " << *expr.subject;
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::extract_expression_t& expr) {
+    ptr.indent(out) << "field: " << expr.extract_field;
+    ptr.indent(out) << "source: " << *expr.extract_source;
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_expression_t& cve) {
