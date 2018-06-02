@@ -137,6 +137,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_schema_statement_t& stmt) {
+    ptr.indent(out) << "create_schema_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "schema_name: " << stmt.schema_name;
     if (stmt.authorization_identifier) {
        ptr.indent(out) << "authorization_identifier: " << stmt.authorization_identifier;
@@ -144,6 +146,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_schema_st
     if (stmt.default_charset) {
        ptr.indent(out) << "default_charset: " << stmt.default_charset;
     }
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_schema_statement_t& stmt) {

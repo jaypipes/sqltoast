@@ -200,6 +200,9 @@ jaypipes@uberbox:~/src/github.com/jaypipes/sqltoast/tests/grammar$ python runner
 Running ansi-92/alter-table ... OK
 Running ansi-92/case-expressions ... OK
 Running ansi-92/column-definitions ... OK
+Running ansi-92/create-schema ... OK
+Running ansi-92/create-table ... OK
+Running ansi-92/create-view ... OK
 Running ansi-92/datetime-expressions ... OK
 Running ansi-92/delete ... OK
 Running ansi-92/drop-view ... OK
