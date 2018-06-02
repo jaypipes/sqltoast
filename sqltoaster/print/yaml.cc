@@ -822,10 +822,18 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::like_predicate_t
         ptr.indent(out) << "negate: true";
     ptr.indent(out) << "pattern:";
     ptr.indent_push(out);
-    to_yaml(ptr, out, *pred.pattern);
+    const sqltoast::character_value_expression_t& pattern_val =
+        static_cast<const sqltoast::character_value_expression_t&>(*pred.pattern);
+    to_yaml(ptr, out, pattern_val);
     ptr.indent_pop(out);
-    if (pred.escape_char)
-        ptr.indent(out) << "escape_char: " << *pred.escape_char;
+    if (pred.escape_char) {
+        const sqltoast::character_value_expression_t& escape_char_val =
+            static_cast<const sqltoast::character_value_expression_t&>(*pred.pattern);
+        ptr.indent(out) << "escape:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, escape_char_val);
+        ptr.indent_pop(out);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::null_predicate_t& pred) {
