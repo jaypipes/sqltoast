@@ -2,346 +2,362 @@
 >SELECT 'a' FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: literal['a']
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: literal['a']
+        referenced_tables:
+          - t1
 # national character string literal value expression primary
 >SELECT N'motorček' FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: literal['motorček']
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: literal['motorček']
+        referenced_tables:
+          - t1
 # bit string literal value expression primary
 >SELECT B'01000101101' FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: literal['01000101101']
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: literal['01000101101']
+        referenced_tables:
+          - t1
 # hex string literal value expression primary
 >SELECT X'FE1CD34A' FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: literal['FE1CD34A']
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: literal['FE1CD34A']
+        referenced_tables:
+          - t1
 # A simple scalar subquery
 >SELECT (SELECT b FROM t2) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: scalar-subquery[
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: scalar-subquery[
 query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
-      referenced_tables:
-        - t1
+        referenced_tables:
+          - t1
 # named and dynamic parameters
 >SELECT :name, :name_long, ? FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: parameter[name]
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: parameter[name_long]
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: parameter[?]
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: parameter[name]
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: parameter[name_long]
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: parameter[?]
+        referenced_tables:
+          - t1
 # character value expression using collation
 >SELECT 'ß' COLLATE utf8mb4_general_ci FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      value: literal['ß']
-                    collation: utf8mb4_general_ci
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        value: literal['ß']
+                      collation: utf8mb4_general_ci
+        referenced_tables:
+          - t1
 # character value expression using concatenation
 >SELECT a || b FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      value: column-reference[a]
-                  - primary:
-                      value: column-reference[b]
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        value: column-reference[a]
+                    - primary:
+                        value: column-reference[b]
+        referenced_tables:
+          - t1
 # character value expression using concatenation with some factors having a collation
 >SELECT a || b COLLATE utf8_bin FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      value: column-reference[a]
-                  - primary:
-                      value: column-reference[b]
-                    collation: utf8_bin
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        value: column-reference[a]
+                    - primary:
+                        value: column-reference[b]
+                      collation: utf8_bin
+        referenced_tables:
+          - t1
 # SUBSTRING string function with no for length modifier
 >SELECT SUBSTRING(a FROM 1) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: SUBSTRING
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-                        from: literal[1]
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: SUBSTRING
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+                          from: literal[1]
+        referenced_tables:
+          - t1
 # SUBSTRING string function with a for length modifier
 >SELECT SUBSTRING(a FROM 1 FOR 2) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: SUBSTRING
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-                        from: literal[1]
-                        for: literal[2]
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: SUBSTRING
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+                          from: literal[1]
+                          for: literal[2]
+        referenced_tables:
+          - t1
 # UPPER and LOWER string functions
 >SELECT UPPER(a), LOWER(a) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: UPPER
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: LOWER
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: UPPER
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: LOWER
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+        referenced_tables:
+          - t1
 # TRANSLATE string function
 >SELECT TRANSLATE(a USING utf8_bin) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: TRANSLATE
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-                        using: utf8_bin
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: TRANSLATE
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+                          using: utf8_bin
+        referenced_tables:
+          - t1
 # CONVERT string function
 >SELECT CONVERT(a USING utf8_bin) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: CONVERT
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-                        using: utf8_bin
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: CONVERT
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+                          using: utf8_bin
+        referenced_tables:
+          - t1
 # TRIM string function with no trim specification or character
 >SELECT TRIM(a) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: TRIM
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: TRIM
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+        referenced_tables:
+          - t1
 # TRIM string function with trim specifications
 >SELECT TRIM(LEADING ' ' FROM a) FROM t1
 statements:
   - type: SELECT
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: STRING_EXPRESSION
-              character_expression:
-                factors:
-                  - primary:
-                      function:
-                        type: TRIM
-                        operand:
-                          character_expression:
-                            factors:
-                              - primary:
-                                  value: column-reference[a]
-                        specification: LEADING
-                        character: literal[' ']
-      referenced_tables:
-        - t1
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: STRING_EXPRESSION
+                character_expression:
+                  factors:
+                    - primary:
+                        function:
+                          type: TRIM
+                          operand:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: column-reference[a]
+                          specification: LEADING
+                          character: literal[' ']
+        referenced_tables:
+          - t1

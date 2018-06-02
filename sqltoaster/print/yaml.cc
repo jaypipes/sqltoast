@@ -478,9 +478,12 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_view_statem
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt) {
+    ptr.indent(out) << "select_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "query:";
     ptr.indent_push(out);
     to_yaml(ptr, out, *stmt.query);
+    ptr.indent_pop(out);
     ptr.indent_pop(out);
 }
 
