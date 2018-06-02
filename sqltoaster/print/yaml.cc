@@ -150,11 +150,14 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_schema_st
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_schema_statement_t& stmt) {
+    ptr.indent(out) << "drop_schema_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "schema_name: " << stmt.schema_name;
     if (stmt.drop_behaviour == sqltoast::DROP_BEHAVIOUR_CASCADE)
        ptr.indent(out) << "drop_behaviour: CASCADE";
     else
        ptr.indent(out) << "drop_behaviour: RESTRICT";
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_table_statement_t& stmt) {

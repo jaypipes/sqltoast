@@ -205,6 +205,7 @@ Running ansi-92/create-table ... OK
 Running ansi-92/create-view ... OK
 Running ansi-92/datetime-expressions ... OK
 Running ansi-92/delete ... OK
+Running ansi-92/drop-schema ... OK
 Running ansi-92/drop-view ... OK
 Running ansi-92/grant ... OK
 Running ansi-92/identifiers ... OK

@@ -1,0 +1,33 @@
+# Simple DROP SCHEMA with no drop behaviour defaults to CASCADE
+>DROP SCHEMA s1
+statements:
+  - type: DROP_SCHEMA
+    drop_schema_statement:
+      schema_name: s1
+      drop_behaviour: CASCADE
+# Simple DROP SCHEMA with explicit drop behaviour of CASCADE
+>DROP SCHEMA s1 CASCADE
+statements:
+  - type: DROP_SCHEMA
+    drop_schema_statement:
+      schema_name: s1
+      drop_behaviour: CASCADE
+# Simple DROP SCHEMA with explicit drop behaviour of RESTRICT
+>DROP SCHEMA s1 RESTRICT
+statements:
+  - type: DROP_SCHEMA
+    drop_schema_statement:
+      schema_name: s1
+      drop_behaviour: RESTRICT
+# Syntax error missing table/schema name
+>DROP SCHEMA
+Syntax error.
+Expected to find << identifier >> but found symbol[EOS]
+DROP SCHEMA
+          ^
+# Syntax error expecting statement ending
+>DROP SCHEMA s1 UNKNOWN
+Syntax error.
+Expected to find one of (EOS|';') but found identifier[UNKNOWN]
+DROP SCHEMA s1 UNKNOWN
+              ^^^^^^^^
