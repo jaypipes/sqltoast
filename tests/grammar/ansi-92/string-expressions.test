@@ -207,7 +207,14 @@ statements:
                               factors:
                                 - primary:
                                     value: column-reference[a]
-                          from: literal[1]
+                          start_position:
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary:
+                                      type: VALUE
+                                      value: literal[1]
         referenced_tables:
           - t1
 # SUBSTRING string function with a for length modifier
@@ -230,8 +237,22 @@ statements:
                               factors:
                                 - primary:
                                     value: column-reference[a]
-                          from: literal[1]
-                          for: literal[2]
+                          start_position:
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary:
+                                      type: VALUE
+                                      value: literal[1]
+                          for_length:
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary:
+                                      type: VALUE
+                                      value: literal[2]
         referenced_tables:
           - t1
 # UPPER and LOWER string functions

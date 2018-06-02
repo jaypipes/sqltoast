@@ -1366,9 +1366,20 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::string_function_
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::substring_function_t& func) {
-    ptr.indent(out) << "from: " << *func.start_position_value;
-    if (func.for_length_value)
-        ptr.indent(out) << "for: " << *func.for_length_value;
+    ptr.indent(out) << "start_position:";
+    ptr.indent_push(out);
+    const sqltoast::numeric_expression_t& start_pos_val =
+        static_cast<sqltoast::numeric_expression_t&>(*func.start_position_value);
+    to_yaml(ptr, out, start_pos_val);
+    ptr.indent_pop(out);
+    if (func.for_length_value) {
+        ptr.indent(out) << "for_length:";
+        ptr.indent_push(out);
+        const sqltoast::numeric_expression_t& for_length_val =
+            static_cast<sqltoast::numeric_expression_t&>(*func.for_length_value);
+        to_yaml(ptr, out, for_length_val);
+        ptr.indent_pop(out);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::convert_function_t& func) {
