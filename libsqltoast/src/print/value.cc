@@ -401,7 +401,7 @@ std::ostream& operator<< (std::ostream& out, const character_primary_t& cp) {
 }
 
 std::ostream& operator<< (std::ostream& out, const character_factor_t& cf) {
-    out << *cf.value;
+    out << *cf.primary;
     if (cf.collation)
         out << " COLLATE " << cf.collation;
     return out;

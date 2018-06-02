@@ -108,11 +108,13 @@ default_charset_or_statement_ending:
     // We get here after successfully parsing the <schema name clause>,
     // which must be followed by either a statement ending or a <default
     // character set clause>
+    cur_sym = cur_tok.symbol;
     switch (cur_sym) {
         case SYMBOL_SEMICOLON:
         case SYMBOL_EOS:
             goto push_statement;
         case SYMBOL_DEFAULT:
+            cur_tok = lex.next();
             goto default_charset_clause;
         default:
             goto statement_ending;
@@ -130,6 +132,7 @@ authz_or_statement_ending:
             cur_tok = lex.next();
             goto authorization_clause;
         case SYMBOL_DEFAULT:
+            cur_tok = lex.next();
             goto default_charset_clause;
         default:
             expect_any_error(ctx,

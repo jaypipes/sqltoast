@@ -1,0 +1,33 @@
+# Simple DROP TABLE with no drop behaviour defaults to CASCADE
+>DROP TABLE t1
+statements:
+  - type: DROP_TABLE
+    drop_table_statement:
+      table_name: t1
+      drop_behaviour: CASCADE
+# Simple DROP TABLE with explicit drop behaviour of CASCADE
+>DROP TABLE t1 CASCADE
+statements:
+  - type: DROP_TABLE
+    drop_table_statement:
+      table_name: t1
+      drop_behaviour: CASCADE
+# Simple DROP TABLE with explicit drop behaviour of RESTRICT
+>DROP TABLE t1 RESTRICT
+statements:
+  - type: DROP_TABLE
+    drop_table_statement:
+      table_name: t1
+      drop_behaviour: RESTRICT
+# Syntax error missing table/table name
+>DROP TABLE
+Syntax error.
+Expected to find << identifier >> but found symbol[EOS]
+DROP TABLE
+         ^
+# Syntax error expecting statement ending
+>DROP TABLE t1 UNKNOWN
+Syntax error.
+Expected to find one of (EOS|';') but found identifier[UNKNOWN]
+DROP TABLE t1 UNKNOWN
+             ^^^^^^^^

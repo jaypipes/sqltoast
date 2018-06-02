@@ -2,96 +2,98 @@
 >INSERT INTO t1 SELECT a, b FROM t1
 statements:
   - type: INSERT_SELECT
-    table_name: t1
-    default_columns: true
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: column-reference[a]
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: column-reference[b]
-      referenced_tables:
-        - t1
+    insert_select_statement:
+      table_name: t1
+      default_columns: true
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: column-reference[b]
+        referenced_tables:
+          - t1
 # INSERT SELECT with target columns and a search condition
 >INSERT INTO t1 (t1_a, t1_b) SELECT a, b FROM t1 WHERE c < 3
 statements:
   - type: INSERT_SELECT
-    table_name: t1
-    columns:
-      - t1_a
-      - t1_b
-    query:
-      selected_columns:
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: column-reference[a]
-        - derived_column:
-            value_expression:
-              type: NUMERIC_EXPRESSION
-              numeric_expression:
-                term:
-                  left:
-                    factor:
-                      primary:
-                        type: VALUE
-                        value: column-reference[b]
-      referenced_tables:
-        - t1
-      where:
-        search_condition:
-          terms:
-            - factor:
-                predicate:
-                  type: COMPARISON
-                  op: LESS_THAN
-                  left:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
-                                  primary:
-                                    type: VALUE
-                                    value: column-reference[c]
-                  right:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
-                                  primary:
-                                    type: VALUE
-                                    value: literal[3]
+    insert_select_statement:
+      table_name: t1
+      columns:
+        - t1_a
+        - t1_b
+      query:
+        selected_columns:
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
+          - derived_column:
+              value_expression:
+                type: NUMERIC_EXPRESSION
+                numeric_expression:
+                  term:
+                    left:
+                      factor:
+                        primary:
+                          type: VALUE
+                          value: column-reference[b]
+        referenced_tables:
+          - t1
+        where:
+          search_condition:
+            terms:
+              - factor:
+                  predicate:
+                    type: COMPARISON
+                    op: LESS_THAN
+                    left:
+                      row_value_constructor:
+                        type: ELEMENT
+                        element:
+                          type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary:
+                                      type: VALUE
+                                      value: column-reference[c]
+                    right:
+                      row_value_constructor:
+                        type: ELEMENT
+                        element:
+                          type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary:
+                                      type: VALUE
+                                      value: literal[3]

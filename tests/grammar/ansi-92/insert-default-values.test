@@ -1,6 +1,7 @@
 >INSERT INTO t1 DEFAULT VALUES
 statements:
   - type: INSERT
-    table_name: t1
-    default_columns: true
-    default_values: true
+    insert_statement:
+      table_name: t1
+      default_columns: true
+      default_values: true

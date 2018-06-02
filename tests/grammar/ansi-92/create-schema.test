@@ -1,0 +1,34 @@
+# Missing schema name
+>CREATE SCHEMA
+Syntax error.
+Expected to find << identifier >> but found symbol[EOS]
+CREATE SCHEMA
+            ^
+# Simple CREATE SCHEMA no options
+>CREATE SCHEMA s1
+statements:
+  - type: CREATE_SCHEMA
+    create_schema_statement:
+      schema_name: s1
+# Simple CREATE SCHEMA with authorizer
+>CREATE SCHEMA s1 AUTHORIZATION usr
+statements:
+  - type: CREATE_SCHEMA
+    create_schema_statement:
+      schema_name: s1
+      authorization_identifier: usr
+# Simple CREATE SCHEMA with default character set
+>CREATE SCHEMA s1 DEFAULT CHARACTER SET utf8
+statements:
+  - type: CREATE_SCHEMA
+    create_schema_statement:
+      schema_name: s1
+      default_charset: utf8
+# Simple CREATE SCHEMA with default character set and authorization
+>CREATE SCHEMA s1 AUTHORIZATION usr DEFAULT CHARACTER SET utf8
+statements:
+  - type: CREATE_SCHEMA
+    create_schema_statement:
+      schema_name: s1
+      authorization_identifier: usr
+      default_charset: utf8
