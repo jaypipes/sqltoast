@@ -535,14 +535,16 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_st
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt) {
+    ptr.indent(out) << "delete_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "table_name: " << stmt.table_name;
-
     if (stmt.where_condition) {
         ptr.indent(out) << "where:";
         ptr.indent_push(out);
         to_yaml(ptr, out, *stmt.where_condition);
         ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt) {
