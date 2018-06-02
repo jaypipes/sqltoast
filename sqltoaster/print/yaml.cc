@@ -488,6 +488,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt) {
+    ptr.indent(out) << "insert_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "table_name: " << stmt.table_name;
     if (stmt.use_default_columns())
         ptr.indent(out) << "default_columns: true";
@@ -509,6 +511,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement
         }
         ptr.indent_pop(out);
     }
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_statement_t& stmt) {
