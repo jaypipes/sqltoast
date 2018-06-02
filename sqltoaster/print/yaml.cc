@@ -1480,7 +1480,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_factor_
     ptr.indent_push(out);
     if (factor.sign != 0)
         ptr.indent(out) << "sign: " << factor.sign;
-    ptr.indent(out) << "primary: " << *factor.value;
+    ptr.indent(out) << "primary: " << *factor.primary;
     ptr.indent_pop(out);
 }
 

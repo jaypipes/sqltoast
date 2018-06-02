@@ -505,7 +505,7 @@ std::ostream& operator<< (std::ostream& out, const interval_primary_t& primary) 
 std::ostream& operator<< (std::ostream& out, const interval_factor_t& factor) {
     if (factor.sign != 0)
         out << factor.sign << ' ';
-    out << *factor.value;
+    out << *factor.primary;
     return out;
 }
 

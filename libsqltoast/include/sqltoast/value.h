@@ -564,10 +564,12 @@ typedef struct interval_primary {
 
 typedef struct interval_factor {
     int8_t sign;
-    std::unique_ptr<interval_primary_t> value;
-    interval_factor(int8_t sign, std::unique_ptr<interval_primary_t>& value) :
+    std::unique_ptr<interval_primary_t> primary;
+    interval_factor(
+            int8_t sign,
+            std::unique_ptr<interval_primary_t>& primary) :
         sign(sign),
-        value(std::move(value))
+        primary(std::move(primary))
     {}
 } interval_factor_t;
 
