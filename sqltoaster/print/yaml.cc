@@ -467,11 +467,14 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& 
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_view_statement_t& stmt) {
+    ptr.indent(out) << "drop_view_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "view_name: " << stmt.table_name;
     if (stmt.drop_behaviour == sqltoast::DROP_BEHAVIOUR_CASCADE)
        ptr.indent(out) << "drop_behaviour: CASCADE";
     else
        ptr.indent(out) << "drop_behaviour: RESTRICT";
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt) {

@@ -2,20 +2,23 @@
 >DROP VIEW v1
 statements:
   - type: DROP_VIEW
-    view_name: v1
-    drop_behaviour: CASCADE
+    drop_view_statement:
+      view_name: v1
+      drop_behaviour: CASCADE
 # Simple DROP VIEW with explicit drop behaviour of CASCADE
 >DROP VIEW v1 CASCADE
 statements:
   - type: DROP_VIEW
-    view_name: v1
-    drop_behaviour: CASCADE
+    drop_view_statement:
+      view_name: v1
+      drop_behaviour: CASCADE
 # Simple DROP VIEW with explicit drop behaviour of RESTRICT
 >DROP VIEW v1 RESTRICT
 statements:
   - type: DROP_VIEW
-    view_name: v1
-    drop_behaviour: RESTRICT
+    drop_view_statement:
+      view_name: v1
+      drop_behaviour: RESTRICT
 # Syntax error missing table/view name
 >DROP VIEW
 Syntax error.
