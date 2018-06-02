@@ -28,7 +28,8 @@ statements:
                           type: VALUE
                           value: coalesce[column-reference[a],literal['n/a']]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # COALESCE with 4 args
 >SELECT COALESCE(a, b, c, 'n/a') FROM t1
 statements:
@@ -47,7 +48,8 @@ statements:
                           type: VALUE
                           value: coalesce[column-reference[a],column-reference[b],column-reference[c],literal['n/a']]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # NULLIF with 2 args
 >SELECT NULLIF(a, 'n/a') FROM t1
 statements:
@@ -66,7 +68,8 @@ statements:
                           type: VALUE
                           value: nullif[column-reference[a],literal['n/a']]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple CASE expression single WHEN no ELSE
 >SELECT CASE a WHEN 1 THEN 2 END FROM t1
 statements:
@@ -85,7 +88,8 @@ statements:
                           type: VALUE
                           value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple CASE expression multiple WHEN no ELSE
 >SELECT CASE a WHEN 1 THEN 2 WHEN 2 THEN 3 END FROM t1
 statements:
@@ -104,7 +108,8 @@ statements:
                           type: VALUE
                           value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple CASE expression single WHEN with ELSE
 >SELECT CASE a WHEN 1 THEN 2 ELSE 42 END FROM t1
 statements:
@@ -123,7 +128,8 @@ statements:
                           type: VALUE
                           value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] ELSE literal[42]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple CASE expression multiple WHEN with ELSE
 >SELECT CASE a WHEN 1 THEN 2 WHEN 2 THEN 3 ELSE 4 END FROM t1
 statements:
@@ -142,7 +148,8 @@ statements:
                           type: VALUE
                           value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3] ELSE literal[4]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Searched CASE expression single WHEN no ELSE
 >SELECT CASE WHEN a = 1 THEN 2 END FROM t1
 statements:
@@ -161,7 +168,8 @@ statements:
                           type: VALUE
                           value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Searched CASE expression multiple WHEN no ELSE
 >SELECT CASE WHEN a = 1 THEN 2 WHEN a = 2 THEN 3 END FROM t1
 statements:
@@ -180,7 +188,8 @@ statements:
                           type: VALUE
                           value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Searched CASE expression single WHEN with ELSE
 >SELECT CASE WHEN a = 1 THEN 2 ELSE 42 END FROM t1
 statements:
@@ -199,7 +208,8 @@ statements:
                           type: VALUE
                           value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] ELSE literal[42]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Searched CASE expression multiple WHEN with ELSE
 >SELECT CASE WHEN a = 1 THEN 2 WHEN a = 2 THEN 3 ELSE 4 END FROM t1
 statements:
@@ -218,4 +228,5 @@ statements:
                           type: VALUE
                           value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3] ELSE literal[4]]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1

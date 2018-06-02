@@ -363,8 +363,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_column_t
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp) {
     ptr.indent(out) << "referenced_tables:";
     ptr.indent_push(out);
-    for (const std::unique_ptr<sqltoast::table_reference_t>& tr : table_exp.referenced_tables)
-        ptr.indent(out) << "- " << *tr;
+    for (const std::unique_ptr<sqltoast::table_reference_t>& tr : table_exp.referenced_tables) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, *tr);
+    }
     ptr.indent_pop(out);
     if (table_exp.where_condition) {
         ptr.indent(out) << "where:";
@@ -435,35 +437,83 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_que
     to_yaml(ptr, out, *qe.joined_table);
 }
 
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_t& tr) {
+    if (ptr.in_list(out)) {
+        ptr.indent(out) << "- type: ";
+        ptr.end_list(out);
+    }
+    else
+        ptr.indent(out) << "type: ";
+    ptr.indent_push(out);
+    switch (tr.type) {
+        case sqltoast::TABLE_REFERENCE_TYPE_TABLE:
+            out << "TABLE";
+            {
+                const sqltoast::table_t& sub =
+                    static_cast<const sqltoast::table_t&>(tr);
+                ptr.indent(out) << "table: " << sub;
+            }
+            break;
+        case sqltoast::TABLE_REFERENCE_TYPE_DERIVED_TABLE:
+            out << "DERIVED_TABLE";
+            {
+                const sqltoast::derived_table_t& sub =
+                    static_cast<const sqltoast::derived_table_t&>(tr);
+                ptr.indent(out) << "derived_table: " << sub;
+            }
+            break;
+        case sqltoast::TABLE_REFERENCE_TYPE_JOINED_TABLE:
+            out << "JOINED_TABLE";
+            {
+                const sqltoast::joined_table_t& sub =
+                    static_cast<const sqltoast::joined_table_t&>(tr);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+    }
+    ptr.indent_pop(out);
+}
+
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& jt) {
+    ptr.indent(out) << "joined_table:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "join_type: ";
     switch (jt.join_type) {
         case sqltoast::JOIN_TYPE_INNER:
-            ptr.indent(out) << "inner-join[";
+            out << "INNER";
             break;
         case sqltoast::JOIN_TYPE_LEFT:
-            ptr.indent(out) << "left-join[";
+            out << "LEFT";
             break;
         case sqltoast::JOIN_TYPE_RIGHT:
-            ptr.indent(out) << "right-join[";
+            out << "RIGHT";
             break;
         case sqltoast::JOIN_TYPE_FULL:
-            ptr.indent(out) << "full-join[";
+            out << "FULL";
             break;
         case sqltoast::JOIN_TYPE_CROSS:
-            ptr.indent(out) << "cross-join[";
+            out << "CROSS";
             break;
         case sqltoast::JOIN_TYPE_NATURAL:
-            ptr.indent(out) << "natural-join[";
+            out << "NATURAL";
             break;
         case sqltoast::JOIN_TYPE_UNION:
-            ptr.indent(out) << "union-join[";
+            out << "UNION";
             break;
         default:
             break;
     }
-    out << *jt.left << ',' << *jt.right;
+    ptr.indent(out) << "left:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *jt.left);
+    ptr.indent_pop(out);
+    ptr.indent(out) << "right:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *jt.right);
+    ptr.indent_pop(out);
     if (jt.spec)
-        out << *jt.spec;
+        ptr.indent(out) << "specification: " << *jt.spec;
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_view_statement_t& stmt) {

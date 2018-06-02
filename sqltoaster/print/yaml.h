@@ -87,6 +87,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::string_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::substring_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_t& tr);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::translate_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::trim_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::unique_predicate_t& pred);

@@ -8,7 +8,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Normal table with an alias using AS keyword
 >SELECT * FROM t1 AS t1_alias
 statements:
@@ -19,7 +20,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1 AS t1_alias
+          - type: TABLE
+            table: t1 AS t1_alias
 # Normal table with an alias NOT using AS keyword
 >SELECT * FROM t1 t1_alias
 statements:
@@ -30,7 +32,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1 AS t1_alias
+          - type: TABLE
+            table: t1 AS t1_alias
 # Derived table with name using AS keyword
 >SELECT * FROM (SELECT a, b FROM t1) AS t
 statements:
@@ -41,4 +44,5 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - <derived table> AS t
+          - type: DERIVED_TABLE
+            derived_table: <derived table> AS t
