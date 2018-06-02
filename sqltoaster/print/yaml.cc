@@ -299,6 +299,8 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_stat
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt) {
+    ptr.indent(out) << "create_view_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "view_name: " << stmt.table_name;
     if (! stmt.columns.empty()) {
         ptr.indent(out) << "columns:";
@@ -316,6 +318,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_stat
     ptr.indent(out) << "query:";
     ptr.indent_push(out);
     to_yaml(ptr, out, *stmt.query);
+    ptr.indent_pop(out);
     ptr.indent_pop(out);
 }
 
