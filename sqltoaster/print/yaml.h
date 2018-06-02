@@ -28,6 +28,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_primar
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_expression_t& cve);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::comp_op_t& op);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::comp_predicate_t& pred);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::convert_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_schema_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_table_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt);
@@ -79,7 +80,11 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::row_value_expres
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::search_condition_t& sc);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stmt);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::string_function_t& func);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::substring_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::translate_function_t& func);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::trim_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::unique_predicate_t& pred);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression_t& ve);

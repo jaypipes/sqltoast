@@ -138,7 +138,8 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: literal['ß']
+                  - primary:
+                      value: literal['ß']
                     collation: utf8mb4_general_ci
       referenced_tables:
         - t1
@@ -153,8 +154,10 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: column-reference[a]
-                  - primary: column-reference[b]
+                  - primary:
+                      value: column-reference[a]
+                  - primary:
+                      value: column-reference[b]
       referenced_tables:
         - t1
 # character value expression using concatenation with some factors having a collation
@@ -168,8 +171,10 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: column-reference[a]
-                  - primary: column-reference[b]
+                  - primary:
+                      value: column-reference[a]
+                  - primary:
+                      value: column-reference[b]
                     collation: utf8_bin
       referenced_tables:
         - t1
@@ -184,7 +189,15 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: substring[column-reference[a] FROM literal[1]]
+                  - primary:
+                      function:
+                        type: SUBSTRING
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
+                        from: literal[1]
       referenced_tables:
         - t1
 # SUBSTRING string function with a for length modifier
@@ -198,7 +211,16 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: substring[column-reference[a] FROM literal[1] FOR literal[2]]
+                  - primary:
+                      function:
+                        type: SUBSTRING
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
+                        from: literal[1]
+                        for: literal[2]
       referenced_tables:
         - t1
 # UPPER and LOWER string functions
@@ -212,13 +234,27 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: upper[column-reference[a]]
+                  - primary:
+                      function:
+                        type: UPPER
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
         - derived_column:
             value_expression:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: lower[column-reference[a]]
+                  - primary:
+                      function:
+                        type: LOWER
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
       referenced_tables:
         - t1
 # TRANSLATE string function
@@ -232,7 +268,15 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: translate[column-reference[a] USING utf8_bin]
+                  - primary:
+                      function:
+                        type: TRANSLATE
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
+                        using: utf8_bin
       referenced_tables:
         - t1
 # CONVERT string function
@@ -246,7 +290,15 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: convert[column-reference[a] USING utf8_bin]
+                  - primary:
+                      function:
+                        type: CONVERT
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
+                        using: utf8_bin
       referenced_tables:
         - t1
 # TRIM string function with no trim specification or character
@@ -260,7 +312,14 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: trim[column-reference[a]]
+                  - primary:
+                      function:
+                        type: TRIM
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
       referenced_tables:
         - t1
 # TRIM string function with trim specifications
@@ -274,6 +333,15 @@ statements:
               type: STRING_EXPRESSION
               character_expression:
                 factors:
-                  - primary: trim[LEADING literal[' '] FROM column-reference[a]]
+                  - primary:
+                      function:
+                        type: TRIM
+                        operand:
+                          character_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
+                        specification: LEADING
+                        character: literal[' ']
       referenced_tables:
         - t1

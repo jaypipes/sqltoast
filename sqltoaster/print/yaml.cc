@@ -1207,23 +1207,156 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_value_
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_factor_t& factor) {
     bool is_list = ptr.in_list(out);
     if (is_list) {
-        ptr.indent(out) << "- primary: " << *factor.primary;
+        ptr.indent(out) << "- primary:";
         ptr.end_list(out);
         ptr.indent_push(out);
     } else {
         ptr.indent(out) << "primary:";
     }
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *factor.primary);
+    ptr.indent_pop(out);
     if (factor.collation)
         ptr.indent(out) << "collation: " << factor.collation;
     if (is_list)
         ptr.indent_pop(out);
 }
 
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_primary_t& cp) {
-    if (cp.value)
-        out << *cp.value;
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::character_primary_t& primary) {
+    if (primary.value)
+        ptr.indent(out) << "value: " << *primary.value;
     else
-        out << *cp.string_function;
+        to_yaml(ptr, out, *primary.string_function);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::string_function_t& func) {
+    ptr.indent(out) << "function:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
+    switch (func.type) {
+        case sqltoast::STRING_FUNCTION_TYPE_SUBSTRING:
+            out << "SUBSTRING";
+            ptr.indent(out) << "operand:";
+            ptr.indent_push(out);
+            {
+                const sqltoast::character_value_expression_t& sub =
+                    static_cast<const sqltoast::character_value_expression_t&>(*func.operand);
+                to_yaml(ptr, out, sub);
+            }
+            ptr.indent_pop(out);
+            {
+                const sqltoast::substring_function_t& sub =
+                    static_cast<const sqltoast::substring_function_t&>(func);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::STRING_FUNCTION_TYPE_UPPER:
+            out << "UPPER";
+            ptr.indent(out) << "operand:";
+            ptr.indent_push(out);
+            {
+                const sqltoast::character_value_expression_t& sub =
+                    static_cast<const sqltoast::character_value_expression_t&>(*func.operand);
+                to_yaml(ptr, out, sub);
+            }
+            ptr.indent_pop(out);
+            break;
+        case sqltoast::STRING_FUNCTION_TYPE_LOWER:
+            out << "LOWER";
+            ptr.indent(out) << "operand:";
+            ptr.indent_push(out);
+            {
+                const sqltoast::character_value_expression_t& sub =
+                    static_cast<const sqltoast::character_value_expression_t&>(*func.operand);
+                to_yaml(ptr, out, sub);
+            }
+            ptr.indent_pop(out);
+            break;
+        case sqltoast::STRING_FUNCTION_TYPE_CONVERT:
+            out << "CONVERT";
+            ptr.indent(out) << "operand:";
+            ptr.indent_push(out);
+            {
+                const sqltoast::character_value_expression_t& sub =
+                    static_cast<const sqltoast::character_value_expression_t&>(*func.operand);
+                to_yaml(ptr, out, sub);
+            }
+            ptr.indent_pop(out);
+            {
+                const sqltoast::convert_function_t& sub =
+                    static_cast<const sqltoast::convert_function_t&>(func);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::STRING_FUNCTION_TYPE_TRANSLATE:
+            out << "TRANSLATE";
+            ptr.indent(out) << "operand:";
+            ptr.indent_push(out);
+            {
+                const sqltoast::character_value_expression_t& sub =
+                    static_cast<const sqltoast::character_value_expression_t&>(*func.operand);
+                to_yaml(ptr, out, sub);
+            }
+            ptr.indent_pop(out);
+            {
+                const sqltoast::translate_function_t& sub =
+                    static_cast<const sqltoast::translate_function_t&>(func);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        case sqltoast::STRING_FUNCTION_TYPE_TRIM:
+            out << "TRIM";
+            ptr.indent(out) << "operand:";
+            ptr.indent_push(out);
+            {
+                const sqltoast::character_value_expression_t& sub =
+                    static_cast<const sqltoast::character_value_expression_t&>(*func.operand);
+                to_yaml(ptr, out, sub);
+            }
+            ptr.indent_pop(out);
+            {
+                const sqltoast::trim_function_t& sub =
+                    static_cast<const sqltoast::trim_function_t&>(func);
+                to_yaml(ptr, out, sub);
+            }
+            break;
+        default:
+            out << "string-function[UNKNOWN]";
+            break;
+    }
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::substring_function_t& func) {
+    ptr.indent(out) << "from: " << *func.start_position_value;
+    if (func.for_length_value)
+        ptr.indent(out) << "for: " << *func.for_length_value;
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::convert_function_t& func) {
+    ptr.indent(out) << "using: " << func.conversion_name;
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::translate_function_t& func) {
+    ptr.indent(out) << "using: " << func.translation_name;
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::trim_function_t& func) {
+    if (func.trim_character) {
+        ptr.indent(out) << "specification: ";
+        switch (func.specification) {
+            case sqltoast::TRIM_SPECIFICATION_LEADING:
+                out << "LEADING";
+                break;
+            case sqltoast::TRIM_SPECIFICATION_TRAILING:
+                out << "TRAILING";
+                break;
+            case sqltoast::TRIM_SPECIFICATION_BOTH:
+                out << "BOTH";
+                break;
+        }
+        ptr.indent(out) << "character: " << *func.trim_character;
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de) {
