@@ -379,6 +379,10 @@ statements:
                                 - primary:
                                     value: column-reference[a]
                           specification: LEADING
-                          character: literal[' ']
+                          trim_character:
+                            character_expression:
+                              factors:
+                                - primary:
+                                    value: literal[' ']
         referenced_tables:
           - t1

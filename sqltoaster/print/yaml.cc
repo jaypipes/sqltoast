@@ -1404,7 +1404,12 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::trim_function_t&
                 out << "BOTH";
                 break;
         }
-        ptr.indent(out) << "character: " << *func.trim_character;
+        ptr.indent(out) << "trim_character:";
+        ptr.indent_push(out);
+        const sqltoast::character_value_expression_t& trim_char_val =
+            static_cast<sqltoast::character_value_expression_t&>(*func.trim_character);
+        to_yaml(ptr, out, trim_char_val);
+        ptr.indent_pop(out);
     }
 }
 
