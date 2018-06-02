@@ -34,6 +34,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_table_sta
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_t& factor);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_field_t& field);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_primary_t& primary);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_term_t& term);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt);

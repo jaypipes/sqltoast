@@ -1431,7 +1431,34 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_
         ptr.indent(out) << "time_zone: LOCAL";
     else
         ptr.indent(out) << "time_zone: " << factor.tz;
-    ptr.indent(out) << "primary: " << *factor.primary;
+    to_yaml(ptr, out, *factor.primary);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_primary_t& primary) {
+    ptr.indent(out) << "primary:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "type: ";
+    switch (primary.type) {
+        case sqltoast::DATETIME_PRIMARY_TYPE_VALUE:
+            out << "VALUE";
+            ptr.indent(out) << "value: ";
+            {
+                const sqltoast::datetime_value_t& sub =
+                    static_cast<const sqltoast::datetime_value_t&>(primary);
+                out << sub;
+            }
+            break;
+        case sqltoast::DATETIME_PRIMARY_TYPE_FUNCTION:
+            out << "FUNCTION";
+            ptr.indent(out) << "function: ";
+            {
+                const sqltoast::current_datetime_function_t& sub =
+                    static_cast<const sqltoast::current_datetime_function_t&>(primary);
+                out << sub;
+            }
+            break;
+    }
     ptr.indent_pop(out);
 }
 

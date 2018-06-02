@@ -13,7 +13,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
         referenced_tables:
           - t1
 # Simple datetime expression with specifier timezone
@@ -31,7 +33,9 @@ statements:
                     term:
                       factor:
                         time_zone: 'UTC'
-                        primary: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
         referenced_tables:
           - t1
 # CURRENT_DATE datetime function
@@ -49,7 +53,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: current-date[]
+                        primary:
+                          type: FUNCTION
+                          function: current-date[]
         referenced_tables:
           - t1
 # CURRENT_DATE datetime function with timezone component
@@ -67,7 +73,9 @@ statements:
                     term:
                       factor:
                         time_zone: 'UTC'
-                        primary: current-date[]
+                        primary:
+                          type: FUNCTION
+                          function: current-date[]
         referenced_tables:
           - t1
 # CURRENT_TIME datetime function with no time precision
@@ -85,7 +93,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: current-time[]
+                        primary:
+                          type: FUNCTION
+                          function: current-time[]
         referenced_tables:
           - t1
 # CURRENT_TIME datetime function with fractional time precision
@@ -103,7 +113,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: current-time[3]
+                        primary:
+                          type: FUNCTION
+                          function: current-time[3]
         referenced_tables:
           - t1
 # CURRENT_TIMESTAMP datetime function with no time precision
@@ -121,7 +133,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: current-timestamp[]
+                        primary:
+                          type: FUNCTION
+                          function: current-timestamp[]
         referenced_tables:
           - t1
 # CURRENT_TIMESTAMP datetime function with fractional time precision
@@ -139,7 +153,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: current-timestamp[3]
+                        primary:
+                          type: FUNCTION
+                          function: current-timestamp[3]
         referenced_tables:
           - t1
 # Add a datetime term to an interval term
@@ -157,7 +173,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
                   op: ADD
                   right:
                     term:
@@ -187,7 +205,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        primary: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
                   op: SUBTRACT
                   right:
                     term:
