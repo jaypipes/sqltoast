@@ -291,8 +291,11 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_acti
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::alter_table_statement_t& stmt) {
+    ptr.indent(out) << "alter_table_statement:";
+    ptr.indent_push(out);
     ptr.indent(out) << "table_name: " << stmt.table_name;
     ptr.indent(out) << "action: " << *stmt.action;
+    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::create_view_statement_t& stmt) {
