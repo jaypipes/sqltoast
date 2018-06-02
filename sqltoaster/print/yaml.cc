@@ -1431,7 +1431,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_
         ptr.indent(out) << "time_zone: LOCAL";
     else
         ptr.indent(out) << "time_zone: " << factor.tz;
-    ptr.indent(out) << "value: " << *factor.value;
+    ptr.indent(out) << "primary: " << *factor.primary;
     ptr.indent_pop(out);
 }
 

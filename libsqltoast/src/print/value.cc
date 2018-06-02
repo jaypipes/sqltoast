@@ -456,7 +456,7 @@ std::ostream& operator<< (std::ostream& out, const datetime_primary_t& dp) {
 }
 
 std::ostream& operator<< (std::ostream& out, const datetime_factor_t& factor) {
-    out << *factor.value;
+    out << *factor.primary;
     if (factor.is_local_tz())
         out << " AT LOCAL";
     else
