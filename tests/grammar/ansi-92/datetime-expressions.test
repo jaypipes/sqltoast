@@ -163,7 +163,13 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[b] YEAR TO MONTH
+                          primary:
+                            value: column-reference[b]
+                            qualifier:
+                              start:
+                                interval: YEAR
+                              end:
+                                interval: MONTH
         referenced_tables:
           - t1
 # Subtract an interval term from a datetime expression
@@ -187,6 +193,10 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[b] DAY
+                          primary:
+                            value: column-reference[b]
+                            qualifier:
+                              start:
+                                interval: DAY
         referenced_tables:
           - t1

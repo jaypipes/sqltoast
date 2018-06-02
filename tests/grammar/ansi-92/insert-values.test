@@ -140,7 +140,13 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: literal['2001-01-01'] DAY TO SECOND
+                          primary:
+                            value: literal['2001-01-01']
+                            qualifier:
+                              start:
+                                interval: DAY
+                              end:
+                                interval: SECOND
 # INSERT INTO using numeric value expressions
 >INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
 statements:

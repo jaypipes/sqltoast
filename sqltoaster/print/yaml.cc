@@ -1435,6 +1435,23 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_factor_
     ptr.indent_pop(out);
 }
 
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_field_t& field) {
+    ptr.indent(out) << "interval: " << field.interval;
+    if (field.interval != sqltoast::INTERVAL_UNIT_SECOND) {
+        if (field.precision > 0)
+            ptr.indent(out) << "leading_precision: " << field.precision;
+    } else {
+        // We can have 0 leading precision and non-zero fractional precision
+        // for second intervals...
+        if (field.precision > 0 ||
+                (field.precision == 0 && field.fractional_precision > 0)) {
+            ptr.indent(out) << "leading_precision: " << field.precision;
+            if (field.fractional_precision > 0)
+                ptr.indent(out) << "fractional_precision: " << field.fractional_precision;
+        }
+    }
+}
+
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& expr) {
     ptr.indent(out) << "interval_expression:";
     ptr.indent_push(out);
@@ -1480,7 +1497,32 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_factor_
     ptr.indent_push(out);
     if (factor.sign != 0)
         ptr.indent(out) << "sign: " << factor.sign;
-    ptr.indent(out) << "primary: " << *factor.primary;
+    to_yaml(ptr, out, *factor.primary);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_primary_t& primary) {
+    ptr.indent(out) << "primary:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "value: " << *primary.value;
+    if (primary.qualifier)
+        to_yaml(ptr, out, *primary.qualifier);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_qualifier_t& qualifier) {
+    ptr.indent(out) << "qualifier:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "start:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, qualifier.start);
+    ptr.indent_pop(out);
+    if (qualifier.end) {
+        ptr.indent(out) << "end:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *qualifier.end);
+        ptr.indent_pop(out);
+    }
     ptr.indent_pop(out);
 }
 
