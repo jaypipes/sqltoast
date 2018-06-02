@@ -107,7 +107,9 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: current-date[]
+                        primary:
+                          type: FUNCTION
+                          function: current-date[]
         - row_value_constructor:
             type: ELEMENT
             element:
@@ -119,7 +121,9 @@ statements:
                     term:
                       factor:
                         time_zone: 'UTC'
-                        value: literal['2001-01-01']
+                        primary:
+                          type: VALUE
+                          value: literal['2001-01-01']
 # INSERT INTO using interval value expressions
 >INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
 statements:
@@ -140,7 +144,13 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: literal['2001-01-01'] DAY TO SECOND
+                          primary:
+                            value: literal['2001-01-01']
+                            qualifier:
+                              start:
+                                interval: DAY
+                              end:
+                                interval: SECOND
 # INSERT INTO using numeric value expressions
 >INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
 statements:

@@ -496,12 +496,12 @@ typedef struct current_datetime_function : datetime_function_t {
 // A datetime factor evaluates to a datetime value. It contains a datetime
 // primary and has an optional timezone component.
 typedef struct datetime_factor {
-    std::unique_ptr<datetime_primary_t> value;
+    std::unique_ptr<datetime_primary_t> primary;
     lexeme_t tz;
     datetime_factor(
-            std::unique_ptr<datetime_primary_t>& value,
+            std::unique_ptr<datetime_primary_t>& primary,
             lexeme_t tz) :
-        value(std::move(value)),
+        primary(std::move(primary)),
         tz(tz)
     {}
     inline bool is_local_tz() const {
@@ -564,10 +564,12 @@ typedef struct interval_primary {
 
 typedef struct interval_factor {
     int8_t sign;
-    std::unique_ptr<interval_primary_t> value;
-    interval_factor(int8_t sign, std::unique_ptr<interval_primary_t>& value) :
+    std::unique_ptr<interval_primary_t> primary;
+    interval_factor(
+            int8_t sign,
+            std::unique_ptr<interval_primary_t>& primary) :
         sign(sign),
-        value(std::move(value))
+        primary(std::move(primary))
     {}
 } interval_factor_t;
 

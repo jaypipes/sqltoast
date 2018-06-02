@@ -8,7 +8,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Identifier includes an underscore
 >SELECT * FROM t1_backup
 statements:
@@ -19,7 +20,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1_backup
+          - type: TABLE
+            table: t1_backup
 # Identifier includes a period
 >SELECT * FROM s1.t1
 statements:
@@ -30,7 +32,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - s1.t1
+          - type: TABLE
+            table: s1.t1
 # Identifier includes multiple periods and underscore
 >SELECT * FROM c1.s1.t1_backup
 statements:
@@ -41,7 +44,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - c1.s1.t1_backup
+          - type: TABLE
+            table: c1.s1.t1_backup
 # Identifier includes a prefix and a star projection
 >SELECT t1.* FROM t1
 statements:
@@ -60,4 +64,5 @@ statements:
                           type: VALUE
                           value: column-reference[t1.*]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1

@@ -13,9 +13,14 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] YEAR
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: YEAR
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple interval value expression with non-second interval qualifier with a
 # leading precision
 >SELECT a DAY(2) FROM t1
@@ -32,9 +37,15 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] DAY(2)
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: DAY
+                                leading_precision: 2
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple interval value expression with second interval qualifier with a
 # leading precision and no fractional precision
 >SELECT a SECOND(2) FROM t1
@@ -51,9 +62,15 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] SECOND(2)
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: SECOND
+                                leading_precision: 2
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple interval value expression with second interval qualifier with a
 # leading precision and no fractional precision
 >SELECT a SECOND(2, 5) FROM t1
@@ -70,9 +87,16 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] SECOND(2, 5)
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: SECOND
+                                leading_precision: 2
+                                fractional_precision: 5
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # interval value expression with start and end non-second interval qualifier
 # with no precision specifiers
 >SELECT a YEAR TO MONTH FROM t1
@@ -89,9 +113,16 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] YEAR TO MONTH
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: YEAR
+                              end:
+                                interval: MONTH
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # interval value expression with start non-second and end second interval
 # qualifier with no precision specifiers
 >SELECT a DAY TO SECOND FROM t1
@@ -108,9 +139,16 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] DAY TO SECOND
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: DAY
+                              end:
+                                interval: SECOND
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # interval value expression with start non-second and end second interval
 # qualifier with a second fractional precision specifier
 >SELECT a DAY TO SECOND(5) FROM t1
@@ -127,9 +165,18 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] DAY TO SECOND(0, 5)
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: DAY
+                              end:
+                                interval: SECOND
+                                leading_precision: 0
+                                fractional_precision: 5
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # interval value expression that operates on an interval term with a numeric
 # factor
 >SELECT a YEAR * 12, a YEAR / 2, a MONTH / (12 / b) FROM t1
@@ -146,7 +193,11 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] YEAR
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: YEAR
                       op: MULTIPLY
                       right:
                         factor:
@@ -161,7 +212,11 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] YEAR
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: YEAR
                       op: DIVIDE
                       right:
                         factor:
@@ -176,7 +231,11 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] MONTH
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: MONTH
                       op: DIVIDE
                       right:
                         factor:
@@ -184,7 +243,8 @@ statements:
                             type: VALUE
                             value: (numeric-expression[literal[12] / column-reference[b]])
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # interval value expression that uses addition and subtraction operators on
 # interval terms
 >SELECT a YEAR + 12 YEAR, created_on DAY TO SECOND - updated_on DAY TO SECOND from t1
@@ -201,13 +261,21 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[a] YEAR
+                          primary:
+                            value: column-reference[a]
+                            qualifier:
+                              start:
+                                interval: YEAR
                   op: ADD
                   right:
                     term:
                       left:
                         factor:
-                          primary: literal[12] YEAR
+                          primary:
+                            value: literal[12]
+                            qualifier:
+                              start:
+                                interval: YEAR
           - derived_column:
               value_expression:
                 type: INTERVAL_EXPRESSION
@@ -216,12 +284,25 @@ statements:
                     term:
                       left:
                         factor:
-                          primary: column-reference[created_on] DAY TO SECOND
+                          primary:
+                            value: column-reference[created_on]
+                            qualifier:
+                              start:
+                                interval: DAY
+                              end:
+                                interval: SECOND
                   op: SUBTRACT
                   right:
                     term:
                       left:
                         factor:
-                          primary: column-reference[updated_on] DAY TO SECOND
+                          primary:
+                            value: column-reference[updated_on]
+                            qualifier:
+                              start:
+                                interval: DAY
+                              end:
+                                interval: SECOND
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1

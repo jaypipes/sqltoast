@@ -13,9 +13,12 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Simple datetime expression with specifier timezone
 >SELECT a AT TIME ZONE 'UTC' FROM t1
 statements:
@@ -31,9 +34,12 @@ statements:
                     term:
                       factor:
                         time_zone: 'UTC'
-                        value: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # CURRENT_DATE datetime function
 >SELECT CURRENT_DATE FROM t1
 statements:
@@ -49,9 +55,12 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: current-date[]
+                        primary:
+                          type: FUNCTION
+                          function: current-date[]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # CURRENT_DATE datetime function with timezone component
 >SELECT CURRENT_DATE AT TIME ZONE 'UTC' FROM t1
 statements:
@@ -67,9 +76,12 @@ statements:
                     term:
                       factor:
                         time_zone: 'UTC'
-                        value: current-date[]
+                        primary:
+                          type: FUNCTION
+                          function: current-date[]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # CURRENT_TIME datetime function with no time precision
 >SELECT CURRENT_TIME FROM t1
 statements:
@@ -85,9 +97,12 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: current-time[]
+                        primary:
+                          type: FUNCTION
+                          function: current-time[]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # CURRENT_TIME datetime function with fractional time precision
 >SELECT CURRENT_TIME(3) FROM t1
 statements:
@@ -103,9 +118,12 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: current-time[3]
+                        primary:
+                          type: FUNCTION
+                          function: current-time[3]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # CURRENT_TIMESTAMP datetime function with no time precision
 >SELECT CURRENT_TIMESTAMP FROM t1
 statements:
@@ -121,9 +139,12 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: current-timestamp[]
+                        primary:
+                          type: FUNCTION
+                          function: current-timestamp[]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # CURRENT_TIMESTAMP datetime function with fractional time precision
 >SELECT CURRENT_TIMESTAMP(3) FROM t1
 statements:
@@ -139,9 +160,12 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: current-timestamp[3]
+                        primary:
+                          type: FUNCTION
+                          function: current-timestamp[3]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Add a datetime term to an interval term
 >SELECT a AT LOCAL + b YEAR TO MONTH FROM t1
 statements:
@@ -157,15 +181,24 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
                   op: ADD
                   right:
                     term:
                       left:
                         factor:
-                          primary: column-reference[b] YEAR TO MONTH
+                          primary:
+                            value: column-reference[b]
+                            qualifier:
+                              start:
+                                interval: YEAR
+                              end:
+                                interval: MONTH
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Subtract an interval term from a datetime expression
 >SELECT a AT LOCAL - b DAY FROM t1
 statements:
@@ -181,12 +214,19 @@ statements:
                     term:
                       factor:
                         time_zone: LOCAL
-                        value: column-reference[a]
+                        primary:
+                          type: VALUE
+                          value: column-reference[a]
                   op: SUBTRACT
                   right:
                     term:
                       left:
                         factor:
-                          primary: column-reference[b] DAY
+                          primary:
+                            value: column-reference[b]
+                            qualifier:
+                              start:
+                                interval: DAY
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1

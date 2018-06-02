@@ -20,7 +20,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Use the optional column list
 >CREATE VIEW v1 (a, b) AS SELECT a, b FROM t1
 statements:
@@ -53,7 +54,8 @@ statements:
                           type: VALUE
                           value: column-reference[b]
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # The optional WITH LOCAL CHECK OPTION clause
 >CREATE VIEW v1 AS SELECT * FROM t1 WITH LOCAL CHECK OPTION
 statements:
@@ -66,7 +68,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # The optional WITH CASCADED CHECK OPTION clause
 >CREATE VIEW v1 AS SELECT * FROM t1 WITH CASCADED CHECK OPTION
 statements:
@@ -79,7 +82,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
 # Missing either LOCAL or CASCADED for the check option clause
 >CREATE VIEW v1 AS SELECT * FROM t1 WITH CHECK OPTION
 Syntax error.

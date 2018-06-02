@@ -30,8 +30,6 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
                 out << jt;
             }
             break;
-        default:
-            break;
     }
     return out;
 }

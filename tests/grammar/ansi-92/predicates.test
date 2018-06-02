@@ -8,7 +8,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -54,7 +55,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -100,7 +102,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -146,7 +149,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -225,7 +229,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -303,7 +308,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -415,7 +421,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -527,7 +534,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -641,7 +649,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -823,7 +832,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -864,7 +874,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -906,7 +917,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -948,7 +960,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -991,7 +1004,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1050,7 +1064,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1111,7 +1126,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1145,7 +1161,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t1_a]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
 # EXISTS (<subquery>) predicate
 >SELECT * FROM t1 WHERE EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1156,7 +1173,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1176,7 +1194,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t1_id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1222,7 +1241,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1242,7 +1262,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t1_id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1289,7 +1310,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1323,7 +1345,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t1_id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1369,7 +1392,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1403,7 +1427,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t1_id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1449,7 +1474,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1484,7 +1510,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t1_id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1530,7 +1557,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1565,7 +1593,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t1_id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1611,7 +1640,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1633,12 +1663,52 @@ statements:
                                       type: VALUE
                                       value: column-reference[a]
                     pattern:
-                      value_expression:
-                        type: STRING_EXPRESSION
-                        character_expression:
-                          factors:
-                            - primary:
-                                value: literal['s%']
+                      character_expression:
+                        factors:
+                          - primary:
+                              value: literal['s%']
+# LIKE predicate with simple column comparison with string and escape
+>SELECT * FROM t1 WHERE a LIKE 's%' ESCAPE '"'
+statements:
+  - type: SELECT
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              asterisk: true
+        referenced_tables:
+          - type: TABLE
+            table: t1
+        where:
+          search_condition:
+            terms:
+              - factor:
+                  predicate:
+                    type: LIKE
+                    match:
+                      row_value_constructor:
+                        type: ELEMENT
+                        element:
+                          type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary:
+                                      type: VALUE
+                                      value: column-reference[a]
+                    pattern:
+                      character_expression:
+                        factors:
+                          - primary:
+                              value: literal['s%']
+                    escape:
+                      character_expression:
+                        factors:
+                          - primary:
+                              value: literal['"']
 # LIKE predicate with concatenated column comparison with string
 >SELECT * FROM t1 WHERE a LIKE b || '%'
 statements:
@@ -1649,7 +1719,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1671,14 +1742,12 @@ statements:
                                       type: VALUE
                                       value: column-reference[a]
                     pattern:
-                      value_expression:
-                        type: STRING_EXPRESSION
-                        character_expression:
-                          factors:
-                            - primary:
-                                value: column-reference[b]
-                            - primary:
-                                value: literal['%']
+                      character_expression:
+                        factors:
+                          - primary:
+                              value: column-reference[b]
+                          - primary:
+                              value: literal['%']
 # OVERLAPS predicate with date columns from multiple tables
 >SELECT * FROM t1, t2 WHERE (t1.start, t1.end) OVERLAPS (t2.start, t2.end)
 statements:
@@ -1689,8 +1758,10 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
-          - t2
+          - type: TABLE
+            table: t1
+          - type: TABLE
+            table: t2
         where:
           search_condition:
             terms:
@@ -1756,7 +1827,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1776,7 +1848,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t2.id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1822,7 +1895,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1842,7 +1916,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t2.id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1889,7 +1964,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -1909,7 +1985,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t2.id]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
                       where:
                         search_condition:
                           terms:
@@ -1962,7 +2039,8 @@ statements:
                                             type: VALUE
                                             value: column-reference[t3.id]
                           referenced_tables:
-                            - t3
+                            - type: TABLE
+                              table: t3
                           where:
                             search_condition:
                               terms:
@@ -2009,7 +2087,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -2045,7 +2124,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t2.start]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
 # quantified comparison predicate with ANY quantifier
 >SELECT * FROM t1 WHERE t1.start <= ANY (SELECT t2.start FROM t2)
 statements:
@@ -2056,7 +2136,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -2092,7 +2173,8 @@ statements:
                                         type: VALUE
                                         value: column-reference[t2.start]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
 # quantified comparison predicate with SOME quantifier translated to ANY quantifier
 >SELECT * FROM t1 WHERE t1.start <= SOME (SELECT t2.start FROM t2)
 statements:
@@ -2103,7 +2185,8 @@ statements:
           - derived_column:
               asterisk: true
         referenced_tables:
-          - t1
+          - type: TABLE
+            table: t1
         where:
           search_condition:
             terms:
@@ -2139,4 +2222,5 @@ statements:
                                         type: VALUE
                                         value: column-reference[t2.start]
                       referenced_tables:
-                        - t2
+                        - type: TABLE
+                          table: t2
