@@ -38,70 +38,78 @@ GRANT ALL PRIVILEGES ON db TO usr WITH GRANT
 >GRANT ALL PRIVILEGES ON db TO usr
 statements:
   - type: GRANT
-    on: db
-    to: usr
-    privileges:
-      - ALL
+    grant_statement:
+      on: db
+      to: usr
+      privileges:
+        - ALL
 # GRANT specific privileges to a user, no grant option
 >GRANT SELECT, DELETE, USAGE ON db TO usr
 statements:
   - type: GRANT
-    on: db
-    to: usr
-    privileges:
-      - SELECT
-      - DELETE
-      - USAGE
+    grant_statement:
+      on: db
+      to: usr
+      privileges:
+        - SELECT
+        - DELETE
+        - USAGE
 # GRANT privilege with action taking columns
 >GRANT INSERT (a, b, c) ON tbl TO usr
 statements:
   - type: GRANT
-    on: tbl
-    to: usr
-    privileges:
-      - INSERT (a,b,c)
+    grant_statement:
+      on: tbl
+      to: usr
+      privileges:
+        - INSERT (a,b,c)
 # GRANT privilege with action taking columns along with no optional columns for
 # update
 >GRANT INSERT (a, b, c), UPDATE ON tbl TO usr
 statements:
   - type: GRANT
-    on: tbl
-    to: usr
-    privileges:
-      - INSERT (a,b,c)
-      - UPDATE
+    grant_statement:
+      on: tbl
+      to: usr
+      privileges:
+        - INSERT (a,b,c)
+        - UPDATE
 # GRANT all on domain object to a user
 >GRANT ALL PRIVILEGES ON DOMAIN dom TO usr
 statements:
   - type: GRANT
-    on: DOMAIN dom
-    to: usr
-    privileges:
-      - ALL
+    grant_statement:
+      on: DOMAIN dom
+      to: usr
+      privileges:
+        - ALL
 # GRANT all on collation object to a user
 >GRANT ALL PRIVILEGES ON COLLATION utf8bin TO usr
 statements:
   - type: GRANT
-    on: COLLATION utf8bin
-    to: usr
-    privileges:
-      - ALL
+    grant_statement:
+      on: COLLATION utf8bin
+      to: usr
+      privileges:
+        - ALL
 # GRANT all on characterset object to a user
 >GRANT ALL PRIVILEGES ON CHARACTER SET utf8 TO usr
 statements:
   - type: GRANT
-    on: CHARACTER SET utf8
-    to: usr
-    privileges:
-      - ALL
+    grant_statement:
+      on: CHARACTER SET utf8
+      to: usr
+      privileges:
+        - ALL
 # GRANT all on translation object to a user
 >GRANT ALL PRIVILEGES ON TRANSLATION trns TO usr
 statements:
   - type: GRANT
-    on: TRANSLATION trns
-    to: usr
-    privileges:
-      - ALL
+    grant_statement:
+      on: TRANSLATION trns
+      to: usr
+      privileges:
+        - ALL
 # Syntax error expecting SET after CHARACTER
 >GRANT ALL PRIVILEGES ON CHARACTER utf8 TO usr
 Syntax error.
