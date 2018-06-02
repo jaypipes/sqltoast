@@ -225,6 +225,7 @@ inline bool is_value_expression_terminator(const symbol_t& sym) {
         case SYMBOL_AND:
         case SYMBOL_COMMA:
         case SYMBOL_ELSE:
+        case SYMBOL_ESCAPE:
         case SYMBOL_END:
         case SYMBOL_EOS:
         case SYMBOL_EQUAL:

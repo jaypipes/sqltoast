@@ -828,7 +828,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::like_predicate_t
     ptr.indent_pop(out);
     if (pred.escape_char) {
         const sqltoast::character_value_expression_t& escape_char_val =
-            static_cast<const sqltoast::character_value_expression_t&>(*pred.pattern);
+            static_cast<const sqltoast::character_value_expression_t&>(*pred.escape_char);
         ptr.indent(out) << "escape:";
         ptr.indent_push(out);
         to_yaml(ptr, out, escape_char_val);

@@ -1637,6 +1637,47 @@ statements:
                         factors:
                           - primary:
                               value: literal['s%']
+# LIKE predicate with simple column comparison with string and escape
+>SELECT * FROM t1 WHERE a LIKE 's%' ESCAPE '"'
+statements:
+  - type: SELECT
+    select_statement:
+      query:
+        selected_columns:
+          - derived_column:
+              asterisk: true
+        referenced_tables:
+          - t1
+        where:
+          search_condition:
+            terms:
+              - factor:
+                  predicate:
+                    type: LIKE
+                    match:
+                      row_value_constructor:
+                        type: ELEMENT
+                        element:
+                          type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              term:
+                                left:
+                                  factor:
+                                    primary:
+                                      type: VALUE
+                                      value: column-reference[a]
+                    pattern:
+                      character_expression:
+                        factors:
+                          - primary:
+                              value: literal['s%']
+                    escape:
+                      character_expression:
+                        factors:
+                          - primary:
+                              value: literal['"']
 # LIKE predicate with concatenated column comparison with string
 >SELECT * FROM t1 WHERE a LIKE b || '%'
 statements:
