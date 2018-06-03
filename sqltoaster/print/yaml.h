@@ -4,8 +4,8 @@
  * See the COPYING file in the root project directory for full text.
  */
 
-#ifndef SQLTOASTER_PRINT_YAML_PRINTERS_H
-#define SQLTOASTER_PRINT_YAML_PRINTERS_H
+#ifndef SQLTOASTER_PRINT_YAML_H
+#define SQLTOASTER_PRINT_YAML_H
 
 #include <sqltoast/print.h>
 
@@ -103,4 +103,4 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression
 } // namespace sqltoaster::print
 } // namespace sqltoaster
 
-#endif /* SQLTOASTER_PRINT_YAML_PRINTERS_H */
+#endif /* SQLTOASTER_PRINT_YAML_H */
