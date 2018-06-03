@@ -460,7 +460,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_
             {
                 const sqltoast::derived_table_t& sub =
                     static_cast<const sqltoast::derived_table_t&>(tr);
-                ptr.indent(out) << "derived_table: " << sub;
+                to_yaml(ptr, out, sub);
             }
             break;
         case sqltoast::TABLE_REFERENCE_TYPE_JOINED_TABLE:
@@ -483,6 +483,15 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_t& t) {
     if (t.has_alias())
         ptr.indent(out) << "alias: " << t.alias;
     ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_table_t& t) {
+    ptr.indent(out) << "derived_table:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "name: " << t.table_name;
+    ptr.indent_pop(out);
+    // NOTE(jaypipes): derived tables don't have aliases because they are
+    // required to be named with AS <table name>
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& jt) {

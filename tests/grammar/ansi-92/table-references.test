@@ -50,4 +50,5 @@ statements:
               asterisk: true
         referenced_tables:
           - type: DERIVED_TABLE
-            derived_table: <derived table> AS t
+            derived_table:
+              name: t
