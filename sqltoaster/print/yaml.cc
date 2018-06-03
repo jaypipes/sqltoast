@@ -489,6 +489,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_table_t&
     ptr.indent(out) << "derived_table:";
     ptr.indent_push(out);
     ptr.indent(out) << "name: " << t.table_name;
+    ptr.indent(out) << "query:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *t.query);
+    ptr.indent_pop(out);
     ptr.indent_pop(out);
     // NOTE(jaypipes): derived tables don't have aliases because they are
     // required to be named with AS <table name>

@@ -52,3 +52,29 @@ statements:
           - type: DERIVED_TABLE
             derived_table:
               name: t
+              query:
+                selected_columns:
+                  - derived_column:
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
+                  - derived_column:
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          term:
+                            left:
+                              factor:
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[b]
+                referenced_tables:
+                  - type: TABLE
+                    table:
+                      name: t1
