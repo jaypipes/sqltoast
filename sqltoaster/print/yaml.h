@@ -58,6 +58,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_primary
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_qualifier_t& qualifier);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_term_t& term);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& ie);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::join_specification_t& spec);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_query_expression_t& qe);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& jt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::length_expression_t& expr);

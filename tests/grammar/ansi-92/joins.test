@@ -46,7 +46,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # INNER JOIN two normal tables WITH the INNER symbol
 >SELECT * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -68,7 +103,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # INNER JOIN two normal tables with no join condition
 >SELECT * FROM t1 JOIN t2
 statements:
@@ -90,7 +160,7 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: 
+              specification:
 # LEFT JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 LEFT JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -112,7 +182,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # LEFT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 LEFT OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -134,7 +239,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # RIGHT JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 RIGHT JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -156,7 +296,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # RIGHT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 RIGHT OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -178,7 +353,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # FULL OUTER JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 FULL JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -200,7 +410,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # FULL OUTER JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 FULL OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -222,7 +467,42 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,column-reference[t1.id] = column-reference[t2.t1_id]
+              specification:
+                on:
+                  search_condition:
+                    terms:
+                      - factor:
+                          predicate:
+                            type: COMPARISON
+                            op: EQUAL
+                            left:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t1.id]
+                            right:
+                              row_value_constructor:
+                                type: ELEMENT
+                                element:
+                                  type: VALUE_EXPRESSION
+                                  value_expression:
+                                    type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      term:
+                                        left:
+                                          factor:
+                                            primary:
+                                              type: VALUE
+                                              value: column-reference[t2.t1_id]
 # JOIN with USING clause
 >SELECT * FROM t1 JOIN t2 USING (id)
 statements:
@@ -244,7 +524,9 @@ statements:
                 type: TABLE
                 table:
                   name: t2
-              specification: ,using[id]
+              specification:
+                using:
+                  - id
 # NATURAL JOIN
 >SELECT * FROM t1 NATURAL JOIN t2
 statements:

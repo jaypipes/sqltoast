@@ -536,7 +536,25 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& 
     to_yaml(ptr, out, *jt.right);
     ptr.indent_pop(out);
     if (jt.spec)
-        ptr.indent(out) << "specification: " << *jt.spec;
+       to_yaml(ptr, out, *jt.spec);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::join_specification_t& spec) {
+    ptr.indent(out) << "specification:";
+    ptr.indent_push(out);
+    if (spec.condition) {
+        ptr.indent(out) << "on:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *spec.condition);
+        ptr.indent_pop(out);
+    } else if (! spec.named_columns.empty()) {
+        ptr.indent(out) << "using:";
+        ptr.indent_push(out);
+        for (const sqltoast::lexeme_t& col : spec.named_columns)
+            ptr.indent(out) << "- " << col;
+        ptr.indent_pop(out);
+    }
     ptr.indent_pop(out);
 }
 
