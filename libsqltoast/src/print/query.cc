@@ -93,6 +93,12 @@ std::ostream& operator<< (std::ostream& out, const non_join_query_primary_t& pri
             }
             break;
         case NON_JOIN_QUERY_PRIMARY_TYPE_TABLE_VALUE_CONSTRUCTOR:
+            {
+                const table_value_constructor_non_join_query_primary_t& sub =
+                    static_cast<const table_value_constructor_non_join_query_primary_t&>(primary);
+                out << sub;
+            }
+            break;
         case NON_JOIN_QUERY_PRIMARY_TYPE_EXPLICIT_TABLE:
         case NON_JOIN_QUERY_PRIMARY_TYPE_SUBEXPRESSION:
             // TODO
@@ -103,6 +109,21 @@ std::ostream& operator<< (std::ostream& out, const non_join_query_primary_t& pri
 
 std::ostream& operator<< (std::ostream& out, const query_specification_non_join_query_primary_t& primary) {
     out << *primary.query_spec;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const table_value_constructor_non_join_query_primary_t& primary) {
+    out << "values[" << *primary.table_value << ']';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const table_value_constructor_t& table_value) {
+    size_t x = 0;
+    for (const std::unique_ptr<row_value_constructor_t>& value : table_value.values) {
+        if (x++ > 0)
+            out << ',';
+        out << *value;
+    }
     return out;
 }
 

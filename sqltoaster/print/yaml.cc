@@ -92,14 +92,6 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
                 to_yaml(ptr, out, sub);
             }
             break;
-        case sqltoast::STATEMENT_TYPE_INSERT_SELECT:
-            out << "INSERT_SELECT";
-            {
-                const sqltoast::insert_select_statement_t& sub =
-                    static_cast<const sqltoast::insert_select_statement_t&>(stmt);
-                to_yaml(ptr, out, sub);
-            }
-            break;
         case sqltoast::STATEMENT_TYPE_DELETE:
             out << "DELETE";
             {
@@ -422,6 +414,12 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_p
             }
             break;
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_TABLE_VALUE_CONSTRUCTOR:
+            {
+                const sqltoast::table_value_constructor_non_join_query_primary_t& sub =
+                    static_cast<const sqltoast::table_value_constructor_non_join_query_primary_t&>(primary);
+                to_yaml(ptr, out, sub);
+            }
+            break;
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_EXPLICIT_TABLE:
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_SUBEXPRESSION:
             // TODO
@@ -431,6 +429,20 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_p
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_non_join_query_primary_t& primary) {
     to_yaml(ptr, out, *primary.query_spec);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_value_constructor_non_join_query_primary_t& primary) {
+    ptr.indent(out) << "values:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *primary.table_value);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_value_constructor_t& table_value) {
+    for (const std::unique_ptr<sqltoast::row_value_constructor_t>& value : table_value.values) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, *value);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_query_expression_t& qe) {
@@ -583,47 +595,22 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement
     ptr.indent(out) << "insert_statement:";
     ptr.indent_push(out);
     ptr.indent(out) << "table_name: " << stmt.table_name;
-    if (stmt.use_default_columns())
-        ptr.indent(out) << "default_columns: true";
-    else {
+    if (! stmt.insert_columns.empty()) {
         ptr.indent(out) << "columns:";
         ptr.indent_push(out);
         for (const sqltoast::lexeme_t& col : stmt.insert_columns)
             ptr.indent(out) << "- " << col;
         ptr.indent_pop(out);
     }
-    if (stmt.use_default_values())
+    if (stmt.query) {
+        ptr.indent(out) << "query:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *stmt.query);
+        ptr.indent_pop(out);
+        ptr.indent_pop(out);
+    } else {
         ptr.indent(out) << "default_values: true";
-    else {
-        ptr.indent(out) << "values:";
-        ptr.indent_push(out);
-        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values) {
-            ptr.start_list(out);
-            to_yaml(ptr, out, *val);
-        }
-        ptr.indent_pop(out);
     }
-    ptr.indent_pop(out);
-}
-
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_statement_t& stmt) {
-    ptr.indent(out) << "insert_select_statement:";
-    ptr.indent_push(out);
-    ptr.indent(out) << "table_name: " << stmt.table_name;
-    if (stmt.use_default_columns())
-        ptr.indent(out) << "default_columns: true";
-    else {
-        ptr.indent(out) << "columns:";
-        ptr.indent_push(out);
-        for (const sqltoast::lexeme_t& col : stmt.insert_columns)
-            ptr.indent(out) << "- " << col;
-        ptr.indent_pop(out);
-    }
-    ptr.indent(out) << "query:";
-    ptr.indent_push(out);
-    to_yaml(ptr, out, *stmt.query);
-    ptr.indent_pop(out);
-    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt) {

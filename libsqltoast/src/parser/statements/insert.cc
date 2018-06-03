@@ -29,8 +29,6 @@ bool parse_insert(
     lexeme_t table_name;
     symbol_t cur_sym;
     std::vector<lexeme_t> col_list;
-    std::vector<std::unique_ptr<row_value_constructor_t>> val_list;
-    std::unique_ptr<row_value_constructor_t> val_list_item;
     std::unique_ptr<query_expression_t> query;
 
     cur_sym = cur_tok.symbol;
@@ -71,16 +69,8 @@ opt_col_list_or_default_values:
     } else if (cur_sym == SYMBOL_LPAREN) {
         cur_tok = lex.next();
         goto process_column_list_item;
-    } else if (cur_sym == SYMBOL_VALUES) {
-        cur_tok = lex.next();
-        goto process_value_list;
-    } else if (cur_sym == SYMBOL_SELECT) {
-        goto process_insert_select;
     }
-    goto err_expect_lparen_values_or_default;
-err_expect_lparen_values_or_default:
-    expect_any_error(ctx, {SYMBOL_DEFAULT, SYMBOL_VALUES, SYMBOL_LPAREN});
-    return false;
+    goto expect_query_expression;
 expect_default_values:
     // We get here after successfully finding DEFAULT, which must be followed
     // by the VALUES symbol
@@ -104,55 +94,23 @@ process_column_list_item:
         goto process_column_list_item;
     } else if (cur_sym == SYMBOL_RPAREN) {
         cur_tok = lex.next();
-        goto expect_values_or_select;
+        goto expect_query_expression;
     }
     goto err_expect_comma_or_rparen;
 err_expect_comma_or_rparen:
     expect_any_error(ctx, {SYMBOL_COMMA, SYMBOL_RPAREN});
     return false;
-expect_values_or_select:
-    // We get here when we expect to find the keyword VALUES preceding the
-    // value list (not the "DEFAULT VALUES" clause
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_SELECT)
-        goto process_insert_select;
-    if (cur_sym != SYMBOL_VALUES)
-        goto err_expect_values;
-    cur_tok = lex.next();
-    goto process_value_list;
-process_value_list:
-    cur_sym = cur_tok.symbol;
-    if (cur_sym != SYMBOL_LPAREN)
-        goto err_expect_lparen;
-    cur_tok = lex.next();
-    goto process_value_list_item;
-process_value_list_item:
-    if (! parse_row_value_constructor(ctx, cur_tok, val_list_item))
-        goto err_expect_value_item;
-    val_list.emplace_back(std::move(val_list_item));
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_COMMA) {
-        cur_tok = lex.next();
-        goto process_value_list_item;
-    } else if (cur_sym == SYMBOL_RPAREN) {
-        cur_tok = lex.next();
-        goto statement_ending;
-    }
-    goto err_expect_comma_or_rparen;
-err_expect_value_item:
+expect_query_expression:
+    if (! parse_query_expression(ctx, cur_tok, query))
+        goto err_expect_query_expression;
+    goto statement_ending;
+err_expect_query_expression:
     {
         std::stringstream estr;
         estr << "Expected a value item, but got " << cur_tok << "." << std::endl;
         create_syntax_error_marker(ctx, estr);
         return false;
     }
-err_expect_lparen:
-    expect_error(ctx, SYMBOL_LPAREN);
-    return false;
-process_insert_select:
-    if (! parse_query_expression(ctx, cur_tok, query))
-        return false;
-    goto statement_ending;
 statement_ending:
     // We get here after successfully parsing the statement and now expect
     // either the end of parse content or a semicolon to indicate end of
@@ -165,12 +123,8 @@ statement_ending:
 push_statement:
     if (ctx.opts.disable_statement_construction)
         return true;
-    if (query)
-        out = std::make_unique<insert_select_statement_t>(
-                table_name, col_list, query);
-    else
-        out = std::make_unique<insert_statement_t>(
-                table_name, col_list, val_list);
+    out = std::make_unique<insert_statement_t>(
+            table_name, col_list, query);
     return true;
 }
 

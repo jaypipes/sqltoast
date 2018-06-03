@@ -1,3 +1,9 @@
+>INSERT INTO t1 DEFAULT VALUES
+statements:
+  - type: INSERT
+    insert_statement:
+      table_name: t1
+      default_values: true
 >INSERT INTO t1 (a, b) VALUES (1, 2)
 statements:
   - type: INSERT
@@ -6,86 +12,81 @@ statements:
       columns:
         - a
         - b
-      values:
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value: literal[1]
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value: literal[2]
+      query:
+        values:
+          - row_value_constructor:
+              type: LIST
+              elements:
+                - type: VALUE_EXPRESSION
+                  value_expression:
+                    type: NUMERIC_EXPRESSION
+                    numeric_expression:
+                      term:
+                        left:
+                          factor:
+                            primary:
+                              type: VALUE
+                              value: literal[1]
+                - type: VALUE_EXPRESSION
+                  value_expression:
+                    type: NUMERIC_EXPRESSION
+                    numeric_expression:
+                      term:
+                        left:
+                          factor:
+                            primary:
+                              type: VALUE
+                              value: literal[2]
 # INSERT INTO with a default columns list
 >INSERT INTO t1 VALUES (1, 2)
 statements:
   - type: INSERT
     insert_statement:
       table_name: t1
-      default_columns: true
-      values:
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value: literal[1]
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value: literal[2]
+      query:
+        values:
+          - row_value_constructor:
+              type: LIST
+              elements:
+                - type: VALUE_EXPRESSION
+                  value_expression:
+                    type: NUMERIC_EXPRESSION
+                    numeric_expression:
+                      term:
+                        left:
+                          factor:
+                            primary:
+                              type: VALUE
+                              value: literal[1]
+                - type: VALUE_EXPRESSION
+                  value_expression:
+                    type: NUMERIC_EXPRESSION
+                    numeric_expression:
+                      term:
+                        left:
+                          factor:
+                            primary:
+                              type: VALUE
+                              value: literal[2]
 # INSERT INTO using a character values expression
->INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
-statements:
-  - type: INSERT
-    insert_statement:
-      table_name: t1
-      default_columns: true
-      values:
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        value: literal['a']
-                      collation: utf8bin
+# >INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
+# statements:
+#   - type: INSERT
+#     insert_statement:
+#       table_name: t1
+#       query:
+#         values:
+#           - row_value_constructor:
+#               type: LIST
+#               elements:
+#                 - type: VALUE_EXPRESSION
+#                   value_expression:
+#                     type: STRING_EXPRESSION
+#                     character_expression:
+#                       factors:
+#                         - primary:
+#                             value: literal['a']
+#                           collation: utf8bin
 # INSERT INTO using datetime value expressions
 >INSERT INTO t1 (create_date, my_date) VALUES (CURRENT_DATE, '2001-01-01' AT TIME ZONE 'UTC')
 statements:
@@ -95,90 +96,90 @@ statements:
       columns:
         - create_date
         - my_date
-      values:
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: FUNCTION
-                          function: current-date[]
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: 'UTC'
-                        primary:
-                          type: VALUE
-                          value: literal['2001-01-01']
+      query:
+        values:
+          - row_value_constructor:
+              type: LIST
+              elements:
+                - type: VALUE_EXPRESSION
+                  value_expression:
+                    type: DATETIME_EXPRESSION
+                    datetime_expression:
+                      left:
+                        term:
+                          factor:
+                            time_zone: LOCAL
+                            primary:
+                              type: FUNCTION
+                              function: current-date[]
+                - type: VALUE_EXPRESSION
+                  value_expression:
+                    type: DATETIME_EXPRESSION
+                    datetime_expression:
+                      left:
+                        term:
+                          factor:
+                            time_zone: 'UTC'
+                            primary:
+                              type: VALUE
+                              value: literal['2001-01-01']
 # INSERT INTO using interval value expressions
->INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
-statements:
-  - type: INSERT
-    insert_statement:
-      table_name: t1
-      columns:
-        - num_seconds
-      values:
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value: literal['2001-01-01']
-                            qualifier:
-                              start:
-                                interval: DAY
-                              end:
-                                interval: SECOND
+# >INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
+# statements:
+#   - type: INSERT
+#     insert_statement:
+#       table_name: t1
+#       columns:
+#         - num_seconds
+#       query:
+#         values:
+#           - row_value_constructor:
+#               type: LIST
+#               elements:
+#                 - type: VALUE_EXPRESSION
+#                   value_expression:
+#                     type: INTERVAL_EXPRESSION
+#                     interval_expression:
+#                       left:
+#                         term:
+#                           left:
+#                             factor:
+#                               primary:
+#                                 value: literal['2001-01-01']
+#                                 qualifier:
+#                                   start:
+#                                     interval: DAY
+#                                   end:
+#                                     interval: SECOND
 # INSERT INTO using numeric value expressions
->INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
-statements:
-  - type: INSERT
-    insert_statement:
-      table_name: t1
-      columns:
-        - num_seconds
-      values:
-        - row_value_constructor:
-            type: ELEMENT
-            element:
-              type: VALUE_EXPRESSION
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            type: VALUE
-                            value: literal[1]
-                  op: ADD
-                  right:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            type: VALUE
-                            value: (numeric-expression[literal[2] * literal[3]])
+# >INSERT INTO t1 (num_seconds) VALUES (1 + (2 * 3))
+# statements:
+#   - type: INSERT
+#     insert_statement:
+#       table_name: t1
+#       columns:
+#         - num_seconds
+#       query:
+#         values:
+#           - row_value_constructor:
+#               type: LIST
+#               elements:
+#                 - type: VALUE_EXPRESSION
+#                   value_expression:
+#                     type: NUMERIC_EXPRESSION
+#                     numeric_expression:
+#                       left:
+#                         term:
+#                           left:
+#                             factor:
+#                               primary:
+#                                 type: VALUE
+#                                 value: literal[1]
+#                       op: ADD
+#                       right:
+#                         term:
+#                           left:
+#                             factor:
+#                               primary:
+#                                 type: VALUE
+#                                 value: (numeric-expression[literal[2] * literal[3]])
