@@ -17,7 +17,8 @@ statements:
                           value: literal[1]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # Simple addition of literal number to column reference
 >UPDATE t1 SET x = 1 WHERE a = (2 + b)
 statements:
@@ -292,7 +293,8 @@ statements:
                           value: VALUE
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # COUNT set function specifications
 >SELECT COUNT(*), COUNT(DISTINCT a), COUNT(a) FROM t1
 statements:
@@ -332,7 +334,8 @@ statements:
                           value: COUNT(column-reference[a])
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # SUM set function specifications
 >SELECT SUM(DISTINCT a), SUM(a) FROM t1
 statements:
@@ -362,7 +365,8 @@ statements:
                           value: SUM(column-reference[a])
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # AVG set function specifications
 >SELECT AVG(DISTINCT a), AVG(a) FROM t1
 statements:
@@ -392,7 +396,8 @@ statements:
                           value: AVG(column-reference[a])
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # MIN set function specifications
 >SELECT MIN(DISTINCT a), MIN(a) FROM t1
 statements:
@@ -422,7 +427,8 @@ statements:
                           value: MIN(column-reference[a])
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # MAX set function specifications
 >SELECT MAX(DISTINCT a), MAX(a) FROM t1
 statements:
@@ -452,7 +458,8 @@ statements:
                           value: MAX(column-reference[a])
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # Nested set function specifications
 >SELECT MAX(COUNT(a)) FROM t1
 statements:
@@ -472,7 +479,8 @@ statements:
                           value: MAX(COUNT(column-reference[a]))
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # Use of CHAR_LENGTH and CHARACTER_LENGTH numeric functions
 >SELECT CHAR_LENGTH(a), CHARACTER_LENGTH(a) + 1 FROM t1
 statements:
@@ -515,7 +523,8 @@ statements:
                             value: literal[1]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # Use of BIT_LENGTH and OCTET_LENGTH numeric functions
 >SELECT BIT_LENGTH(a), OCTET_LENGTH(a) FROM t1
 statements:
@@ -549,7 +558,8 @@ statements:
                             operand: column-reference[a]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # Use of EXTRACT numeric function
 >SELECT EXTRACT(YEAR FROM a) FROM t1
 statements:
@@ -572,7 +582,8 @@ statements:
                             source: datetime-expression[column-reference[a] AT LOCAL]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # Use of POSITION numeric function
 >SELECT POSITION('123' IN a) FROM t1
 statements:
@@ -595,4 +606,5 @@ statements:
                             in: column-reference[a]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1

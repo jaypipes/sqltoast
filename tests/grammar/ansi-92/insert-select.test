@@ -29,7 +29,8 @@ statements:
                           value: column-reference[b]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # INSERT SELECT with target columns and a search condition
 >INSERT INTO t1 (t1_a, t1_b) SELECT a, b FROM t1 WHERE c < 3
 statements:
@@ -63,7 +64,8 @@ statements:
                           value: column-reference[b]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
         where:
           search_condition:
             terms:
