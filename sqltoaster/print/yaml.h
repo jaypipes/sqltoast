@@ -39,6 +39,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_term_t&
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::datetime_value_expression_t& de);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_column_t& dc);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_table_t& t);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_column_action_t& action);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_column_action_t& action);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::drop_schema_statement_t& stmt);
@@ -57,6 +58,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_primary
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_qualifier_t& qualifier);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_term_t& term);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_value_expression_t& ie);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::join_specification_t& spec);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_query_expression_t& qe);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& jt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::length_expression_t& expr);
@@ -86,6 +88,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::select_statement
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::string_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::substring_function_t& func);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_t& t);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_t& tr);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::translate_function_t& func);

@@ -9,7 +9,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
 # Identifier includes an underscore
 >SELECT * FROM t1_backup
 statements:
@@ -21,7 +22,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: t1_backup
+            table:
+              name: t1_backup
 # Identifier includes a period
 >SELECT * FROM s1.t1
 statements:
@@ -33,7 +35,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: s1.t1
+            table:
+              name: s1.t1
 # Identifier includes multiple periods and underscore
 >SELECT * FROM c1.s1.t1_backup
 statements:
@@ -45,7 +48,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: c1.s1.t1_backup
+            table:
+              name: c1.s1.t1_backup
 # Identifier includes a prefix and a star projection
 >SELECT t1.* FROM t1
 statements:
@@ -65,4 +69,5 @@ statements:
                           value: column-reference[t1.*]
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1

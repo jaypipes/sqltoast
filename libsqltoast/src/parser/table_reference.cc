@@ -61,7 +61,7 @@ bool parse_table_reference(
     lexeme_t alias;
     join_type_t join_type = JOIN_TYPE_UNKNOWN;
     std::unique_ptr<search_condition_t> join_cond;
-    std::unique_ptr<query_expression_t> derived;
+    std::unique_ptr<query_expression_t> query;
     std::unique_ptr<table_reference_t> right;
     // Used for the USING clause
     std::vector<lexeme_t> named_columns;
@@ -77,7 +77,7 @@ bool parse_table_reference(
             return false;
     }
 expect_derived_table:
-    if (! parse_query_expression(ctx, cur_tok, derived))
+    if (! parse_query_expression(ctx, cur_tok, query))
         return false;
     cur_sym = cur_tok.symbol;
     if (cur_sym != SYMBOL_RPAREN)
@@ -264,7 +264,7 @@ ensure_normal_table:
 ensure_derived_table:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<derived_table_t>(alias, derived);
+    out = std::make_unique<derived_table_t>(alias, query);
     goto check_join;
 push_cross_or_natural_join:
     if (ctx.opts.disable_statement_construction)
@@ -277,9 +277,12 @@ push_join:
     if (! named_columns.empty())
         out = std::make_unique<joined_table_t>(
                 join_type, out, right, named_columns);
-    else
+    else if (join_cond)
         out = std::make_unique<joined_table_t>(
                 join_type, out, right, join_cond);
+    else
+        out = std::make_unique<joined_table_t>(
+                join_type, out, right);
     return true;
 }
 

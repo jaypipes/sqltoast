@@ -10,7 +10,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
         where:
           search_condition:
             terms:
@@ -77,7 +78,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
         where:
           search_condition:
             terms:
@@ -124,7 +126,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
         where:
           search_condition:
             terms:
@@ -172,7 +175,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
         where:
           search_condition:
             terms:
@@ -221,7 +225,8 @@ statements:
               asterisk: true
         referenced_tables:
           - type: TABLE
-            table: t1
+            table:
+              name: t1
         where:
           search_condition:
             terms:

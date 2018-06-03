@@ -438,20 +438,21 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_que
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_t& tr) {
-    if (ptr.in_list(out)) {
+    bool is_list = ptr.in_list(out);
+    if (is_list) {
         ptr.indent(out) << "- type: ";
+        ptr.indent_push(out);
         ptr.end_list(out);
     }
     else
         ptr.indent(out) << "type: ";
-    ptr.indent_push(out);
     switch (tr.type) {
         case sqltoast::TABLE_REFERENCE_TYPE_TABLE:
             out << "TABLE";
             {
                 const sqltoast::table_t& sub =
                     static_cast<const sqltoast::table_t&>(tr);
-                ptr.indent(out) << "table: " << sub;
+                to_yaml(ptr, out, sub);
             }
             break;
         case sqltoast::TABLE_REFERENCE_TYPE_DERIVED_TABLE:
@@ -459,7 +460,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_
             {
                 const sqltoast::derived_table_t& sub =
                     static_cast<const sqltoast::derived_table_t&>(tr);
-                ptr.indent(out) << "derived_table: " << sub;
+                to_yaml(ptr, out, sub);
             }
             break;
         case sqltoast::TABLE_REFERENCE_TYPE_JOINED_TABLE:
@@ -471,7 +472,30 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_
             }
             break;
     }
+    if (is_list)
+        ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_t& t) {
+    ptr.indent(out) << "table:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "name: " << t.table_name;
+    if (t.has_alias())
+        ptr.indent(out) << "alias: " << t.alias;
     ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::derived_table_t& t) {
+    ptr.indent(out) << "derived_table:";
+    ptr.indent_push(out);
+    ptr.indent(out) << "name: " << t.table_name;
+    ptr.indent(out) << "query:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *t.query);
+    ptr.indent_pop(out);
+    ptr.indent_pop(out);
+    // NOTE(jaypipes): derived tables don't have aliases because they are
+    // required to be named with AS <table name>
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& jt) {
@@ -512,7 +536,25 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_t& 
     to_yaml(ptr, out, *jt.right);
     ptr.indent_pop(out);
     if (jt.spec)
-        ptr.indent(out) << "specification: " << *jt.spec;
+       to_yaml(ptr, out, *jt.spec);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::join_specification_t& spec) {
+    ptr.indent(out) << "specification:";
+    ptr.indent_push(out);
+    if (spec.condition) {
+        ptr.indent(out) << "on:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *spec.condition);
+        ptr.indent_pop(out);
+    } else if (! spec.named_columns.empty()) {
+        ptr.indent(out) << "using:";
+        ptr.indent_push(out);
+        for (const sqltoast::lexeme_t& col : spec.named_columns)
+            ptr.indent(out) << "- " << col;
+        ptr.indent_pop(out);
+    }
     ptr.indent_pop(out);
 }
 

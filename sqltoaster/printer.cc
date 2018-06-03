@@ -26,7 +26,6 @@ std::ostream& operator<< (std::ostream& out, printer_t& ptr) {
                 stmt_ptr_it++) {
             ptr.start_list(out);
             print::to_yaml(ptr, out, *(*stmt_ptr_it));
-            ptr.end_list(out);
         }
         ptr.indent_pop(out);
     }
