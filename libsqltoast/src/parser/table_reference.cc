@@ -277,9 +277,12 @@ push_join:
     if (! named_columns.empty())
         out = std::make_unique<joined_table_t>(
                 join_type, out, right, named_columns);
-    else
+    else if (join_cond)
         out = std::make_unique<joined_table_t>(
                 join_type, out, right, join_cond);
+    else
+        out = std::make_unique<joined_table_t>(
+                join_type, out, right);
     return true;
 }
 
