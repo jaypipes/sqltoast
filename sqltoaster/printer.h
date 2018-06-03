@@ -14,36 +14,34 @@
 
 namespace sqltoaster {
 
+typedef enum output_format {
+    OUTPUT_FORMAT_DEFAULT,
+    OUTPUT_FORMAT_YAML
+} output_format_t;
+
 const long LIST_ITEM_OFF = 0;
 const long LIST_ITEM_ON = 1;
 
-const long OUTPUT_FORMAT_DEFAULT = 1;
-const long OUTPUT_FORMAT_YAML = 2;
-
-const int OUTPUT_FORMAT_XALLOC_INDEX = 0;
-const int INDENT_LEVEL_XALLOC_INDEX = 1;
+const int INDENT_LEVEL_XALLOC_INDEX = 0;
 // Informs the printer whether the current item to be printed is a list item
-const int LIST_ITEM_XALLOC_INDEX = 2;
+const int LIST_ITEM_XALLOC_INDEX = 1;
 
 typedef struct printer {
-    int iomanip_indexes[3];
+    int iomanip_indexes[2];
     sqltoast::parse_result_t& res;
-    printer(sqltoast::parse_result_t& res, std::ostream& out) : res(res)
+    output_format_t output_format;
+    printer(
+            sqltoast::parse_result_t& res,
+            std::ostream& out) :
+        res(res),
+        output_format(OUTPUT_FORMAT_DEFAULT)
     {
-        iomanip_indexes[OUTPUT_FORMAT_XALLOC_INDEX] = std::ios_base::xalloc();
         iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX] = std::ios_base::xalloc();
         iomanip_indexes[LIST_ITEM_XALLOC_INDEX] = std::ios_base::xalloc();
         int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
         out.iword(idx_indent) = 0;
         int idx_list_item = iomanip_indexes[LIST_ITEM_XALLOC_INDEX];
         out.iword(idx_list_item) = LIST_ITEM_OFF;
-    }
-    inline void set_yaml(std::ostream& out) {
-        int idx_format = iomanip_indexes[OUTPUT_FORMAT_XALLOC_INDEX];
-        out.iword(idx_format) = OUTPUT_FORMAT_YAML;
-    }
-    inline bool use_yaml(std::ostream& out) const {
-        return (out.iword(iomanip_indexes[OUTPUT_FORMAT_XALLOC_INDEX]) == OUTPUT_FORMAT_YAML);
     }
     inline void indent_push(std::ostream& out) {
         int idx_indent = iomanip_indexes[INDENT_LEVEL_XALLOC_INDEX];
