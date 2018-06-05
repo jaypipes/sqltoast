@@ -306,7 +306,10 @@ std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt) {
             out << std::endl << "     " << x++ << ": " << col;
         }
     }
-    out << std::endl << "   query:" << std::endl << "     " << *stmt.query;
+    if (stmt.query)
+        out << std::endl << "   query:" << std::endl << "     " << *stmt.query;
+    else
+        out << std::endl << "   default_value: true";
     out << ">";
 
     return out;

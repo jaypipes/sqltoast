@@ -5,7 +5,9 @@ SET(PROJECT_DESCRIPTION "A demonstration of the sqltoast library")
 
 SET(SQLTOASTER_SOURCES
     main.cc
+    node.cc
     printer.cc
+    node/statement.cc
     print/yaml.cc
 )
 
