@@ -146,10 +146,11 @@ std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& v
                 out << sf;
             }
             break;
-        case VEP_TYPE_VALUE_EXPRESSION:
+        case VEP_TYPE_PARENTHESIZED_VALUE_EXPRESSION:
             {
-                const value_subexpression_t& ve = static_cast<const value_subexpression_t&>(vep);
-                out << "(" << *ve.value << ")";
+                const parenthesized_value_expression_t& ve =
+                    static_cast<const parenthesized_value_expression_t&>(vep);
+                out << "parenthesized-value-expression[" << *ve.value << "]";
             }
             break;
         case VEP_TYPE_CASE_EXPRESSION:

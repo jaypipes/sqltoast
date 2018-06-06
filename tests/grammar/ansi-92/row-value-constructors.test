@@ -100,7 +100,7 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: (column-reference[a])
+                                      value: parenthesized-value-expression[column-reference[a]]
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -114,7 +114,7 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: (column-reference[b])
+                                      value: parenthesized-value-expression[column-reference[b]]
 # scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2)
 statements:

@@ -144,7 +144,7 @@ check_punc_keywords:
     switch (cur_sym) {
         case SYMBOL_LPAREN:
             cur_tok = lex.next();
-            goto subquery_or_subexpression;
+            goto subquery_or_parenthesized_value_expression;
         case SYMBOL_COUNT:
         case SYMBOL_AVG:
         case SYMBOL_MAX:
@@ -158,7 +158,7 @@ check_punc_keywords:
         default:
             return false;
     }
-subquery_or_subexpression:
+subquery_or_parenthesized_value_expression:
     // There are two possible value expressions that follow a LPAREN: scalar
     // subqueries and precedent value expressions (parens-enclosed value
     // expressions where the parens indicates that the value expression should
@@ -166,7 +166,7 @@ subquery_or_subexpression:
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_SELECT)
         goto process_subquery;
-    goto process_subexpression;
+    goto process_parenthesized_value_expression;
 process_subquery:
 {
     parse_position_t subq_start = cur_tok.lexeme.start;
@@ -185,7 +185,7 @@ process_subquery:
     out = std::make_unique<scalar_subquery_t>(subq, vep_lexeme);
     return true;
 }
-process_subexpression:
+process_parenthesized_value_expression:
 {
     parse_position_t inner_val_start = cur_tok.lexeme.start;
     std::unique_ptr<value_expression_t> inner_value;
@@ -200,7 +200,7 @@ process_subexpression:
     cur_tok = lex.next();
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<value_subexpression_t>(inner_value, vep_lexeme);
+    out = std::make_unique<parenthesized_value_expression_t>(inner_value, vep_lexeme);
     return true;
 }
 err_expect_rparen:

@@ -248,7 +248,7 @@ statements:
                         factor:
                           primary:
                             type: VALUE
-                            value: (numeric-expression[literal[12] / column-reference[b]])
+                            value: parenthesized-value-expression[numeric-expression[literal[12] / column-reference[b]]]
         referenced_tables:
           - type: TABLE
             table:

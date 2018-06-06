@@ -133,7 +133,7 @@ std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_
 std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep);
 std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep);
 std::ostream& operator<< (std::ostream& out, const value_expression_t& ve);
-std::ostream& operator<< (std::ostream& out, const value_subexpression_t& uvs);
+std::ostream& operator<< (std::ostream& out, const parenthesized_value_expression_t& vep);
 
 } // namespace sqltoast
 

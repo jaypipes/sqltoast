@@ -61,7 +61,7 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[2] + column-reference[b]])
+                                    value: parenthesized-value-expression[numeric-expression[literal[2] + column-reference[b]]]
 # Simple subtraction of literal number from column reference
 >UPDATE t1 SET x = 1 WHERE a = (b - 2)
 statements:
@@ -104,7 +104,7 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[column-reference[b] - literal[2]])
+                                    value: parenthesized-value-expression[numeric-expression[column-reference[b] - literal[2]]]
 # Simple multiplication of two literals
 >UPDATE t1 SET x = 1 WHERE a = (2 * 1)
 statements:
@@ -147,7 +147,7 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[2] * literal[1]])
+                                    value: parenthesized-value-expression[numeric-expression[literal[2] * literal[1]]]
 # Simple division of two literals
 >UPDATE t1 SET x = 1 WHERE a = (1 / 2)
 statements:
@@ -190,7 +190,7 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[1] / literal[2]])
+                                    value: parenthesized-value-expression[numeric-expression[literal[1] / literal[2]]]
 # Addition of numeric expression to a literal
 >UPDATE t1 SET x = 1 WHERE a = (1 + (2 * 1))
 statements:
@@ -233,7 +233,7 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])
+                                    value: parenthesized-value-expression[numeric-expression[literal[1] + parenthesized-value-expression[numeric-expression[literal[2] * literal[1]]]]]
 # General value expression primaries
 >SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
 statements:
