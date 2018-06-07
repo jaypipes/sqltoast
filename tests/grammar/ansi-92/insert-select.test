@@ -15,7 +15,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: column-reference[a]
+                          value:
+                            primary:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -25,7 +28,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: column-reference[b]
+                          value:
+                            primary:
+                              type: COLUMN_REFERENCE
+                              column_reference: b
         referenced_tables:
           - type: TABLE
             table:
@@ -50,7 +56,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: column-reference[a]
+                          value:
+                            primary:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -60,7 +69,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: column-reference[b]
+                          value:
+                            primary:
+                              type: COLUMN_REFERENCE
+                              column_reference: b
         referenced_tables:
           - type: TABLE
             table:
@@ -85,7 +97,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[c]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: c
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -99,4 +114,7 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[3]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[3]

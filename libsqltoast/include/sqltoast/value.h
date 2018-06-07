@@ -239,10 +239,10 @@ typedef struct numeric_primary {
 } numeric_primary_t;
 
 typedef struct numeric_value : numeric_primary_t {
-    std::unique_ptr<value_expression_primary_t> value;
-    numeric_value(std::unique_ptr<value_expression_primary_t>& value) :
+    std::unique_ptr<value_expression_primary_t> primary;
+    numeric_value(std::unique_ptr<value_expression_primary_t>& primary) :
         numeric_primary_t(NUMERIC_PRIMARY_TYPE_VALUE),
-        value(std::move(value))
+        primary(std::move(primary))
     {}
 } numeric_value_t;
 

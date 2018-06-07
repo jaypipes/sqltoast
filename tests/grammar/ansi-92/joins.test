@@ -67,7 +67,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -81,7 +84,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # INNER JOIN two normal tables WITH the INNER symbol
 >SELECT * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -124,7 +130,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -138,7 +147,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # INNER JOIN two normal tables with no join condition
 >SELECT * FROM t1 JOIN t2
 statements:
@@ -202,7 +214,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -216,7 +231,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # LEFT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 LEFT OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -259,7 +277,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -273,7 +294,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # RIGHT JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 RIGHT JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -316,7 +340,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -330,7 +357,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # RIGHT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 RIGHT OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -373,7 +403,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -387,7 +420,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # FULL OUTER JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 FULL JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -430,7 +466,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -444,7 +483,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # FULL OUTER JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 FULL OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -487,7 +529,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t1.id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t1.id
                             right:
                               row_value_constructor:
                                 type: ELEMENT
@@ -501,7 +546,10 @@ statements:
                                           factor:
                                             primary:
                                               type: VALUE
-                                              value: column-reference[t2.t1_id]
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: t2.t1_id
 # JOIN with USING clause
 >SELECT * FROM t1 JOIN t2 USING (id)
 statements:

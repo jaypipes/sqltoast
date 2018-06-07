@@ -14,7 +14,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: YEAR
@@ -39,7 +41,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: DAY
@@ -65,7 +69,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: SECOND
@@ -91,7 +97,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: SECOND
@@ -118,7 +126,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: YEAR
@@ -145,7 +155,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: DAY
@@ -172,7 +184,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: DAY
@@ -201,7 +215,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: YEAR
@@ -210,7 +226,10 @@ statements:
                         factor:
                           primary:
                             type: VALUE
-                            value: literal[12]
+                            value:
+                              primary:
+                                type: UNSIGNED_VALUE_SPECIFICATION
+                                unsigned_value_specification: literal[12]
           - derived_column:
               value_expression:
                 type: INTERVAL_EXPRESSION
@@ -220,7 +239,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: YEAR
@@ -229,7 +250,10 @@ statements:
                         factor:
                           primary:
                             type: VALUE
-                            value: literal[2]
+                            value:
+                              primary:
+                                type: UNSIGNED_VALUE_SPECIFICATION
+                                unsigned_value_specification: literal[2]
           - derived_column:
               value_expression:
                 type: INTERVAL_EXPRESSION
@@ -239,7 +263,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: MONTH
@@ -248,7 +274,10 @@ statements:
                         factor:
                           primary:
                             type: VALUE
-                            value: parenthesized-value-expression[numeric-expression[literal[12] / column-reference[b]]]
+                            value:
+                              primary:
+                                type: PARENTHESIZED_VALUE_EXPRESSION
+                                parenthesized_value_expression: numeric-expression[literal[12] / column-reference[b]]
         referenced_tables:
           - type: TABLE
             table:
@@ -270,7 +299,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[a]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: a
                             qualifier:
                               start:
                                 interval: YEAR
@@ -280,7 +311,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: literal[12]
+                            value:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal[12]
                             qualifier:
                               start:
                                 interval: YEAR
@@ -293,7 +326,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[created_on]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: created_on
                             qualifier:
                               start:
                                 interval: DAY
@@ -305,7 +340,9 @@ statements:
                       left:
                         factor:
                           primary:
-                            value: column-reference[updated_on]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: updated_on
                             qualifier:
                               start:
                                 interval: DAY

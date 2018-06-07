@@ -26,7 +26,10 @@ statements:
                           factor:
                             primary:
                               type: VALUE
-                              value: literal[1]
+                              value:
+                                primary:
+                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                  unsigned_value_specification: literal[1]
                 - type: VALUE_EXPRESSION
                   value_expression:
                     type: NUMERIC_EXPRESSION
@@ -36,7 +39,10 @@ statements:
                           factor:
                             primary:
                               type: VALUE
-                              value: literal[2]
+                              value:
+                                primary:
+                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                  unsigned_value_specification: literal[2]
 # INSERT INTO with a default columns list
 >INSERT INTO t1 VALUES (1, 2)
 statements:
@@ -57,7 +63,10 @@ statements:
                           factor:
                             primary:
                               type: VALUE
-                              value: literal[1]
+                              value:
+                                primary:
+                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                  unsigned_value_specification: literal[1]
                 - type: VALUE_EXPRESSION
                   value_expression:
                     type: NUMERIC_EXPRESSION
@@ -67,7 +76,10 @@ statements:
                           factor:
                             primary:
                               type: VALUE
-                              value: literal[2]
+                              value:
+                                primary:
+                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                  unsigned_value_specification: literal[2]
 # INSERT INTO using a character values expression
 # >INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
 # statements:

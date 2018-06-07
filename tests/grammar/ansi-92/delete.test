@@ -30,7 +30,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: column-reference[a]
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -44,4 +47,7 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[10]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[10]

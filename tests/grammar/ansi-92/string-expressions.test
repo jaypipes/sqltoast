@@ -14,7 +14,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: literal['a']
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['a']
         referenced_tables:
           - type: TABLE
             table:
@@ -35,7 +38,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: literal['motorček']
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['motorček']
         referenced_tables:
           - type: TABLE
             table:
@@ -56,7 +62,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: literal['01000101101']
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['01000101101']
         referenced_tables:
           - type: TABLE
             table:
@@ -77,7 +86,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: literal['FE1CD34A']
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['FE1CD34A']
         referenced_tables:
           - type: TABLE
             table:
@@ -98,8 +110,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: scalar-subquery[
-query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]]
+                          value:
+                            primary:
+                              type: SCALAR_SUBQUERY
+                              scalar_subquery: query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]
         referenced_tables:
           - type: TABLE
             table:
@@ -120,7 +134,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: parameter[name]
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: parameter[name]
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -130,7 +147,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: parameter[name_long]
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: parameter[name_long]
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -140,7 +160,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: parameter[?]
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: parameter[?]
         referenced_tables:
           - type: TABLE
             table:
@@ -232,7 +255,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
         referenced_tables:
           - type: TABLE
             table:
@@ -264,7 +290,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
                           for_length:
                             numeric_expression:
                               term:
@@ -272,7 +301,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[2]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[2]
         referenced_tables:
           - type: TABLE
             table:

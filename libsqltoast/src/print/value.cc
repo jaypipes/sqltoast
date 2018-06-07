@@ -208,7 +208,7 @@ std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_
 }
 
 std::ostream& operator<< (std::ostream& out, const numeric_value_t& nv) {
-    out << *nv.value;
+    out << *nv.primary;
     return out;
 }
 
