@@ -81,6 +81,23 @@ typedef struct query_specification_non_join_query_primary : non_join_query_prima
     {}
 } query_specification_non_join_query_primary_t;
 
+typedef struct table_value_constructor {
+    std::vector<std::unique_ptr<row_value_constructor_t>> values;
+    table_value_constructor(
+            std::vector<std::unique_ptr<row_value_constructor_t>>& values) :
+        values(std::move(values))
+    {}
+} table_value_constructor_t;
+
+typedef struct table_value_constructor_non_join_query_primary : non_join_query_primary_t {
+    std::unique_ptr<table_value_constructor_t> table_value;
+    table_value_constructor_non_join_query_primary(
+            std::unique_ptr<table_value_constructor_t>& table_value) :
+        non_join_query_primary_t(NON_JOIN_QUERY_PRIMARY_TYPE_TABLE_VALUE_CONSTRUCTOR),
+        table_value(std::move(table_value))
+    {}
+} table_value_constructor_non_join_query_primary_t;
+
 typedef struct non_join_query_term {
     std::unique_ptr<non_join_query_primary_t> primary;
     non_join_query_term(

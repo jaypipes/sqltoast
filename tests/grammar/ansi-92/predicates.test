@@ -31,7 +31,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -45,7 +48,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[10]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[10]
 # anti-equality comparison predicate
 >SELECT * FROM t1 WHERE a <> 10
 statements:
@@ -79,7 +85,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -93,7 +102,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[10]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[10]
 # Order of value expressions should not matter in equality comparison
 >SELECT * FROM t1 WHERE 10 = a
 statements:
@@ -127,7 +139,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[10]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[10]
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -141,7 +156,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
 # Compound predicate with AND of two equality comparison predicates
 >SELECT * FROM t1 WHERE a = 1 AND b = 2
 statements:
@@ -175,7 +193,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -189,7 +210,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
                 and:
                   factor:
                     predicate:
@@ -208,7 +232,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[b]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: b
                       right:
                         row_value_constructor:
                           type: ELEMENT
@@ -222,7 +249,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: literal[2]
+                                        value:
+                                          primary:
+                                            type: UNSIGNED_VALUE_SPECIFICATION
+                                            unsigned_value_specification: literal[2]
 # Compound predicate with OR of two equality comparison predicates
 >SELECT * FROM t1 WHERE a = 1 OR b = 2
 statements:
@@ -256,7 +286,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -270,7 +303,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
               - factor:
                   predicate:
                     type: COMPARISON
@@ -288,7 +324,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[b]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: b
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -302,7 +341,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[2]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[2]
 # Compound predicate with both AND and OR operators
 >SELECT * FROM t1 WHERE a = 1 AND b = 2 OR c = 3
 statements:
@@ -336,7 +378,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -350,7 +395,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
                 and:
                   factor:
                     predicate:
@@ -369,7 +417,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[b]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: b
                       right:
                         row_value_constructor:
                           type: ELEMENT
@@ -383,7 +434,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: literal[2]
+                                        value:
+                                          primary:
+                                            type: UNSIGNED_VALUE_SPECIFICATION
+                                            unsigned_value_specification: literal[2]
               - factor:
                   predicate:
                     type: COMPARISON
@@ -401,7 +455,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[c]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: c
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -415,7 +472,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[3]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[3]
 # Compound predicate with both OR and AND operators. The AND should take
 # precedence
 >SELECT * FROM t1 WHERE a = 1 OR b = 2 AND c = 3
@@ -450,7 +510,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -464,7 +527,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
               - factor:
                   predicate:
                     type: COMPARISON
@@ -482,7 +548,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[b]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: b
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -496,7 +565,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[2]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[2]
                 and:
                   factor:
                     predicate:
@@ -515,7 +587,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[c]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: c
                       right:
                         row_value_constructor:
                           type: ELEMENT
@@ -529,7 +604,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: literal[3]
+                                        value:
+                                          primary:
+                                            type: UNSIGNED_VALUE_SPECIFICATION
+                                            unsigned_value_specification: literal[3]
 # Compound predicate with both AND and OR operators using parens for precedence
 # override
 >SELECT * FROM t1 WHERE a = 1 AND (b = 2 OR c = 3)
@@ -564,7 +642,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -578,7 +659,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
                 and:
                   factor:
                     search_condition:
@@ -600,7 +684,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: column-reference[b]
+                                                value:
+                                                  primary:
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: b
                               right:
                                 row_value_constructor:
                                   type: ELEMENT
@@ -614,7 +701,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: literal[2]
+                                                value:
+                                                  primary:
+                                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                                    unsigned_value_specification: literal[2]
                         - factor:
                             predicate:
                               type: COMPARISON
@@ -632,7 +722,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: column-reference[c]
+                                                value:
+                                                  primary:
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: c
                               right:
                                 row_value_constructor:
                                   type: ELEMENT
@@ -646,7 +739,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: literal[3]
+                                                value:
+                                                  primary:
+                                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                                    unsigned_value_specification: literal[3]
 # Multiple nested search conditions using parens for precedence
 >SELECT * FROM t1 WHERE a = 1 AND (b = 2 OR c = 3 AND (d = 4 OR e = 5))
 statements:
@@ -680,7 +776,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     right:
                       row_value_constructor:
                         type: ELEMENT
@@ -694,7 +793,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
                 and:
                   factor:
                     search_condition:
@@ -716,7 +818,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: column-reference[b]
+                                                value:
+                                                  primary:
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: b
                               right:
                                 row_value_constructor:
                                   type: ELEMENT
@@ -730,7 +835,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: literal[2]
+                                                value:
+                                                  primary:
+                                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                                    unsigned_value_specification: literal[2]
                         - factor:
                             predicate:
                               type: COMPARISON
@@ -748,7 +856,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: column-reference[c]
+                                                value:
+                                                  primary:
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: c
                               right:
                                 row_value_constructor:
                                   type: ELEMENT
@@ -762,7 +873,10 @@ statements:
                                             factor:
                                               primary:
                                                 type: VALUE
-                                                value: literal[3]
+                                                value:
+                                                  primary:
+                                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                                    unsigned_value_specification: literal[3]
                           and:
                             factor:
                               search_condition:
@@ -784,7 +898,10 @@ statements:
                                                       factor:
                                                         primary:
                                                           type: VALUE
-                                                          value: column-reference[d]
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: d
                                         right:
                                           row_value_constructor:
                                             type: ELEMENT
@@ -798,7 +915,10 @@ statements:
                                                       factor:
                                                         primary:
                                                           type: VALUE
-                                                          value: literal[4]
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[4]
                                   - factor:
                                       predicate:
                                         type: COMPARISON
@@ -816,7 +936,10 @@ statements:
                                                       factor:
                                                         primary:
                                                           type: VALUE
-                                                          value: column-reference[e]
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: e
                                         right:
                                           row_value_constructor:
                                             type: ELEMENT
@@ -830,7 +953,10 @@ statements:
                                                       factor:
                                                         primary:
                                                           type: VALUE
-                                                          value: literal[5]
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[5]
 # IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE a IN (1)
 statements:
@@ -863,7 +989,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     values:
                       - value_expression:
                           type: NUMERIC_EXPRESSION
@@ -873,7 +1002,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[1]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[1]
 # Negate of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE a NOT IN (1)
 statements:
@@ -906,7 +1038,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     negate: true
                     values:
                       - value_expression:
@@ -917,7 +1052,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[1]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[1]
 # top-level negation of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE NOT a IN (1)
 statements:
@@ -950,7 +1088,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     values:
                       - value_expression:
                           type: NUMERIC_EXPRESSION
@@ -960,7 +1101,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[1]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[1]
                   negate: true
 # double-negation of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE NOT a NOT IN (1)
@@ -994,7 +1138,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     negate: true
                     values:
                       - value_expression:
@@ -1005,7 +1152,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[1]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[1]
                   negate: true
 # IN (<value list>) operator with multiple value
 >SELECT * FROM t1 WHERE a IN (1, 2, 3)
@@ -1039,7 +1189,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     values:
                       - value_expression:
                           type: NUMERIC_EXPRESSION
@@ -1049,7 +1202,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[1]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[1]
                       - value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
@@ -1058,7 +1214,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[2]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[2]
                       - value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
@@ -1067,7 +1226,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: literal[3]
+                                    value:
+                                      primary:
+                                        type: UNSIGNED_VALUE_SPECIFICATION
+                                        unsigned_value_specification: literal[3]
 # IN (<value list>) operator with complex value expressions
 >SELECT * FROM t1 WHERE a IN (1 - b, CHAR_LENGTH(b))
 statements:
@@ -1100,7 +1262,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     values:
                       - value_expression:
                           type: NUMERIC_EXPRESSION
@@ -1111,7 +1276,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: literal[1]
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[1]
                             op: SUBTRACT
                             right:
                               term:
@@ -1119,7 +1287,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[b]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: b
                       - value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
@@ -1163,7 +1334,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     query:
                       selected_columns:
                         - derived_column:
@@ -1175,7 +1349,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1_a]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1_a
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1210,7 +1387,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1_id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1235,7 +1415,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1249,7 +1432,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
 # NOT EXISTS (<subquery>) predicate
 >SELECT * FROM t1 WHERE NOT EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1280,7 +1466,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1_id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1305,7 +1494,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1319,7 +1511,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
                     negate: true
 # <row> MATCH (<subquery>) predicate
 >SELECT * FROM t1 WHERE id MATCH (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
@@ -1353,7 +1548,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[id]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: id
                     query:
                       selected_columns:
                         - derived_column:
@@ -1365,7 +1563,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1_id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1390,7 +1591,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1404,7 +1608,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
 # <row> MATCH (<subquery>) predicate explicit FULL
 >SELECT * FROM t1 WHERE id MATCH FULL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1437,7 +1644,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[id]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: id
                     query:
                       selected_columns:
                         - derived_column:
@@ -1449,7 +1659,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1_id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1474,7 +1687,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1488,7 +1704,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
 # <row> MATCH (<subquery>) predicate with UNIQUE
 >SELECT * FROM t1 WHERE id MATCH UNIQUE (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1521,7 +1740,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[id]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: id
                     unique: true
                     query:
                       selected_columns:
@@ -1534,7 +1756,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1_id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1559,7 +1784,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1573,7 +1801,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
 # <row> MATCH (<subquery>) predicate explicit PARTIAL
 >SELECT * FROM t1 WHERE id MATCH PARTIAL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1606,7 +1837,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[id]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: id
                     partial: true
                     query:
                       selected_columns:
@@ -1619,7 +1853,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1_id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1644,7 +1881,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1658,7 +1898,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
 # LIKE predicate with simple column comparison with string
 >SELECT * FROM t1 WHERE a LIKE 's%'
 statements:
@@ -1691,7 +1934,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     pattern:
                       character_expression:
                         factors:
@@ -1729,7 +1975,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     pattern:
                       character_expression:
                         factors:
@@ -1772,7 +2021,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[a]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
                     pattern:
                       character_expression:
                         factors:
@@ -1815,7 +2067,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1.start]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1.start
                           - type: VALUE_EXPRESSION
                             value_expression:
                               type: NUMERIC_EXPRESSION
@@ -1825,7 +2080,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t1.end]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t1.end
                     right:
                       row_value_constructor:
                         type: LIST
@@ -1839,7 +2097,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.start]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.start
                           - type: VALUE_EXPRESSION
                             value_expression:
                               type: NUMERIC_EXPRESSION
@@ -1849,7 +2110,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.end]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.end
 # the UNIQUE predicate returns a match when the correlation returns one and
 # only one row
 >SELECT * FROM t1 WHERE UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id);
@@ -1881,7 +2145,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1906,7 +2173,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t2.t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t2.t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1920,7 +2190,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
 # negated UNIQUE predicate
 >SELECT * FROM t1 WHERE NOT UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id);
 statements:
@@ -1951,7 +2224,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1976,7 +2252,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t2.t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t2.t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -1990,7 +2269,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
                     negate: true
 # Combine EXISTS and UNIQUE predicate
 >SELECT * FROM t1 WHERE UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id) AND EXISTS (SELECT t3.id FROM t3 WHERE t3.t1_id = t1.id);
@@ -2022,7 +2304,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.id]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.id
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -2047,7 +2332,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t2.t1_id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t2.t1_id
                                   right:
                                     row_value_constructor:
                                       type: ELEMENT
@@ -2061,7 +2349,10 @@ statements:
                                                 factor:
                                                   primary:
                                                     type: VALUE
-                                                    value: column-reference[t1.id]
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: t1.id
                   and:
                     factor:
                       predicate:
@@ -2077,7 +2368,10 @@ statements:
                                         factor:
                                           primary:
                                             type: VALUE
-                                            value: column-reference[t3.id]
+                                            value:
+                                              primary:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t3.id
                           referenced_tables:
                             - type: TABLE
                               table:
@@ -2102,7 +2396,10 @@ statements:
                                                     factor:
                                                       primary:
                                                         type: VALUE
-                                                        value: column-reference[t3.t1_id]
+                                                        value:
+                                                          primary:
+                                                            type: COLUMN_REFERENCE
+                                                            column_reference: t3.t1_id
                                       right:
                                         row_value_constructor:
                                           type: ELEMENT
@@ -2116,7 +2413,10 @@ statements:
                                                     factor:
                                                       primary:
                                                         type: VALUE
-                                                        value: column-reference[t1.id]
+                                                        value:
+                                                          primary:
+                                                            type: COLUMN_REFERENCE
+                                                            column_reference: t1.id
 # quantified comparison predicates are like comparison predicates with an
 # ANY|ALL|SOME quantifier
 >SELECT * FROM t1 WHERE t1.start > ALL (SELECT t2.start FROM t2)
@@ -2151,7 +2451,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[t1.start]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: t1.start
                     quantifier: ALL
                     query:
                       selected_columns:
@@ -2164,7 +2467,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.start]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.start
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -2202,7 +2508,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[t1.start]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: t1.start
                     quantifier: ANY
                     query:
                       selected_columns:
@@ -2215,7 +2524,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.start]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.start
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -2253,7 +2565,10 @@ statements:
                                   factor:
                                     primary:
                                       type: VALUE
-                                      value: column-reference[t1.start]
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: t1.start
                     quantifier: ANY
                     query:
                       selected_columns:
@@ -2266,7 +2581,10 @@ statements:
                                     factor:
                                       primary:
                                         type: VALUE
-                                        value: column-reference[t2.start]
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: t2.start
                       referenced_tables:
                         - type: TABLE
                           table:

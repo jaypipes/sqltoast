@@ -92,14 +92,6 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::statement_t& stm
                 to_yaml(ptr, out, sub);
             }
             break;
-        case sqltoast::STATEMENT_TYPE_INSERT_SELECT:
-            out << "INSERT_SELECT";
-            {
-                const sqltoast::insert_select_statement_t& sub =
-                    static_cast<const sqltoast::insert_select_statement_t&>(stmt);
-                to_yaml(ptr, out, sub);
-            }
-            break;
         case sqltoast::STATEMENT_TYPE_DELETE:
             out << "DELETE";
             {
@@ -422,6 +414,12 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_p
             }
             break;
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_TABLE_VALUE_CONSTRUCTOR:
+            {
+                const sqltoast::table_value_constructor_non_join_query_primary_t& sub =
+                    static_cast<const sqltoast::table_value_constructor_non_join_query_primary_t&>(primary);
+                to_yaml(ptr, out, sub);
+            }
+            break;
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_EXPLICIT_TABLE:
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_SUBEXPRESSION:
             // TODO
@@ -431,6 +429,20 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::non_join_query_p
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::query_specification_non_join_query_primary_t& primary) {
     to_yaml(ptr, out, *primary.query_spec);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_value_constructor_non_join_query_primary_t& primary) {
+    ptr.indent(out) << "values:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *primary.table_value);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_value_constructor_t& table_value) {
+    for (const std::unique_ptr<sqltoast::row_value_constructor_t>& value : table_value.values) {
+        ptr.start_list(out);
+        to_yaml(ptr, out, *value);
+    }
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::joined_table_query_expression_t& qe) {
@@ -583,47 +595,22 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement
     ptr.indent(out) << "insert_statement:";
     ptr.indent_push(out);
     ptr.indent(out) << "table_name: " << stmt.table_name;
-    if (stmt.use_default_columns())
-        ptr.indent(out) << "default_columns: true";
-    else {
+    if (! stmt.insert_columns.empty()) {
         ptr.indent(out) << "columns:";
         ptr.indent_push(out);
         for (const sqltoast::lexeme_t& col : stmt.insert_columns)
             ptr.indent(out) << "- " << col;
         ptr.indent_pop(out);
     }
-    if (stmt.use_default_values())
+    if (stmt.query) {
+        ptr.indent(out) << "query:";
+        ptr.indent_push(out);
+        to_yaml(ptr, out, *stmt.query);
+        ptr.indent_pop(out);
+        ptr.indent_pop(out);
+    } else {
         ptr.indent(out) << "default_values: true";
-    else {
-        ptr.indent(out) << "values:";
-        ptr.indent_push(out);
-        for (const std::unique_ptr<sqltoast::row_value_constructor_t>& val : stmt.insert_values) {
-            ptr.start_list(out);
-            to_yaml(ptr, out, *val);
-        }
-        ptr.indent_pop(out);
     }
-    ptr.indent_pop(out);
-}
-
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_statement_t& stmt) {
-    ptr.indent(out) << "insert_select_statement:";
-    ptr.indent_push(out);
-    ptr.indent(out) << "table_name: " << stmt.table_name;
-    if (stmt.use_default_columns())
-        ptr.indent(out) << "default_columns: true";
-    else {
-        ptr.indent(out) << "columns:";
-        ptr.indent_push(out);
-        for (const sqltoast::lexeme_t& col : stmt.insert_columns)
-            ptr.indent(out) << "- " << col;
-        ptr.indent_pop(out);
-    }
-    ptr.indent(out) << "query:";
-    ptr.indent_push(out);
-    to_yaml(ptr, out, *stmt.query);
-    ptr.indent_pop(out);
-    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::delete_statement_t& stmt) {
@@ -1254,7 +1241,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_primary_
             {
                 const sqltoast::numeric_value_t& sub =
                     static_cast<const sqltoast::numeric_value_t&>(primary);
-                ptr.indent(out) << "value: " << sub;
+                ptr.indent(out) << "value:";
+                ptr.indent_push(out);
+                to_yaml(ptr, out, sub);
+                ptr.indent_pop(out);
             }
             break;
         case sqltoast::NUMERIC_PRIMARY_TYPE_FUNCTION:
@@ -1262,17 +1252,76 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_primary_
             {
                 const sqltoast::numeric_function_t& sub =
                     static_cast<const sqltoast::numeric_function_t&>(primary);
+                ptr.indent(out) << "function:";
+                ptr.indent_push(out);
                 to_yaml(ptr, out, sub);
+                ptr.indent_pop(out);
             }
             break;
     }
     ptr.indent_pop(out);
 }
 
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_value_t& value) {
+    ptr.indent(out) << "primary:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *value.primary);
+    ptr.indent_pop(out);
+}
+
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression_primary_t& primary) {
+    switch (primary.vep_type) {
+        case sqltoast::VEP_TYPE_UNSIGNED_VALUE_SPECIFICATION:
+            ptr.indent(out) << "type: UNSIGNED_VALUE_SPECIFICATION";
+            {
+                const sqltoast::unsigned_value_specification_t& sub =
+                    static_cast<const sqltoast::unsigned_value_specification_t&>(primary);
+                ptr.indent(out) << "unsigned_value_specification: " << sub;
+            }
+            break;
+        case sqltoast::VEP_TYPE_COLUMN_REFERENCE:
+            ptr.indent(out) << "type: COLUMN_REFERENCE";
+            ptr.indent(out) << "column_reference: " << primary.lexeme;
+            break;
+        case sqltoast::VEP_TYPE_SET_FUNCTION_SPECIFICATION:
+            ptr.indent(out) << "type: SET_FUNCTION_SPECIFICATION";
+            {
+                const sqltoast::set_function_t& sub =
+                    static_cast<const sqltoast::set_function_t&>(primary);
+                ptr.indent(out) << "set_function_specification: " << sub;
+            }
+            break;
+        case sqltoast::VEP_TYPE_PARENTHESIZED_VALUE_EXPRESSION:
+            ptr.indent(out) << "type: PARENTHESIZED_VALUE_EXPRESSION";
+            {
+                const sqltoast::parenthesized_value_expression_t& sub =
+                    static_cast<const sqltoast::parenthesized_value_expression_t&>(primary);
+                ptr.indent(out) << "parenthesized_value_expression: " << *sub.value;
+            }
+            break;
+        case sqltoast::VEP_TYPE_CASE_EXPRESSION:
+            ptr.indent(out) << "type: CASE_EXPRESSION";
+            {
+                const sqltoast::case_expression_t& sub =
+                    static_cast<const sqltoast::case_expression_t&>(primary);
+                ptr.indent(out) << "case_expression: " << sub;
+            }
+            break;
+        case sqltoast::VEP_TYPE_SCALAR_SUBQUERY:
+            ptr.indent(out) << "type: SCALAR_SUBQUERY";
+            {
+                const sqltoast::scalar_subquery_t& sub =
+                    static_cast<const sqltoast::scalar_subquery_t&>(primary);
+                ptr.indent(out) << "scalar_subquery: " << *sub.subquery;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_function_t& func) {
     bool found_length_func = false;
-    ptr.indent(out) << "function:";
-    ptr.indent_push(out);
     ptr.indent(out) << "type: ";
     switch (func.type) {
         case sqltoast::NUMERIC_FUNCTION_TYPE_POSITION:
@@ -1312,7 +1361,6 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_function
             static_cast<const sqltoast::length_expression_t&>(func);
         to_yaml(ptr, out, sub);
     }
-    ptr.indent_pop(out);
 }
 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::length_expression_t& expr) {
@@ -1647,7 +1695,10 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_factor_
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_primary_t& primary) {
     ptr.indent(out) << "primary:";
     ptr.indent_push(out);
-    ptr.indent(out) << "value: " << *primary.value;
+    ptr.indent(out) << "value:";
+    ptr.indent_push(out);
+    to_yaml(ptr, out, *primary.value);
+    ptr.indent_pop(out);
     if (primary.qualifier)
         to_yaml(ptr, out, *primary.qualifier);
     ptr.indent_pop(out);

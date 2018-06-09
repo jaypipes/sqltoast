@@ -51,7 +51,6 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_action_t& 
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::grant_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_subquery_predicate_t& pred);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::in_values_predicate_t& pred);
-void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_select_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::insert_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_factor_t& factor);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::interval_primary_t& primary);
@@ -73,6 +72,7 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_factor_t
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_primary_t& primary);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_term_t& term);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::numeric_value_t& value);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::overlaps_predicate_t& pred);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::position_expression_t& expr);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::predicate_t& pred);
@@ -91,11 +91,14 @@ void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::substring_functi
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_t& t);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_expression_t& table_exp);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_reference_t& tr);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_value_constructor_non_join_query_primary_t& primary);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::table_value_constructor_t&);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::translate_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::trim_function_t& func);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::unique_predicate_t& pred);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::update_statement_t& stmt);
 void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression_t& ve);
+void to_yaml(printer_t& ptr, std::ostream& out, const sqltoast::value_expression_primary_t& primary);
 
 } // namespace sqltoaster::print
 } // namespace sqltoaster

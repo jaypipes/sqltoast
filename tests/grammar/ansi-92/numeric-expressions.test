@@ -14,7 +14,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: literal[1]
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal[1]
         referenced_tables:
           - type: TABLE
             table:
@@ -47,7 +50,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: column-reference[a]
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -61,7 +67,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[2] + column-reference[b]])
+                                    value:
+                                      primary:
+                                        type: PARENTHESIZED_VALUE_EXPRESSION
+                                        parenthesized_value_expression: numeric-expression[literal[2] + column-reference[b]]
 # Simple subtraction of literal number from column reference
 >UPDATE t1 SET x = 1 WHERE a = (b - 2)
 statements:
@@ -90,7 +99,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: column-reference[a]
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -104,7 +116,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[column-reference[b] - literal[2]])
+                                    value:
+                                      primary:
+                                        type: PARENTHESIZED_VALUE_EXPRESSION
+                                        parenthesized_value_expression: numeric-expression[column-reference[b] - literal[2]]
 # Simple multiplication of two literals
 >UPDATE t1 SET x = 1 WHERE a = (2 * 1)
 statements:
@@ -133,7 +148,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: column-reference[a]
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -147,7 +165,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[2] * literal[1]])
+                                    value:
+                                      primary:
+                                        type: PARENTHESIZED_VALUE_EXPRESSION
+                                        parenthesized_value_expression: numeric-expression[literal[2] * literal[1]]
 # Simple division of two literals
 >UPDATE t1 SET x = 1 WHERE a = (1 / 2)
 statements:
@@ -176,7 +197,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: column-reference[a]
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -190,7 +214,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[1] / literal[2]])
+                                    value:
+                                      primary:
+                                        type: PARENTHESIZED_VALUE_EXPRESSION
+                                        parenthesized_value_expression: numeric-expression[literal[1] / literal[2]]
 # Addition of numeric expression to a literal
 >UPDATE t1 SET x = 1 WHERE a = (1 + (2 * 1))
 statements:
@@ -219,7 +246,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: column-reference[a]
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
                   right:
                     row_value_constructor:
                       type: ELEMENT
@@ -233,7 +263,10 @@ statements:
                                 factor:
                                   primary:
                                     type: VALUE
-                                    value: (numeric-expression[literal[1] + (numeric-expression[literal[2] * literal[1]])])
+                                    value:
+                                      primary:
+                                        type: PARENTHESIZED_VALUE_EXPRESSION
+                                        parenthesized_value_expression: numeric-expression[literal[1] + parenthesized-value-expression[numeric-expression[literal[2] * literal[1]]]]
 # General value expression primaries
 >SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
 statements:
@@ -250,7 +283,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: USER
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: USER
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -260,7 +296,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: CURRENT_USER
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: CURRENT_USER
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -270,7 +309,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: SESSION_USER
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: SESSION_USER
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -280,7 +322,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: SYSTEM_USER
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: SYSTEM_USER
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -290,7 +335,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: VALUE
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: VALUE
         referenced_tables:
           - type: TABLE
             table:
@@ -311,7 +359,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: COUNT(*)
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: COUNT(*)
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -321,7 +372,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: COUNT(DISTINCT column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: COUNT(DISTINCT column-reference[a])
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -331,7 +385,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: COUNT(column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: COUNT(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -352,7 +409,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: SUM(DISTINCT column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: SUM(DISTINCT column-reference[a])
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -362,7 +422,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: SUM(column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: SUM(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -383,7 +446,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: AVG(DISTINCT column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: AVG(DISTINCT column-reference[a])
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -393,7 +459,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: AVG(column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: AVG(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -414,7 +483,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: MIN(DISTINCT column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: MIN(DISTINCT column-reference[a])
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -424,7 +496,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: MIN(column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: MIN(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -445,7 +520,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: MAX(DISTINCT column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: MAX(DISTINCT column-reference[a])
           - derived_column:
               value_expression:
                 type: NUMERIC_EXPRESSION
@@ -455,7 +533,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: MAX(column-reference[a])
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: MAX(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -476,7 +557,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: MAX(COUNT(column-reference[a]))
+                          value:
+                            primary:
+                              type: SET_FUNCTION_SPECIFICATION
+                              set_function_specification: MAX(COUNT(column-reference[a]))
         referenced_tables:
           - type: TABLE
             table:
@@ -520,7 +604,10 @@ statements:
                         factor:
                           primary:
                             type: VALUE
-                            value: literal[1]
+                            value:
+                              primary:
+                                type: UNSIGNED_VALUE_SPECIFICATION
+                                unsigned_value_specification: literal[1]
         referenced_tables:
           - type: TABLE
             table:

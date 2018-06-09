@@ -21,7 +21,6 @@ typedef enum statement_type {
     STATEMENT_TYPE_DROP_VIEW,
     STATEMENT_TYPE_GRANT,
     STATEMENT_TYPE_INSERT,
-    STATEMENT_TYPE_INSERT_SELECT,
     STATEMENT_TYPE_ROLLBACK,
     STATEMENT_TYPE_SELECT,
     STATEMENT_TYPE_UPDATE
@@ -201,41 +200,17 @@ typedef struct select_statement : statement_t {
 typedef struct insert_statement : statement_t {
     lexeme_t table_name;
     std::vector<lexeme_t> insert_columns;
-    std::vector<std::unique_ptr<row_value_constructor_t>> insert_values;
+    std::unique_ptr<query_expression_t> query;
     insert_statement(
             lexeme_t& table_name,
             std::vector<lexeme_t>& col_list,
-            std::vector<std::unique_ptr<row_value_constructor_t>>& val_list) :
-        statement_t(STATEMENT_TYPE_INSERT),
-        table_name(table_name),
-        insert_columns(std::move(col_list)),
-        insert_values(std::move(val_list))
-    {}
-    inline bool use_default_columns() const {
-        return insert_columns.empty();
-    }
-    inline bool use_default_values() const {
-        return insert_values.empty();
-    }
-} insert_statement_t;
-
-typedef struct insert_select_statement : statement_t {
-    lexeme_t table_name;
-    std::vector<lexeme_t> insert_columns;
-    std::unique_ptr<query_expression_t> query;
-    insert_select_statement(
-            lexeme_t& table_name,
-            std::vector<lexeme_t>& col_list,
             std::unique_ptr<query_expression_t>& query) :
-        statement_t(STATEMENT_TYPE_INSERT_SELECT),
+        statement_t(STATEMENT_TYPE_INSERT),
         table_name(table_name),
         insert_columns(std::move(col_list)),
         query(std::move(query))
     {}
-    inline bool use_default_columns() const {
-        return insert_columns.empty();
-    }
-} insert_select_statement_t;
+} insert_statement_t;
 
 typedef struct delete_statement : statement_t {
     lexeme_t table_name;

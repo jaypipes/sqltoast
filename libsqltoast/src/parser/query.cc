@@ -97,15 +97,73 @@ bool parse_non_join_query_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<non_join_query_primary_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    parse_position_t start = lex.cursor;
+    token_t start_tok = lex.current_token;
     std::unique_ptr<query_specification_t> query_spec;
+    std::unique_ptr<table_value_constructor_t> tvc;
 
-    if (! parse_query_specification(ctx, cur_tok, query_spec))
+    if (parse_query_specification(ctx, cur_tok, query_spec))
+        goto push_primary;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
         return false;
-    // TODO(jaypipes): Handle table value constructor and explicit table
+    // Reset cursor to before parsing of joined table attempt.
+    lex.cursor = start;
+    lex.current_token = cur_tok = start_tok;
+    if (! parse_table_value_constructor(ctx, cur_tok, tvc))
+        return false;
+    // TODO(jaypipes): explicit table
+push_primary:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<query_specification_non_join_query_primary_t>(
-            query_spec);
+    if (query_spec)
+        out = std::make_unique<query_specification_non_join_query_primary_t>(query_spec);
+    else if (tvc)
+        out = std::make_unique<table_value_constructor_non_join_query_primary_t>(tvc);
+    return true;
+}
+
+//  <table value constructor> ::=
+//      VALUES <table value constructor list>
+//
+//  <table value constructor list> ::=
+//      <row value constructor>
+//      [ { <comma> <row value constructor> }... ]
+bool parse_table_value_constructor(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<table_value_constructor_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+
+    std::vector<std::unique_ptr<row_value_constructor_t>> val_list;
+    std::unique_ptr<row_value_constructor_t> val_list_item;
+
+    if (cur_sym != SYMBOL_VALUES)
+        return false;
+    cur_tok = lex.next();
+    goto process_value_list_item;
+process_value_list_item:
+    if (! parse_row_value_constructor(ctx, cur_tok, val_list_item))
+        goto err_expect_value_item;
+    val_list.emplace_back(std::move(val_list_item));
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_COMMA) {
+        cur_tok = lex.next();
+        goto process_value_list_item;
+    }
+    goto push_tvc;
+err_expect_value_item:
+    {
+        std::stringstream estr;
+        estr << "Expected a value item, but got " << cur_tok << "." << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+push_tvc:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<table_value_constructor_t>(val_list);
     return true;
 }
 

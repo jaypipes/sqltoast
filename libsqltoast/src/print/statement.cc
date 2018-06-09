@@ -73,13 +73,6 @@ std::ostream& operator<< (std::ostream& out, const statement_t& stmt) {
                 out << sub;
             }
             break;
-        case STATEMENT_TYPE_INSERT_SELECT:
-            {
-                const insert_select_statement_t& sub =
-                    static_cast<const insert_select_statement_t&>(stmt);
-                out << sub;
-            }
-            break;
         case STATEMENT_TYPE_DELETE:
             {
                 const delete_statement_t& sub = static_cast<const delete_statement_t&>(stmt);
@@ -306,36 +299,7 @@ std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt) {
     out << "<statement: INSERT" << std::endl
         << "   table name: " << stmt.table_name;
 
-    if (stmt.use_default_columns())
-        out << std::endl << "   default columns: true";
-    else {
-        out << std::endl << "   columns:";
-        size_t x = 0;
-        for (const lexeme_t& col : stmt.insert_columns) {
-            out << std::endl << "     " << x++ << ": " << col;
-        }
-    }
-    if (stmt.use_default_values())
-        out << std::endl << "   default values: true";
-    else {
-        size_t x = 0;
-        out << std::endl << "   values:";
-        for (const std::unique_ptr<row_value_constructor_t>& val : stmt.insert_values) {
-            out << std::endl << "     " << x++ << ": " << *val;
-        }
-    }
-    out << ">";
-
-    return out;
-}
-
-std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& stmt) {
-    out << "<statement: INSERT" << std::endl
-        << "   table name: " << stmt.table_name;
-
-    if (stmt.use_default_columns())
-        out << std::endl << "   default columns: true";
-    else {
+    if (! stmt.insert_columns.empty()) {
         out << std::endl << "   columns:";
         size_t x = 0;
         for (const lexeme_t& col : stmt.insert_columns) {

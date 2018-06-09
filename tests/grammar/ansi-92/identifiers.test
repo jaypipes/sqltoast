@@ -66,7 +66,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: column-reference[t1.*]
+                          value:
+                            primary:
+                              type: COLUMN_REFERENCE
+                              column_reference: t1.*
         referenced_tables:
           - type: TABLE
             table:

@@ -26,7 +26,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: coalesce[column-reference[a],literal['n/a']]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: coalesce[column-reference[a],literal['n/a']]
         referenced_tables:
           - type: TABLE
             table:
@@ -47,7 +50,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: coalesce[column-reference[a],column-reference[b],column-reference[c],literal['n/a']]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: coalesce[column-reference[a],column-reference[b],column-reference[c],literal['n/a']]
         referenced_tables:
           - type: TABLE
             table:
@@ -68,7 +74,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: nullif[column-reference[a],literal['n/a']]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: nullif[column-reference[a],literal['n/a']]
         referenced_tables:
           - type: TABLE
             table:
@@ -89,7 +98,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2]]
         referenced_tables:
           - type: TABLE
             table:
@@ -110,7 +122,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3]]
         referenced_tables:
           - type: TABLE
             table:
@@ -131,7 +146,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] ELSE literal[42]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] ELSE literal[42]]
         referenced_tables:
           - type: TABLE
             table:
@@ -152,7 +170,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3] ELSE literal[4]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3] ELSE literal[4]]
         referenced_tables:
           - type: TABLE
             table:
@@ -173,7 +194,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2]]
         referenced_tables:
           - type: TABLE
             table:
@@ -194,7 +218,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3]]
         referenced_tables:
           - type: TABLE
             table:
@@ -215,7 +242,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] ELSE literal[42]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] ELSE literal[42]]
         referenced_tables:
           - type: TABLE
             table:
@@ -236,7 +266,10 @@ statements:
                       factor:
                         primary:
                           type: VALUE
-                          value: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3] ELSE literal[4]]
+                          value:
+                            primary:
+                              type: CASE_EXPRESSION
+                              case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3] ELSE literal[4]]
         referenced_tables:
           - type: TABLE
             table:

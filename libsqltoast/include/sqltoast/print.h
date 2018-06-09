@@ -66,7 +66,6 @@ std::ostream& operator<< (std::ostream& out, const drop_table_statement_t& stmt)
 std::ostream& operator<< (std::ostream& out, const drop_view_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const grant_action_t& action);
 std::ostream& operator<< (std::ostream& out, const grant_statement_t& stmt);
-std::ostream& operator<< (std::ostream& out, const insert_select_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const insert_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const select_statement_t& stmt);
 std::ostream& operator<< (std::ostream& out, const statement_t& stmt);
@@ -125,6 +124,8 @@ std::ostream& operator<< (std::ostream& out, const substring_function_t& sf);
 std::ostream& operator<< (std::ostream& out, const table_expression_t& te);
 std::ostream& operator<< (std::ostream& out, const table_reference_t& tr);
 std::ostream& operator<< (std::ostream& out, const table_t& t);
+std::ostream& operator<< (std::ostream& out, const table_value_constructor_non_join_query_primary_t& primary);
+std::ostream& operator<< (std::ostream& out, const table_value_constructor_t& table_value);
 std::ostream& operator<< (std::ostream& out, const translate_function_t& tf);
 std::ostream& operator<< (std::ostream& out, const trim_function_t& tf);
 std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_t& uvs);
@@ -132,7 +133,7 @@ std::ostream& operator<< (std::ostream& out, const unsigned_value_specification_
 std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep);
 std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& vep);
 std::ostream& operator<< (std::ostream& out, const value_expression_t& ve);
-std::ostream& operator<< (std::ostream& out, const value_subexpression_t& uvs);
+std::ostream& operator<< (std::ostream& out, const parenthesized_value_expression_t& vep);
 
 } // namespace sqltoast
 

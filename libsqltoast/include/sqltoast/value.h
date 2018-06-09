@@ -17,7 +17,7 @@ typedef enum vep_type {
     VEP_TYPE_SET_FUNCTION_SPECIFICATION,
     VEP_TYPE_SCALAR_SUBQUERY,
     VEP_TYPE_CASE_EXPRESSION,
-    VEP_TYPE_VALUE_EXPRESSION,
+    VEP_TYPE_PARENTHESIZED_VALUE_EXPRESSION,
     VEP_TYPE_CAST_SPECIFICATION
 } vep_type_t;
 
@@ -203,15 +203,15 @@ typedef struct searched_case_expression : case_expression_t {
 } searched_case_expression_t;
 
 // This is a "subexpression" inside a value expression primary
-typedef struct value_subexpression : value_expression_primary_t {
+typedef struct parenthesized_value_expression : value_expression_primary_t {
     std::unique_ptr<struct value_expression> value;
-    value_subexpression(
+    parenthesized_value_expression(
             std::unique_ptr<struct value_expression>& value,
             lexeme_t lexeme) :
-        value_expression_primary_t(VEP_TYPE_VALUE_EXPRESSION, lexeme),
+        value_expression_primary_t(VEP_TYPE_PARENTHESIZED_VALUE_EXPRESSION, lexeme),
         value(std::move(value))
     {}
-} value_subexpression_t;
+} parenthesized_value_expression_t;
 
 // A value expression primary that contains a subquery that evaluates to a
 // scalar value
@@ -239,10 +239,10 @@ typedef struct numeric_primary {
 } numeric_primary_t;
 
 typedef struct numeric_value : numeric_primary_t {
-    std::unique_ptr<value_expression_primary_t> value;
-    numeric_value(std::unique_ptr<value_expression_primary_t>& value) :
+    std::unique_ptr<value_expression_primary_t> primary;
+    numeric_value(std::unique_ptr<value_expression_primary_t>& primary) :
         numeric_primary_t(NUMERIC_PRIMARY_TYPE_VALUE),
-        value(std::move(value))
+        primary(std::move(primary))
     {}
 } numeric_value_t;
 
