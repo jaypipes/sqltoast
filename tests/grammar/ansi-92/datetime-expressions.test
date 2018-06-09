@@ -5,17 +5,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: VALUE
-                          value: column-reference[a]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: VALUE
+                    value: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:
@@ -27,17 +24,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: 'UTC'
-                        primary:
-                          type: VALUE
-                          value: column-reference[a]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: 'UTC'
+                  primary:
+                    type: VALUE
+                    value: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:
@@ -49,17 +43,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: FUNCTION
-                          function: current-date[]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: FUNCTION
+                    function: current-date[]
         referenced_tables:
           - type: TABLE
             table:
@@ -71,17 +62,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: 'UTC'
-                        primary:
-                          type: FUNCTION
-                          function: current-date[]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: 'UTC'
+                  primary:
+                    type: FUNCTION
+                    function: current-date[]
         referenced_tables:
           - type: TABLE
             table:
@@ -93,17 +81,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: FUNCTION
-                          function: current-time[]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: FUNCTION
+                    function: current-time[]
         referenced_tables:
           - type: TABLE
             table:
@@ -115,17 +100,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: FUNCTION
-                          function: current-time[3]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: FUNCTION
+                    function: current-time[3]
         referenced_tables:
           - type: TABLE
             table:
@@ -137,17 +119,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: FUNCTION
-                          function: current-timestamp[]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: FUNCTION
+                    function: current-timestamp[]
         referenced_tables:
           - type: TABLE
             table:
@@ -159,17 +138,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: FUNCTION
-                          function: current-timestamp[3]
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: FUNCTION
+                    function: current-timestamp[3]
         referenced_tables:
           - type: TABLE
             table:
@@ -181,31 +157,24 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: VALUE
-                          value: column-reference[a]
-                  op: ADD
-                  right:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: b
-                            qualifier:
-                              start:
-                                interval: YEAR
-                              end:
-                                interval: MONTH
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: VALUE
+                    value: column-reference[a]
+              op: ADD
+              right:
+                left:
+                  primary:
+                    value: column-reference[b]
+                    qualifier:
+                      start:
+                        interval: YEAR
+                      end:
+                        interval: MONTH
         referenced_tables:
           - type: TABLE
             table:
@@ -217,29 +186,22 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: DATETIME_EXPRESSION
-                datetime_expression:
-                  left:
-                    term:
-                      factor:
-                        time_zone: LOCAL
-                        primary:
-                          type: VALUE
-                          value: column-reference[a]
-                  op: SUBTRACT
-                  right:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: b
-                            qualifier:
-                              start:
-                                interval: DAY
+          - type: DATETIME_EXPRESSION
+            datetime_expression:
+              left:
+                factor:
+                  time_zone: LOCAL
+                  primary:
+                    type: VALUE
+                    value: column-reference[a]
+              op: SUBTRACT
+              right:
+                left:
+                  primary:
+                    value: column-reference[b]
+                    qualifier:
+                      start:
+                        interval: DAY
         referenced_tables:
           - type: TABLE
             table:

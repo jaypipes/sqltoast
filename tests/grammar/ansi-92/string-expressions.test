@@ -5,19 +5,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: literal['a']
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: literal['a']
         referenced_tables:
           - type: TABLE
             table:
@@ -29,19 +26,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: literal['motorček']
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: literal['motorček']
         referenced_tables:
           - type: TABLE
             table:
@@ -53,19 +47,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: literal['01000101101']
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: literal['01000101101']
         referenced_tables:
           - type: TABLE
             table:
@@ -77,19 +68,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: literal['FE1CD34A']
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: literal['FE1CD34A']
         referenced_tables:
           - type: TABLE
             table:
@@ -101,19 +89,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SCALAR_SUBQUERY
-                              scalar_subquery: query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SCALAR_SUBQUERY
+                        scalar_subquery: query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]
         referenced_tables:
           - type: TABLE
             table:
@@ -125,45 +110,36 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: parameter[name]
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: parameter[name_long]
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: parameter[?]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: parameter[name]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: parameter[name_long]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: parameter[?]
         referenced_tables:
           - type: TABLE
             table:
@@ -175,14 +151,12 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        value: literal['ß']
-                      collation: utf8mb4_general_ci
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    value: literal['ß']
+                  collation: utf8mb4_general_ci
         referenced_tables:
           - type: TABLE
             table:
@@ -194,15 +168,13 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        value: column-reference[a]
-                    - primary:
-                        value: column-reference[b]
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    value: column-reference[a]
+                - primary:
+                    value: column-reference[b]
         referenced_tables:
           - type: TABLE
             table:
@@ -214,16 +186,14 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        value: column-reference[a]
-                    - primary:
-                        value: column-reference[b]
-                      collation: utf8_bin
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    value: column-reference[a]
+                - primary:
+                    value: column-reference[b]
+                  collation: utf8_bin
         referenced_tables:
           - type: TABLE
             table:
@@ -235,30 +205,25 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: SUBSTRING
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
-                          start_position:
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: SUBSTRING
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
+                      start_position:
+                        left:
+                          left:
+                            primary:
+                              type: VALUE
+                              value:
+                                primary:
+                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                  unsigned_value_specification: literal[1]
         referenced_tables:
           - type: TABLE
             table:
@@ -270,41 +235,34 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: SUBSTRING
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
-                          start_position:
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
-                          for_length:
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[2]
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: SUBSTRING
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
+                      start_position:
+                        left:
+                          left:
+                            primary:
+                              type: VALUE
+                              value:
+                                primary:
+                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                  unsigned_value_specification: literal[1]
+                      for_length:
+                        left:
+                          left:
+                            primary:
+                              type: VALUE
+                              value:
+                                primary:
+                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                  unsigned_value_specification: literal[2]
         referenced_tables:
           - type: TABLE
             table:
@@ -316,32 +274,26 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: UPPER
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: LOWER
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: UPPER
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: LOWER
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:
@@ -353,20 +305,17 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: TRANSLATE
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
-                          using: utf8_bin
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: TRANSLATE
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
+                      using: utf8_bin
         referenced_tables:
           - type: TABLE
             table:
@@ -378,20 +327,17 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: CONVERT
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
-                          using: utf8_bin
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: CONVERT
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
+                      using: utf8_bin
         referenced_tables:
           - type: TABLE
             table:
@@ -403,19 +349,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: TRIM
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: TRIM
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:
@@ -427,25 +370,21 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: STRING_EXPRESSION
-                character_expression:
-                  factors:
-                    - primary:
-                        function:
-                          type: TRIM
-                          operand:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: column-reference[a]
-                          specification: LEADING
-                          trim_character:
-                            character_expression:
-                              factors:
-                                - primary:
-                                    value: literal[' ']
+          - type: STRING_EXPRESSION
+            string_expression:
+              factors:
+                - primary:
+                    function:
+                      type: TRIM
+                      operand:
+                        factors:
+                          - primary:
+                              value: column-reference[a]
+                      specification: LEADING
+                      trim_character:
+                        factors:
+                          - primary:
+                              value: literal[' ']
         referenced_tables:
           - type: TABLE
             table:

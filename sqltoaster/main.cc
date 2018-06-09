@@ -63,7 +63,7 @@ int main (int argc, char *argv[])
     auto dur = measure<std::chrono::nanoseconds>::execution(p);
     sqltoaster::printer ptr(p.res, std::cout);
     if (use_yaml)
-        ptr.set_yaml(std::cout);
+        ptr.output_format = sqltoaster::OUTPUT_FORMAT_YAML;
     if (p.res.code == sqltoast::PARSE_OK)
         std::cout << ptr << std::endl;
     else if (p.res.code == sqltoast::PARSE_INPUT_ERROR)

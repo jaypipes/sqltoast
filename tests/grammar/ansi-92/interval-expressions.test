@@ -5,21 +5,15 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: YEAR
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: YEAR
         referenced_tables:
           - type: TABLE
             table:
@@ -32,22 +26,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: DAY
-                                leading_precision: 2
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: DAY
+                        leading_precision: 2
         referenced_tables:
           - type: TABLE
             table:
@@ -60,22 +48,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: SECOND
-                                leading_precision: 2
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: SECOND
+                        leading_precision: 2
         referenced_tables:
           - type: TABLE
             table:
@@ -88,23 +70,17 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: SECOND
-                                leading_precision: 2
-                                fractional_precision: 5
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: SECOND
+                        leading_precision: 2
+                        fractional_precision: 5
         referenced_tables:
           - type: TABLE
             table:
@@ -117,23 +93,17 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: YEAR
-                              end:
-                                interval: MONTH
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: YEAR
+                      end:
+                        interval: MONTH
         referenced_tables:
           - type: TABLE
             table:
@@ -146,23 +116,17 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: DAY
-                              end:
-                                interval: SECOND
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: DAY
+                      end:
+                        interval: SECOND
         referenced_tables:
           - type: TABLE
             table:
@@ -175,25 +139,19 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: DAY
-                              end:
-                                interval: SECOND
-                                leading_precision: 0
-                                fractional_precision: 5
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: DAY
+                      end:
+                        interval: SECOND
+                        leading_precision: 0
+                        fractional_precision: 5
         referenced_tables:
           - type: TABLE
             table:
@@ -206,78 +164,54 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: YEAR
-                      op: MULTIPLY
-                      right:
-                        factor:
-                          primary:
-                            type: VALUE
-                            value:
-                              primary:
-                                type: UNSIGNED_VALUE_SPECIFICATION
-                                unsigned_value_specification: literal[12]
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: YEAR
-                      op: DIVIDE
-                      right:
-                        factor:
-                          primary:
-                            type: VALUE
-                            value:
-                              primary:
-                                type: UNSIGNED_VALUE_SPECIFICATION
-                                unsigned_value_specification: literal[2]
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: MONTH
-                      op: DIVIDE
-                      right:
-                        factor:
-                          primary:
-                            type: VALUE
-                            value:
-                              primary:
-                                type: PARENTHESIZED_VALUE_EXPRESSION
-                                parenthesized_value_expression: numeric-expression[literal[12] / column-reference[b]]
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: YEAR
+                op: MULTIPLY
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: YEAR
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: YEAR
+                op: DIVIDE
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: YEAR
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: MONTH
+                op: DIVIDE
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: MONTH
         referenced_tables:
           - type: TABLE
             table:
@@ -290,64 +224,44 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-                            qualifier:
-                              start:
-                                interval: YEAR
-                  op: ADD
-                  right:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: literal[12]
-                            qualifier:
-                              start:
-                                interval: YEAR
-          - derived_column:
-              value_expression:
-                type: INTERVAL_EXPRESSION
-                interval_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: created_on
-                            qualifier:
-                              start:
-                                interval: DAY
-                              end:
-                                interval: SECOND
-                  op: SUBTRACT
-                  right:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            value:
-                              type: COLUMN_REFERENCE
-                              column_reference: updated_on
-                            qualifier:
-                              start:
-                                interval: DAY
-                              end:
-                                interval: SECOND
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[a]
+                    qualifier:
+                      start:
+                        interval: YEAR
+              op: ADD
+              right:
+                left:
+                  primary:
+                    value: literal[12]
+                    qualifier:
+                      start:
+                        interval: YEAR
+          - type: INTERVAL_EXPRESSION
+            interval_expression:
+              left:
+                left:
+                  primary:
+                    value: column-reference[created_on]
+                    qualifier:
+                      start:
+                        interval: DAY
+                      end:
+                        interval: SECOND
+              op: SUBTRACT
+              right:
+                left:
+                  primary:
+                    value: column-reference[updated_on]
+                    qualifier:
+                      start:
+                        interval: DAY
+                      end:
+                        interval: SECOND
         referenced_tables:
           - type: TABLE
             table:
