@@ -4,10 +4,11 @@
  * See the COPYING file in the root project directory for full text.
  */
 
+#include <sqltoast/print.h>
+
 #include "node.h"
 #include "fill.h"
 #include "printer.h"
-#include "print/yaml.h"
 
 namespace sqltoaster {
 

@@ -8,7 +8,6 @@ SET(SQLTOASTER_SOURCES
     node.cc
     printer.cc
     node/statement.cc
-    print/yaml.cc
 )
 
 ADD_EXECUTABLE(sqltoaster ${SQLTOASTER_SOURCES})
