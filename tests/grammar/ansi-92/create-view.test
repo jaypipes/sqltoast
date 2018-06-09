@@ -17,8 +17,7 @@ statements:
       view_name: v1
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
@@ -34,32 +33,26 @@ statements:
         - b
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: COLUMN_REFERENCE
-                              column_reference: b
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: a
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: b
         referenced_tables:
           - type: TABLE
             table:
@@ -73,8 +66,7 @@ statements:
       check_option: LOCAL
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
@@ -88,8 +80,7 @@ statements:
       check_option: CASCADED
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:

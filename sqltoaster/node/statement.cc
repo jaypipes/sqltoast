@@ -455,7 +455,7 @@ void fill(mapping_t& node, const sqltoast::joined_table_t& jt) {
         std::unique_ptr<node_t> spec_node = std::make_unique<mapping_t>();
         mapping_t& spec_map = static_cast<mapping_t&>(*spec_node);
         fill(spec_map, *jt.spec);
-        node.setattr("spec", spec_node);
+        node.setattr("specification", spec_node);
     }
 }
 

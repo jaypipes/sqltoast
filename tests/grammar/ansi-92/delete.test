@@ -11,43 +11,39 @@ statements:
     delete_statement:
       table_name: t1
       where:
-        search_condition:
-          terms:
-            - factor:
-                predicate:
-                  type: COMPARISON
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                comparison_predicate:
                   op: EQUAL
                   left:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: COLUMN_REFERENCE
-                                        column_reference: a
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
                   right:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[10]
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[10]

@@ -11,12 +11,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: CROSS
+              type: CROSS_JOIN
               left:
                 type: TABLE
                 table:
@@ -32,12 +31,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: INNER
+              type: INNER_JOIN
               left:
                 type: TABLE
                 table:
@@ -48,46 +46,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # INNER JOIN two normal tables WITH the INNER symbol
 >SELECT * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -95,12 +89,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: INNER
+              type: INNER_JOIN
               left:
                 type: TABLE
                 table:
@@ -111,46 +104,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # INNER JOIN two normal tables with no join condition
 >SELECT * FROM t1 JOIN t2
 statements:
@@ -158,12 +147,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: INNER
+              type: INNER_JOIN
               left:
                 type: TABLE
                 table:
@@ -179,12 +167,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: LEFT
+              type: LEFT_JOIN
               left:
                 type: TABLE
                 table:
@@ -195,46 +182,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # LEFT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 LEFT OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -242,12 +225,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: LEFT
+              type: LEFT_JOIN
               left:
                 type: TABLE
                 table:
@@ -258,46 +240,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # RIGHT JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 RIGHT JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -305,12 +283,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: RIGHT
+              type: RIGHT_JOIN
               left:
                 type: TABLE
                 table:
@@ -321,46 +298,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # RIGHT JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 RIGHT OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -368,12 +341,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: RIGHT
+              type: RIGHT_JOIN
               left:
                 type: TABLE
                 table:
@@ -384,46 +356,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # FULL OUTER JOIN two normal tables WITHOUT the optional OUTER symbol
 >SELECT * FROM t1 FULL JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -431,12 +399,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: FULL
+              type: FULL_JOIN
               left:
                 type: TABLE
                 table:
@@ -447,46 +414,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # FULL OUTER JOIN two normal tables WITH the optional OUTER symbol
 >SELECT * FROM t1 FULL OUTER JOIN t2 ON t1.id = t2.t1_id
 statements:
@@ -494,12 +457,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: FULL
+              type: FULL_JOIN
               left:
                 type: TABLE
                 table:
@@ -510,46 +472,42 @@ statements:
                   name: t2
               specification:
                 on:
-                  search_condition:
-                    terms:
-                      - factor:
-                          predicate:
-                            type: COMPARISON
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
                             op: EQUAL
                             left:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t1.id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
                             right:
-                              row_value_constructor:
-                                type: ELEMENT
-                                element:
-                                  type: VALUE_EXPRESSION
-                                  value_expression:
-                                    type: NUMERIC_EXPRESSION
-                                    numeric_expression:
-                                      term:
-                                        left:
-                                          factor:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
                                             primary:
-                                              type: VALUE
-                                              value:
-                                                primary:
-                                                  type: COLUMN_REFERENCE
-                                                  column_reference: t2.t1_id
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t2.t1_id
 # JOIN with USING clause
 >SELECT * FROM t1 JOIN t2 USING (id)
 statements:
@@ -557,12 +515,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: INNER
+              type: INNER_JOIN
               left:
                 type: TABLE
                 table:
@@ -581,12 +538,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: NATURAL
+              type: NATURAL_JOIN
               left:
                 type: TABLE
                 table:
@@ -602,12 +558,11 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: JOINED_TABLE
             joined_table:
-              join_type: UNION
+              type: UNION_JOIN
               left:
                 type: TABLE
                 table:

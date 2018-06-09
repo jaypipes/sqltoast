@@ -5,19 +5,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: literal[1]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: literal[1]
         referenced_tables:
           - type: TABLE
             table:
@@ -31,46 +28,42 @@ statements:
       set_columns:
         x: literal[1]
       where:
-        search_condition:
-          terms:
-            - factor:
-                predicate:
-                  type: COMPARISON
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                comparison_predicate:
                   op: EQUAL
                   left:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: COLUMN_REFERENCE
-                                        column_reference: a
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
                   right:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: PARENTHESIZED_VALUE_EXPRESSION
-                                        parenthesized_value_expression: numeric-expression[literal[2] + column-reference[b]]
+                                    type: PARENTHESIZED_VALUE_EXPRESSION
+                                    parenthesized_value_expression: numeric-expression[literal[2] + column-reference[b]]
 # Simple subtraction of literal number from column reference
 >UPDATE t1 SET x = 1 WHERE a = (b - 2)
 statements:
@@ -80,46 +73,42 @@ statements:
       set_columns:
         x: literal[1]
       where:
-        search_condition:
-          terms:
-            - factor:
-                predicate:
-                  type: COMPARISON
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                comparison_predicate:
                   op: EQUAL
                   left:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: COLUMN_REFERENCE
-                                        column_reference: a
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
                   right:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: PARENTHESIZED_VALUE_EXPRESSION
-                                        parenthesized_value_expression: numeric-expression[column-reference[b] - literal[2]]
+                                    type: PARENTHESIZED_VALUE_EXPRESSION
+                                    parenthesized_value_expression: numeric-expression[column-reference[b] - literal[2]]
 # Simple multiplication of two literals
 >UPDATE t1 SET x = 1 WHERE a = (2 * 1)
 statements:
@@ -129,46 +118,42 @@ statements:
       set_columns:
         x: literal[1]
       where:
-        search_condition:
-          terms:
-            - factor:
-                predicate:
-                  type: COMPARISON
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                comparison_predicate:
                   op: EQUAL
                   left:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: COLUMN_REFERENCE
-                                        column_reference: a
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
                   right:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: PARENTHESIZED_VALUE_EXPRESSION
-                                        parenthesized_value_expression: numeric-expression[literal[2] * literal[1]]
+                                    type: PARENTHESIZED_VALUE_EXPRESSION
+                                    parenthesized_value_expression: numeric-expression[literal[2] * literal[1]]
 # Simple division of two literals
 >UPDATE t1 SET x = 1 WHERE a = (1 / 2)
 statements:
@@ -178,46 +163,42 @@ statements:
       set_columns:
         x: literal[1]
       where:
-        search_condition:
-          terms:
-            - factor:
-                predicate:
-                  type: COMPARISON
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                comparison_predicate:
                   op: EQUAL
                   left:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: COLUMN_REFERENCE
-                                        column_reference: a
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
                   right:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: PARENTHESIZED_VALUE_EXPRESSION
-                                        parenthesized_value_expression: numeric-expression[literal[1] / literal[2]]
+                                    type: PARENTHESIZED_VALUE_EXPRESSION
+                                    parenthesized_value_expression: numeric-expression[literal[1] / literal[2]]
 # Addition of numeric expression to a literal
 >UPDATE t1 SET x = 1 WHERE a = (1 + (2 * 1))
 statements:
@@ -227,46 +208,42 @@ statements:
       set_columns:
         x: literal[1]
       where:
-        search_condition:
-          terms:
-            - factor:
-                predicate:
-                  type: COMPARISON
+        terms:
+          - factor:
+              predicate:
+                type: COMPARISON
+                comparison_predicate:
                   op: EQUAL
                   left:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: COLUMN_REFERENCE
-                                        column_reference: a
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
                   right:
-                    row_value_constructor:
-                      type: ELEMENT
-                      element:
-                        type: VALUE_EXPRESSION
-                        value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                    type: ELEMENT
+                    element:
+                      type: VALUE_EXPRESSION
+                      value_expression:
+                        type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: PARENTHESIZED_VALUE_EXPRESSION
-                                        parenthesized_value_expression: numeric-expression[literal[1] + parenthesized-value-expression[numeric-expression[literal[2] * literal[1]]]]
+                                    type: PARENTHESIZED_VALUE_EXPRESSION
+                                    parenthesized_value_expression: numeric-expression[literal[1] + parenthesized-value-expression[numeric-expression[literal[2] * literal[1]]]]
 # General value expression primaries
 >SELECT USER, CURRENT_USER, SESSION_USER, SYSTEM_USER, VALUE FROM t1
 statements:
@@ -274,71 +251,56 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: USER
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: CURRENT_USER
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: SESSION_USER
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: SYSTEM_USER
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: UNSIGNED_VALUE_SPECIFICATION
-                              unsigned_value_specification: VALUE
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: USER
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: CURRENT_USER
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: SESSION_USER
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: SYSTEM_USER
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: VALUE
         referenced_tables:
           - type: TABLE
             table:
@@ -350,45 +312,36 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: COUNT(*)
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: COUNT(DISTINCT column-reference[a])
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: COUNT(column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: COUNT(*)
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: COUNT(DISTINCT column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: COUNT(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -400,32 +353,26 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: SUM(DISTINCT column-reference[a])
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: SUM(column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: SUM(DISTINCT column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: SUM(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -437,32 +384,26 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: AVG(DISTINCT column-reference[a])
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: AVG(column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: AVG(DISTINCT column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: AVG(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -474,32 +415,26 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: MIN(DISTINCT column-reference[a])
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: MIN(column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: MIN(DISTINCT column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: MIN(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -511,32 +446,26 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: MAX(DISTINCT column-reference[a])
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: MAX(column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: MAX(DISTINCT column-reference[a])
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: MAX(column-reference[a])
         referenced_tables:
           - type: TABLE
             table:
@@ -548,19 +477,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: SET_FUNCTION_SPECIFICATION
-                              set_function_specification: MAX(COUNT(column-reference[a]))
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: SET_FUNCTION_SPECIFICATION
+                        set_function_specification: MAX(COUNT(column-reference[a]))
         referenced_tables:
           - type: TABLE
             table:
@@ -572,42 +498,33 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: FUNCTION
-                          function:
-                            type: CHAR_LENGTH
-                            operand: column-reference[a]
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  left:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            type: FUNCTION
-                            function:
-                              type: CHAR_LENGTH
-                              operand: column-reference[a]
-                  op: ADD
-                  right:
-                    term:
-                      left:
-                        factor:
-                          primary:
-                            type: VALUE
-                            value:
-                              primary:
-                                type: UNSIGNED_VALUE_SPECIFICATION
-                                unsigned_value_specification: literal[1]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: FUNCTION
+                    function:
+                      type: CHAR_LENGTH
+                      operand: column-reference[a]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: FUNCTION
+                    function:
+                      type: CHAR_LENGTH
+                      operand: column-reference[a]
+              op: ADD
+              right:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: UNSIGNED_VALUE_SPECIFICATION
+                        unsigned_value_specification: literal[1]
         referenced_tables:
           - type: TABLE
             table:
@@ -619,30 +536,24 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: FUNCTION
-                          function:
-                            type: BIT_LENGTH
-                            operand: column-reference[a]
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: FUNCTION
-                          function:
-                            type: OCTET_LENGTH
-                            operand: column-reference[a]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: FUNCTION
+                    function:
+                      type: BIT_LENGTH
+                      operand: column-reference[a]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: FUNCTION
+                    function:
+                      type: OCTET_LENGTH
+                      operand: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:
@@ -654,19 +565,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: FUNCTION
-                          function:
-                            type: EXTRACT
-                            field: YEAR
-                            source: datetime-expression[column-reference[a] AT LOCAL]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: FUNCTION
+                    function:
+                      type: EXTRACT
+                      field: YEAR
+                      source: datetime-expression[column-reference[a] AT LOCAL]
         referenced_tables:
           - type: TABLE
             table:
@@ -678,19 +586,16 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: FUNCTION
-                          function:
-                            type: POSITION
-                            find: literal['123']
-                            in: column-reference[a]
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: FUNCTION
+                    function:
+                      type: POSITION
+                      find: literal['123']
+                      in: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:

@@ -5,53 +5,48 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[10]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[10]
 # anti-equality comparison predicate
 >SELECT * FROM t1 WHERE a <> 10
 statements:
@@ -59,53 +54,48 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: NOT_EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[10]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[10]
 # Order of value expressions should not matter in equality comparison
 >SELECT * FROM t1 WHERE 10 = a
 statements:
@@ -113,53 +103,48 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[10]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[10]
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
 # Compound predicate with AND of two equality comparison predicates
 >SELECT * FROM t1 WHERE a = 1 AND b = 2
 statements:
@@ -167,92 +152,84 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
+                    right:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[1]
+                and:
+                  factor:
+                    predicate:
+                      type: COMPARISON
+                      comparison_predicate:
+                        op: EQUAL
+                        left:
+                          type: ELEMENT
+                          element:
+                            type: VALUE_EXPRESSION
+                            value_expression:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
                                 left:
-                                  factor:
+                                  left:
                                     primary:
                                       type: VALUE
                                       value:
                                         primary:
                                           type: COLUMN_REFERENCE
-                                          column_reference: a
-                    right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
+                                          column_reference: b
+                        right:
+                          type: ELEMENT
+                          element:
+                            type: VALUE_EXPRESSION
+                            value_expression:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
                                 left:
-                                  factor:
+                                  left:
                                     primary:
                                       type: VALUE
                                       value:
                                         primary:
                                           type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
-                and:
-                  factor:
-                    predicate:
-                      type: COMPARISON
-                      op: EQUAL
-                      left:
-                        row_value_constructor:
-                          type: ELEMENT
-                          element:
-                            type: VALUE_EXPRESSION
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: b
-                      right:
-                        row_value_constructor:
-                          type: ELEMENT
-                          element:
-                            type: VALUE_EXPRESSION
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: UNSIGNED_VALUE_SPECIFICATION
-                                            unsigned_value_specification: literal[2]
+                                          unsigned_value_specification: literal[2]
 # Compound predicate with OR of two equality comparison predicates
 >SELECT * FROM t1 WHERE a = 1 OR b = 2
 statements:
@@ -260,222 +237,203 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
-                    op: EQUAL
-                    left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
-                    right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
-              - factor:
-                  predicate:
-                    type: COMPARISON
-                    op: EQUAL
-                    left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: b
-                    right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[2]
 # Compound predicate with both AND and OR operators
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
+                    op: EQUAL
+                    left:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
+                    right:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[1]
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
+                    op: EQUAL
+                    left:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: b
+                    right:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[2]
 >SELECT * FROM t1 WHERE a = 1 AND b = 2 OR c = 3
 statements:
   - type: SELECT
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[1]
                 and:
                   factor:
                     predicate:
                       type: COMPARISON
-                      op: EQUAL
-                      left:
-                        row_value_constructor:
+                      comparison_predicate:
+                        op: EQUAL
+                        left:
                           type: ELEMENT
                           element:
                             type: VALUE_EXPRESSION
                             value_expression:
                               type: NUMERIC_EXPRESSION
                               numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: b
-                      right:
-                        row_value_constructor:
-                          type: ELEMENT
-                          element:
-                            type: VALUE_EXPRESSION
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: UNSIGNED_VALUE_SPECIFICATION
-                                            unsigned_value_specification: literal[2]
-              - factor:
-                  predicate:
-                    type: COMPARISON
-                    op: EQUAL
-                    left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
                                 left:
-                                  factor:
+                                  left:
                                     primary:
                                       type: VALUE
                                       value:
                                         primary:
                                           type: COLUMN_REFERENCE
-                                          column_reference: c
-                    right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
+                                          column_reference: b
+                        right:
+                          type: ELEMENT
+                          element:
+                            type: VALUE_EXPRESSION
+                            value_expression:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
                                 left:
-                                  factor:
+                                  left:
                                     primary:
                                       type: VALUE
                                       value:
                                         primary:
                                           type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[3]
+                                          unsigned_value_specification: literal[2]
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
+                    op: EQUAL
+                    left:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: c
+                    right:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[3]
 # Compound predicate with both OR and AND operators. The AND should take
 # precedence
 >SELECT * FROM t1 WHERE a = 1 OR b = 2 AND c = 3
@@ -484,130 +442,119 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
-              - factor:
-                  predicate:
-                    type: COMPARISON
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[1]
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: b
+                                      type: COLUMN_REFERENCE
+                                      column_reference: b
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[2]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[2]
                 and:
                   factor:
                     predicate:
                       type: COMPARISON
-                      op: EQUAL
-                      left:
-                        row_value_constructor:
+                      comparison_predicate:
+                        op: EQUAL
+                        left:
                           type: ELEMENT
                           element:
                             type: VALUE_EXPRESSION
                             value_expression:
                               type: NUMERIC_EXPRESSION
                               numeric_expression:
-                                term:
+                                left:
                                   left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: c
-                      right:
-                        row_value_constructor:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: c
+                        right:
                           type: ELEMENT
                           element:
                             type: VALUE_EXPRESSION
                             value_expression:
                               type: NUMERIC_EXPRESSION
                               numeric_expression:
-                                term:
+                                left:
                                   left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: UNSIGNED_VALUE_SPECIFICATION
-                                            unsigned_value_specification: literal[3]
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[3]
 # Compound predicate with both AND and OR operators using parens for precedence
 # override
 >SELECT * FROM t1 WHERE a = 1 AND (b = 2 OR c = 3)
@@ -616,53 +563,48 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[1]
                 and:
                   factor:
                     search_condition:
@@ -670,79 +612,73 @@ statements:
                         - factor:
                             predicate:
                               type: COMPARISON
-                              op: EQUAL
-                              left:
-                                row_value_constructor:
+                              comparison_predicate:
+                                op: EQUAL
+                                left:
                                   type: ELEMENT
                                   element:
                                     type: VALUE_EXPRESSION
                                     value_expression:
                                       type: NUMERIC_EXPRESSION
                                       numeric_expression:
-                                        term:
+                                        left:
                                           left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: b
-                              right:
-                                row_value_constructor:
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: b
+                                right:
                                   type: ELEMENT
                                   element:
                                     type: VALUE_EXPRESSION
                                     value_expression:
                                       type: NUMERIC_EXPRESSION
                                       numeric_expression:
-                                        term:
+                                        left:
                                           left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: UNSIGNED_VALUE_SPECIFICATION
-                                                    unsigned_value_specification: literal[2]
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                                  unsigned_value_specification: literal[2]
                         - factor:
                             predicate:
                               type: COMPARISON
-                              op: EQUAL
-                              left:
-                                row_value_constructor:
+                              comparison_predicate:
+                                op: EQUAL
+                                left:
                                   type: ELEMENT
                                   element:
                                     type: VALUE_EXPRESSION
                                     value_expression:
                                       type: NUMERIC_EXPRESSION
                                       numeric_expression:
-                                        term:
+                                        left:
                                           left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: c
-                              right:
-                                row_value_constructor:
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: c
+                                right:
                                   type: ELEMENT
                                   element:
                                     type: VALUE_EXPRESSION
                                     value_expression:
                                       type: NUMERIC_EXPRESSION
                                       numeric_expression:
-                                        term:
+                                        left:
                                           left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: UNSIGNED_VALUE_SPECIFICATION
-                                                    unsigned_value_specification: literal[3]
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                                  unsigned_value_specification: literal[3]
 # Multiple nested search conditions using parens for precedence
 >SELECT * FROM t1 WHERE a = 1 AND (b = 2 OR c = 3 AND (d = 4 OR e = 5))
 statements:
@@ -750,53 +686,48 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[1]
                 and:
                   factor:
                     search_condition:
@@ -804,153 +735,141 @@ statements:
                         - factor:
                             predicate:
                               type: COMPARISON
-                              op: EQUAL
-                              left:
-                                row_value_constructor:
+                              comparison_predicate:
+                                op: EQUAL
+                                left:
                                   type: ELEMENT
                                   element:
                                     type: VALUE_EXPRESSION
                                     value_expression:
                                       type: NUMERIC_EXPRESSION
                                       numeric_expression:
-                                        term:
+                                        left:
                                           left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: b
-                              right:
-                                row_value_constructor:
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: b
+                                right:
                                   type: ELEMENT
                                   element:
                                     type: VALUE_EXPRESSION
                                     value_expression:
                                       type: NUMERIC_EXPRESSION
                                       numeric_expression:
-                                        term:
+                                        left:
                                           left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: UNSIGNED_VALUE_SPECIFICATION
-                                                    unsigned_value_specification: literal[2]
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                                  unsigned_value_specification: literal[2]
                         - factor:
                             predicate:
                               type: COMPARISON
-                              op: EQUAL
-                              left:
-                                row_value_constructor:
+                              comparison_predicate:
+                                op: EQUAL
+                                left:
                                   type: ELEMENT
                                   element:
                                     type: VALUE_EXPRESSION
                                     value_expression:
                                       type: NUMERIC_EXPRESSION
                                       numeric_expression:
-                                        term:
-                                          left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: c
-                              right:
-                                row_value_constructor:
-                                  type: ELEMENT
-                                  element:
-                                    type: VALUE_EXPRESSION
-                                    value_expression:
-                                      type: NUMERIC_EXPRESSION
-                                      numeric_expression:
-                                        term:
-                                          left:
-                                            factor:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: UNSIGNED_VALUE_SPECIFICATION
-                                                    unsigned_value_specification: literal[3]
-                          and:
-                            factor:
-                              search_condition:
-                                terms:
-                                  - factor:
-                                      predicate:
-                                        type: COMPARISON
-                                        op: EQUAL
                                         left:
-                                          row_value_constructor:
-                                            type: ELEMENT
-                                            element:
-                                              type: VALUE_EXPRESSION
-                                              value_expression:
-                                                type: NUMERIC_EXPRESSION
-                                                numeric_expression:
-                                                  term:
+                                          left:
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: COLUMN_REFERENCE
+                                                  column_reference: c
+                                right:
+                                  type: ELEMENT
+                                  element:
+                                    type: VALUE_EXPRESSION
+                                    value_expression:
+                                      type: NUMERIC_EXPRESSION
+                                      numeric_expression:
+                                        left:
+                                          left:
+                                            primary:
+                                              type: VALUE
+                                              value:
+                                                primary:
+                                                  type: UNSIGNED_VALUE_SPECIFICATION
+                                                  unsigned_value_specification: literal[3]
+                            and:
+                              factor:
+                                search_condition:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
                                                     left:
-                                                      factor:
+                                                      left:
                                                         primary:
                                                           type: VALUE
                                                           value:
                                                             primary:
                                                               type: COLUMN_REFERENCE
                                                               column_reference: d
-                                        right:
-                                          row_value_constructor:
-                                            type: ELEMENT
-                                            element:
-                                              type: VALUE_EXPRESSION
-                                              value_expression:
-                                                type: NUMERIC_EXPRESSION
-                                                numeric_expression:
-                                                  term:
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
                                                     left:
-                                                      factor:
+                                                      left:
                                                         primary:
                                                           type: VALUE
                                                           value:
                                                             primary:
                                                               type: UNSIGNED_VALUE_SPECIFICATION
                                                               unsigned_value_specification: literal[4]
-                                  - factor:
-                                      predicate:
-                                        type: COMPARISON
-                                        op: EQUAL
-                                        left:
-                                          row_value_constructor:
-                                            type: ELEMENT
-                                            element:
-                                              type: VALUE_EXPRESSION
-                                              value_expression:
-                                                type: NUMERIC_EXPRESSION
-                                                numeric_expression:
-                                                  term:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
                                                     left:
-                                                      factor:
+                                                      left:
                                                         primary:
                                                           type: VALUE
                                                           value:
                                                             primary:
                                                               type: COLUMN_REFERENCE
                                                               column_reference: e
-                                        right:
-                                          row_value_constructor:
-                                            type: ELEMENT
-                                            element:
-                                              type: VALUE_EXPRESSION
-                                              value_expression:
-                                                type: NUMERIC_EXPRESSION
-                                                numeric_expression:
-                                                  term:
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
                                                     left:
-                                                      factor:
+                                                      left:
                                                         primary:
                                                           type: VALUE
                                                           value:
@@ -964,48 +883,43 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: IN_VALUES
+          terms:
+            - factor:
+                predicate:
+                  type: IN_VALUES
+                  in_values_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
-                    values:
-                      - value_expression:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
-                            term:
+                            left:
                               left:
-                                factor:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
+                    values:
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[1]
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
 # Negate of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE a NOT IN (1)
 statements:
@@ -1013,49 +927,44 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: IN_VALUES
+          terms:
+            - factor:
+                predicate:
+                  type: IN_VALUES
+                  in_values_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
-                    negate: true
-                    values:
-                      - value_expression:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
-                            term:
+                            left:
                               left:
-                                factor:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
+                    negate: true
+                    values:
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[1]
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
 # top-level negation of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE NOT a IN (1)
 statements:
@@ -1063,49 +972,44 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: IN_VALUES
+          terms:
+            - factor:
+                predicate:
+                  type: IN_VALUES
+                  in_values_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
-                    values:
-                      - value_expression:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
-                            term:
+                            left:
                               left:
-                                factor:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
+                    values:
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[1]
-                  negate: true
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
+                negate: true
 # double-negation of IN (<value list>) operator with single value
 >SELECT * FROM t1 WHERE NOT a NOT IN (1)
 statements:
@@ -1113,50 +1017,45 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: IN_VALUES
+          terms:
+            - factor:
+                predicate:
+                  type: IN_VALUES
+                  in_values_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
-                    negate: true
-                    values:
-                      - value_expression:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
-                            term:
+                            left:
                               left:
-                                factor:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
+                    negate: true
+                    values:
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[1]
-                  negate: true
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
+                negate: true
 # IN (<value list>) operator with multiple value
 >SELECT * FROM t1 WHERE a IN (1, 2, 3)
 statements:
@@ -1164,72 +1063,63 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: IN_VALUES
+          terms:
+            - factor:
+                predicate:
+                  type: IN_VALUES
+                  in_values_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     values:
-                      - value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[1]
-                      - value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[2]
-                      - value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
-                              left:
-                                factor:
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[2]
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: VALUE
-                                    value:
-                                      primary:
-                                        type: UNSIGNED_VALUE_SPECIFICATION
-                                        unsigned_value_specification: literal[3]
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[3]
 # IN (<value list>) operator with complex value expressions
 >SELECT * FROM t1 WHERE a IN (1 - b, CHAR_LENGTH(b))
 statements:
@@ -1237,71 +1127,61 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: IN_VALUES
+          terms:
+            - factor:
+                predicate:
+                  type: IN_VALUES
+                  in_values_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
-                    values:
-                      - value_expression:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
                           type: NUMERIC_EXPRESSION
                           numeric_expression:
                             left:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[1]
-                            op: SUBTRACT
-                            right:
-                              term:
-                                left:
-                                  factor:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: b
-                      - value_expression:
-                          type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            term:
                               left:
-                                factor:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
+                    values:
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
                                   primary:
-                                    type: FUNCTION
-                                    function:
-                                      type: CHAR_LENGTH
-                                      operand: column-reference[b]
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
+                          op: SUBTRACT
+                          right:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
+                                  primary:
+                                    type: COLUMN_REFERENCE
+                                    column_reference: b
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: FUNCTION
+                                function:
+                                  type: CHAR_LENGTH
+                                  operand: column-reference[b]
 # IN (<subquery>) operator
 >SELECT * FROM t1 WHERE a IN (SELECT t1_a FROM t2)
 statements:
@@ -1309,50 +1189,44 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: IN_SUBQUERY
+          terms:
+            - factor:
+                predicate:
+                  type: IN_SUBQUERY
+                  in_subquery_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1_a
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1_a
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -1364,78 +1238,70 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: EXISTS
+          terms:
+            - factor:
+                predicate:
+                  type: EXISTS
+                  exists_predicate:
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1_id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
 # NOT EXISTS (<subquery>) predicate
 >SELECT * FROM t1 WHERE NOT EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1443,79 +1309,71 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: EXISTS
+          terms:
+            - factor:
+                predicate:
+                  type: EXISTS
+                  exists_predicate:
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1_id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
-                    negate: true
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
+                negate: true
 # <row> MATCH (<subquery>) predicate
 >SELECT * FROM t1 WHERE id MATCH (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1523,95 +1381,85 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: MATCH
+          terms:
+            - factor:
+                predicate:
+                  type: MATCH
+                  match_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: id
+                                      type: COLUMN_REFERENCE
+                                      column_reference: id
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1_id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
 # <row> MATCH (<subquery>) predicate explicit FULL
 >SELECT * FROM t1 WHERE id MATCH FULL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1619,95 +1467,85 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: MATCH
+          terms:
+            - factor:
+                predicate:
+                  type: MATCH
+                  match_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: id
+                                      type: COLUMN_REFERENCE
+                                      column_reference: id
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1_id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
 # <row> MATCH (<subquery>) predicate with UNIQUE
 >SELECT * FROM t1 WHERE id MATCH UNIQUE (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1715,96 +1553,86 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: MATCH
+          terms:
+            - factor:
+                predicate:
+                  type: MATCH
+                  match_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: id
+                                      type: COLUMN_REFERENCE
+                                      column_reference: id
                     unique: true
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1_id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
 # <row> MATCH (<subquery>) predicate explicit PARTIAL
 >SELECT * FROM t1 WHERE id MATCH PARTIAL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1812,96 +1640,86 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: MATCH
+          terms:
+            - factor:
+                predicate:
+                  type: MATCH
+                  match_predicate:
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: id
+                                      type: COLUMN_REFERENCE
+                                      column_reference: id
                     partial: true
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1_id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1_id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
 # LIKE predicate with simple column comparison with string
 >SELECT * FROM t1 WHERE a LIKE 's%'
 statements:
@@ -1909,40 +1727,36 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: LIKE
+          terms:
+            - factor:
+                predicate:
+                  type: LIKE
+                  like_predicate:
                     match:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     pattern:
-                      character_expression:
-                        factors:
-                          - primary:
-                              value: literal['s%']
+                      factors:
+                        - primary:
+                            value: literal['s%']
 # LIKE predicate with simple column comparison with string and escape
 >SELECT * FROM t1 WHERE a LIKE 's%' ESCAPE '"'
 statements:
@@ -1950,45 +1764,40 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: LIKE
+          terms:
+            - factor:
+                predicate:
+                  type: LIKE
+                  like_predicate:
                     match:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     pattern:
-                      character_expression:
-                        factors:
-                          - primary:
-                              value: literal['s%']
-                    escape:
-                      character_expression:
-                        factors:
-                          - primary:
-                              value: literal['"']
+                      factors:
+                        - primary:
+                            value: literal['s%']
+                    escape_char:
+                      factors:
+                        - primary:
+                            value: literal['"']
 # LIKE predicate with concatenated column comparison with string
 >SELECT * FROM t1 WHERE a LIKE b || '%'
 statements:
@@ -1996,42 +1805,38 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: LIKE
+          terms:
+            - factor:
+                predicate:
+                  type: LIKE
+                  like_predicate:
                     match:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: a
+                                      type: COLUMN_REFERENCE
+                                      column_reference: a
                     pattern:
-                      character_expression:
-                        factors:
-                          - primary:
-                              value: column-reference[b]
-                          - primary:
-                              value: literal['%']
+                      factors:
+                        - primary:
+                            value: column-reference[b]
+                        - primary:
+                            value: literal['%']
 # OVERLAPS predicate with date columns from multiple tables
 >SELECT * FROM t1, t2 WHERE (t1.start, t1.end) OVERLAPS (t2.start, t2.end)
 statements:
@@ -2039,8 +1844,7 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
@@ -2049,71 +1853,65 @@ statements:
             table:
               name: t2
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
+          terms:
+            - factor:
+                predicate:
+                  overlaps_predicate:
                     type: OVERLAPS
                     left:
-                      row_value_constructor:
-                        type: LIST
-                        elements:
-                          - type: VALUE_EXPRESSION
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
+                      type: LIST
+                      elements:
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
                                       primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1.start
-                          - type: VALUE_EXPRESSION
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: t1.start
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
                                       primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t1.end
+                                        type: COLUMN_REFERENCE
+                                        column_reference: t1.end
                     right:
-                      row_value_constructor:
-                        type: LIST
-                        elements:
-                          - type: VALUE_EXPRESSION
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
+                      type: LIST
+                      elements:
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
                                       primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.start
-                          - type: VALUE_EXPRESSION
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: t2.start
+                        - type: VALUE_EXPRESSION
+                          value_expression:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
                                       primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.end
+                                        type: COLUMN_REFERENCE
+                                        column_reference: t2.end
 # the UNIQUE predicate returns a match when the correlation returns one and
 # only one row
 >SELECT * FROM t1 WHERE UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id);
@@ -2122,78 +1920,70 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: UNIQUE
+          terms:
+            - factor:
+                predicate:
+                  type: UNIQUE
+                  unique_predicate:
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t2.id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t2.t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t2.t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
 # negated UNIQUE predicate
 >SELECT * FROM t1 WHERE NOT UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id);
 statements:
@@ -2201,79 +1991,71 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: UNIQUE
+          terms:
+            - factor:
+                predicate:
+                  type: UNIQUE
+                  unique_predicate:
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t2.id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t2.t1_id
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t2.t1_id
                                   right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
-                                              left:
-                                                factor:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
-                    negate: true
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
+                negate: true
 # Combine EXISTS and UNIQUE predicate
 >SELECT * FROM t1 WHERE UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id) AND EXISTS (SELECT t3.id FROM t3 WHERE t3.t1_id = t1.id);
 statements:
@@ -2281,142 +2063,128 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: UNIQUE
+          terms:
+            - factor:
+                predicate:
+                  type: UNIQUE
+                  unique_predicate:
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.id
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t2.id
                       referenced_tables:
                         - type: TABLE
                           table:
                             name: t2
                       where:
-                        search_condition:
-                          terms:
-                            - factor:
-                                predicate:
-                                  type: COMPARISON
+                        terms:
+                          - factor:
+                              predicate:
+                                type: COMPARISON
+                                comparison_predicate:
                                   op: EQUAL
                                   left:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
+                                                  primary:
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t2.t1_id
+                                  right:
+                                    type: ELEMENT
+                                    element:
+                                      type: VALUE_EXPRESSION
+                                      value_expression:
+                                        type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
+                                                  primary:
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t1.id
+                and:
+                  factor:
+                    predicate:
+                      type: EXISTS
+                      exists_predicate:
+                        query:
+                          selected_columns:
+                            - type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: t3.id
+                          referenced_tables:
+                            - type: TABLE
+                              table:
+                                name: t3
+                          where:
+                            terms:
+                              - factor:
+                                  predicate:
+                                    type: COMPARISON
+                                    comparison_predicate:
+                                      op: EQUAL
+                                      left:
+                                        type: ELEMENT
+                                        element:
+                                          type: VALUE_EXPRESSION
+                                          value_expression:
+                                            type: NUMERIC_EXPRESSION
+                                            numeric_expression:
                                               left:
-                                                factor:
+                                                left:
                                                   primary:
                                                     type: VALUE
                                                     value:
                                                       primary:
                                                         type: COLUMN_REFERENCE
-                                                        column_reference: t2.t1_id
-                                  right:
-                                    row_value_constructor:
-                                      type: ELEMENT
-                                      element:
-                                        type: VALUE_EXPRESSION
-                                        value_expression:
-                                          type: NUMERIC_EXPRESSION
-                                          numeric_expression:
-                                            term:
+                                                        column_reference: t3.t1_id
+                                      right:
+                                        type: ELEMENT
+                                        element:
+                                          type: VALUE_EXPRESSION
+                                          value_expression:
+                                            type: NUMERIC_EXPRESSION
+                                            numeric_expression:
                                               left:
-                                                factor:
+                                                left:
                                                   primary:
                                                     type: VALUE
                                                     value:
                                                       primary:
                                                         type: COLUMN_REFERENCE
                                                         column_reference: t1.id
-                  and:
-                    factor:
-                      predicate:
-                        type: EXISTS
-                        query:
-                          selected_columns:
-                            - derived_column:
-                                value_expression:
-                                  type: NUMERIC_EXPRESSION
-                                  numeric_expression:
-                                    term:
-                                      left:
-                                        factor:
-                                          primary:
-                                            type: VALUE
-                                            value:
-                                              primary:
-                                                type: COLUMN_REFERENCE
-                                                column_reference: t3.id
-                          referenced_tables:
-                            - type: TABLE
-                              table:
-                                name: t3
-                          where:
-                            search_condition:
-                              terms:
-                                - factor:
-                                    predicate:
-                                      type: COMPARISON
-                                      op: EQUAL
-                                      left:
-                                        row_value_constructor:
-                                          type: ELEMENT
-                                          element:
-                                            type: VALUE_EXPRESSION
-                                            value_expression:
-                                              type: NUMERIC_EXPRESSION
-                                              numeric_expression:
-                                                term:
-                                                  left:
-                                                    factor:
-                                                      primary:
-                                                        type: VALUE
-                                                        value:
-                                                          primary:
-                                                            type: COLUMN_REFERENCE
-                                                            column_reference: t3.t1_id
-                                      right:
-                                        row_value_constructor:
-                                          type: ELEMENT
-                                          element:
-                                            type: VALUE_EXPRESSION
-                                            value_expression:
-                                              type: NUMERIC_EXPRESSION
-                                              numeric_expression:
-                                                term:
-                                                  left:
-                                                    factor:
-                                                      primary:
-                                                        type: VALUE
-                                                        value:
-                                                          primary:
-                                                            type: COLUMN_REFERENCE
-                                                            column_reference: t1.id
 # quantified comparison predicates are like comparison predicates with an
 # ANY|ALL|SOME quantifier
 >SELECT * FROM t1 WHERE t1.start > ALL (SELECT t2.start FROM t2)
@@ -2425,52 +2193,46 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: QUANTIFIED_COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: QUANTIFIED_COMPARISON
+                  quantified_comparison_predicate:
                     op: GREATER_THAN
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: t1.start
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1.start
                     quantifier: ALL
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.start
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t2.start
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -2482,52 +2244,46 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: QUANTIFIED_COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: QUANTIFIED_COMPARISON
+                  quantified_comparison_predicate:
                     op: LESS_THAN_OR_EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: t1.start
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1.start
                     quantifier: ANY
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.start
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t2.start
                       referenced_tables:
                         - type: TABLE
                           table:
@@ -2539,52 +2295,46 @@ statements:
     select_statement:
       query:
         selected_columns:
-          - derived_column:
-              asterisk: true
+          - asterisk: true
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: QUANTIFIED_COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: QUANTIFIED_COMPARISON
+                  quantified_comparison_predicate:
                     op: LESS_THAN_OR_EQUAL
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: t1.start
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t1.start
                     quantifier: ANY
                     query:
                       selected_columns:
-                        - derived_column:
-                            value_expression:
-                              type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                term:
-                                  left:
-                                    factor:
-                                      primary:
-                                        type: VALUE
-                                        value:
-                                          primary:
-                                            type: COLUMN_REFERENCE
-                                            column_reference: t2.start
+                        - type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
+                                    primary:
+                                      type: COLUMN_REFERENCE
+                                      column_reference: t2.start
                       referenced_tables:
                         - type: TABLE
                           table:

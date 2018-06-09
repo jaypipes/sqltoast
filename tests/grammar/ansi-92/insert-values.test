@@ -14,35 +14,32 @@ statements:
         - b
       query:
         values:
-          - row_value_constructor:
-              type: LIST
-              elements:
-                - type: VALUE_EXPRESSION
-                  value_expression:
-                    type: NUMERIC_EXPRESSION
-                    numeric_expression:
-                      term:
-                        left:
-                          factor:
+          - type: LIST
+            elements:
+              - type: VALUE_EXPRESSION
+                value_expression:
+                  type: NUMERIC_EXPRESSION
+                  numeric_expression:
+                    left:
+                      left:
+                        primary:
+                          type: VALUE
+                          value:
                             primary:
-                              type: VALUE
-                              value:
-                                primary:
-                                  type: UNSIGNED_VALUE_SPECIFICATION
-                                  unsigned_value_specification: literal[1]
-                - type: VALUE_EXPRESSION
-                  value_expression:
-                    type: NUMERIC_EXPRESSION
-                    numeric_expression:
-                      term:
-                        left:
-                          factor:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal[1]
+              - type: VALUE_EXPRESSION
+                value_expression:
+                  type: NUMERIC_EXPRESSION
+                  numeric_expression:
+                    left:
+                      left:
+                        primary:
+                          type: VALUE
+                          value:
                             primary:
-                              type: VALUE
-                              value:
-                                primary:
-                                  type: UNSIGNED_VALUE_SPECIFICATION
-                                  unsigned_value_specification: literal[2]
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal[2]
 # INSERT INTO with a default columns list
 >INSERT INTO t1 VALUES (1, 2)
 statements:
@@ -51,35 +48,32 @@ statements:
       table_name: t1
       query:
         values:
-          - row_value_constructor:
-              type: LIST
-              elements:
-                - type: VALUE_EXPRESSION
-                  value_expression:
-                    type: NUMERIC_EXPRESSION
-                    numeric_expression:
-                      term:
-                        left:
-                          factor:
+          - type: LIST
+            elements:
+              - type: VALUE_EXPRESSION
+                value_expression:
+                  type: NUMERIC_EXPRESSION
+                  numeric_expression:
+                    left:
+                      left:
+                        primary:
+                          type: VALUE
+                          value:
                             primary:
-                              type: VALUE
-                              value:
-                                primary:
-                                  type: UNSIGNED_VALUE_SPECIFICATION
-                                  unsigned_value_specification: literal[1]
-                - type: VALUE_EXPRESSION
-                  value_expression:
-                    type: NUMERIC_EXPRESSION
-                    numeric_expression:
-                      term:
-                        left:
-                          factor:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal[1]
+              - type: VALUE_EXPRESSION
+                value_expression:
+                  type: NUMERIC_EXPRESSION
+                  numeric_expression:
+                    left:
+                      left:
+                        primary:
+                          type: VALUE
+                          value:
                             primary:
-                              type: VALUE
-                              value:
-                                primary:
-                                  type: UNSIGNED_VALUE_SPECIFICATION
-                                  unsigned_value_specification: literal[2]
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal[2]
 # INSERT INTO using a character values expression
 # >INSERT INTO t1 VALUES ('a' COLLATE utf8bin)
 # statements:
@@ -110,31 +104,28 @@ statements:
         - my_date
       query:
         values:
-          - row_value_constructor:
-              type: LIST
-              elements:
-                - type: VALUE_EXPRESSION
-                  value_expression:
-                    type: DATETIME_EXPRESSION
-                    datetime_expression:
-                      left:
-                        term:
-                          factor:
-                            time_zone: LOCAL
-                            primary:
-                              type: FUNCTION
-                              function: current-date[]
-                - type: VALUE_EXPRESSION
-                  value_expression:
-                    type: DATETIME_EXPRESSION
-                    datetime_expression:
-                      left:
-                        term:
-                          factor:
-                            time_zone: 'UTC'
-                            primary:
-                              type: VALUE
-                              value: literal['2001-01-01']
+          - type: LIST
+            elements:
+              - type: VALUE_EXPRESSION
+                value_expression:
+                  type: DATETIME_EXPRESSION
+                  datetime_expression:
+                    left:
+                      factor:
+                        time_zone: LOCAL
+                        primary:
+                          type: FUNCTION
+                          function: current-date[]
+              - type: VALUE_EXPRESSION
+                value_expression:
+                  type: DATETIME_EXPRESSION
+                  datetime_expression:
+                    left:
+                      factor:
+                        time_zone: 'UTC'
+                        primary:
+                          type: VALUE
+                          value: literal['2001-01-01']
 # INSERT INTO using interval value expressions
 # >INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
 # statements:

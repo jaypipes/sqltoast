@@ -6,32 +6,26 @@ statements:
       table_name: t1
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: COLUMN_REFERENCE
-                              column_reference: b
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: a
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: b
         referenced_tables:
           - type: TABLE
             table:
@@ -47,74 +41,64 @@ statements:
         - t1_b
       query:
         selected_columns:
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: COLUMN_REFERENCE
-                              column_reference: a
-          - derived_column:
-              value_expression:
-                type: NUMERIC_EXPRESSION
-                numeric_expression:
-                  term:
-                    left:
-                      factor:
-                        primary:
-                          type: VALUE
-                          value:
-                            primary:
-                              type: COLUMN_REFERENCE
-                              column_reference: b
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: a
+          - type: NUMERIC_EXPRESSION
+            numeric_expression:
+              left:
+                left:
+                  primary:
+                    type: VALUE
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: b
         referenced_tables:
           - type: TABLE
             table:
               name: t1
         where:
-          search_condition:
-            terms:
-              - factor:
-                  predicate:
-                    type: COMPARISON
+          terms:
+            - factor:
+                predicate:
+                  type: COMPARISON
+                  comparison_predicate:
                     op: LESS_THAN
                     left:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: c
+                                      type: COLUMN_REFERENCE
+                                      column_reference: c
                     right:
-                      row_value_constructor:
-                        type: ELEMENT
-                        element:
-                          type: VALUE_EXPRESSION
-                          value_expression:
-                            type: NUMERIC_EXPRESSION
-                            numeric_expression:
-                              term:
-                                left:
-                                  factor:
+                      type: ELEMENT
+                      element:
+                        type: VALUE_EXPRESSION
+                        value_expression:
+                          type: NUMERIC_EXPRESSION
+                          numeric_expression:
+                            left:
+                              left:
+                                primary:
+                                  type: VALUE
+                                  value:
                                     primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: UNSIGNED_VALUE_SPECIFICATION
-                                          unsigned_value_specification: literal[3]
+                                      type: UNSIGNED_VALUE_SPECIFICATION
+                                      unsigned_value_specification: literal[3]
