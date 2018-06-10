@@ -506,7 +506,13 @@ statements:
                     type: FUNCTION
                     function:
                       type: CHAR_LENGTH
-                      operand: column-reference[a]
+                      char_length:
+                        operand:
+                          type: STRING_EXPRESSION
+                          string_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -515,7 +521,13 @@ statements:
                     type: FUNCTION
                     function:
                       type: CHAR_LENGTH
-                      operand: column-reference[a]
+                      char_length:
+                        operand:
+                          type: STRING_EXPRESSION
+                          string_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
               op: ADD
               right:
                 left:
@@ -544,7 +556,13 @@ statements:
                     type: FUNCTION
                     function:
                       type: BIT_LENGTH
-                      operand: column-reference[a]
+                      bit_length:
+                        operand:
+                          type: STRING_EXPRESSION
+                          string_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -553,7 +571,13 @@ statements:
                     type: FUNCTION
                     function:
                       type: OCTET_LENGTH
-                      operand: column-reference[a]
+                      octet_length:
+                        operand:
+                          type: STRING_EXPRESSION
+                          string_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:

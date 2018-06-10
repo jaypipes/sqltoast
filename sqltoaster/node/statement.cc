@@ -1153,7 +1153,6 @@ void fill(mapping_t& node, const sqltoast::value_expression_primary_t& primary) 
 }
 
 void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {
-    bool found_length_func = false;
     switch (func.type) {
         case sqltoast::NUMERIC_FUNCTION_TYPE_POSITION:
             node.setattr("type", "POSITION");
@@ -1173,31 +1172,48 @@ void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {
             break;
         case sqltoast::NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
             node.setattr("type", "CHAR_LENGTH");
-            found_length_func = true;
+            {
+                std::unique_ptr<node_t> length_node = std::make_unique<mapping_t>();
+                mapping_t& length_map = static_cast<mapping_t&>(*length_node);
+                const sqltoast::length_expression_t& sub =
+                    static_cast<const sqltoast::length_expression_t&>(func);
+                fill(length_map, sub);
+                node.setattr("char_length", length_node);
+            }
             break;
         case sqltoast::NUMERIC_FUNCTION_TYPE_BIT_LENGTH:
             node.setattr("type", "BIT_LENGTH");
-            found_length_func = true;
+            {
+                std::unique_ptr<node_t> length_node = std::make_unique<mapping_t>();
+                mapping_t& length_map = static_cast<mapping_t&>(*length_node);
+                const sqltoast::length_expression_t& sub =
+                    static_cast<const sqltoast::length_expression_t&>(func);
+                fill(length_map, sub);
+                node.setattr("bit_length", length_node);
+            }
             break;
         case sqltoast::NUMERIC_FUNCTION_TYPE_OCTET_LENGTH:
             node.setattr("type", "OCTET_LENGTH");
-            found_length_func = true;
+            {
+                std::unique_ptr<node_t> length_node = std::make_unique<mapping_t>();
+                mapping_t& length_map = static_cast<mapping_t&>(*length_node);
+                const sqltoast::length_expression_t& sub =
+                    static_cast<const sqltoast::length_expression_t&>(func);
+                fill(length_map, sub);
+                node.setattr("octet_length", length_node);
+            }
             break;
         default:
             // TODO(jaypipes)
             break;
     }
-    if (found_length_func) {
-        const sqltoast::length_expression_t& sub =
-            static_cast<const sqltoast::length_expression_t&>(func);
-        fill(node, sub);
-    }
 }
 
 void fill(mapping_t& node, const sqltoast::length_expression_t& expr) {
-    std::stringstream val;
-    val << *expr.operand;
-    node.setattr("operand", val.str());
+    std::unique_ptr<node_t> operand_node = std::make_unique<mapping_t>();
+    mapping_t& operand_map = static_cast<mapping_t&>(*operand_node);
+    fill(operand_map, *expr.operand);
+    node.setattr("operand", operand_node);
 }
 
 void fill(mapping_t& node, const sqltoast::position_expression_t& expr) {

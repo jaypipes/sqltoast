@@ -1181,7 +1181,13 @@ statements:
                                 type: FUNCTION
                                 function:
                                   type: CHAR_LENGTH
-                                  operand: column-reference[b]
+                                  char_length:
+                                    operand:
+                                      type: STRING_EXPRESSION
+                                      string_expression:
+                                        factors:
+                                          - primary:
+                                              value: column-reference[b]
 # IN (<subquery>) operator
 >SELECT * FROM t1 WHERE a IN (SELECT t1_a FROM t2)
 statements:
