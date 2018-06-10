@@ -227,15 +227,16 @@ statements:
                               value:
                                 type: COLUMN_REFERENCE
                                 column_reference: a
-                      start_position:
-                        left:
+                      substring:
+                        start_position:
                           left:
-                            primary:
-                              type: VALUE
-                              value:
-                                primary:
-                                  type: UNSIGNED_VALUE_SPECIFICATION
-                                  unsigned_value_specification: literal[1]
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
+                                  primary:
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
         referenced_tables:
           - type: TABLE
             table:
@@ -259,24 +260,25 @@ statements:
                               value:
                                 type: COLUMN_REFERENCE
                                 column_reference: a
-                      start_position:
-                        left:
+                      substring:
+                        start_position:
                           left:
-                            primary:
-                              type: VALUE
-                              value:
-                                primary:
-                                  type: UNSIGNED_VALUE_SPECIFICATION
-                                  unsigned_value_specification: literal[1]
-                      for_length:
-                        left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
+                                  primary:
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[1]
+                        for_length:
                           left:
-                            primary:
-                              type: VALUE
-                              value:
-                                primary:
-                                  type: UNSIGNED_VALUE_SPECIFICATION
-                                  unsigned_value_specification: literal[2]
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
+                                  primary:
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal[2]
         referenced_tables:
           - type: TABLE
             table:
@@ -359,7 +361,8 @@ statements:
                               value:
                                 type: COLUMN_REFERENCE
                                 column_reference: a
-                      using: utf8_bin
+                      convert:
+                        using: utf8_bin
         referenced_tables:
           - type: TABLE
             table:

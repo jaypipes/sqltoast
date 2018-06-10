@@ -1290,9 +1290,12 @@ void fill(mapping_t& node, const sqltoast::string_function_t& func) {
             node.setattr("type", "SUBSTRING");
             node.setattr("operand", operand_node);
             {
+                std::unique_ptr<node_t> substring_node = std::make_unique<mapping_t>();
+                mapping_t& substring_map = static_cast<mapping_t&>(*substring_node);
                 const sqltoast::substring_function_t& sub =
                     static_cast<const sqltoast::substring_function_t&>(func);
-                fill(node, sub);
+                fill(substring_map, sub);
+                node.setattr("substring", substring_node);
             }
             break;
         case sqltoast::STRING_FUNCTION_TYPE_UPPER:
@@ -1307,9 +1310,12 @@ void fill(mapping_t& node, const sqltoast::string_function_t& func) {
             node.setattr("type", "CONVERT");
             node.setattr("operand", operand_node);
             {
+                std::unique_ptr<node_t> convert_node = std::make_unique<mapping_t>();
+                mapping_t& convert_map = static_cast<mapping_t&>(*convert_node);
                 const sqltoast::convert_function_t& sub =
                     static_cast<const sqltoast::convert_function_t&>(func);
-                fill(node, sub);
+                fill(convert_map, sub);
+                node.setattr("convert", convert_node);
             }
             break;
         case sqltoast::STRING_FUNCTION_TYPE_TRANSLATE:
