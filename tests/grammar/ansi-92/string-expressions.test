@@ -155,7 +155,9 @@ statements:
             string_expression:
               factors:
                 - primary:
-                    value: literal['ß']
+                    value:
+                      type: UNSIGNED_VALUE_SPECIFICATION
+                      unsigned_value_specification: literal['ß']
                   collation: utf8mb4_general_ci
         referenced_tables:
           - type: TABLE
@@ -172,9 +174,13 @@ statements:
             string_expression:
               factors:
                 - primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                 - primary:
-                    value: column-reference[b]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: b
         referenced_tables:
           - type: TABLE
             table:
@@ -190,9 +196,13 @@ statements:
             string_expression:
               factors:
                 - primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                 - primary:
-                    value: column-reference[b]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: b
                   collation: utf8_bin
         referenced_tables:
           - type: TABLE
@@ -214,7 +224,9 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
                       start_position:
                         left:
                           left:
@@ -244,7 +256,9 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
                       start_position:
                         left:
                           left:
@@ -283,7 +297,9 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
           - type: STRING_EXPRESSION
             string_expression:
               factors:
@@ -293,7 +309,9 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -314,7 +332,9 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
                       using: utf8_bin
         referenced_tables:
           - type: TABLE
@@ -336,7 +356,9 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
                       using: utf8_bin
         referenced_tables:
           - type: TABLE
@@ -358,7 +380,9 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -379,12 +403,16 @@ statements:
                       operand:
                         factors:
                           - primary:
-                              value: column-reference[a]
+                              value:
+                                type: COLUMN_REFERENCE
+                                column_reference: a
                       specification: LEADING
                       trim_character:
                         factors:
                           - primary:
-                              value: literal[' ']
+                              value:
+                                type: UNSIGNED_VALUE_SPECIFICATION
+                                unsigned_value_specification: literal[' ']
         referenced_tables:
           - type: TABLE
             table:

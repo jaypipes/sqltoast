@@ -1187,7 +1187,9 @@ statements:
                                       string_expression:
                                         factors:
                                           - primary:
-                                              value: column-reference[b]
+                                              value:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: b
 # IN (<subquery>) operator
 >SELECT * FROM t1 WHERE a IN (SELECT t1_a FROM t2)
 statements:
@@ -1762,7 +1764,9 @@ statements:
                     pattern:
                       factors:
                         - primary:
-                            value: literal['s%']
+                            value:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['s%']
 # LIKE predicate with simple column comparison with string and escape
 >SELECT * FROM t1 WHERE a LIKE 's%' ESCAPE '"'
 statements:
@@ -1799,11 +1803,15 @@ statements:
                     pattern:
                       factors:
                         - primary:
-                            value: literal['s%']
+                            value:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['s%']
                     escape_char:
                       factors:
                         - primary:
-                            value: literal['"']
+                            value:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['"']
 # LIKE predicate with concatenated column comparison with string
 >SELECT * FROM t1 WHERE a LIKE b || '%'
 statements:
@@ -1840,9 +1848,13 @@ statements:
                     pattern:
                       factors:
                         - primary:
-                            value: column-reference[b]
+                            value:
+                              type: COLUMN_REFERENCE
+                              column_reference: b
                         - primary:
-                            value: literal['%']
+                            value:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['%']
 # OVERLAPS predicate with date columns from multiple tables
 >SELECT * FROM t1, t2 WHERE (t1.start, t1.end) OVERLAPS (t2.start, t2.end)
 statements:

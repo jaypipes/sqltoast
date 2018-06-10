@@ -1266,9 +1266,10 @@ void fill(mapping_t& node, const sqltoast::character_factor_t& factor) {
 
 void fill(mapping_t& node, const sqltoast::character_primary_t& primary) {
     if (primary.value) {
-        std::stringstream val;
-        val << *primary.value;
-        node.setattr("value", val.str());
+        std::unique_ptr<node_t> value_node = std::make_unique<mapping_t>();
+        mapping_t& value_map = static_cast<mapping_t&>(*value_node);
+        fill(value_map, *primary.value);
+        node.setattr("value", value_node);
     }
     else {
         std::unique_ptr<node_t> function_node = std::make_unique<mapping_t>();

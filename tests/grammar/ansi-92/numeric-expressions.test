@@ -512,7 +512,9 @@ statements:
                           string_expression:
                             factors:
                               - primary:
-                                  value: column-reference[a]
+                                  value:
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -527,7 +529,9 @@ statements:
                           string_expression:
                             factors:
                               - primary:
-                                  value: column-reference[a]
+                                  value:
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
               op: ADD
               right:
                 left:
@@ -562,7 +566,9 @@ statements:
                           string_expression:
                             factors:
                               - primary:
-                                  value: column-reference[a]
+                                  value:
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -577,7 +583,9 @@ statements:
                           string_expression:
                             factors:
                               - primary:
-                                  value: column-reference[a]
+                                  value:
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -633,13 +641,17 @@ statements:
                           string_expression:
                             factors:
                               - primary:
-                                  value: literal['123']
+                                  value:
+                                    type: UNSIGNED_VALUE_SPECIFICATION
+                                    unsigned_value_specification: literal['123']
                         in:
                           type: STRING_EXPRESSION
                           string_expression:
                             factors:
                               - primary:
-                                  value: column-reference[a]
+                                  value:
+                                    type: COLUMN_REFERENCE
+                                    column_reference: a
         referenced_tables:
           - type: TABLE
             table:
