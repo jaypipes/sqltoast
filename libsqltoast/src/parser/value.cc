@@ -1362,7 +1362,7 @@ bool parse_trim_function(
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<value_expression_t> operand;
     std::unique_ptr<value_expression_t> trim_char;
-    trim_specification_t trim_spec = TRIM_SPECIFICATION_LEADING;
+    trim_specification_t trim_spec = TRIM_SPECIFICATION_BOTH;
 
     // The TRIM symbol has already been consumed so we now need the left
     // parens

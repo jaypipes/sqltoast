@@ -1334,9 +1334,12 @@ void fill(mapping_t& node, const sqltoast::string_function_t& func) {
             node.setattr("type", "TRIM");
             node.setattr("operand", operand_node);
             {
+                std::unique_ptr<node_t> trim_node = std::make_unique<mapping_t>();
+                mapping_t& trim_map = static_cast<mapping_t&>(*trim_node);
                 const sqltoast::trim_function_t& sub =
                     static_cast<const sqltoast::trim_function_t&>(func);
-                fill(node, sub);
+                fill(trim_map, sub);
+                node.setattr("trim", trim_node);
             }
             break;
         default:
@@ -1371,18 +1374,18 @@ void fill(mapping_t& node, const sqltoast::translate_function_t& func) {
 }
 
 void fill(mapping_t& node, const sqltoast::trim_function_t& func) {
+    switch (func.specification) {
+        case sqltoast::TRIM_SPECIFICATION_LEADING:
+            node.setattr("specification", "LEADING");
+            break;
+        case sqltoast::TRIM_SPECIFICATION_TRAILING:
+            node.setattr("specification", "TRAILING");
+            break;
+        default:
+            node.setattr("specification", "BOTH");
+            break;
+    }
     if (func.trim_character) {
-        switch (func.specification) {
-            case sqltoast::TRIM_SPECIFICATION_LEADING:
-                node.setattr("specification", "LEADING");
-                break;
-            case sqltoast::TRIM_SPECIFICATION_TRAILING:
-                node.setattr("specification", "TRAILING");
-                break;
-            case sqltoast::TRIM_SPECIFICATION_BOTH:
-                node.setattr("specification", "BOTH");
-                break;
-        }
         std::unique_ptr<node_t> trim_char_node = std::make_unique<mapping_t>();
         mapping_t& trim_char_map = static_cast<mapping_t&>(*trim_char_node);
         const sqltoast::character_value_expression_t& trim_char_val =
