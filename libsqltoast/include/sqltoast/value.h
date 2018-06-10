@@ -64,34 +64,28 @@ typedef struct unsigned_value_specification : value_expression_primary_t {
 
 typedef enum set_function_type {
     SET_FUNCTION_TYPE_COUNT,
-    SET_FUNCTION_TYPE_COUNT_DISTINCT,
-    SET_FUNCTION_TYPE_COUNT_STAR,
     SET_FUNCTION_TYPE_AVG,
-    SET_FUNCTION_TYPE_AVG_DISTINCT,
     SET_FUNCTION_TYPE_MIN,
-    SET_FUNCTION_TYPE_MIN_DISTINCT,
     SET_FUNCTION_TYPE_MAX,
-    SET_FUNCTION_TYPE_MAX_DISTINCT,
     SET_FUNCTION_TYPE_SUM,
-    SET_FUNCTION_TYPE_SUM_DISTINCT
 } set_function_type_t;
 
 struct value_expression;
 typedef struct set_function : value_expression_primary_t {
     set_function_type_t func_type;
+    bool star;
+    bool distinct;
     std::unique_ptr<struct value_expression> value;
     set_function(
             set_function_type_t func_type,
-            lexeme_t lexeme) :
-        value_expression_primary_t(VEP_TYPE_SET_FUNCTION_SPECIFICATION, lexeme),
-        func_type(func_type)
-    {}
-    set_function(
-            set_function_type_t func_type,
             lexeme_t lexeme,
+            bool star,
+            bool distinct,
             std::unique_ptr<struct value_expression>& value) :
         value_expression_primary_t(VEP_TYPE_SET_FUNCTION_SPECIFICATION, lexeme),
         func_type(func_type),
+        star(star),
+        distinct(distinct),
         value(std::move(value))
     {}
 } set_function_t;

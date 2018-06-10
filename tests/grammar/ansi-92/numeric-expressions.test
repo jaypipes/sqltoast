@@ -322,7 +322,8 @@ statements:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
                         set_function_specification:
-                          type: COUNT_STAR
+                          type: COUNT
+                          star: true
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -333,7 +334,8 @@ statements:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
                         set_function_specification:
-                          type: COUNT_DISTINCT
+                          type: COUNT
+                          distinct: true
                           value:
                             type: NUMERIC_EXPRESSION
                             numeric_expression:
@@ -388,7 +390,8 @@ statements:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
                         set_function_specification:
-                          type: SUM_DISTINCT
+                          type: SUM
+                          distinct: true
                           value:
                             type: NUMERIC_EXPRESSION
                             numeric_expression:
@@ -443,7 +446,8 @@ statements:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
                         set_function_specification:
-                          type: AVG_DISTINCT
+                          type: AVG
+                          distinct: true
                           value:
                             type: NUMERIC_EXPRESSION
                             numeric_expression:
@@ -498,7 +502,8 @@ statements:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
                         set_function_specification:
-                          type: MIN_DISTINCT
+                          type: MIN
+                          distinct: true
                           value:
                             type: NUMERIC_EXPRESSION
                             numeric_expression:
@@ -553,7 +558,8 @@ statements:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
                         set_function_specification:
-                          type: MAX_DISTINCT
+                          type: MAX
+                          distinct: true
                           value:
                             type: NUMERIC_EXPRESSION
                             numeric_expression:

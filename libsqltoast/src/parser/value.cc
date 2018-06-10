@@ -356,6 +356,8 @@ bool parse_set_function(
     parse_position_t sf_start = lex.cursor;
     parse_position_t sf_end;
     set_function_type_t func_type;
+    bool star = false;
+    bool distinct = false;
     std::unique_ptr<value_expression_t> operand;
     symbol_t cur_sym = cur_tok.symbol;
     switch (cur_sym) {
@@ -407,7 +409,7 @@ process_count_asterisk:
     if (cur_sym != SYMBOL_RPAREN)
         goto err_expect_rparen;
     cur_tok = lex.next();
-    func_type = SET_FUNCTION_TYPE_COUNT_STAR;
+    star = true;
     goto push_set_function;
 process_set_function:
     // We get here if we found one of the non-COUNT set functions (AVG, SUM,
@@ -425,25 +427,7 @@ optional_set_quantifier:
             cur_tok = lex.next();
             goto process_operand;
         }
-        switch (func_type) {
-            case SET_FUNCTION_TYPE_COUNT:
-                func_type = SET_FUNCTION_TYPE_COUNT_DISTINCT;
-                break;
-            case SET_FUNCTION_TYPE_MAX:
-                func_type = SET_FUNCTION_TYPE_MAX_DISTINCT;
-                break;
-            case SET_FUNCTION_TYPE_MIN:
-                func_type = SET_FUNCTION_TYPE_MIN_DISTINCT;
-                break;
-            case SET_FUNCTION_TYPE_AVG:
-                func_type = SET_FUNCTION_TYPE_AVG_DISTINCT;
-                break;
-            case SET_FUNCTION_TYPE_SUM:
-                func_type = SET_FUNCTION_TYPE_SUM_DISTINCT;
-                break;
-            default:
-                return false; // should be unreachable
-        }
+        distinct = true;
         cur_tok = lex.next();
     }
     goto process_operand;
@@ -463,12 +447,8 @@ err_expect_rparen:
 push_set_function:
     if (ctx.opts.disable_statement_construction)
         return true;
-    if (operand)
-        out = std::make_unique<set_function_t>(
-                func_type, lexeme_t(sf_start, sf_end), operand);
-    else
-        out = std::make_unique<set_function_t>(
-                func_type, lexeme_t(sf_start, sf_end));
+    out = std::make_unique<set_function_t>(
+            func_type, lexeme_t(sf_start, sf_end), star, distinct, operand);
     return true;
 }
 

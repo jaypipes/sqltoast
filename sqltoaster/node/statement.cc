@@ -1155,64 +1155,32 @@ void fill(mapping_t& node, const sqltoast::value_expression_primary_t& primary) 
 }
 
 void fill(mapping_t& node, const sqltoast::set_function_t& func) {
-    std::unique_ptr<node_t> value_node = std::make_unique<mapping_t>();
-    mapping_t& value_map = static_cast<mapping_t&>(*value_node);
     switch (func.func_type) {
-        case sqltoast::SET_FUNCTION_TYPE_COUNT_STAR:
-            node.setattr("type", "COUNT_STAR");
-            break;
-        case sqltoast::SET_FUNCTION_TYPE_COUNT_DISTINCT:
-            node.setattr("type", "COUNT_DISTINCT");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
-            break;
         case sqltoast::SET_FUNCTION_TYPE_COUNT:
             node.setattr("type", "COUNT");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
-            break;
-        case sqltoast::SET_FUNCTION_TYPE_AVG_DISTINCT:
-            node.setattr("type", "AVG_DISTINCT");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
             break;
         case sqltoast::SET_FUNCTION_TYPE_AVG:
             node.setattr("type", "AVG");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
-            break;
-        case sqltoast::SET_FUNCTION_TYPE_MIN_DISTINCT:
-            node.setattr("type", "MIN_DISTINCT");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
             break;
         case sqltoast::SET_FUNCTION_TYPE_MIN:
             node.setattr("type", "MIN");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
-            break;
-        case sqltoast::SET_FUNCTION_TYPE_MAX_DISTINCT:
-            node.setattr("type", "MAX_DISTINCT");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
             break;
         case sqltoast::SET_FUNCTION_TYPE_MAX:
             node.setattr("type", "MAX");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
-            break;
-        case sqltoast::SET_FUNCTION_TYPE_SUM_DISTINCT:
-            node.setattr("type", "SUM_DISTINCT");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
             break;
         case sqltoast::SET_FUNCTION_TYPE_SUM:
             node.setattr("type", "SUM");
-            fill(value_map, *func.value);
-            node.setattr("value", value_node);
             break;
-        default:
-            break;
+    }
+    if (func.star)
+        node.setattr("star", "true");
+    if (func.distinct)
+        node.setattr("distinct", "true");
+    if (func.value) {
+        std::unique_ptr<node_t> value_node = std::make_unique<mapping_t>();
+        mapping_t& value_map = static_cast<mapping_t&>(*value_node);
+        fill(value_map, *func.value);
+        node.setattr("value", value_node);
     }
 }
 

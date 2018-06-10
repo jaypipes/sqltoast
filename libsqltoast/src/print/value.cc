@@ -10,42 +10,31 @@ namespace sqltoast {
 
 std::ostream& operator<< (std::ostream& out, const set_function_t& sf) {
     switch (sf.func_type) {
-        case SET_FUNCTION_TYPE_COUNT_STAR:
-            out << "COUNT(*)";
-            break;
-        case SET_FUNCTION_TYPE_COUNT_DISTINCT:
-            out << "COUNT(DISTINCT " << *sf.value << ")";
-            break;
         case SET_FUNCTION_TYPE_COUNT:
-            out << "COUNT(" << *sf.value << ")";
-            break;
-        case SET_FUNCTION_TYPE_AVG_DISTINCT:
-            out << "AVG(DISTINCT " << *sf.value << ")";
+            out << "COUNT";
             break;
         case SET_FUNCTION_TYPE_AVG:
-            out << "AVG(" << *sf.value << ")";
-            break;
-        case SET_FUNCTION_TYPE_MIN_DISTINCT:
-            out << "MIN(DISTINCT " << *sf.value << ")";
+            out << "AVG";
             break;
         case SET_FUNCTION_TYPE_MIN:
-            out << "MIN(" << *sf.value << ")";
-            break;
-        case SET_FUNCTION_TYPE_MAX_DISTINCT:
-            out << "MAX(DISTINCT " << *sf.value << ")";
+            out << "MIN";
             break;
         case SET_FUNCTION_TYPE_MAX:
-            out << "MAX(" << *sf.value << ")";
-            break;
-        case SET_FUNCTION_TYPE_SUM_DISTINCT:
-            out << "SUM(DISTINCT " << *sf.value << ")";
+            out << "MAX";
             break;
         case SET_FUNCTION_TYPE_SUM:
-            out << "SUM(" << *sf.value << ")";
-            break;
-        default:
+            out << "SUM";
             break;
     }
+    out << '(';
+    if (sf.star)
+        out << '*';
+    else {
+        if (sf.distinct)
+            out << "DISTINCT ";
+        out << *sf.value;
+    }
+    out << ')';
     return out;
 }
 
