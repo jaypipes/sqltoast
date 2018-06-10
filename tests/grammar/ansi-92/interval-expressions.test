@@ -10,7 +10,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: YEAR
@@ -31,7 +33,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: DAY
@@ -53,7 +57,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: SECOND
@@ -75,7 +81,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: SECOND
@@ -98,7 +106,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: YEAR
@@ -121,7 +131,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: DAY
@@ -144,7 +156,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: DAY
@@ -169,14 +183,18 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: YEAR
                 op: MULTIPLY
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: YEAR
@@ -185,14 +203,18 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: YEAR
                 op: DIVIDE
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: YEAR
@@ -201,14 +223,18 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: MONTH
                 op: DIVIDE
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: MONTH
@@ -229,7 +255,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[a]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: a
                     qualifier:
                       start:
                         interval: YEAR
@@ -237,7 +265,9 @@ statements:
               right:
                 left:
                   primary:
-                    value: literal[12]
+                    value:
+                      type: UNSIGNED_VALUE_SPECIFICATION
+                      unsigned_value_specification: literal[12]
                     qualifier:
                       start:
                         interval: YEAR
@@ -246,7 +276,9 @@ statements:
               left:
                 left:
                   primary:
-                    value: column-reference[created_on]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: created_on
                     qualifier:
                       start:
                         interval: DAY
@@ -256,7 +288,9 @@ statements:
               right:
                 left:
                   primary:
-                    value: column-reference[updated_on]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: updated_on
                     qualifier:
                       start:
                         interval: DAY

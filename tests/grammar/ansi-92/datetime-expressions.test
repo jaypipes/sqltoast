@@ -178,7 +178,9 @@ statements:
               right:
                 left:
                   primary:
-                    value: column-reference[b]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: b
                     qualifier:
                       start:
                         interval: YEAR
@@ -210,7 +212,9 @@ statements:
               right:
                 left:
                   primary:
-                    value: column-reference[b]
+                    value:
+                      type: COLUMN_REFERENCE
+                      column_reference: b
                     qualifier:
                       start:
                         interval: DAY

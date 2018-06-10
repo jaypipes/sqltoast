@@ -1537,9 +1537,10 @@ void fill(mapping_t& node, const sqltoast::interval_factor_t& factor) {
 }
 
 void fill(mapping_t& node, const sqltoast::interval_primary_t& primary) {
-    std::stringstream val;
-    val << *primary.value;
-    node.setattr("value", val.str());
+    std::unique_ptr<node_t> value_node = std::make_unique<mapping_t>();
+    mapping_t& value_map = static_cast<mapping_t&>(*value_node);
+    fill(value_map, *primary.value);
+    node.setattr("value", value_node);
     if (primary.qualifier) {
         std::unique_ptr<node_t> qualifier_node = std::make_unique<mapping_t>();
         mapping_t& qualifier_map = static_cast<mapping_t&>(*qualifier_node);
