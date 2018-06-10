@@ -1125,10 +1125,12 @@ void fill(mapping_t& node, const sqltoast::value_expression_primary_t& primary) 
         case sqltoast::VEP_TYPE_PARENTHESIZED_VALUE_EXPRESSION:
             node.setattr("type", "PARENTHESIZED_VALUE_EXPRESSION");
             {
+                std::unique_ptr<node_t> expr_node = std::make_unique<mapping_t>();
+                mapping_t& expr_map = static_cast<mapping_t&>(*expr_node);
                 const sqltoast::parenthesized_value_expression_t& sub =
                     static_cast<const sqltoast::parenthesized_value_expression_t&>(primary);
-                val << *sub.value;
-                node.setattr("parenthesized_value_expression", val.str());
+                fill(expr_map, sub);
+                node.setattr("parenthesized_value_expression", expr_node);
             }
             break;
         case sqltoast::VEP_TYPE_CASE_EXPRESSION:
@@ -1182,6 +1184,13 @@ void fill(mapping_t& node, const sqltoast::set_function_t& func) {
         fill(value_map, *func.value);
         node.setattr("value", value_node);
     }
+}
+
+void fill(mapping_t& node, const sqltoast::parenthesized_value_expression_t& expr) {
+    std::unique_ptr<node_t> value_node = std::make_unique<mapping_t>();
+    mapping_t& value_map = static_cast<mapping_t&>(*value_node);
+    fill(value_map, *expr.value);
+    node.setattr("value", value_node);
 }
 
 void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {

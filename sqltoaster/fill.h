@@ -70,6 +70,7 @@ void fill(mapping_t& node, const sqltoast::numeric_primary_t& primary);
 void fill(mapping_t& node, const sqltoast::numeric_term_t& term);
 void fill(mapping_t& node, const sqltoast::numeric_value_t& value);
 void fill(mapping_t& node, const sqltoast::overlaps_predicate_t& pred);
+void fill(mapping_t& node, const sqltoast::parenthesized_value_expression_t& expr);
 void fill(mapping_t& node, const sqltoast::position_expression_t& expr);
 void fill(mapping_t& node, const sqltoast::predicate_t& pred);
 void fill(mapping_t& node, const sqltoast::quantified_comparison_predicate_t& pred);
