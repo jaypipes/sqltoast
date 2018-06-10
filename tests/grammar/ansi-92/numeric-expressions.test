@@ -618,8 +618,19 @@ statements:
                     type: FUNCTION
                     function:
                       type: POSITION
-                      find: literal['123']
-                      in: column-reference[a]
+                      char_position:
+                        find:
+                          type: STRING_EXPRESSION
+                          string_expression:
+                            factors:
+                              - primary:
+                                  value: literal['123']
+                        in:
+                          type: STRING_EXPRESSION
+                          string_expression:
+                            factors:
+                              - primary:
+                                  value: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:

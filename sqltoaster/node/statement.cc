@@ -1157,9 +1157,12 @@ void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {
         case sqltoast::NUMERIC_FUNCTION_TYPE_POSITION:
             node.setattr("type", "POSITION");
             {
+                std::unique_ptr<node_t> position_node = std::make_unique<mapping_t>();
+                mapping_t& position_map = static_cast<mapping_t&>(*position_node);
                 const sqltoast::position_expression_t& sub =
                     static_cast<const sqltoast::position_expression_t&>(func);
-                fill(node, sub);
+                fill(position_map, sub);
+                node.setattr("char_position", position_node);
             }
             break;
         case sqltoast::NUMERIC_FUNCTION_TYPE_EXTRACT:
@@ -1217,12 +1220,14 @@ void fill(mapping_t& node, const sqltoast::length_expression_t& expr) {
 }
 
 void fill(mapping_t& node, const sqltoast::position_expression_t& expr) {
-    std::stringstream val;
-    val << *expr.to_find;
-    node.setattr("find", val.str());
-    val.str(std::string()); val.clear();
-    val << *expr.subject;
-    node.setattr("in", val.str());
+    std::unique_ptr<node_t> to_find_node = std::make_unique<mapping_t>();
+    mapping_t& to_find_map = static_cast<mapping_t&>(*to_find_node);
+    fill(to_find_map, *expr.to_find);
+    node.setattr("find", to_find_node);
+    std::unique_ptr<node_t> in_node = std::make_unique<mapping_t>();
+    mapping_t& in_map = static_cast<mapping_t&>(*in_node);
+    fill(in_map, *expr.subject);
+    node.setattr("in", in_node);
 }
 
 void fill(mapping_t& node, const sqltoast::extract_expression_t& expr) {
