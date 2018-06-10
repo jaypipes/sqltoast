@@ -461,10 +461,10 @@ typedef struct datetime_primary {
 } datetime_primary_t;
 
 typedef struct datetime_value : datetime_primary_t {
-    std::unique_ptr<value_expression_primary_t> value;
-    datetime_value(std::unique_ptr<value_expression_primary_t>& value) :
+    std::unique_ptr<value_expression_primary_t> primary;
+    datetime_value(std::unique_ptr<value_expression_primary_t>& primary) :
         datetime_primary_t(DATETIME_PRIMARY_TYPE_VALUE),
-        value(std::move(value))
+        primary(std::move(primary))
     {}
 } datetime_value_t;
 

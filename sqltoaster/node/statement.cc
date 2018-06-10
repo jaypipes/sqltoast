@@ -1436,10 +1436,12 @@ void fill(mapping_t& node, const sqltoast::datetime_primary_t& primary) {
         case sqltoast::DATETIME_PRIMARY_TYPE_VALUE:
             node.setattr("type", "VALUE");
             {
+                std::unique_ptr<node_t> value_node = std::make_unique<mapping_t>();
+                mapping_t& value_map = static_cast<mapping_t&>(*value_node);
                 const sqltoast::datetime_value_t& sub =
                     static_cast<const sqltoast::datetime_value_t&>(primary);
-                val << sub;
-                node.setattr("value", val.str());
+                fill(value_map, sub);
+                node.setattr("value", value_node);
             }
             break;
         case sqltoast::DATETIME_PRIMARY_TYPE_FUNCTION:
@@ -1452,6 +1454,13 @@ void fill(mapping_t& node, const sqltoast::datetime_primary_t& primary) {
             }
             break;
     }
+}
+
+void fill(mapping_t& node, const sqltoast::datetime_value_t& value) {
+    std::unique_ptr<node_t> primary_node = std::make_unique<mapping_t>();
+    mapping_t& primary_map = static_cast<mapping_t&>(*primary_node);
+    fill(primary_map, *value.primary);
+    node.setattr("primary", primary_node);
 }
 
 void fill(mapping_t& node, const sqltoast::datetime_field_t& field) {

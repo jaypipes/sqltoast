@@ -32,6 +32,7 @@ void fill(mapping_t& node, const sqltoast::datetime_factor_t& factor);
 void fill(mapping_t& node, const sqltoast::datetime_field_t& field);
 void fill(mapping_t& node, const sqltoast::datetime_primary_t& primary);
 void fill(mapping_t& node, const sqltoast::datetime_term_t& term);
+void fill(mapping_t& node, const sqltoast::datetime_value_t& value);
 void fill(mapping_t& node, const sqltoast::datetime_value_expression_t& de);
 void fill(mapping_t& node, const sqltoast::delete_statement_t& stmt);
 void fill(mapping_t& node, const sqltoast::derived_column_t& dc);

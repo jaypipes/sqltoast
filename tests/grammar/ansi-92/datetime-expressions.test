@@ -12,7 +12,10 @@ statements:
                   time_zone: LOCAL
                   primary:
                     type: VALUE
-                    value: column-reference[a]
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -31,7 +34,10 @@ statements:
                   time_zone: 'UTC'
                   primary:
                     type: VALUE
-                    value: column-reference[a]
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -164,7 +170,10 @@ statements:
                   time_zone: LOCAL
                   primary:
                     type: VALUE
-                    value: column-reference[a]
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: a
               op: ADD
               right:
                 left:
@@ -193,7 +202,10 @@ statements:
                   time_zone: LOCAL
                   primary:
                     type: VALUE
-                    value: column-reference[a]
+                    value:
+                      primary:
+                        type: COLUMN_REFERENCE
+                        column_reference: a
               op: SUBTRACT
               right:
                 left:

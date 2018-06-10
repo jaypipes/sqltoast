@@ -125,7 +125,10 @@ statements:
                         time_zone: 'UTC'
                         primary:
                           type: VALUE
-                          value: literal['2001-01-01']
+                          value:
+                            primary:
+                              type: UNSIGNED_VALUE_SPECIFICATION
+                              unsigned_value_specification: literal['2001-01-01']
 # INSERT INTO using interval value expressions
 # >INSERT INTO t1 (num_seconds) VALUES ('2001-01-01' DAY TO SECOND)
 # statements:

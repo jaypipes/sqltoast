@@ -432,7 +432,7 @@ std::ostream& operator<< (std::ostream& out, const current_datetime_function_t& 
 }
 
 std::ostream& operator<< (std::ostream& out, const datetime_value_t& dv) {
-    out << *dv.value;
+    out << *dv.primary;
     return out;
 }
 
