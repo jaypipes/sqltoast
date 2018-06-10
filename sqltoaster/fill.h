@@ -81,6 +81,7 @@ void fill(mapping_t& node, const sqltoast::row_value_constructor_t& rvc);
 void fill(mapping_t& node, const sqltoast::row_value_expression_t& rve);
 void fill(mapping_t& node, const sqltoast::search_condition_t& sc);
 void fill(mapping_t& node, const sqltoast::select_statement_t& stmt);
+void fill(mapping_t& node, const sqltoast::set_function_t& func);
 void fill(mapping_t& node, const sqltoast::statement_t& stmt);
 void fill(mapping_t& node, const sqltoast::string_function_t& func);
 void fill(mapping_t& node, const sqltoast::substring_function_t& func);

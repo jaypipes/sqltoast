@@ -1,6 +1,6 @@
 # Row value constructor list is parens-enclosed comma-separated list of row
 # value constructor elements
->SELECT  * FROM t1 WHERE (a, b) = (b, a)
+>SELECT * FROM t1 WHERE (a, b) = (b, a)
 statements:
   - type: SELECT
     select_statement:

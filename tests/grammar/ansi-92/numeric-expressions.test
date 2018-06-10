@@ -321,7 +321,8 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: COUNT(*)
+                        set_function_specification:
+                          type: COUNT_STAR
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -331,7 +332,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: COUNT(DISTINCT column-reference[a])
+                        set_function_specification:
+                          type: COUNT_DISTINCT
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -341,7 +354,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: COUNT(column-reference[a])
+                        set_function_specification:
+                          type: COUNT
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -362,7 +387,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: SUM(DISTINCT column-reference[a])
+                        set_function_specification:
+                          type: SUM_DISTINCT
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -372,7 +409,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: SUM(column-reference[a])
+                        set_function_specification:
+                          type: SUM
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -393,7 +442,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: AVG(DISTINCT column-reference[a])
+                        set_function_specification:
+                          type: AVG_DISTINCT
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -403,7 +464,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: AVG(column-reference[a])
+                        set_function_specification:
+                          type: AVG
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -424,7 +497,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: MIN(DISTINCT column-reference[a])
+                        set_function_specification:
+                          type: MIN_DISTINCT
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -434,7 +519,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: MIN(column-reference[a])
+                        set_function_specification:
+                          type: MIN
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -455,7 +552,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: MAX(DISTINCT column-reference[a])
+                        set_function_specification:
+                          type: MAX_DISTINCT
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
           - type: NUMERIC_EXPRESSION
             numeric_expression:
               left:
@@ -465,7 +574,19 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: MAX(column-reference[a])
+                        set_function_specification:
+                          type: MAX
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: COLUMN_REFERENCE
+                                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
@@ -486,7 +607,31 @@ statements:
                     value:
                       primary:
                         type: SET_FUNCTION_SPECIFICATION
-                        set_function_specification: MAX(COUNT(column-reference[a]))
+                        set_function_specification:
+                          type: MAX
+                          value:
+                            type: NUMERIC_EXPRESSION
+                            numeric_expression:
+                              left:
+                                left:
+                                  primary:
+                                    type: VALUE
+                                    value:
+                                      primary:
+                                        type: SET_FUNCTION_SPECIFICATION
+                                        set_function_specification:
+                                          type: COUNT
+                                          value:
+                                            type: NUMERIC_EXPRESSION
+                                            numeric_expression:
+                                              left:
+                                                left:
+                                                  primary:
+                                                    type: VALUE
+                                                    value:
+                                                      primary:
+                                                        type: COLUMN_REFERENCE
+                                                        column_reference: a
         referenced_tables:
           - type: TABLE
             table:
