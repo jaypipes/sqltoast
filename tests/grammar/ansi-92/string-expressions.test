@@ -337,7 +337,8 @@ statements:
                               value:
                                 type: COLUMN_REFERENCE
                                 column_reference: a
-                      using: utf8_bin
+                      translate:
+                        using: utf8_bin
         referenced_tables:
           - type: TABLE
             table:

@@ -1322,9 +1322,12 @@ void fill(mapping_t& node, const sqltoast::string_function_t& func) {
             node.setattr("type", "TRANSLATE");
             node.setattr("operand", operand_node);
             {
+                std::unique_ptr<node_t> translate_node = std::make_unique<mapping_t>();
+                mapping_t& translate_map = static_cast<mapping_t&>(*translate_node);
                 const sqltoast::translate_function_t& sub =
                     static_cast<const sqltoast::translate_function_t&>(func);
-                fill(node, sub);
+                fill(translate_map, sub);
+                node.setattr("translate", translate_node);
             }
             break;
         case sqltoast::STRING_FUNCTION_TYPE_TRIM:
