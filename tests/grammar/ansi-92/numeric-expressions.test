@@ -597,8 +597,17 @@ statements:
                     type: FUNCTION
                     function:
                       type: EXTRACT
-                      field: YEAR
-                      source: datetime-expression[column-reference[a] AT LOCAL]
+                      extract:
+                        field: YEAR
+                        source:
+                          type: DATETIME_EXPRESSION
+                          datetime_expression:
+                            left:
+                              factor:
+                                time_zone: LOCAL
+                                primary:
+                                  type: VALUE
+                                  value: column-reference[a]
         referenced_tables:
           - type: TABLE
             table:

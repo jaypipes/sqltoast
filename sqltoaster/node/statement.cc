@@ -1168,9 +1168,12 @@ void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {
         case sqltoast::NUMERIC_FUNCTION_TYPE_EXTRACT:
             node.setattr("type", "EXTRACT");
             {
+                std::unique_ptr<node_t> extract_node = std::make_unique<mapping_t>();
+                mapping_t& extract_map = static_cast<mapping_t&>(*extract_node);
                 const sqltoast::extract_expression_t& sub =
                     static_cast<const sqltoast::extract_expression_t&>(func);
-                fill(node, sub);
+                fill(extract_map, sub);
+                node.setattr("extract", extract_node);
             }
             break;
         case sqltoast::NUMERIC_FUNCTION_TYPE_CHAR_LENGTH:
@@ -1234,9 +1237,10 @@ void fill(mapping_t& node, const sqltoast::extract_expression_t& expr) {
     std::stringstream val;
     val << expr.extract_field;
     node.setattr("field", val.str());
-    val.str(std::string()); val.clear();
-    val << *expr.extract_source;
-    node.setattr("source", val.str());
+    std::unique_ptr<node_t> source_node = std::make_unique<mapping_t>();
+    mapping_t& source_map = static_cast<mapping_t&>(*source_node);
+    fill(source_map, *expr.extract_source);
+    node.setattr("source", source_node);
 }
 
 void fill(mapping_t& node, const sqltoast::character_value_expression_t& cve) {
