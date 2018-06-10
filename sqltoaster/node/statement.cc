@@ -1136,10 +1136,12 @@ void fill(mapping_t& node, const sqltoast::value_expression_primary_t& primary) 
         case sqltoast::VEP_TYPE_CASE_EXPRESSION:
             node.setattr("type", "CASE_EXPRESSION");
             {
+                std::unique_ptr<node_t> expr_node = std::make_unique<mapping_t>();
+                mapping_t& expr_map = static_cast<mapping_t&>(*expr_node);
                 const sqltoast::case_expression_t& sub =
                     static_cast<const sqltoast::case_expression_t&>(primary);
-                val << sub;
-                node.setattr("case_expression", val.str());
+                fill(expr_map, sub);
+                node.setattr("case_expression", expr_node);
             }
             break;
         case sqltoast::VEP_TYPE_SCALAR_SUBQUERY:
@@ -1191,6 +1193,133 @@ void fill(mapping_t& node, const sqltoast::parenthesized_value_expression_t& exp
     mapping_t& value_map = static_cast<mapping_t&>(*value_node);
     fill(value_map, *expr.value);
     node.setattr("value", value_node);
+}
+
+void fill(mapping_t& node, const sqltoast::case_expression_t& expr) {
+    std::stringstream val;
+    switch (expr.case_type) {
+        case sqltoast::CASE_EXPRESSION_TYPE_COALESCE_FUNCTION:
+            node.setattr("type", "COALESCE_FUNCTION");
+            {
+                std::unique_ptr<node_t> function_node = std::make_unique<mapping_t>();
+                mapping_t& function_map = static_cast<mapping_t&>(*function_node);
+                const sqltoast::coalesce_function_t& sub =
+                    static_cast<const sqltoast::coalesce_function_t&>(expr);
+                fill(function_map, sub);
+                node.setattr("coalesce_function", function_node);
+            }
+            break;
+        case sqltoast::CASE_EXPRESSION_TYPE_NULLIF_FUNCTION:
+            node.setattr("type", "NULLIF_FUNCTION");
+            {
+                std::unique_ptr<node_t> function_node = std::make_unique<mapping_t>();
+                mapping_t& function_map = static_cast<mapping_t&>(*function_node);
+                const sqltoast::nullif_function_t& sub =
+                    static_cast<const sqltoast::nullif_function_t&>(expr);
+                fill(function_map, sub);
+                node.setattr("nullif_function", function_node);
+            }
+            break;
+        case sqltoast::CASE_EXPRESSION_TYPE_SIMPLE_CASE:
+            node.setattr("type", "SIMPLE_CASE_EXPRESSION");
+            {
+                std::unique_ptr<node_t> expr_node = std::make_unique<mapping_t>();
+                mapping_t& expr_map = static_cast<mapping_t&>(*expr_node);
+                const sqltoast::simple_case_expression_t& sub =
+                    static_cast<const sqltoast::simple_case_expression_t&>(expr);
+                fill(expr_map, sub);
+                node.setattr("simple_case_expression", expr_node);
+            }
+            break;
+        case sqltoast::CASE_EXPRESSION_TYPE_SEARCHED_CASE:
+            node.setattr("type", "SEARCHED_CASE_EXPRESSION");
+            {
+                std::unique_ptr<node_t> expr_node = std::make_unique<mapping_t>();
+                mapping_t& expr_map = static_cast<mapping_t&>(*expr_node);
+                const sqltoast::searched_case_expression_t& sub =
+                    static_cast<const sqltoast::searched_case_expression_t&>(expr);
+                fill(expr_map, sub);
+                node.setattr("searched_case_expression", expr_node);
+            }
+            break;
+    }
+}
+
+void fill(mapping_t& node, const sqltoast::coalesce_function_t& func) {
+    std::unique_ptr<node_t> values_node = std::make_unique<sequence_t>();
+    sequence_t& values_seq = static_cast<sequence_t&>(*values_node);
+    for (const auto& val : func.values) {
+        std::unique_ptr<node_t> value_node = std::make_unique<mapping_t>();
+        mapping_t& value_map = static_cast<mapping_t&>(*value_node);
+        fill(value_map, *val);
+        values_seq.append(value_node);
+    }
+    node.setattr("values", values_node);
+}
+
+void fill(mapping_t& node, const sqltoast::nullif_function_t& func) {
+    std::unique_ptr<node_t> left_node = std::make_unique<mapping_t>();
+    mapping_t& left_map = static_cast<mapping_t&>(*left_node);
+    fill(left_map, *func.left);
+    node.setattr("left", left_node);
+    std::unique_ptr<node_t> right_node = std::make_unique<mapping_t>();
+    mapping_t& right_map = static_cast<mapping_t&>(*right_node);
+    fill(right_map, *func.right);
+    node.setattr("right", right_node);
+}
+
+void fill(mapping_t& node, const sqltoast::simple_case_expression_t& expr) {
+    std::unique_ptr<node_t> operand_node = std::make_unique<mapping_t>();
+    mapping_t& operand_map = static_cast<mapping_t&>(*operand_node);
+    fill(operand_map, *expr.operand);
+    node.setattr("operand", operand_node);
+    std::unique_ptr<node_t> when_clauses_node = std::make_unique<sequence_t>();
+    sequence_t& when_clauses_seq = static_cast<sequence_t&>(*when_clauses_node);
+    for (const auto& when_clause : expr.when_clauses) {
+        std::unique_ptr<node_t> when_node = std::make_unique<mapping_t>();
+        mapping_t& when_map = static_cast<mapping_t&>(*when_node);
+        std::unique_ptr<node_t> when_operand_node = std::make_unique<mapping_t>();
+        mapping_t& when_operand_map = static_cast<mapping_t&>(*when_operand_node);
+        fill(when_operand_map, *when_clause.operand);
+        when_map.setattr("operand", when_operand_node);
+        std::unique_ptr<node_t> when_result_node = std::make_unique<mapping_t>();
+        mapping_t& when_result_map = static_cast<mapping_t&>(*when_result_node);
+        fill(when_result_map, *when_clause.result);
+        when_map.setattr("result", when_result_node);
+        when_clauses_seq.append(when_node);
+    }
+    node.setattr("when_clauses", when_clauses_node);
+    if (expr.else_value) {
+        std::unique_ptr<node_t> else_node = std::make_unique<mapping_t>();
+        mapping_t& else_map = static_cast<mapping_t&>(*else_node);
+        fill(else_map, *expr.else_value);
+        node.setattr("else", else_node);
+    }
+}
+
+void fill(mapping_t& node, const sqltoast::searched_case_expression_t& expr) {
+    std::unique_ptr<node_t> when_clauses_node = std::make_unique<sequence_t>();
+    sequence_t& when_clauses_seq = static_cast<sequence_t&>(*when_clauses_node);
+    for (const auto& when_clause : expr.when_clauses) {
+        std::unique_ptr<node_t> when_node = std::make_unique<mapping_t>();
+        mapping_t& when_map = static_cast<mapping_t&>(*when_node);
+        std::unique_ptr<node_t> when_condition_node = std::make_unique<mapping_t>();
+        mapping_t& when_condition_map = static_cast<mapping_t&>(*when_condition_node);
+        fill(when_condition_map, *when_clause.condition);
+        when_map.setattr("condition", when_condition_node);
+        std::unique_ptr<node_t> when_result_node = std::make_unique<mapping_t>();
+        mapping_t& when_result_map = static_cast<mapping_t&>(*when_result_node);
+        fill(when_result_map, *when_clause.result);
+        when_map.setattr("result", when_result_node);
+        when_clauses_seq.append(when_node);
+    }
+    node.setattr("when_clauses", when_clauses_node);
+    if (expr.else_value) {
+        std::unique_ptr<node_t> else_node = std::make_unique<mapping_t>();
+        mapping_t& else_map = static_cast<mapping_t&>(*else_node);
+        fill(else_map, *expr.else_value);
+        node.setattr("else", else_node);
+    }
 }
 
 void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {

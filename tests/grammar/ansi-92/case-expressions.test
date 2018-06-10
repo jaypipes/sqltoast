@@ -26,7 +26,30 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: coalesce[column-reference[a],literal['n/a']]
+                        case_expression:
+                          type: COALESCE_FUNCTION
+                          coalesce_function:
+                            values:
+                              - type: NUMERIC_EXPRESSION
+                                numeric_expression:
+                                  left:
+                                    left:
+                                      primary:
+                                        type: VALUE
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: a
+                              - type: NUMERIC_EXPRESSION
+                                numeric_expression:
+                                  left:
+                                    left:
+                                      primary:
+                                        type: VALUE
+                                        value:
+                                          primary:
+                                            type: UNSIGNED_VALUE_SPECIFICATION
+                                            unsigned_value_specification: literal['n/a']
         referenced_tables:
           - type: TABLE
             table:
@@ -47,7 +70,50 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: coalesce[column-reference[a],column-reference[b],column-reference[c],literal['n/a']]
+                        case_expression:
+                          type: COALESCE_FUNCTION
+                          coalesce_function:
+                            values:
+                              - type: NUMERIC_EXPRESSION
+                                numeric_expression:
+                                  left:
+                                    left:
+                                      primary:
+                                        type: VALUE
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: a
+                              - type: NUMERIC_EXPRESSION
+                                numeric_expression:
+                                  left:
+                                    left:
+                                      primary:
+                                        type: VALUE
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: b
+                              - type: NUMERIC_EXPRESSION
+                                numeric_expression:
+                                  left:
+                                    left:
+                                      primary:
+                                        type: VALUE
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: c
+                              - type: NUMERIC_EXPRESSION
+                                numeric_expression:
+                                  left:
+                                    left:
+                                      primary:
+                                        type: VALUE
+                                        value:
+                                          primary:
+                                            type: UNSIGNED_VALUE_SPECIFICATION
+                                            unsigned_value_specification: literal['n/a']
         referenced_tables:
           - type: TABLE
             table:
@@ -68,7 +134,31 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: nullif[column-reference[a],literal['n/a']]
+                        case_expression:
+                          type: NULLIF_FUNCTION
+                          nullif_function:
+                            left:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
+                            right:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal['n/a']
         referenced_tables:
           - type: TABLE
             table:
@@ -89,7 +179,43 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2]]
+                        case_expression:
+                          type: SIMPLE_CASE_EXPRESSION
+                          simple_case_expression:
+                            operand:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
+                            when_clauses:
+                              - operand:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
         referenced_tables:
           - type: TABLE
             table:
@@ -110,7 +236,65 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3]]
+                        case_expression:
+                          type: SIMPLE_CASE_EXPRESSION
+                          simple_case_expression:
+                            operand:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
+                            when_clauses:
+                              - operand:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                              - operand:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[3]
         referenced_tables:
           - type: TABLE
             table:
@@ -131,7 +315,54 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] ELSE literal[42]]
+                        case_expression:
+                          type: SIMPLE_CASE_EXPRESSION
+                          simple_case_expression:
+                            operand:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
+                            when_clauses:
+                              - operand:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                            else:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[42]
         referenced_tables:
           - type: TABLE
             table:
@@ -152,7 +383,76 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: simple-case-expression[column-reference[a] WHEN literal[1] THEN literal[2] WHEN literal[2] THEN literal[3] ELSE literal[4]]
+                        case_expression:
+                          type: SIMPLE_CASE_EXPRESSION
+                          simple_case_expression:
+                            operand:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: COLUMN_REFERENCE
+                                          column_reference: a
+                            when_clauses:
+                              - operand:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                              - operand:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[3]
+                            else:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[4]
         referenced_tables:
           - type: TABLE
             table:
@@ -173,7 +473,58 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2]]
+                        case_expression:
+                          type: SEARCHED_CASE_EXPRESSION
+                          searched_case_expression:
+                            when_clauses:
+                              - condition:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: a
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
         referenced_tables:
           - type: TABLE
             table:
@@ -194,7 +545,106 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3]]
+                        case_expression:
+                          type: SEARCHED_CASE_EXPRESSION
+                          searched_case_expression:
+                            when_clauses:
+                              - condition:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: a
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                              - condition:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: a
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[2]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[3]
         referenced_tables:
           - type: TABLE
             table:
@@ -215,7 +665,69 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] ELSE literal[42]]
+                        case_expression:
+                          type: SEARCHED_CASE_EXPRESSION
+                          searched_case_expression:
+                            when_clauses:
+                              - condition:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: a
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                            else:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[42]
         referenced_tables:
           - type: TABLE
             table:
@@ -236,7 +748,117 @@ statements:
                     value:
                       primary:
                         type: CASE_EXPRESSION
-                        case_expression: searched-case-expression[WHEN column-reference[a] = literal[1] THEN literal[2] WHEN column-reference[a] = literal[2] THEN literal[3] ELSE literal[4]]
+                        case_expression:
+                          type: SEARCHED_CASE_EXPRESSION
+                          searched_case_expression:
+                            when_clauses:
+                              - condition:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: a
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[1]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[2]
+                              - condition:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
+                                            left:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: a
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                                              unsigned_value_specification: literal[2]
+                                result:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: UNSIGNED_VALUE_SPECIFICATION
+                                              unsigned_value_specification: literal[3]
+                            else:
+                              type: NUMERIC_EXPRESSION
+                              numeric_expression:
+                                left:
+                                  left:
+                                    primary:
+                                      type: VALUE
+                                      value:
+                                        primary:
+                                          type: UNSIGNED_VALUE_SPECIFICATION
+                                          unsigned_value_specification: literal[4]
         referenced_tables:
           - type: TABLE
             table:
