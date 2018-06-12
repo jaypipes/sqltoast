@@ -787,7 +787,7 @@ bool parse_numeric_function(
     lexer& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
     numeric_function_type_t func_type;
-    interval_unit_t extract_field = INTERVAL_UNIT_UNKNOWN;
+    interval_unit_t extract_field;
     std::unique_ptr<value_expression_t> to_find; // only used for POSITION
     std::unique_ptr<value_expression_t> value;
     switch (cur_sym) {
@@ -1552,7 +1552,7 @@ bool parse_datetime_function(
         std::unique_ptr<datetime_primary_t>& out) {
     lexer_t& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    datetime_function_type_t func_type = DATETIME_FUNCTION_TYPE_UNKNOWN;
+    datetime_function_type_t func_type;
     size_t time_precision = 0;
 
     switch (cur_sym) {

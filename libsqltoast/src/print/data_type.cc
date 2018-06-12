@@ -165,9 +165,6 @@ std::ostream& operator<< (std::ostream& out, const interval_t& interval) {
 
 std::ostream& operator<< (std::ostream& out, const interval_unit_t& unit) {
     switch (unit) {
-        case INTERVAL_UNIT_UNKNOWN:
-            out << "UNKNOWN";
-            break;
         case INTERVAL_UNIT_YEAR:
             out << "YEAR";
             break;

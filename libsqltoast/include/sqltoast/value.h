@@ -462,7 +462,6 @@ typedef struct datetime_value : datetime_primary_t {
 } datetime_value_t;
 
 typedef enum datetime_function_type {
-    DATETIME_FUNCTION_TYPE_UNKNOWN,
     DATETIME_FUNCTION_TYPE_CURRENT_DATE,
     DATETIME_FUNCTION_TYPE_CURRENT_TIME,
     DATETIME_FUNCTION_TYPE_CURRENT_TIMESTAMP,
