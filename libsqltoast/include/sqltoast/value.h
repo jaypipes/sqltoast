@@ -211,12 +211,12 @@ typedef struct parenthesized_value_expression : value_expression_primary_t {
 // scalar value
 struct query_expression;
 typedef struct scalar_subquery : value_expression_primary_t {
-    std::unique_ptr<struct query_expression> subquery;
+    std::unique_ptr<struct query_expression> query;
     scalar_subquery(
-            std::unique_ptr<struct query_expression>& subquery,
+            std::unique_ptr<struct query_expression>& query,
             lexeme_t lexeme) :
         value_expression_primary_t(VEP_TYPE_SCALAR_SUBQUERY, lexeme),
-        subquery(std::move(subquery))
+        query(std::move(query))
     {}
 } scalar_subquery_t;
 

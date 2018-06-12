@@ -1147,10 +1147,12 @@ void fill(mapping_t& node, const sqltoast::value_expression_primary_t& primary) 
         case sqltoast::VEP_TYPE_SCALAR_SUBQUERY:
             node.setattr("type", "SCALAR_SUBQUERY");
             {
+                std::unique_ptr<node_t> subq_node = std::make_unique<mapping_t>();
+                mapping_t& subq_map = static_cast<mapping_t&>(*subq_node);
                 const sqltoast::scalar_subquery_t& sub =
                     static_cast<const sqltoast::scalar_subquery_t&>(primary);
-                val << *sub.subquery;
-                node.setattr("scalar_subquery", val.str());
+                fill(subq_map, sub);
+                node.setattr("scalar_subquery", subq_node);
             }
             break;
         default:
@@ -1320,6 +1322,13 @@ void fill(mapping_t& node, const sqltoast::searched_case_expression_t& expr) {
         fill(else_map, *expr.else_value);
         node.setattr("else", else_node);
     }
+}
+
+void fill(mapping_t& node, const sqltoast::scalar_subquery_t& subq) {
+    std::unique_ptr<node_t> query_node = std::make_unique<mapping_t>();
+    mapping_t& query_map = static_cast<mapping_t&>(*query_node);
+    fill(query_map, *subq.query);
+    node.setattr("query", query_node);
 }
 
 void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {

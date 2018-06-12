@@ -151,7 +151,7 @@ std::ostream& operator<< (std::ostream& out, const value_expression_primary_t& v
         case VEP_TYPE_SCALAR_SUBQUERY:
             {
                 const scalar_subquery_t& subq = static_cast<const scalar_subquery_t&>(vep);
-                out << "scalar-subquery[" << std::endl << *subq.subquery << "]";
+                out << "scalar-subquery[" << std::endl << *subq.query << "]";
             }
             break;
         default:

@@ -98,7 +98,23 @@ statements:
                     value:
                       primary:
                         type: SCALAR_SUBQUERY
-                        scalar_subquery: query[selected-columns[column-reference[b]] table-expression[referenced-tables[t2]]
+                        scalar_subquery:
+                          query:
+                            selected_columns:
+                              - type: NUMERIC_EXPRESSION
+                                numeric_expression:
+                                  left:
+                                    left:
+                                      primary:
+                                        type: VALUE
+                                        value:
+                                          primary:
+                                            type: COLUMN_REFERENCE
+                                            column_reference: b
+                            referenced_tables:
+                              - type: TABLE
+                                table:
+                                  name: t2
         referenced_tables:
           - type: TABLE
             table:

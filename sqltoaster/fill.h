@@ -83,6 +83,7 @@ void fill(mapping_t& node, const sqltoast::query_specification_t& query);
 void fill(mapping_t& node, const sqltoast::row_value_constructor_element_t& rvce);
 void fill(mapping_t& node, const sqltoast::row_value_constructor_t& rvc);
 void fill(mapping_t& node, const sqltoast::row_value_expression_t& rve);
+void fill(mapping_t& node, const sqltoast::scalar_subquery_t& subq);
 void fill(mapping_t& node, const sqltoast::search_condition_t& sc);
 void fill(mapping_t& node, const sqltoast::searched_case_expression_t& expr);
 void fill(mapping_t& node, const sqltoast::select_statement_t& stmt);
