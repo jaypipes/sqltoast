@@ -337,9 +337,6 @@ std::ostream& operator<< (std::ostream& out, const string_function_t& sf) {
                 out << tf;
             }
             break;
-        default:
-            out << "string-function[UNKNOWN]";
-            break;
     }
     return out;
 }
