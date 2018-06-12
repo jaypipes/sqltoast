@@ -241,7 +241,6 @@ typedef struct numeric_value : numeric_primary_t {
 } numeric_value_t;
 
 typedef enum numeric_function_type {
-    NUMERIC_FUNCTION_TYPE_UNKNOWN,
     NUMERIC_FUNCTION_TYPE_POSITION,
     NUMERIC_FUNCTION_TYPE_EXTRACT,
     NUMERIC_FUNCTION_TYPE_CHAR_LENGTH,

@@ -786,7 +786,7 @@ bool parse_numeric_function(
         std::unique_ptr<numeric_primary_t>& out) {
     lexer& lex = ctx.lexer;
     symbol_t cur_sym = cur_tok.symbol;
-    numeric_function_type_t func_type = NUMERIC_FUNCTION_TYPE_UNKNOWN;
+    numeric_function_type_t func_type;
     interval_unit_t extract_field = INTERVAL_UNIT_UNKNOWN;
     std::unique_ptr<value_expression_t> to_find; // only used for POSITION
     std::unique_ptr<value_expression_t> value;

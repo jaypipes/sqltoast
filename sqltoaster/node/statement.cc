@@ -1379,9 +1379,6 @@ void fill(mapping_t& node, const sqltoast::numeric_function_t& func) {
                 node.setattr("octet_length", length_node);
             }
             break;
-        default:
-            // TODO(jaypipes)
-            break;
     }
 }
 
