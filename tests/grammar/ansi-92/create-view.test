@@ -16,12 +16,20 @@ statements:
     create_view_statement:
       view_name: v1
       query:
-        selected_columns:
-          - asterisk: true
-        referenced_tables:
-          - type: TABLE
-            table:
-              name: t1
+        type: NON_JOIN_QUERY_EXPRESSION
+        non_join_query_expression:
+          type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+          non_join_query_term_query_expression:
+            term:
+              primary:
+                type: QUERY_SPECIFICATION
+                query_specification:
+                  selected_columns:
+                    - asterisk: true
+                  referenced_tables:
+                    - type: TABLE
+                      table:
+                        name: t1
 # Use the optional column list
 >CREATE VIEW v1 (a, b) AS SELECT a, b FROM t1
 statements:
@@ -32,31 +40,39 @@ statements:
         - a
         - b
       query:
-        selected_columns:
-          - type: NUMERIC_EXPRESSION
-            numeric_expression:
-              left:
-                left:
-                  primary:
-                    type: VALUE
-                    value:
-                      primary:
-                        type: COLUMN_REFERENCE
-                        column_reference: a
-          - type: NUMERIC_EXPRESSION
-            numeric_expression:
-              left:
-                left:
-                  primary:
-                    type: VALUE
-                    value:
-                      primary:
-                        type: COLUMN_REFERENCE
-                        column_reference: b
-        referenced_tables:
-          - type: TABLE
-            table:
-              name: t1
+        type: NON_JOIN_QUERY_EXPRESSION
+        non_join_query_expression:
+          type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+          non_join_query_term_query_expression:
+            term:
+              primary:
+                type: QUERY_SPECIFICATION
+                query_specification:
+                  selected_columns:
+                    - type: NUMERIC_EXPRESSION
+                      numeric_expression:
+                        left:
+                          left:
+                            primary:
+                              type: VALUE
+                              value:
+                                primary:
+                                  type: COLUMN_REFERENCE
+                                  column_reference: a
+                    - type: NUMERIC_EXPRESSION
+                      numeric_expression:
+                        left:
+                          left:
+                            primary:
+                              type: VALUE
+                              value:
+                                primary:
+                                  type: COLUMN_REFERENCE
+                                  column_reference: b
+                  referenced_tables:
+                    - type: TABLE
+                      table:
+                        name: t1
 # The optional WITH LOCAL CHECK OPTION clause
 >CREATE VIEW v1 AS SELECT * FROM t1 WITH LOCAL CHECK OPTION
 statements:
@@ -65,12 +81,20 @@ statements:
       view_name: v1
       check_option: LOCAL
       query:
-        selected_columns:
-          - asterisk: true
-        referenced_tables:
-          - type: TABLE
-            table:
-              name: t1
+        type: NON_JOIN_QUERY_EXPRESSION
+        non_join_query_expression:
+          type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+          non_join_query_term_query_expression:
+            term:
+              primary:
+                type: QUERY_SPECIFICATION
+                query_specification:
+                  selected_columns:
+                    - asterisk: true
+                  referenced_tables:
+                    - type: TABLE
+                      table:
+                        name: t1
 # The optional WITH CASCADED CHECK OPTION clause
 >CREATE VIEW v1 AS SELECT * FROM t1 WITH CASCADED CHECK OPTION
 statements:
@@ -79,12 +103,20 @@ statements:
       view_name: v1
       check_option: CASCADED
       query:
-        selected_columns:
-          - asterisk: true
-        referenced_tables:
-          - type: TABLE
-            table:
-              name: t1
+        type: NON_JOIN_QUERY_EXPRESSION
+        non_join_query_expression:
+          type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+          non_join_query_term_query_expression:
+            term:
+              primary:
+                type: QUERY_SPECIFICATION
+                query_specification:
+                  selected_columns:
+                    - asterisk: true
+                  referenced_tables:
+                    - type: TABLE
+                      table:
+                        name: t1
 # Missing either LOCAL or CASCADED for the check option clause
 >CREATE VIEW v1 AS SELECT * FROM t1 WITH CHECK OPTION
 Syntax error.

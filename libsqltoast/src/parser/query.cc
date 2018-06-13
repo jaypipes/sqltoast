@@ -47,14 +47,57 @@ bool parse_non_join_query_expression(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<query_expression_t>& out) {
+    lexer_t& lex = ctx.lexer;
     std::unique_ptr<query_term_t> query_term;
+    std::unique_ptr<query_expression_t> query_expr;
+    symbol_t cur_sym = cur_tok.symbol;
+    bool union_expr = false;
+    bool all = false;
 
-    if (! parse_non_join_query_term(ctx, cur_tok, query_term))
+    if (parse_non_join_query_term(ctx, cur_tok, query_term))
+        goto push_non_join_query_expression;
+    if (! parse_query_expression(ctx, cur_tok, query_expr))
         return false;
-    // TODO(jaypipes): Handle UNION and EXCEPT
+    cur_sym = cur_tok.symbol;
+    switch (cur_sym) {
+        case SYMBOL_UNION:
+            cur_tok = lex.next();
+            union_expr = true;
+            goto expect_all_or_query_term;
+        case SYMBOL_EXCEPT:
+            cur_tok = lex.next();
+            goto expect_all_or_query_term;
+        default:
+            return false;
+    }
+expect_all_or_query_term:
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_ALL) {
+        cur_tok = lex.next();
+        all = true;
+    }
+    if (! parse_query_term(ctx, cur_tok, query_term))
+        goto err_expect_query_term;
+    goto push_non_join_query_expression;
+err_expect_query_term:
+    {
+        std::stringstream estr;
+        estr << "Expected <query term> but found "
+             << cur_tok << std::endl;
+        create_syntax_error_marker(ctx, estr);
+        return false;
+    }
+push_non_join_query_expression:
     if (ctx.opts.disable_statement_construction)
         return true;
-    out = std::make_unique<non_join_query_expression_t>(query_term);
+    if (! query_expr)
+        out = std::make_unique<non_join_query_term_query_expression_t>(query_term);
+    else {
+        if (union_expr)
+            out = std::make_unique<union_query_expression_t>(query_expr, query_term, all);
+        else
+            out = std::make_unique<except_query_expression_t>(query_expr, query_term, all);
+    }
     return true;
 }
 

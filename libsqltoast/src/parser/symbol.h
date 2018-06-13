@@ -104,6 +104,7 @@ typedef enum symbol {
     SYMBOL_ELSE,
     SYMBOL_END,
     SYMBOL_ESCAPE,
+    SYMBOL_EXCEPT,
     SYMBOL_EXISTS,
     SYMBOL_EXTRACT,
     SYMBOL_FLOAT,

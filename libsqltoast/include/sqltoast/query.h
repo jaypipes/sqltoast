@@ -143,15 +143,60 @@ typedef struct joined_table_query_term : query_term_t {
     {}
 } joined_table_query_term_t;
 
+typedef enum non_join_query_expression_type {
+    NON_JOIN_QUERY_EXPRESSION_TYPE_NON_JOIN_QUERY_TERM,
+    NON_JOIN_QUERY_EXPRESSION_TYPE_UNION,
+    NON_JOIN_QUERY_EXPRESSION_TYPE_EXCEPT
+} non_join_query_expression_type_t;
+
 typedef struct non_join_query_expression : query_expression_t {
-    // Guaranteed to be static_castable to non_join_query_term_t.
-    std::unique_ptr<query_term_t> term;
+    non_join_query_expression_type_t non_join_query_expression_type;
     non_join_query_expression(
-            std::unique_ptr<query_term_t>& term) :
+            non_join_query_expression_type_t type) :
         query_expression_t(QUERY_COMPONENT_TYPE_NON_JOIN),
-        term(std::move(term))
+        non_join_query_expression_type(type)
     {}
 } non_join_query_expression_t;
+
+typedef struct non_join_query_term_query_expression : non_join_query_expression_t {
+    // Guaranteed to be static_castable to non_join_query_term_t.
+    std::unique_ptr<query_term_t> term;
+    non_join_query_term_query_expression(
+            std::unique_ptr<query_term_t>& term) :
+        non_join_query_expression_t(NON_JOIN_QUERY_EXPRESSION_TYPE_NON_JOIN_QUERY_TERM),
+        term(std::move(term))
+    {}
+} non_join_query_term_query_expression_t;
+
+typedef struct union_query_expression : non_join_query_expression_t {
+    std::unique_ptr<query_expression_t> left;
+    std::unique_ptr<query_term_t> right;
+    bool all;
+    union_query_expression(
+            std::unique_ptr<query_expression_t>& left,
+            std::unique_ptr<query_term_t>& right,
+            bool all) :
+        non_join_query_expression_t(NON_JOIN_QUERY_EXPRESSION_TYPE_UNION),
+        left(std::move(left)),
+        right(std::move(right)),
+        all(all)
+    {}
+} union_query_expression_t;
+
+typedef struct except_query_expression : non_join_query_expression_t {
+    std::unique_ptr<query_expression_t> left;
+    std::unique_ptr<query_term_t> right;
+    bool all;
+    except_query_expression(
+            std::unique_ptr<query_expression_t>& left,
+            std::unique_ptr<query_term_t>& right,
+            bool all) :
+        non_join_query_expression_t(NON_JOIN_QUERY_EXPRESSION_TYPE_EXCEPT),
+        left(std::move(left)),
+        right(std::move(right)),
+        all(all)
+    {}
+} except_query_expression_t;
 
 typedef struct joined_table_query_expression : query_expression_t {
     std::unique_ptr<joined_table_t> joined_table;

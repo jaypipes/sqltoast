@@ -74,7 +74,50 @@ std::ostream& operator<< (std::ostream& out, const query_expression_t& qe) {
 }
 
 std::ostream& operator<< (std::ostream& out, const non_join_query_expression_t& qe) {
+    switch (qe.non_join_query_expression_type) {
+        case NON_JOIN_QUERY_EXPRESSION_TYPE_NON_JOIN_QUERY_TERM:
+            {
+                const non_join_query_term_query_expression_t& sub =
+                    static_cast<const non_join_query_term_query_expression_t&>(qe);
+                out << sub;
+            }
+            break;
+        case NON_JOIN_QUERY_EXPRESSION_TYPE_UNION:
+            {
+                const union_query_expression_t& sub =
+                    static_cast<const union_query_expression_t&>(qe);
+                out << sub;
+            }
+            break;
+        case NON_JOIN_QUERY_EXPRESSION_TYPE_EXCEPT:
+            {
+                const except_query_expression_t& sub =
+                    static_cast<const except_query_expression_t&>(qe);
+                out << sub;
+            }
+            break;
+    }
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const non_join_query_term_query_expression_t& qe) {
     out << *qe.term;
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const union_query_expression_t& qe) {
+    out << "union";
+    if (qe.all)
+        out << "-all";
+    out << '[' << *qe.left << ',' << *qe.right << ']';
+    return out;
+}
+
+std::ostream& operator<< (std::ostream& out, const except_query_expression_t& qe) {
+    out << "except";
+    if (qe.all)
+        out << "-all";
+    out << '[' << *qe.left << ',' << *qe.right << ']';
     return out;
 }
 

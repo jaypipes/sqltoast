@@ -1224,21 +1224,29 @@ statements:
                                       type: COLUMN_REFERENCE
                                       column_reference: a
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t1_a
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
+                                              primary:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t1_a
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
 # EXISTS (<subquery>) predicate
 >SELECT * FROM t1 WHERE EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1258,58 +1266,66 @@ statements:
                   type: EXISTS
                   exists_predicate:
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t1_id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t1_id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
 # NOT EXISTS (<subquery>) predicate
 >SELECT * FROM t1 WHERE NOT EXISTS (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1329,58 +1345,66 @@ statements:
                   type: EXISTS
                   exists_predicate:
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t1_id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t1_id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
                 negate: true
 # <row> MATCH (<subquery>) predicate
 >SELECT * FROM t1 WHERE id MATCH (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
@@ -1416,58 +1440,66 @@ statements:
                                       type: COLUMN_REFERENCE
                                       column_reference: id
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t1_id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t1_id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
 # <row> MATCH (<subquery>) predicate explicit FULL
 >SELECT * FROM t1 WHERE id MATCH FULL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1502,58 +1534,66 @@ statements:
                                       type: COLUMN_REFERENCE
                                       column_reference: id
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t1_id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t1_id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
 # <row> MATCH (<subquery>) predicate with UNIQUE
 >SELECT * FROM t1 WHERE id MATCH UNIQUE (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1589,58 +1629,66 @@ statements:
                                       column_reference: id
                     unique: true
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t1_id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t1_id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
 # <row> MATCH (<subquery>) predicate explicit PARTIAL
 >SELECT * FROM t1 WHERE id MATCH PARTIAL (SELECT t1_id FROM t2 WHERE t1_id = t1.id)
 statements:
@@ -1676,58 +1724,66 @@ statements:
                                       column_reference: id
                     partial: true
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t1_id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t1_id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
 # LIKE predicate with simple column comparison with string
 >SELECT * FROM t1 WHERE a LIKE 's%'
 statements:
@@ -1950,58 +2006,66 @@ statements:
                   type: UNIQUE
                   unique_predicate:
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t2.id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t2.t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t2.id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t2.t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
 # negated UNIQUE predicate
 >SELECT * FROM t1 WHERE NOT UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id);
 statements:
@@ -2021,58 +2085,66 @@ statements:
                   type: UNIQUE
                   unique_predicate:
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t2.id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t2.t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t2.id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t2.t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
                 negate: true
 # Combine EXISTS and UNIQUE predicate
 >SELECT * FROM t1 WHERE UNIQUE (SELECT t2.id FROM t2 WHERE t2.t1_id = t1.id) AND EXISTS (SELECT t3.id FROM t3 WHERE t3.t1_id = t1.id);
@@ -2093,116 +2165,132 @@ statements:
                   type: UNIQUE
                   unique_predicate:
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t2.id
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
-                      where:
-                        terms:
-                          - factor:
-                              predicate:
-                                type: COMPARISON
-                                comparison_predicate:
-                                  op: EQUAL
-                                  left:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
-                                            left:
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
                                               primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t2.t1_id
-                                  right:
-                                    type: ELEMENT
-                                    element:
-                                      type: VALUE_EXPRESSION
-                                      value_expression:
-                                        type: NUMERIC_EXPRESSION
-                                        numeric_expression:
-                                          left:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t2.id
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
+                                where:
+                                  terms:
+                                    - factor:
+                                        predicate:
+                                          type: COMPARISON
+                                          comparison_predicate:
+                                            op: EQUAL
                                             left:
-                                              primary:
-                                                type: VALUE
-                                                value:
-                                                  primary:
-                                                    type: COLUMN_REFERENCE
-                                                    column_reference: t1.id
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t2.t1_id
+                                            right:
+                                              type: ELEMENT
+                                              element:
+                                                type: VALUE_EXPRESSION
+                                                value_expression:
+                                                  type: NUMERIC_EXPRESSION
+                                                  numeric_expression:
+                                                    left:
+                                                      left:
+                                                        primary:
+                                                          type: VALUE
+                                                          value:
+                                                            primary:
+                                                              type: COLUMN_REFERENCE
+                                                              column_reference: t1.id
                 and:
                   factor:
                     predicate:
                       type: EXISTS
                       exists_predicate:
                         query:
-                          selected_columns:
-                            - type: NUMERIC_EXPRESSION
-                              numeric_expression:
-                                left:
-                                  left:
-                                    primary:
-                                      type: VALUE
-                                      value:
-                                        primary:
-                                          type: COLUMN_REFERENCE
-                                          column_reference: t3.id
-                          referenced_tables:
-                            - type: TABLE
-                              table:
-                                name: t3
-                          where:
-                            terms:
-                              - factor:
-                                  predicate:
-                                    type: COMPARISON
-                                    comparison_predicate:
-                                      op: EQUAL
-                                      left:
-                                        type: ELEMENT
-                                        element:
-                                          type: VALUE_EXPRESSION
-                                          value_expression:
-                                            type: NUMERIC_EXPRESSION
-                                            numeric_expression:
-                                              left:
-                                                left:
+                          type: NON_JOIN_QUERY_EXPRESSION
+                          non_join_query_expression:
+                            type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                            non_join_query_term_query_expression:
+                              term:
+                                primary:
+                                  type: QUERY_SPECIFICATION
+                                  query_specification:
+                                    selected_columns:
+                                      - type: NUMERIC_EXPRESSION
+                                        numeric_expression:
+                                          left:
+                                            left:
+                                              primary:
+                                                type: VALUE
+                                                value:
                                                   primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t3.t1_id
-                                      right:
-                                        type: ELEMENT
-                                        element:
-                                          type: VALUE_EXPRESSION
-                                          value_expression:
-                                            type: NUMERIC_EXPRESSION
-                                            numeric_expression:
-                                              left:
+                                                    type: COLUMN_REFERENCE
+                                                    column_reference: t3.id
+                                    referenced_tables:
+                                      - type: TABLE
+                                        table:
+                                          name: t3
+                                    where:
+                                      terms:
+                                        - factor:
+                                            predicate:
+                                              type: COMPARISON
+                                              comparison_predicate:
+                                                op: EQUAL
                                                 left:
-                                                  primary:
-                                                    type: VALUE
-                                                    value:
-                                                      primary:
-                                                        type: COLUMN_REFERENCE
-                                                        column_reference: t1.id
+                                                  type: ELEMENT
+                                                  element:
+                                                    type: VALUE_EXPRESSION
+                                                    value_expression:
+                                                      type: NUMERIC_EXPRESSION
+                                                      numeric_expression:
+                                                        left:
+                                                          left:
+                                                            primary:
+                                                              type: VALUE
+                                                              value:
+                                                                primary:
+                                                                  type: COLUMN_REFERENCE
+                                                                  column_reference: t3.t1_id
+                                                right:
+                                                  type: ELEMENT
+                                                  element:
+                                                    type: VALUE_EXPRESSION
+                                                    value_expression:
+                                                      type: NUMERIC_EXPRESSION
+                                                      numeric_expression:
+                                                        left:
+                                                          left:
+                                                            primary:
+                                                              type: VALUE
+                                                              value:
+                                                                primary:
+                                                                  type: COLUMN_REFERENCE
+                                                                  column_reference: t1.id
 # quantified comparison predicates are like comparison predicates with an
 # ANY|ALL|SOME quantifier
 >SELECT * FROM t1 WHERE t1.start > ALL (SELECT t2.start FROM t2)
@@ -2240,21 +2328,29 @@ statements:
                                       column_reference: t1.start
                     quantifier: ALL
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t2.start
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
+                                              primary:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t2.start
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
 # quantified comparison predicate with ANY quantifier
 >SELECT * FROM t1 WHERE t1.start <= ANY (SELECT t2.start FROM t2)
 statements:
@@ -2291,21 +2387,29 @@ statements:
                                       column_reference: t1.start
                     quantifier: ANY
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t2.start
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
+                                              primary:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t2.start
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2
 # quantified comparison predicate with SOME quantifier translated to ANY quantifier
 >SELECT * FROM t1 WHERE t1.start <= SOME (SELECT t2.start FROM t2)
 statements:
@@ -2342,18 +2446,26 @@ statements:
                                       column_reference: t1.start
                     quantifier: ANY
                     query:
-                      selected_columns:
-                        - type: NUMERIC_EXPRESSION
-                          numeric_expression:
-                            left:
-                              left:
-                                primary:
-                                  type: VALUE
-                                  value:
-                                    primary:
-                                      type: COLUMN_REFERENCE
-                                      column_reference: t2.start
-                      referenced_tables:
-                        - type: TABLE
-                          table:
-                            name: t2
+                      type: NON_JOIN_QUERY_EXPRESSION
+                      non_join_query_expression:
+                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                        non_join_query_term_query_expression:
+                          term:
+                            primary:
+                              type: QUERY_SPECIFICATION
+                              query_specification:
+                                selected_columns:
+                                  - type: NUMERIC_EXPRESSION
+                                    numeric_expression:
+                                      left:
+                                        left:
+                                          primary:
+                                            type: VALUE
+                                            value:
+                                              primary:
+                                                type: COLUMN_REFERENCE
+                                                column_reference: t2.start
+                                referenced_tables:
+                                  - type: TABLE
+                                    table:
+                                      name: t2

@@ -75,6 +75,7 @@ kw_jump_table_t _init_kw_jump_table(char lead_char) {
             return t;
         case 'e':
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_EXISTS, "EXISTS"));
+            t.emplace_back(kw_jump_table_entry_t(SYMBOL_EXCEPT, "EXCEPT"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_END, "END"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_ELSE, "ELSE"));
             t.emplace_back(kw_jump_table_entry_t(SYMBOL_EXTRACT, "EXTRACT"));

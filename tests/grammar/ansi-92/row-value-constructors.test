@@ -193,21 +193,29 @@ statements:
                                       type: SCALAR_SUBQUERY
                                       scalar_subquery:
                                         query:
-                                          selected_columns:
-                                            - type: NUMERIC_EXPRESSION
-                                              numeric_expression:
-                                                left:
-                                                  left:
-                                                    primary:
-                                                      type: VALUE
-                                                      value:
-                                                        primary:
-                                                          type: COLUMN_REFERENCE
-                                                          column_reference: b
-                                          referenced_tables:
-                                            - type: TABLE
-                                              table:
-                                                name: t2
+                                          type: NON_JOIN_QUERY_EXPRESSION
+                                          non_join_query_expression:
+                                            type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                                            non_join_query_term_query_expression:
+                                              term:
+                                                primary:
+                                                  type: QUERY_SPECIFICATION
+                                                  query_specification:
+                                                    selected_columns:
+                                                      - type: NUMERIC_EXPRESSION
+                                                        numeric_expression:
+                                                          left:
+                                                            left:
+                                                              primary:
+                                                                type: VALUE
+                                                                value:
+                                                                  primary:
+                                                                    type: COLUMN_REFERENCE
+                                                                    column_reference: b
+                                                    referenced_tables:
+                                                      - type: TABLE
+                                                        table:
+                                                          name: t2
 # scalar subquery inside another scalar subquery
 >SELECT * FROM t1 WHERE a = (SELECT b FROM t2 WHERE b = (SELECT c FROM t3))
 statements:
@@ -258,74 +266,90 @@ statements:
                                       type: SCALAR_SUBQUERY
                                       scalar_subquery:
                                         query:
-                                          selected_columns:
-                                            - type: NUMERIC_EXPRESSION
-                                              numeric_expression:
-                                                left:
-                                                  left:
-                                                    primary:
-                                                      type: VALUE
-                                                      value:
-                                                        primary:
-                                                          type: COLUMN_REFERENCE
-                                                          column_reference: b
-                                          referenced_tables:
-                                            - type: TABLE
-                                              table:
-                                                name: t2
-                                          where:
-                                            terms:
-                                              - factor:
-                                                  predicate:
-                                                    type: COMPARISON
-                                                    comparison_predicate:
-                                                      op: EQUAL
-                                                      left:
-                                                        type: ELEMENT
-                                                        element:
-                                                          type: VALUE_EXPRESSION
-                                                          value_expression:
-                                                            type: NUMERIC_EXPRESSION
-                                                            numeric_expression:
-                                                              left:
-                                                                left:
+                                          type: NON_JOIN_QUERY_EXPRESSION
+                                          non_join_query_expression:
+                                            type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                                            non_join_query_term_query_expression:
+                                              term:
+                                                primary:
+                                                  type: QUERY_SPECIFICATION
+                                                  query_specification:
+                                                    selected_columns:
+                                                      - type: NUMERIC_EXPRESSION
+                                                        numeric_expression:
+                                                          left:
+                                                            left:
+                                                              primary:
+                                                                type: VALUE
+                                                                value:
                                                                   primary:
-                                                                    type: VALUE
-                                                                    value:
-                                                                      primary:
-                                                                        type: COLUMN_REFERENCE
-                                                                        column_reference: b
-                                                      right:
-                                                        type: ELEMENT
-                                                        element:
-                                                          type: VALUE_EXPRESSION
-                                                          value_expression:
-                                                            type: NUMERIC_EXPRESSION
-                                                            numeric_expression:
-                                                              left:
+                                                                    type: COLUMN_REFERENCE
+                                                                    column_reference: b
+                                                    referenced_tables:
+                                                      - type: TABLE
+                                                        table:
+                                                          name: t2
+                                                    where:
+                                                      terms:
+                                                        - factor:
+                                                            predicate:
+                                                              type: COMPARISON
+                                                              comparison_predicate:
+                                                                op: EQUAL
                                                                 left:
-                                                                  primary:
-                                                                    type: VALUE
-                                                                    value:
-                                                                      primary:
-                                                                        type: SCALAR_SUBQUERY
-                                                                        scalar_subquery:
-                                                                          query:
-                                                                            selected_columns:
-                                                                              - type: NUMERIC_EXPRESSION
-                                                                                numeric_expression:
-                                                                                  left:
-                                                                                    left:
-                                                                                      primary:
-                                                                                        type: VALUE
-                                                                                        value:
-                                                                                          primary:
-                                                                                            type: COLUMN_REFERENCE
-                                                                                            column_reference: c
-                                                                            referenced_tables:
-                                                                              - type: TABLE
-                                                                                table:
-                                                                                  name: t3
+                                                                  type: ELEMENT
+                                                                  element:
+                                                                    type: VALUE_EXPRESSION
+                                                                    value_expression:
+                                                                      type: NUMERIC_EXPRESSION
+                                                                      numeric_expression:
+                                                                        left:
+                                                                          left:
+                                                                            primary:
+                                                                              type: VALUE
+                                                                              value:
+                                                                                primary:
+                                                                                  type: COLUMN_REFERENCE
+                                                                                  column_reference: b
+                                                                right:
+                                                                  type: ELEMENT
+                                                                  element:
+                                                                    type: VALUE_EXPRESSION
+                                                                    value_expression:
+                                                                      type: NUMERIC_EXPRESSION
+                                                                      numeric_expression:
+                                                                        left:
+                                                                          left:
+                                                                            primary:
+                                                                              type: VALUE
+                                                                              value:
+                                                                                primary:
+                                                                                  type: SCALAR_SUBQUERY
+                                                                                  scalar_subquery:
+                                                                                    query:
+                                                                                      type: NON_JOIN_QUERY_EXPRESSION
+                                                                                      non_join_query_expression:
+                                                                                        type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                                                                                        non_join_query_term_query_expression:
+                                                                                          term:
+                                                                                            primary:
+                                                                                              type: QUERY_SPECIFICATION
+                                                                                              query_specification:
+                                                                                                selected_columns:
+                                                                                                  - type: NUMERIC_EXPRESSION
+                                                                                                    numeric_expression:
+                                                                                                      left:
+                                                                                                        left:
+                                                                                                          primary:
+                                                                                                            type: VALUE
+                                                                                                            value:
+                                                                                                              primary:
+                                                                                                                type: COLUMN_REFERENCE
+                                                                                                                column_reference: c
+                                                                                                referenced_tables:
+                                                                                                  - type: TABLE
+                                                                                                    table:
+                                                                                                      name: t3
 # scalar subquery with correlation and alias
 >SELECT * FROM t1 WHERE num_t2 = (SELECT COUNT(*) FROM t2 WHERE t2.t1_id = t1.id)
 statements:
@@ -376,57 +400,65 @@ statements:
                                       type: SCALAR_SUBQUERY
                                       scalar_subquery:
                                         query:
-                                          selected_columns:
-                                            - type: NUMERIC_EXPRESSION
-                                              numeric_expression:
-                                                left:
-                                                  left:
-                                                    primary:
-                                                      type: VALUE
-                                                      value:
-                                                        primary:
-                                                          type: SET_FUNCTION_SPECIFICATION
-                                                          set_function_specification:
-                                                            type: COUNT
-                                                            star: true
-                                          referenced_tables:
-                                            - type: TABLE
-                                              table:
-                                                name: t2
-                                          where:
-                                            terms:
-                                              - factor:
-                                                  predicate:
-                                                    type: COMPARISON
-                                                    comparison_predicate:
-                                                      op: EQUAL
-                                                      left:
-                                                        type: ELEMENT
-                                                        element:
-                                                          type: VALUE_EXPRESSION
-                                                          value_expression:
-                                                            type: NUMERIC_EXPRESSION
-                                                            numeric_expression:
-                                                              left:
-                                                                left:
+                                          type: NON_JOIN_QUERY_EXPRESSION
+                                          non_join_query_expression:
+                                            type: NON_JOIN_QUERY_TERM_QUERY_EXPRESSION
+                                            non_join_query_term_query_expression:
+                                              term:
+                                                primary:
+                                                  type: QUERY_SPECIFICATION
+                                                  query_specification:
+                                                    selected_columns:
+                                                      - type: NUMERIC_EXPRESSION
+                                                        numeric_expression:
+                                                          left:
+                                                            left:
+                                                              primary:
+                                                                type: VALUE
+                                                                value:
                                                                   primary:
-                                                                    type: VALUE
-                                                                    value:
-                                                                      primary:
-                                                                        type: COLUMN_REFERENCE
-                                                                        column_reference: t2.t1_id
-                                                      right:
-                                                        type: ELEMENT
-                                                        element:
-                                                          type: VALUE_EXPRESSION
-                                                          value_expression:
-                                                            type: NUMERIC_EXPRESSION
-                                                            numeric_expression:
-                                                              left:
+                                                                    type: SET_FUNCTION_SPECIFICATION
+                                                                    set_function_specification:
+                                                                      type: COUNT
+                                                                      star: true
+                                                    referenced_tables:
+                                                      - type: TABLE
+                                                        table:
+                                                          name: t2
+                                                    where:
+                                                      terms:
+                                                        - factor:
+                                                            predicate:
+                                                              type: COMPARISON
+                                                              comparison_predicate:
+                                                                op: EQUAL
                                                                 left:
-                                                                  primary:
-                                                                    type: VALUE
-                                                                    value:
-                                                                      primary:
-                                                                        type: COLUMN_REFERENCE
-                                                                        column_reference: t1.id
+                                                                  type: ELEMENT
+                                                                  element:
+                                                                    type: VALUE_EXPRESSION
+                                                                    value_expression:
+                                                                      type: NUMERIC_EXPRESSION
+                                                                      numeric_expression:
+                                                                        left:
+                                                                          left:
+                                                                            primary:
+                                                                              type: VALUE
+                                                                              value:
+                                                                                primary:
+                                                                                  type: COLUMN_REFERENCE
+                                                                                  column_reference: t2.t1_id
+                                                                right:
+                                                                  type: ELEMENT
+                                                                  element:
+                                                                    type: VALUE_EXPRESSION
+                                                                    value_expression:
+                                                                      type: NUMERIC_EXPRESSION
+                                                                      numeric_expression:
+                                                                        left:
+                                                                          left:
+                                                                            primary:
+                                                                              type: VALUE
+                                                                              value:
+                                                                                primary:
+                                                                                  type: COLUMN_REFERENCE
+                                                                                  column_reference: t1.id

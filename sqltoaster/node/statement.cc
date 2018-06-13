@@ -296,63 +296,161 @@ void fill(mapping_t& node, const sqltoast::table_expression_t& table_exp) {
 void fill(mapping_t& node, const sqltoast::query_expression_t& qe) {
     switch (qe.query_component_type) {
         case sqltoast::QUERY_COMPONENT_TYPE_NON_JOIN:
+            node.setattr("type", "NON_JOIN_QUERY_EXPRESSION");
             {
+                std::unique_ptr<node_t> expr_node = std::make_unique<mapping_t>();
+                mapping_t& expr_map = static_cast<mapping_t&>(*expr_node);
                 const sqltoast::non_join_query_expression_t& sub =
                     static_cast<const sqltoast::non_join_query_expression_t&>(qe);
-                fill(node, sub);
+                fill(expr_map, sub);
+                node.setattr("non_join_query_expression", expr_node);
             }
             break;
         case sqltoast::QUERY_COMPONENT_TYPE_JOINED_TABLE:
+            node.setattr("type", "JOINED_TABLE");
             {
+                std::unique_ptr<node_t> jt_node = std::make_unique<mapping_t>();
+                mapping_t& jt_map = static_cast<mapping_t&>(*jt_node);
                 const sqltoast::joined_table_query_expression_t& sub =
                     static_cast<const sqltoast::joined_table_query_expression_t&>(qe);
-                fill(node, sub);
+                fill(jt_map, sub);
+                node.setattr("joined_table", jt_node);
             }
             break;
     }
 }
 
-void fill(mapping_t& node, const sqltoast::non_join_query_expression_t& qe) {
-    fill(node, *qe.term);
+void fill(mapping_t& node, const sqltoast::non_join_query_expression_t& expr) {
+    switch (expr.non_join_query_expression_type) {
+        case sqltoast::NON_JOIN_QUERY_EXPRESSION_TYPE_NON_JOIN_QUERY_TERM:
+            node.setattr("type", "NON_JOIN_QUERY_TERM_QUERY_EXPRESSION");
+            {
+                std::unique_ptr<node_t> term_node = std::make_unique<mapping_t>();
+                mapping_t& term_map = static_cast<mapping_t&>(*term_node);
+                const sqltoast::non_join_query_term_query_expression_t& sub =
+                    static_cast<const sqltoast::non_join_query_term_query_expression_t&>(expr);
+                fill(term_map, sub);
+                node.setattr("non_join_query_term_query_expression", term_node);
+            }
+            break;
+        case sqltoast::NON_JOIN_QUERY_EXPRESSION_TYPE_UNION:
+            node.setattr("type", "UNION_QUERY_EXPRESSION");
+            {
+                std::unique_ptr<node_t> union_node = std::make_unique<mapping_t>();
+                mapping_t& union_map = static_cast<mapping_t&>(*union_node);
+                const sqltoast::union_query_expression_t& sub =
+                    static_cast<const sqltoast::union_query_expression_t&>(expr);
+                fill(union_map, sub);
+                node.setattr("union_query_expression", union_node);
+            }
+            break;
+        case sqltoast::NON_JOIN_QUERY_EXPRESSION_TYPE_EXCEPT:
+            node.setattr("type", "EXCEPT_QUERY_EXPRESSION");
+            {
+                std::unique_ptr<node_t> except_node = std::make_unique<mapping_t>();
+                mapping_t& except_map = static_cast<mapping_t&>(*except_node);
+                const sqltoast::except_query_expression_t& sub =
+                    static_cast<const sqltoast::except_query_expression_t&>(expr);
+                fill(except_map, sub);
+                node.setattr("except_query_expression", except_node);
+            }
+            break;
+    }
+}
+
+void fill(mapping_t& node, const sqltoast::non_join_query_term_query_expression_t& expr) {
+    std::unique_ptr<node_t> term_node = std::make_unique<mapping_t>();
+    mapping_t& term_map = static_cast<mapping_t&>(*term_node);
+    const sqltoast::non_join_query_term_t& sub =
+        static_cast<sqltoast::non_join_query_term_t&>(*expr.term);
+    fill(term_map, sub);
+    node.setattr("term", term_node);
+}
+
+void fill(mapping_t& node, const sqltoast::union_query_expression_t& expr) {
+    std::unique_ptr<node_t> left_node = std::make_unique<mapping_t>();
+    mapping_t& left_map = static_cast<mapping_t&>(*left_node);
+    fill(left_map, *expr.left);
+    node.setattr("left", left_node);
+    if (expr.all)
+        node.setattr("all", "true");
+    std::unique_ptr<node_t> right_node = std::make_unique<mapping_t>();
+    mapping_t& right_map = static_cast<mapping_t&>(*right_node);
+    fill(right_map, *expr.right);
+    node.setattr("right", right_node);
+}
+
+void fill(mapping_t& node, const sqltoast::except_query_expression_t& expr) {
+    std::unique_ptr<node_t> left_node = std::make_unique<mapping_t>();
+    mapping_t& left_map = static_cast<mapping_t&>(*left_node);
+    fill(left_map, *expr.left);
+    node.setattr("left", left_node);
+    if (expr.all)
+        node.setattr("all", "true");
+    std::unique_ptr<node_t> right_node = std::make_unique<mapping_t>();
+    mapping_t& right_map = static_cast<mapping_t&>(*right_node);
+    fill(right_map, *expr.right);
+    node.setattr("right", right_node);
 }
 
 void fill(mapping_t& node, const sqltoast::query_term_t& term) {
     switch (term.query_component_type) {
         case sqltoast::QUERY_COMPONENT_TYPE_NON_JOIN:
+            node.setattr("type", "NON_JOIN_QUERY_TERM");
             {
+                std::unique_ptr<node_t> term_node = std::make_unique<mapping_t>();
+                mapping_t& term_map = static_cast<mapping_t&>(*term_node);
                 const sqltoast::non_join_query_term_t& sub =
                     static_cast<const sqltoast::non_join_query_term_t&>(term);
-                fill(node, sub);
+                fill(term_map, sub);
+                node.setattr("non_join_query_term", term_node);
             }
             break;
         case sqltoast::QUERY_COMPONENT_TYPE_JOINED_TABLE:
+            node.setattr("type", "JOINED_TABLE");
             {
+                std::unique_ptr<node_t> jt_node = std::make_unique<mapping_t>();
+                mapping_t& jt_map = static_cast<mapping_t&>(*jt_node);
                 const sqltoast::joined_table_query_term_t& sub =
                     static_cast<const sqltoast::joined_table_query_term_t&>(term);
-                fill(node, sub);
+                fill(jt_map, sub);
+                node.setattr("joined_table", jt_node);
             }
             break;
     }
 }
 
 void fill(mapping_t& node, const sqltoast::non_join_query_term_t& term) {
-    fill(node, *term.primary);
+    std::unique_ptr<node_t> primary_node = std::make_unique<mapping_t>();
+    mapping_t& primary_map = static_cast<mapping_t&>(*primary_node);
+    const sqltoast::non_join_query_primary_t& sub =
+        static_cast<sqltoast::non_join_query_primary_t&>(*term.primary);
+    fill(primary_map, sub);
+    node.setattr("primary", primary_node);
 }
 
 void fill(mapping_t& node, const sqltoast::query_primary_t& primary) {
     switch (primary.query_component_type) {
         case sqltoast::QUERY_COMPONENT_TYPE_NON_JOIN:
+            node.setattr("type", "NON_JOIN_QUERY_PRIMARY");
             {
+                std::unique_ptr<node_t> primary_node = std::make_unique<mapping_t>();
+                mapping_t& primary_map = static_cast<mapping_t&>(*primary_node);
                 const sqltoast::non_join_query_primary_t& sub =
                     static_cast<const sqltoast::non_join_query_primary_t&>(primary);
-                fill(node, sub);
+                fill(primary_map, sub);
+                node.setattr("non_join_query_primary", primary_node);
             }
             break;
         case sqltoast::QUERY_COMPONENT_TYPE_JOINED_TABLE:
+            node.setattr("type", "JOINED_TABLE");
             {
+                std::unique_ptr<node_t> jt_node = std::make_unique<mapping_t>();
+                mapping_t& jt_map = static_cast<mapping_t&>(*jt_node);
                 const sqltoast::joined_table_query_primary_t& sub =
                     static_cast<const sqltoast::joined_table_query_primary_t&>(primary);
-                fill(node, sub);
+                fill(jt_map, sub);
+                node.setattr("joined_table", jt_node);
             }
             break;
     }
@@ -361,17 +459,25 @@ void fill(mapping_t& node, const sqltoast::query_primary_t& primary) {
 void fill(mapping_t& node, const sqltoast::non_join_query_primary_t& primary) {
     switch (primary.primary_type) {
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_QUERY_SPECIFICATION:
+            node.setattr("type", "QUERY_SPECIFICATION");
             {
+                std::unique_ptr<node_t> qs_node = std::make_unique<mapping_t>();
+                mapping_t& qs_map = static_cast<mapping_t&>(*qs_node);
                 const sqltoast::query_specification_non_join_query_primary_t& sub =
                     static_cast<const sqltoast::query_specification_non_join_query_primary_t&>(primary);
-                fill(node, sub);
+                fill(qs_map, sub);
+                node.setattr("query_specification", qs_node);
             }
             break;
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_TABLE_VALUE_CONSTRUCTOR:
+            node.setattr("type", "TABLE_VALUE_CONSTRUCTOR");
             {
+                std::unique_ptr<node_t> tvc_node = std::make_unique<mapping_t>();
+                mapping_t& tvc_map = static_cast<mapping_t&>(*tvc_node);
                 const sqltoast::table_value_constructor_non_join_query_primary_t& sub =
                     static_cast<const sqltoast::table_value_constructor_non_join_query_primary_t&>(primary);
-                fill(node, sub);
+                fill(tvc_map, sub);
+                node.setattr("table_value_constructor", tvc_node);
             }
             break;
         case sqltoast::NON_JOIN_QUERY_PRIMARY_TYPE_EXPLICIT_TABLE:

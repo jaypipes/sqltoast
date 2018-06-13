@@ -101,6 +101,7 @@ std::ostream& operator<< (std::ostream& out, const length_expression_t& le);
 std::ostream& operator<< (std::ostream& out, const non_join_query_expression_t& qe);
 std::ostream& operator<< (std::ostream& out, const non_join_query_primary_t& primary);
 std::ostream& operator<< (std::ostream& out, const non_join_query_term_t& term);
+std::ostream& operator<< (std::ostream& out, const non_join_query_term_query_expression_t& qe);
 std::ostream& operator<< (std::ostream& out, const nullif_function_t& nf);
 std::ostream& operator<< (std::ostream& out, const numeric_expression_t& ne);
 std::ostream& operator<< (std::ostream& out, const numeric_factor_t& nf);
