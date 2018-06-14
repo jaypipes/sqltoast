@@ -1,0 +1,16 @@
+# A UNION query expression (not a UNION JOIN) is only possible in ANSI-92 when
+# issusing the UNION'd query expression as a subquery. Therefore the following
+# is illegal:
+#
+# `SELECT * FROM t1 UNION SELECT * FROM t2`
+#
+# however, this is not illegal:
+#
+# `SELECT * FROM (SELECT * FROM t1 UNION SELECT * FROM t2)`
+>SELECT * FROM t1 UNION SELECT * FROM t2
+Syntax error.
+Failed to recognize any valid SQL statement.
+SELECT * FROM t1 UNION SELECT * FROM t2
+                      ^^^^^^^^^^^^^^^^^
+>SELECT * FROM (SELECT * FROM t1 UNION SELECT * FROM t2) AS d1
+...

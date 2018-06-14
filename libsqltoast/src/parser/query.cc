@@ -48,6 +48,8 @@ bool parse_non_join_query_expression(
         token_t& cur_tok,
         std::unique_ptr<query_expression_t>& out) {
     lexer_t& lex = ctx.lexer;
+    parse_position_t start = lex.cursor;
+    token_t start_tok = lex.current_token;
     std::unique_ptr<query_term_t> query_term;
     std::unique_ptr<query_expression_t> query_expr;
     symbol_t cur_sym = cur_tok.symbol;
@@ -56,6 +58,12 @@ bool parse_non_join_query_expression(
 
     if (parse_non_join_query_term(ctx, cur_tok, query_term))
         goto push_non_join_query_expression;
+    if (ctx.result.code == PARSE_SYNTAX_ERROR)
+        return false;
+
+    // Reset cursor to before parsing of joined table attempt.
+    lex.cursor = start;
+    lex.current_token = cur_tok = start_tok;
     if (! parse_query_expression(ctx, cur_tok, query_expr))
         return false;
     cur_sym = cur_tok.symbol;
