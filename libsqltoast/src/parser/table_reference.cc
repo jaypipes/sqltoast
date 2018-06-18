@@ -20,10 +20,6 @@ namespace sqltoast {
 //
 // <derived column list> ::= <column name list>
 //
-// <derived table> ::= <table subquery>
-//
-// <table subquery> ::= <subquery>
-//
 // <joined table> ::=
 //     <cross join>
 //     | <qualified join>
@@ -61,43 +57,17 @@ bool parse_table_reference(
     lexeme_t alias;
     join_type_t join_type = JOIN_TYPE_UNKNOWN;
     std::unique_ptr<search_condition_t> join_cond;
-    std::unique_ptr<query_expression_t> query;
     std::unique_ptr<table_reference_t> right;
     // Used for the USING clause
     std::vector<lexeme_t> named_columns;
-    switch (cur_sym) {
-        case SYMBOL_LPAREN:
-            cur_tok = lex.next();
-            goto expect_derived_table;
-        case SYMBOL_IDENTIFIER:
-            table_name = cur_tok.lexeme;
-            cur_tok = lex.next();
-            goto optional_alias;
-        default:
-            return false;
-    }
-expect_derived_table:
-    if (! parse_query_expression(ctx, cur_tok, query))
-        return false;
-    cur_sym = cur_tok.symbol;
-    if (cur_sym != SYMBOL_RPAREN)
-        goto err_expect_rparen;
-    cur_tok = lex.next();
-    // A derived table MUST have a <correlation specification> which means it
-    // must be given a name preceded by an optional AS symbol
-    cur_sym = cur_tok.symbol;
-    if (cur_sym == SYMBOL_AS) {
+    if (cur_sym == SYMBOL_IDENTIFIER) {
+        table_name = cur_tok.lexeme;
         cur_tok = lex.next();
+        goto optional_alias;
     }
-    cur_sym = cur_tok.symbol;
-    if (cur_sym != SYMBOL_IDENTIFIER)
-        goto err_expect_identifier;
-    alias = cur_tok.lexeme;
-    cur_tok = lex.next();
-    goto ensure_derived_table;
-err_expect_rparen:
-    expect_error(ctx, SYMBOL_RPAREN);
-    return false;
+    if (! parse_derived_table(ctx, cur_tok, out))
+        return false;
+    goto check_join;
 optional_alias:
     // We get here after consuming an identifier, derived table specifier or
     // joined table specifier. An alias can be provided for this table
@@ -243,6 +213,9 @@ process_named_column:
 err_expect_lparen:
     expect_error(ctx, SYMBOL_LPAREN);
     return false;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
 optional_outer:
     // We get here after successfully parsing the FULL, LEFT or RIGHT symbols.
     // These symbols may be followed by an optional OUTER symbol and then the
@@ -261,11 +234,6 @@ ensure_normal_table:
         return true;
     out = std::make_unique<table_t>(table_name, alias);
     goto check_join;
-ensure_derived_table:
-    if (ctx.opts.disable_statement_construction)
-        return true;
-    out = std::make_unique<derived_table_t>(alias, query);
-    goto check_join;
 push_cross_or_natural_join:
     if (ctx.opts.disable_statement_construction)
         return true;
@@ -283,6 +251,63 @@ push_join:
     else
         out = std::make_unique<joined_table_t>(
                 join_type, out, right);
+    return true;
+}
+
+// <derived table> ::= <table subquery>
+//
+// <table subquery> ::= <subquery>
+bool parse_derived_table(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<table_reference_t>& out) {
+    lexer_t& lex = ctx.lexer;
+    symbol_t cur_sym = cur_tok.symbol;
+    lexeme_t alias;
+    std::unique_ptr<query_expression_t> query;
+
+    if (cur_sym != SYMBOL_LPAREN)
+        return false;
+
+    cur_tok = lex.next();
+    if (! parse_query_expression(ctx, cur_tok, query))
+        goto err_expect_query_expression;
+
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_RPAREN)
+        goto err_expect_rparen;
+
+    cur_tok = lex.next();
+    // A derived table MUST have a <correlation specification> which means it
+    // must be given a name preceded by an optional AS symbol
+    cur_sym = cur_tok.symbol;
+    if (cur_sym == SYMBOL_AS) {
+        cur_tok = lex.next();
+    }
+    cur_sym = cur_tok.symbol;
+    if (cur_sym != SYMBOL_IDENTIFIER)
+        goto err_expect_identifier;
+    alias = cur_tok.lexeme;
+    cur_tok = lex.next();
+    goto push_derived_table;
+err_expect_rparen:
+    expect_error(ctx, SYMBOL_RPAREN);
+    return false;
+err_expect_identifier:
+    expect_error(ctx, SYMBOL_IDENTIFIER);
+    return false;
+err_expect_query_expression:
+{
+    std::stringstream estr;
+    estr << "Expected <query expression> but found "
+         << cur_tok << std::endl;
+    create_syntax_error_marker(ctx, estr);
+    return false;
+}
+push_derived_table:
+    if (ctx.opts.disable_statement_construction)
+        return true;
+    out = std::make_unique<derived_table_t>(alias, query);
     return true;
 }
 
