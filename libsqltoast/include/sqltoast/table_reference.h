@@ -64,13 +64,13 @@ typedef struct table : table_reference_t {
 
 struct query_expression;
 typedef struct derived_table : table_reference_t {
-    lexeme_t table_name;
+    correlation_spec_t correlation_spec;
     std::unique_ptr<struct query_expression> query;
     derived_table(
             lexeme_t& table_name,
             std::unique_ptr<struct query_expression>& query) :
         table_reference_t(TABLE_REFERENCE_TYPE_DERIVED_TABLE),
-        table_name(table_name),
+        correlation_spec(table_name),
         query(std::move(query))
     {}
 } derived_table_t;

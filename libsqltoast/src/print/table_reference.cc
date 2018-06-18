@@ -42,7 +42,7 @@ std::ostream& operator<< (std::ostream& out, const table_t& t) {
 }
 
 std::ostream& operator<< (std::ostream& out, const derived_table_t& dt) {
-    out << "<derived table> AS " << dt.table_name;
+    out << "<derived table> AS " << dt.correlation_spec.alias;
     return out;
 }
 

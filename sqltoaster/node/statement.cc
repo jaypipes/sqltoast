@@ -408,9 +408,9 @@ void fill(mapping_t& node, const sqltoast::table_t& t) {
 }
 
 void fill(mapping_t& node, const sqltoast::derived_table_t& t) {
-    // NOTE(jaypipes): derived tables don't have aliases because they are
-    // required to be named with AS <table name>
-    node.setattr("name", t.table_name);
+    // NOTE(jaypipes): derived tables always have a <correlation spec> which
+    // contains an alias attribute
+    node.setattr("name", t.correlation_spec.alias);
     std::unique_ptr<node_t> query_node = std::make_unique<mapping_t>();
     mapping_t& query_map = static_cast<mapping_t&>(*query_node);
     fill(query_map, *t.query);
