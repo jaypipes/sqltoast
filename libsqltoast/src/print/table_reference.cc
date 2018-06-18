@@ -36,9 +36,8 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
 
 std::ostream& operator<< (std::ostream& out, const table_t& t) {
     out << std::string(t.table_name.start, t.table_name.end);
-    if (t.has_alias()) {
-        out << " AS " << std::string(t.alias.start, t.alias.end);
-    }
+    if (t.has_alias())
+        out << " AS " << t.correlation_spec->alias;
     return out;
 }
 

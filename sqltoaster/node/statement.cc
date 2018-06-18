@@ -404,7 +404,7 @@ void fill(mapping_t& node, const sqltoast::table_reference_t& tr) {
 void fill(mapping_t& node, const sqltoast::table_t& t) {
     node.setattr("name", t.table_name);
     if (t.has_alias())
-        node.setattr("alias", t.alias);
+        node.setattr("alias", t.correlation_spec->alias);
 }
 
 void fill(mapping_t& node, const sqltoast::derived_table_t& t) {

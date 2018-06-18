@@ -9,6 +9,23 @@
 
 namespace sqltoast {
 
+// A correlation specification is the parse element that indicates a table
+// reference's alias (technically called a "correlation name") and the optional
+// list of correlated column names.
+typedef struct correlation_spec {
+    lexeme_t alias;
+    std::vector<lexeme_t> columns;
+    correlation_spec(lexeme_t& alias) :
+        alias(alias)
+    {}
+    correlation_spec(
+            lexeme_t& alias,
+            std::vector<lexeme_t>& columns) :
+        alias(alias),
+        columns(std::move(columns))
+    {}
+} correlation_spec_t;
+
 // A table reference is an object whose columns are referenced in the <select
 // list>, <group by>, <having>, <where> or <join condition> clauses of a
 // SEELECT statement. There are three types of table references. A table is
@@ -32,14 +49,16 @@ typedef struct table_reference {
 
 typedef struct table : table_reference_t {
     lexeme_t table_name;
-    lexeme_t alias;
+    std::unique_ptr<correlation_spec_t> correlation_spec;
     table(lexeme_t& table_name, lexeme_t& alias) :
         table_reference_t(TABLE_REFERENCE_TYPE_TABLE),
         table_name(table_name),
-        alias(alias)
+        correlation_spec(std::make_unique<correlation_spec_t>(alias))
     {}
     inline bool has_alias() const {
-        return alias.start != parse_position_t(0);
+        if (correlation_spec)
+            return correlation_spec->alias;
+        return false;
     }
 } table_t;
 
