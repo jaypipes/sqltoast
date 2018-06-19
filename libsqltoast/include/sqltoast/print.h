@@ -96,7 +96,7 @@ std::ostream& operator<< (std::ostream& out, const interval_term_t& tern);
 std::ostream& operator<< (std::ostream& out, const interval_value_expression_t& ve);
 std::ostream& operator<< (std::ostream& out, const join_specification_t& js);
 std::ostream& operator<< (std::ostream& out, const joined_table_query_expression_t& qe);
-std::ostream& operator<< (std::ostream& out, const joined_table_t& jt);
+std::ostream& operator<< (std::ostream& out, const join_target_t& jt);
 std::ostream& operator<< (std::ostream& out, const length_expression_t& le);
 std::ostream& operator<< (std::ostream& out, const non_join_query_expression_t& qe);
 std::ostream& operator<< (std::ostream& out, const non_join_query_primary_t& primary);

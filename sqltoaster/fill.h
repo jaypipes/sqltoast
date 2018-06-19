@@ -57,7 +57,7 @@ void fill(mapping_t& node, const sqltoast::interval_term_t& term);
 void fill(mapping_t& node, const sqltoast::interval_value_expression_t& ie);
 void fill(mapping_t& node, const sqltoast::join_specification_t& spec);
 void fill(mapping_t& node, const sqltoast::joined_table_query_expression_t& qe);
-void fill(mapping_t& node, const sqltoast::joined_table_t& jt);
+void fill(mapping_t& node, const sqltoast::join_target_t& jt);
 void fill(mapping_t& node, const sqltoast::length_expression_t& expr);
 void fill(mapping_t& node, const sqltoast::like_predicate_t& pred);
 void fill(mapping_t& node, const sqltoast::match_predicate_t& pred);

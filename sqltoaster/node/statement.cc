@@ -389,15 +389,12 @@ void fill(mapping_t& node, const sqltoast::table_reference_t& tr) {
                 node.setattr("derived_table", subnode);
             }
             break;
-        case sqltoast::TABLE_REFERENCE_TYPE_JOINED_TABLE:
-            node.setattr("type", "JOINED_TABLE");
-            {
-                const sqltoast::joined_table_t& sub =
-                    static_cast<const sqltoast::joined_table_t&>(tr);
-                fill(submap, sub);
-                node.setattr("joined_table", subnode);
-            }
-            break;
+    }
+    if (tr.joined) {
+        std::unique_ptr<node_t> joined_node = std::make_unique<mapping_t>();
+        mapping_t& joined_map = static_cast<mapping_t&>(*joined_node);
+        fill(joined_map, *tr.joined);
+        node.setattr("joined", joined_node);
     }
 }
 
@@ -417,7 +414,7 @@ void fill(mapping_t& node, const sqltoast::derived_table_t& t) {
     node.setattr("query", query_node);
 }
 
-void fill(mapping_t& node, const sqltoast::joined_table_t& jt) {
+void fill(mapping_t& node, const sqltoast::join_target_t& jt) {
     switch (jt.join_type) {
         case sqltoast::JOIN_TYPE_INNER:
             node.setattr("type", "INNER_JOIN");
@@ -443,18 +440,14 @@ void fill(mapping_t& node, const sqltoast::joined_table_t& jt) {
         default:
             break;
     }
-    std::unique_ptr<node_t> left_node = std::make_unique<mapping_t>();
-    mapping_t& left_map = static_cast<mapping_t&>(*left_node);
-    fill(left_map, *jt.left);
-    node.setattr("left", left_node);
-    std::unique_ptr<node_t> right_node = std::make_unique<mapping_t>();
-    mapping_t& right_map = static_cast<mapping_t&>(*right_node);
-    fill(right_map, *jt.right);
-    node.setattr("right", right_node);
-    if (jt.spec) {
+    std::unique_ptr<node_t> table_ref_node = std::make_unique<mapping_t>();
+    mapping_t& table_ref_map = static_cast<mapping_t&>(*table_ref_node);
+    fill(table_ref_map, *jt.table_ref);
+    node.setattr("table_reference", table_ref_node);
+    if (jt.join_spec) {
         std::unique_ptr<node_t> spec_node = std::make_unique<mapping_t>();
         mapping_t& spec_map = static_cast<mapping_t&>(*spec_node);
-        fill(spec_map, *jt.spec);
+        fill(spec_map, *jt.join_spec);
         node.setattr("specification", spec_node);
     }
 }

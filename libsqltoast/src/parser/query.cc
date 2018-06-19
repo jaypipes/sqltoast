@@ -27,7 +27,7 @@ bool parse_query_expression(
     lexer_t& lex = ctx.lexer;
     parse_position_t start = lex.cursor;
     token_t start_tok = lex.current_token;
-    std::unique_ptr<joined_table_t> joined_table;
+    std::unique_ptr<table_reference_t> joined_table;
 
     if (parse_non_join_query_expression(ctx, cur_tok, out))
         return true;
@@ -174,19 +174,20 @@ push_tvc:
 bool parse_joined_table(
         parse_context_t& ctx,
         token_t& cur_tok,
-        std::unique_ptr<joined_table_t>& out) {
+        std::unique_ptr<table_reference_t>& out) {
     lexer_t& lex = ctx.lexer;
     parse_position_t start = lex.cursor;
     token_t start_tok = lex.current_token;
     symbol_t cur_sym = cur_tok.symbol;
-    join_type_t join_type = JOIN_TYPE_UNKNOWN;
+    join_type_t join_type = JOIN_TYPE_NONE;
+    std::unique_ptr<join_target_t> join_target;
+    std::unique_ptr<join_specification_t> join_spec;
     std::unique_ptr<search_condition_t> join_cond;
-    std::unique_ptr<table_reference_t> left;
     std::unique_ptr<table_reference_t> right;
     // Used for the USING clause
     std::vector<lexeme_t> named_columns;
 
-    if (parse_table_reference(ctx, cur_tok, left))
+    if (parse_table_reference(ctx, cur_tok, out))
         goto process_join_type;
     // Reset cursor to before parsing of table reference attempt. If the next
     // symbol is a LPAREN, pop it and try parsing a parens-enclosed
@@ -343,13 +344,11 @@ push_joined_table:
     if (ctx.opts.disable_statement_construction)
         return true;
     if (! named_columns.empty())
-        out = std::make_unique<joined_table_t>(
-                join_type, left, right, named_columns);
+        join_spec = std::make_unique<join_specification_t>(named_columns);
     else if (join_cond)
-        out = std::make_unique<joined_table_t>(
-                join_type, left, right, join_cond);
-    else
-        out = std::make_unique<joined_table_t>(join_type, left, right);
+        join_spec = std::make_unique<join_specification_t>(join_cond);
+    join_target = std::make_unique<join_target_t>(join_type, right, join_spec);
+    out->join(join_target);
     return true;
 }
 

@@ -55,7 +55,9 @@ bool parse_table_reference(
     symbol_t cur_sym = cur_tok.symbol;
     lexeme_t table_name;
     lexeme_t alias;
-    join_type_t join_type = JOIN_TYPE_UNKNOWN;
+    join_type_t join_type = JOIN_TYPE_NONE;
+    std::unique_ptr<join_target_t> join_target;
+    std::unique_ptr<join_specification_t> join_spec;
     std::unique_ptr<search_condition_t> join_cond;
     std::unique_ptr<table_reference_t> right;
     // Used for the USING clause
@@ -144,7 +146,7 @@ process_union_cross_or_natural_join:
     cur_tok = lex.next();
     if (! parse_table_reference(ctx, cur_tok, right))
         goto err_expect_table_reference;
-    goto push_cross_or_natural_join;
+    goto push_join;
 err_expect_join:
     expect_error(ctx, SYMBOL_JOIN);
     return false;
@@ -234,23 +236,21 @@ ensure_normal_table:
         return true;
     out = std::make_unique<table_t>(table_name, alias);
     goto check_join;
-push_cross_or_natural_join:
-    if (ctx.opts.disable_statement_construction)
-        return true;
-    out = std::make_unique<joined_table_t>(join_type, out, right);
-    return true;
 push_join:
     if (ctx.opts.disable_statement_construction)
         return true;
+    if (! right) {
+        // out parameter has already been populated with either a normal or
+        // derived table, and we found no JOIN symbol afterwards, so just
+        // return
+        return true;
+    }
     if (! named_columns.empty())
-        out = std::make_unique<joined_table_t>(
-                join_type, out, right, named_columns);
+        join_spec = std::make_unique<join_specification_t>(named_columns);
     else if (join_cond)
-        out = std::make_unique<joined_table_t>(
-                join_type, out, right, join_cond);
-    else
-        out = std::make_unique<joined_table_t>(
-                join_type, out, right);
+        join_spec = std::make_unique<join_specification_t>(join_cond);
+    join_target = std::make_unique<join_target_t>(join_type, right, join_spec);
+    out->join(join_target);
     return true;
 }
 
