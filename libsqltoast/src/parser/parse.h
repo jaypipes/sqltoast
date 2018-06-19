@@ -143,10 +143,6 @@ bool parse_non_join_query_primary(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<non_join_query_primary_t>& out);
-bool parse_joined_table(
-        parse_context_t& ctx,
-        token_t& cur_tok,
-        std::unique_ptr<joined_table_t>& out);
 
 // Returns true if a query specification can be parsed. If true, the out
 // argument will contain a new pointer to a query_specification_t.
@@ -166,6 +162,14 @@ bool parse_table_value_constructor(
 // Returns true if a table reference can be parsed. If true, the out argument
 // will contain a new pointer to a table_reference_t.
 bool parse_table_reference(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<table_reference_t>& out);
+bool parse_derived_table(
+        parse_context_t& ctx,
+        token_t& cur_tok,
+        std::unique_ptr<table_reference_t>& out);
+bool parse_joined_table(
         parse_context_t& ctx,
         token_t& cur_tok,
         std::unique_ptr<table_reference_t>& out);

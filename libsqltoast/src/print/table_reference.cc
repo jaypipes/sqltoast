@@ -23,31 +23,25 @@ std::ostream& operator<< (std::ostream& out, const table_reference_t& tr) {
                 out << dt;
             }
             break;
-        case TABLE_REFERENCE_TYPE_JOINED_TABLE:
-            {
-                const joined_table_t& jt =
-                    static_cast<const joined_table_t&>(tr);
-                out << jt;
-            }
-            break;
     }
+    if (tr.joined)
+        out << *tr.joined;
     return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const table_t& t) {
     out << std::string(t.table_name.start, t.table_name.end);
-    if (t.has_alias()) {
-        out << " AS " << std::string(t.alias.start, t.alias.end);
-    }
+    if (t.has_alias())
+        out << " AS " << t.correlation_spec->alias;
     return out;
 }
 
 std::ostream& operator<< (std::ostream& out, const derived_table_t& dt) {
-    out << "<derived table> AS " << dt.table_name;
+    out << "<derived table> AS " << dt.correlation_spec.alias;
     return out;
 }
 
-std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
+std::ostream& operator<< (std::ostream& out, const join_target_t& jt) {
     switch (jt.join_type) {
         case JOIN_TYPE_INNER:
             out << "inner-join[";
@@ -73,9 +67,9 @@ std::ostream& operator<< (std::ostream& out, const joined_table_t& jt) {
         default:
             break;
     }
-    out << *jt.left << ',' << *jt.right;
-    if (jt.spec)
-        out << *jt.spec;
+    out << *jt.table_ref;
+    if (jt.join_spec)
+        out << *jt.join_spec;
     out << ']';
     return out;
 }

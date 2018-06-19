@@ -13,14 +13,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: CROSS_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -33,14 +31,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: INNER_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -91,14 +87,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: INNER_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -149,14 +143,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: INNER_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -169,14 +161,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: LEFT_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -227,14 +217,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: LEFT_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -285,14 +273,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: RIGHT_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -343,14 +329,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: RIGHT_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -401,14 +385,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: FULL_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -459,14 +441,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: FULL_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -517,14 +497,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: INNER_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -540,14 +518,12 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: NATURAL_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
@@ -560,14 +536,86 @@ statements:
         selected_columns:
           - asterisk: true
         referenced_tables:
-          - type: JOINED_TABLE
-            joined_table:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
               type: UNION_JOIN
-              left:
-                type: TABLE
-                table:
-                  name: t1
-              right:
+              table_reference:
                 type: TABLE
                 table:
                   name: t2
+# JOIN of normal table to derived table
+>SELECT * FROM t1 LEFT JOIN (SELECT t1_id FROM t2 GROUP BY t1_id) AS d2 ON t1.id = d2.t1_id
+statements:
+  - type: SELECT
+    select_statement:
+      query:
+        selected_columns:
+          - asterisk: true
+        referenced_tables:
+          - type: TABLE
+            table:
+              name: t1
+            joined:
+              type: LEFT_JOIN
+              table_reference:
+                type: DERIVED_TABLE
+                derived_table:
+                  name: d2
+                  query:
+                    selected_columns:
+                      - type: NUMERIC_EXPRESSION
+                        numeric_expression:
+                          left:
+                            left:
+                              primary:
+                                type: VALUE
+                                value:
+                                  primary:
+                                    type: COLUMN_REFERENCE
+                                    column_reference: t1_id
+                    referenced_tables:
+                      - type: TABLE
+                        table:
+                          name: t2
+                    group_by:
+                      - t1_id
+              specification:
+                on:
+                  terms:
+                    - factor:
+                        predicate:
+                          type: COMPARISON
+                          comparison_predicate:
+                            op: EQUAL
+                            left:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: COLUMN_REFERENCE
+                                              column_reference: t1.id
+                            right:
+                              type: ELEMENT
+                              element:
+                                type: VALUE_EXPRESSION
+                                value_expression:
+                                  type: NUMERIC_EXPRESSION
+                                  numeric_expression:
+                                    left:
+                                      left:
+                                        primary:
+                                          type: VALUE
+                                          value:
+                                            primary:
+                                              type: COLUMN_REFERENCE
+                                              column_reference: d2.t1_id
