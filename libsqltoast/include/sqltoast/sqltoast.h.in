@@ -30,6 +30,8 @@
 #include "query.h"
 #include "statement.h"
 
+#include "debug.h"
+
 namespace sqltoast {
 
 // Dialects of SQL that can be parsed by sqltoast
