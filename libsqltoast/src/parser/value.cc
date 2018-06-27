@@ -21,31 +21,47 @@ bool parse_numeric_term(
     symbol_t cur_sym = cur_tok.symbol;
     std::unique_ptr<numeric_factor_t> factor;
     std::unique_ptr<numeric_factor_t> operand;
-    if (! parse_numeric_factor(ctx, cur_tok, factor))
+    ST_DBG("before parse_numeric_factor(factor). cur_tok is ", cur_tok);
+    if (! parse_numeric_factor(ctx, cur_tok, factor)) {
+        ST_DBG("parse_numeric_factor(factor) -> false. "
+               "returning false from parse_numeric_term()");
         return false;
+    }
+    ST_DBG("parse_numeric_term(factor) -> true. cur_tok is ", cur_tok);
     goto ensure_term;
 optional_operator:
     // Check to see if we've currently got a * or a / arithmetic operator as
     // our current symbol. If so, that indicates we should expect to parse
     // another numeric factor as an operand to the arithmetic equation.
+    ST_DBG("check cur_tok ", cur_tok, " is optional operator");
     cur_sym = cur_tok.symbol;
     if (cur_sym == SYMBOL_ASTERISK) {
         cur_tok = lex.next();
+        ST_DBG("found ASTERISK operator. expect parse_numeric_factor(operand). "
+               "cur_tok is ", cur_tok);
         if (! parse_numeric_factor(ctx, cur_tok, operand)) {
+            ST_DBG("parse_numeric_factor(operand) -> false. SYNTAX ERROR.");
             if (ctx.result.code == PARSE_SYNTAX_ERROR)
                 return false;
             goto err_expect_numeric_factor;
         }
+        ST_DBG("parse_numeric_factor(operand) -> true. "
+               "returning true from parse_numeric_term()");
         if (out)
             out->multiply(operand);
         return true;
     } else if (cur_sym == SYMBOL_SOLIDUS) {
         cur_tok = lex.next();
+        ST_DBG("found SOLIDUS operator. expect parse_numeric_factor(operand). "
+               "cur_tok is ", cur_tok);
         if (! parse_numeric_factor(ctx, cur_tok, operand)) {
+            ST_DBG("parse_numeric_factor(operand) -> false. SYNTAX ERROR.");
             if (ctx.result.code == PARSE_SYNTAX_ERROR)
                 return false;
             goto err_expect_numeric_factor;
         }
+        ST_DBG("parse_numeric_factor(operand) -> true. "
+               "returning true from parse_numeric_term()");
         if (out)
             out->divide(operand);
         return true;
