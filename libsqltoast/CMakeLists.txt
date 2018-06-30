@@ -52,6 +52,31 @@ SET(LIBSQLTOAST_SOURCES
 )
 
 ADD_LIBRARY(sqltoast STATIC ${LIBSQLTOAST_SOURCES})
+SET_TARGET_PROPERTIES(sqltoast PROPERTIES
+    CXX_STANDARD 14
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+SET(LIBSQLTOAST_BUILD_OPTS, "-Wall --no-rtti")
+TARGET_COMPILE_OPTIONS(sqltoast
+    PUBLIC ${LIBSQLTOAST_BUILD_OPTS}
+)
+
+# To build with debugging symbols and some extra tracing functionality, do:
+#
+# $ROOT_DIR/build $> cmake -DCMAKE_BUILD_TYPE=debug ..
+SET(LIBSQLTOAST_BUILD_DEBUG_OPTS, "-Werror -DSQLTOAST_DEBUG")
+TARGET_COMPILE_OPTIONS(sqltoast
+    PRIVATE "$<$<CONFIG:DEBUG>:${LIBSQLTOAST_BUILD_DEBUG_OPTS}>"
+)
+
+# To build a speed-optimized binary, do:
+#
+# $ROOT_DIR/build $> cmake -DCMAKE_BUILD_TYPE=release ..
+SET(LIBSQLTOAST_BUILD_RELEASE_OPTS, "-O2 -falign-functions=1 -falign-jumps=1 -falign-loops=1 -falign-labels=1")
+TARGET_COMPILE_OPTIONS(sqltoast
+    PRIVATE "$<$<CONFIG:RELEASE>:${LIBSQLTOAST_BUILD_RELEASE_OPTS}>"
+)
 
 # Header file for configuration templated variables
 CONFIGURE_FILE(
@@ -61,10 +86,16 @@ CONFIGURE_FILE(
 
 # Header files in src/ are private and not exported for public sqltoast
 # interfaces
-TARGET_INCLUDE_DIRECTORIES(sqltoast PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    PRIVATE src)
+TARGET_INCLUDE_DIRECTORIES(sqltoast
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        src)
+
+TARGET_LINK_LIBRARIES(sqltoast
+    debug unwind
+)
 
 # 'make install' to the correct locations (provided by GNUInstallDirs).
 INSTALL(TARGETS sqltoast EXPORT sqltoast_config
