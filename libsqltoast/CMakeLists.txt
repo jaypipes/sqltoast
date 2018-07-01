@@ -93,9 +93,11 @@ TARGET_INCLUDE_DIRECTORIES(sqltoast
     PRIVATE
         src)
 
-TARGET_LINK_LIBRARIES(sqltoast
-    debug unwind
-)
+# Include libunwind when we're in debug mode
+if (${BUILD_TYPE_LOWER} STREQUAL "debug")
+    FIND_PACKAGE(libunwind REQUIRED)
+    TARGET_LINK_LIBRARIES(sqltoast ${LIBUNWIND_LIBRARIES})
+endif ()
 
 # 'make install' to the correct locations (provided by GNUInstallDirs).
 INSTALL(TARGETS sqltoast EXPORT sqltoast_config
