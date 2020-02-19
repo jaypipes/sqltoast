@@ -1,15 +1,22 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.4)
-SET(CMAKE_CXX_FLAGS "-std=c++14 -Wall -fno-rtti")
+PROJECT(sqltoast)
 
-# To build with debugging symbols and some extra tracing functionality, do:
-#
-# $ROOT_DIR/build $> cmake -DCMAKE_BUILD_TYPE=debug ..
-SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb -DSQLTOAST_DEBUG")
+# String comparisons in cmake are case-sensitive and unfortunately, CamelCase
+# is used for many examples/tutorials, so people do things like cmake ..
+# -DCMAKE_BUILD_TYPE=Debug. We want to only have to compare lower-cased build
+# types, so we have a variable here that lower-cases the build type and stores
+# it in a cache variable for use by the other cmakes.
+STRING(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_LOWER)
 
-# To build a speed-optimized binary, do:
-#
-# $ROOT_DIR/build $> cmake -DCMAKE_BUILD_TYPE=fast ..
-SET(CMAKE_CXX_FLAGS_FAST "-O2 -falign-functions=1 -falign-jumps=1 -falign-loops=1 -falign-labels=1")
+SET(
+    CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_SOURCE_DIR}/cmake_modules"
+)
+
+# Must use GNUInstallDirs to install libraries into correct
+# locations on all platforms.
+INCLUDE(GNUInstallDirs)
 
 ADD_SUBDIRECTORY(libsqltoast)
 ADD_SUBDIRECTORY(sqltoaster)

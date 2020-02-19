@@ -1,6 +1,5 @@
-PROJECT(libsqltoast)
+PROJECT(libsqltoast VERSION 0.1 LANGUAGES CXX)
 
-SET(PROJECT_VERSION 0.1)
 SET(PROJECT_DESCRIPTION "A recursive descent parser for SQL")
 SET(SQLTOAST_VERSION_MAJOR 0)
 SET(SQLTOAST_VERSION_MINOR 1)
@@ -52,6 +51,33 @@ SET(LIBSQLTOAST_SOURCES
     src/print/value_expression.cc
 )
 
+ADD_LIBRARY(sqltoast STATIC ${LIBSQLTOAST_SOURCES})
+SET_TARGET_PROPERTIES(sqltoast PROPERTIES
+    CXX_STANDARD 14
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+SET(LIBSQLTOAST_BUILD_OPTS, "-Wall --no-rtti")
+TARGET_COMPILE_OPTIONS(sqltoast
+    PUBLIC ${LIBSQLTOAST_BUILD_OPTS}
+)
+
+# To build with debugging symbols and some extra tracing functionality, do:
+#
+# $ROOT_DIR/build $> cmake -DCMAKE_BUILD_TYPE=debug ..
+SET(LIBSQLTOAST_BUILD_DEBUG_OPTS, "-Werror -DSQLTOAST_DEBUG")
+TARGET_COMPILE_OPTIONS(sqltoast
+    PRIVATE "$<$<CONFIG:DEBUG>:${LIBSQLTOAST_BUILD_DEBUG_OPTS}>"
+)
+
+# To build a speed-optimized binary, do:
+#
+# $ROOT_DIR/build $> cmake -DCMAKE_BUILD_TYPE=release ..
+SET(LIBSQLTOAST_BUILD_RELEASE_OPTS, "-O2 -falign-functions=1 -falign-jumps=1 -falign-loops=1 -falign-labels=1")
+TARGET_COMPILE_OPTIONS(sqltoast
+    PRIVATE "$<$<CONFIG:RELEASE>:${LIBSQLTOAST_BUILD_RELEASE_OPTS}>"
+)
+
 # Header file for configuration templated variables
 CONFIGURE_FILE(
     "${PROJECT_SOURCE_DIR}/include/sqltoast/sqltoast.h.in"
@@ -60,13 +86,29 @@ CONFIGURE_FILE(
 
 # Header files in src/ are private and not exported for public sqltoast
 # interfaces
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src)
+TARGET_INCLUDE_DIRECTORIES(sqltoast
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        src)
 
-ADD_LIBRARY(sqltoast STATIC ${LIBSQLTOAST_SOURCES})
-TARGET_INCLUDE_DIRECTORIES(sqltoast PUBLIC ${PROJECT_SOURCE_DIR}/include)
+# Include libunwind when we're in debug mode
+if (${BUILD_TYPE_LOWER} STREQUAL "debug")
+    FIND_PACKAGE(libunwind REQUIRED)
+    TARGET_LINK_LIBRARIES(sqltoast ${LIBUNWIND_LIBRARIES})
+endif ()
 
-# Set up a pkg-config file for libsqltoast from the template in the root
-# directory and make sure we only interpolate @VARS not $VARS
-CONFIGURE_FILE(sqltoast.pc.in sqltoast.pc @ONLY)
+# 'make install' to the correct locations (provided by GNUInstallDirs).
+INSTALL(TARGETS sqltoast EXPORT sqltoast_config
+    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})  # This is for Windows
 
-INSTALL(TARGETS sqltoast DESTINATION lib)
+# This makes the project importable from the install directory
+# Put config file in per-project dir (name MUST match), can also
+# just go into 'cmake'.
+INSTALL(EXPORT sqltoast_config DESTINATION share/sqltoast/cmake)
+
+# This makes the project importable from the build directory
+EXPORT(TARGETS sqltoast FILE sqltoast_config.cmake)
