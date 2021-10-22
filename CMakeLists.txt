@@ -8,11 +8,7 @@ PROJECT(sqltoast)
 # it in a cache variable for use by the other cmakes.
 STRING(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_LOWER)
 
-SET(
-    CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_SOURCE_DIR}/cmake_modules"
-)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
 # Must use GNUInstallDirs to install libraries into correct
 # locations on all platforms.
